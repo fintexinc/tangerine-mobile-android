@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_title">Tangerine Wealth</string>
+    <string name="text_my_net_worth">My Net Worth</string>
+    <string name="text_my_portfolio">My Portfolio</string>
+    <string name="text_tangerine_net_worth">Tangerine Net Worth</string>
+    <string name="text_all_accounts">All Accounts</string>
+    <string name="text_well_done">Well done!</string>
+    <string name="text_you_increased_rrsp">You’ve increased RRSP contributions by $1500 this month</string>
+    <string name="text_earned_this_month">earned this month</string>
+    <string name="text_assets">Assets</string>
+    <string name="text_add_asset">Add Asset</string>
+    <string name="text_liabilities">Liabilities</string>
+    <string name="text_add_liability">Add Liability</string>
+    <string name="text_you_saved">You’ve saved $2,500 by investing with Tangerine.</string>
+    <string name="text_money_stays">More money stays in your pocket — just the way it should be.</string>
+    <string name="text_what_is_going_on">Here’s what’s going on</string>
+    <string name="text_activity">Activity</string>
+    <string name="text_documents">Documents</string>
+    <string name="text_articles_you_might_like">Articles you might like</string>
+    <string name="text_invest">Invest</string>
+    <string name="text_invest_instructions">Q2 Investment update 📈 Chaos to comeback</string>
+    <string name="text_show_more">Show More</string>
+    <string name="text_new_market_insights">New market insights are available — stay informed with the latest trends and perspectives</string>
+    <string name="text_check_in_update">Check-in and update</string>
+    <string name="text_performance">Performance</string>
+    <string name="text_my_accounts">My Accounts</string>
+    <string name="format_registered_accounts">Registered Accounts (%d)</string>
+    <string name="format_non_registered_accounts">Non-Registered Accounts (%d)</string>
+    <string name="text_top_holdings">Top Holdings</string>
+    <string name="text_largest_positions">Largest positions held across all accounts in this portfolio.</string>
+    <string name="text_sector_exposure">Sector Exposure</string>
+    <string name="text_asset_mix">Asset Mix</string>
+    <string name="text_geographic_exposure">Geographic Exposure</string>
+    <string name="text_accounts">Accounts</string>
+
+    
+</resources>

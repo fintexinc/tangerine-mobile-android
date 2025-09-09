@@ -1,0 +1,131 @@
+package com.fintexinc.core.data.mock
+
+const val ASSETS_MOCK = "{\n" +
+        "    \"investment\": [\n" +
+        "        {\n" +
+        "            \"id\": \"ACCT-INV-001\",\n" +
+        "            \"userId\": \"INV-0001\",\n" +
+        "            \"accountNumber\": \"TFSA-9876-4321\",\n" +
+        "            \"registeredName\": \"TFSA of Alex Tremblay\",\n" +
+        "            \"inceptionDate\": \"2023-02-10\",\n" +
+        "            \"beneficiaries\": [\n" +
+        "                {\"name\": \"Marie Tremblay\", \"relationship\": \"Spouse\", \"percentage\": 100}\n" +
+        "            ],\n" +
+        "            \"accountName\": \"TFSA - Core Balanced\",\n" +
+        "            \"accountType\": \"TFSA\",\n" +
+        "            \"productType\": \"MUTUAL_FUND\",\n" +
+        "            \"fund\": {\n" +
+        "                \"fundCode\": \"TAN-BAL\",\n" +
+        "                \"fundName\": \"Tangerine Core Balanced Portfolio\",\n" +
+        "                \"riskLevel\": \"MEDIUM\",\n" +
+        "                \"currency\": \"CAD\",\n" +
+        "                \"units\": 152.347,\n" +
+        "                \"navPerUnit\": 26.85,\n" +
+        "                \"priceAsOf\": \"2025-08-15\"\n" +
+        "            },\n" +
+        "            \"MarketValue\": 4090.52,\n" +
+        "            \"BookCost\": 3800.0,\n" +
+        "            \"GainLoss\": 290.52,\n" +
+        "            \"GainLossPercentage\": 7.64,\n" +
+        "            \"linkedDate\": \"2023-02-10\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:45:00Z\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"id\": \"ACCT-INV-002\",\n" +
+        "            \"userId\": \"INV-0001\",\n" +
+        "            \"accountNumber\": \"RSP-1234-5678\",\n" +
+        "            \"registeredName\": \"RSP of Alex Tremblay\",\n" +
+        "            \"inceptionDate\": \"2022-11-05\",\n" +
+        "            \"beneficiaries\": [\n" +
+        "                {\"name\": \"Marie Tremblay\", \"relationship\": \"Spouse\", \"percentage\": 100}\n" +
+        "            ],\n" +
+        "            \"accountName\": \"RSP - Equity Growth\",\n" +
+        "            \"accountType\": \"RSP\",\n" +
+        "            \"productType\": \"MUTUAL_FUND\",\n" +
+        "            \"fund\": {\n" +
+        "                \"fundCode\": \"TAN-EQG\",\n" +
+        "                \"fundName\": \"Tangerine Equity Growth Portfolio\",\n" +
+        "                \"riskLevel\": \"MEDIUM_TO_HIGH\",\n" +
+        "                \"currency\": \"CAD\",\n" +
+        "                \"units\": 98.0,\n" +
+        "                \"navPerUnit\": 30.12,\n" +
+        "                \"priceAsOf\": \"2025-08-15\"\n" +
+        "            },\n" +
+        "            \"MarketValue\": 2951.76,\n" +
+        "            \"BookCost\": 3100.0,\n" +
+        "            \"GainLoss\": -148.24,\n" +
+        "            \"GainLossPercentage\": -4.78,\n" +
+        "            \"linkedDate\": \"2022-11-05\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:45:00Z\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"id\": \"ACCT-INV-003\",\n" +
+        "            \"userId\": \"INV-0002\",\n" +
+        "            \"accountNumber\": \"NR-2468-1357\",\n" +
+        "            \"registeredName\": \"Non-Registered of Sophie Dubois\",\n" +
+        "            \"inceptionDate\": \"2024-05-12\",\n" +
+        "            \"beneficiaries\": [],\n" +
+        "            \"accountName\": \"Non-Registered - Dividend\",\n" +
+        "            \"accountType\": \"NON_REGISTERED\",\n" +
+        "            \"productType\": \"MUTUAL_FUND\",\n" +
+        "            \"fund\": {\n" +
+        "                \"fundCode\": \"TAN-DIV\",\n" +
+        "                \"fundName\": \"Tangerine Dividend Portfolio\",\n" +
+        "                \"riskLevel\": \"MEDIUM\",\n" +
+        "                \"currency\": \"CAD\",\n" +
+        "                \"units\": 210.5,\n" +
+        "                \"navPerUnit\": 15.75,\n" +
+        "                \"priceAsOf\": \"2025-08-15\"\n" +
+        "            },\n" +
+        "            \"MarketValue\": 3315.38,\n" +
+        "            \"BookCost\": 3200.0,\n" +
+        "            \"GainLoss\": 115.38,\n" +
+        "            \"GainLossPercentage\": 3.61,\n" +
+        "            \"linkedDate\": \"2024-05-12\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:45:00Z\"\n" +
+        "        }\n" +
+        "    ],\n" +
+        "    \"banking\": [\n" +
+        "        {\n" +
+        "            \"id\": \"ACCT-BNK-001\",\n" +
+        "            \"userId\": \"INV-0001\",\n" +
+        "            \"accountNumber\": \"011-1234567\",\n" +
+        "            \"accountName\": \"Everyday Chequing\",\n" +
+        "            \"accountType\": \"CHEQUING\",\n" +
+        "            \"accountBalance\": 2450.33,\n" +
+        "            \"linkedDate\": \"2021-06-01\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"id\": \"ACCT-BNK-002\",\n" +
+        "            \"userId\": \"INV-0002\",\n" +
+        "            \"accountNumber\": \"011-7654321\",\n" +
+        "            \"accountName\": \"Savings Account\",\n" +
+        "            \"accountType\": \"SAVINGS\",\n" +
+        "            \"accountBalance\": 12450.10,\n" +
+        "            \"linkedDate\": \"2020-04-22\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "        }\n" +
+        "    ],\n" +
+        "    \"custom\": [\n" +
+        "        {\n" +
+        "            \"id\": \"ASSET-CUS-001\",\n" +
+        "            \"userId\": \"INV-0001\",\n" +
+        "            \"assetName\": \"Toyota Corolla 2018\",\n" +
+        "            \"assetType\": \"CAR\",\n" +
+        "            \"assetValue\": 12000.0,\n" +
+        "            \"linkedDate\": \"2024-03-15\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"id\": \"ASSET-CUS-002\",\n" +
+        "            \"userId\": \"INV-0002\",\n" +
+        "            \"assetName\": \"Cottage in Muskoka\",\n" +
+        "            \"assetType\": \"HOUSE\",\n" +
+        "            \"assetValue\": 425000.0,\n" +
+        "            \"linkedDate\": \"2019-07-12\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "        }\n" +
+        "    ]\n" +
+        "}\n" +
+        "\n"

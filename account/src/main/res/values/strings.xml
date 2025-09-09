@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_account_balance">Account Balance</string>
+    <string name="text_past_month">past month</string>
+    <string name="text_investor_profile">Investor Profile</string>
+    <string name="button_edit_profile">Edit Profile</string>
+    <string name="text_account_details">Account Details</string>
+    <string name="text_summary">Summary</string>
+    <string name="text_your_next_contribution">Your next Automatic Contribution is schedule for $100 on August 5th</string>
+    <string name="text_view_details">View Details</string>
+    <string name="text_search">Search</string>
+    <string name="text_income">Income</string>
+    <string name="text_household_net_worth">Household net worth</string>
+    <string name="text_investment_knowledge">Investment knowledge</string>
+    <string name="text_risk_tolerance_a">Risk tolerance Part A - Within a month</string>
+    <string name="text_risk_tolerance_b">Risk tolerance Part B - Within a year</string>
+    <string name="text_overall_risk_tolerance">Overall risk tolerance</string>
+    <string name="text_investment_objective">Investment objective</string>
+    <string name="text_time_horizon">Investment objective</string>
+    <string name="text_living_expenses">Living Expenses</string>
+</resources>
