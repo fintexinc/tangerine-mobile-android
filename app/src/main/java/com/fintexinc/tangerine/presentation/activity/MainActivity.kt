@@ -221,6 +221,12 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onOpenDocuments = {
                                     navController.navigate(Documents)
+                                },
+                                onTabSelected = { tab ->
+                                    accountViewModel.onTabChanged(
+                                        tab = tab,
+                                        accountId = args.accountId
+                                    )
                                 }
                             )
                         }

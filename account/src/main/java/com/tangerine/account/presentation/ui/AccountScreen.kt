@@ -39,7 +39,8 @@ import com.tangerine.account.presentation.viewmodel.AccountViewModel
 fun AccountScreen(
     state: AccountViewModel.State,
     onBackClicked: () -> Unit,
-    onOpenDocuments: () -> Unit
+    onOpenDocuments: () -> Unit,
+    onTabSelected: (AccountTab) -> Unit
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -52,7 +53,8 @@ fun AccountScreen(
             Content(
                 state = state,
                 onBackClicked = onBackClicked,
-                onOpenDocuments = onOpenDocuments
+                onOpenDocuments = onOpenDocuments,
+                onTabSelected = onTabSelected
             )
         }
     }
@@ -62,7 +64,8 @@ fun AccountScreen(
 private fun Content(
     state: AccountViewModel.State,
     onBackClicked: () -> Unit,
-    onOpenDocuments: () -> Unit
+    onOpenDocuments: () -> Unit,
+    onTabSelected: (AccountTab) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -109,7 +112,7 @@ private fun Content(
         AccountTabsUI(
             selectedTab,
             onTabSelected = { tab ->
-                selectedTab.value = tab
+                onTabSelected(tab)
             }
         )
         Spacer(modifier = Modifier.height(24.dp))

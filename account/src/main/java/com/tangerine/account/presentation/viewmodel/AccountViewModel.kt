@@ -13,7 +13,6 @@ import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Activ
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Documents
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Positions
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Summary
-import dagger.assisted.AssistedFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,10 +33,10 @@ class AccountViewModel @Inject constructor(
         _state.value = Summary(accountGateway.getAccountById(id))
     }
 
-    fun onTabChanged(tab: AccountTab) = viewModelScope.launch {
+    fun onTabChanged(tab: AccountTab, accountId: String) = viewModelScope.launch {
         when (tab) {
             AccountTab.SUMMARY -> {
-                //_state.value = Summary(accountGateway.getAccountById(id))
+                _state.value = Summary(accountGateway.getAccountById(accountId))
             }
 
             AccountTab.ACTIVITY -> {
@@ -81,7 +80,7 @@ class AccountViewModel @Inject constructor(
             }
 
             AccountTab.DOCUMENTS -> {
-                //_state.value = Documents(accountGateway.getDocumentsByAccountId(id))
+                _state.value = Documents(accountGateway.getDocumentsByAccountId(accountId))
             }
         }
     }
