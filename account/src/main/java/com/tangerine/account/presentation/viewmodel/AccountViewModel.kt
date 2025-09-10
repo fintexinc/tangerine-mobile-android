@@ -13,38 +13,31 @@ import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Activ
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Documents
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Positions
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Summary
-import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = AccountViewModel.Factory::class)
-class AccountViewModel @AssistedInject constructor(
-    @Assisted private val id: String,
+@HiltViewModel
+class AccountViewModel @Inject constructor(
     private val accountGateway: AccountGateway
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(id: String): AccountViewModel
-    }
 
     private val _state: MutableStateFlow<State> = MutableStateFlow<State>(State.Loading)
     val state: StateFlow<State>
         get() = _state.asStateFlow()
 
-    fun getData() = viewModelScope.launch {
+    fun getData(id: String) = viewModelScope.launch {
         _state.value = Summary(accountGateway.getAccountById(id))
     }
 
     fun onTabChanged(tab: AccountTab) = viewModelScope.launch {
         when (tab) {
             AccountTab.SUMMARY -> {
-                _state.value = Summary(accountGateway.getAccountById(id))
+                //_state.value = Summary(accountGateway.getAccountById(id))
             }
 
             AccountTab.ACTIVITY -> {
@@ -88,7 +81,7 @@ class AccountViewModel @AssistedInject constructor(
             }
 
             AccountTab.DOCUMENTS -> {
-                _state.value = Documents(accountGateway.getDocumentsByAccountId(id))
+                //_state.value = Documents(accountGateway.getDocumentsByAccountId(id))
             }
         }
     }

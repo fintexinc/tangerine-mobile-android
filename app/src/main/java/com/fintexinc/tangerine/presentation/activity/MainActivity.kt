@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
@@ -36,19 +37,12 @@ import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
 import com.tangerine.documents.presentation.ui.AccountDocumentsUI
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val dashboardViewModel: DashboardViewModel by viewModels()
-    private val accountViewModel: AccountViewModel by viewModels<AccountViewModel>(
-        extrasProducer = {
-            defaultViewModelCreationExtras.withCreationCallback<AccountViewModel.Factory> {
-                it.create("1")
-            }
-        }
-    )
+    private val accountViewModel: AccountViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -202,7 +196,7 @@ class MainActivity : ComponentActivity() {
                                     dashboardViewModel.onPlatformClicked()
                                 },
                                 onOpenAccount = {
-                                    navController.navigate(Account)
+                                    navController.navigate(Account(it))
                                 },
                                 updateCheckedStates = { asset, assetStates, liabilities, liabilitiesStates ->
                                     dashboardViewModel.updateCheckedStates(
@@ -215,8 +209,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<Account>() {
+                            val args = it.toRoute<Account>()
                             LaunchedEffect(true) {
-                                accountViewModel.getData()
+                                accountViewModel.getData(args.accountId)
                             }
                             val state = accountViewModel.state.collectAsState()
                             AccountScreen(
@@ -246,7 +241,7 @@ class MainActivity : ComponentActivity() {
     object Dashboard
 
     @Serializable
-    object Account
+    data class Account(val accountId: String)
 
     @Serializable
     object Documents

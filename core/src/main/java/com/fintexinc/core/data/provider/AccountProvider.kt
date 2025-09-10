@@ -20,7 +20,7 @@ class AccountProvider: AccountGateway {
 
     // Add database in future to get account by id or use API method for this
     override suspend fun getAccountById(id: String): Account {
-        return getAccounts().first { it.id == id }
+        return getAccounts().first { it.accountId == id }
     }
 
     override suspend fun getDocuments(): List<Document> {

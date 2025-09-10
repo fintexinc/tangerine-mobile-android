@@ -9,3 +9,8 @@ fun Double.formatCurrency(): String {
     formatter.minimumFractionDigits = 2
     return formatter.format(this)
 }
+
+fun Long.formatCurrency(): String {
+    val formatter = NumberFormat.getCurrencyInstance(Locale.US)
+    return formatter.format(this)
+}

@@ -31,7 +31,7 @@ import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 fun DashboardScreenUI(
     state: DashboardViewModel.State,
     onPlatformClicked: () -> Unit,
-    onOpenAccount: () -> Unit,
+    onOpenAccount: (accountId: String) -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
 ) {
     when (state) {
@@ -49,7 +49,7 @@ fun DashboardScreenUI(
 private fun Content(
     state: DashboardViewModel.State.Data,
     onPlatformClicked: () -> Unit,
-    onOpenAccount:() -> Unit,
+    onOpenAccount:(accountId: String) -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
 ) {
     Column(

@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.DataPoint
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
@@ -62,7 +63,7 @@ import com.tangerine.charts.compose_charts.models.Pie
 import com.tangerine.charts.compose_charts.models.PopupProperties
 
 @Composable
-fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: () -> Unit) {
+fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -127,29 +128,17 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: () -> Unit) {
         }
         Spacer(modifier = Modifier.height(12.dp))
         // TODO: add logic based on mocked data
-        val registeredAccounts = listOf(
+
+        val registeredAccounts = accounts.map {
             AccountUI(
-                name = "Jack Dawson TFSA",
-                subName = "39024242",
-                value = "20,000 CAD",
-                valueChange = 832.01,
-                percentageChange = 4.39
-            ),
-            AccountUI(
-                name = "Jack Dawson TFSA",
-                subName = "39024242",
-                value = "20,000 CAD",
-                valueChange = 832.01,
-                percentageChange = 4.39
-            ),
-            AccountUI(
-                name = "Jack Dawson TFSA",
-                subName = "39024242",
-                value = "20,000 CAD",
+                accountId = it.accountId,
+                name = it.userId,
+                subName = it.accountId,
+                value = it.income.formatCurrency(),
                 valueChange = 832.01,
                 percentageChange = 4.39
             )
-        )
+        }
         AccountListUI(
             title = stringResource(
                 R.string.format_registered_accounts, registeredAccounts.size
@@ -161,6 +150,7 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: () -> Unit) {
         Spacer(modifier = Modifier.height(10.dp))
         val nonRegisteredAccounts = listOf(
             AccountUI(
+                registeredAccounts[0].accountId,
                 name = "Jack Dawson TFSA",
                 subName = "39024242",
                 value = "20,000 CAD",
@@ -168,6 +158,7 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: () -> Unit) {
                 percentageChange = 4.39
             ),
             AccountUI(
+                registeredAccounts[1].accountId,
                 name = "Jack Dawson TFSA",
                 subName = "39024242",
                 value = "20,000 CAD",
@@ -212,7 +203,7 @@ private fun AccountListUI(
     modifier: Modifier = Modifier,
     title: String,
     accounts: List<AccountUI>,
-    onOpenAccount: () -> Unit
+    onOpenAccount: (accountId: String) -> Unit
 ) {
     val expanded = remember {
         mutableStateOf(true)
@@ -260,7 +251,7 @@ private fun AccountListUI(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .clickable {
-                            onOpenAccount()
+                            onOpenAccount(account.accountId)
                         }
                         .padding(horizontal = 12.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -524,6 +515,7 @@ private fun TopHoldingsUI() {
 }
 
 data class AccountUI(
+    val accountId: String,
     val name: String,
     val subName: String,
     val value: String,

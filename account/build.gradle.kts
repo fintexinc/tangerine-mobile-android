@@ -61,7 +61,6 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.compose.constraint.layout)
     implementation(libs.compose.navigation)
-    implementation(libs.compose.chart)
     implementation(libs.kotlinx.serialization.json)
 
 
@@ -72,4 +71,7 @@ dependencies {
 
     // core
     implementation(project(":core"))
+
+    // charts
+    implementation(project(":charts"))
 }

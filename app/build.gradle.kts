@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.compose.constraint.layout)
     implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.hilt.navigation.compose)
 
     // test
     testImplementation(libs.junit)
