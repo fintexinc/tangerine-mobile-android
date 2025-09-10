@@ -1,5 +1,8 @@
 package com.fintexinc.core.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Account(
     val id: String,
     val userId: String,

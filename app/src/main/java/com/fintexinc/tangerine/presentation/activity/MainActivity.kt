@@ -36,13 +36,19 @@ import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
 import com.tangerine.documents.presentation.ui.AccountDocumentsUI
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     private val dashboardViewModel: DashboardViewModel by viewModels()
-    private val accountViewModel: AccountViewModel by viewModels()
+    private val accountViewModel: AccountViewModel by viewModels<AccountViewModel>(
+        extrasProducer = {
+            defaultViewModelCreationExtras.withCreationCallback<AccountViewModel.Factory> {
+                it.create("1")
+            }
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -198,8 +204,13 @@ class MainActivity : ComponentActivity() {
                                 onOpenAccount = {
                                     navController.navigate(Account)
                                 },
-                                updateCheckedStates = { asset , assetStates, liabilities, liabilitiesStates ->
-                                    dashboardViewModel.updateCheckedStates(asset, assetStates, liabilities, liabilitiesStates)
+                                updateCheckedStates = { asset, assetStates, liabilities, liabilitiesStates ->
+                                    dashboardViewModel.updateCheckedStates(
+                                        asset,
+                                        assetStates,
+                                        liabilities,
+                                        liabilitiesStates
+                                    )
                                 }
                             )
                         }

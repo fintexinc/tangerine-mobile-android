@@ -1,4 +1,4 @@
-package com.fintexinc.core.data.utils
+package com.fintexinc.core.data.utils.date
 
 import com.fintexinc.core.domain.model.DocumentDate
 import java.text.SimpleDateFormat

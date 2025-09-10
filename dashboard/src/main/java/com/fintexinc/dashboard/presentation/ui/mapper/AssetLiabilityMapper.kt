@@ -1,6 +1,7 @@
 package com.fintexinc.dashboard.presentation.ui.mapper
 
-import com.fintexinc.core.data.utils.formatCurrency
+import com.fintexinc.core.data.utils.currency.formatCurrency
+import com.fintexinc.core.domain.model.Banking
 import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.domain.model.DataPoint
 import com.fintexinc.core.domain.model.Investment
@@ -11,6 +12,7 @@ fun Liability.toNameValue() = NameValueChecked(
     name = getByLiabilityType(liabilityType),
     value = balance,
     subName = accountNumber,
+    date = linkedDate,
     isChecked = true
 )
 
@@ -27,6 +29,15 @@ fun Custom.toNameValue() = NameValueChecked(
     name = assetName,
     value = assetValue,
     subName = id,
+    date = linkedDate,
+    isChecked = true
+)
+
+fun Banking.toNameValue() = NameValueChecked(
+    name = accountName,
+    value = accountBalance,
+    subName = accountNumber,
+    date = linkedDate,
     isChecked = true
 )
 
@@ -34,6 +45,7 @@ fun Investment.toNameValue() = NameValueChecked(
     name = registeredName,
     value = MarketValue,
     subName = accountNumber,
+    date = linkedDate,
     isChecked = true
 )
 

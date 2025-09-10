@@ -39,8 +39,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.utils.formatCurrency
-import com.fintexinc.core.data.utils.formatToString
+import com.fintexinc.core.data.model.DateValue
+import com.fintexinc.core.data.utils.currency.formatCurrency
+import com.fintexinc.core.data.utils.date.formatToString
 import com.fintexinc.core.domain.model.DataPoint
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
@@ -48,8 +49,6 @@ import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
 import com.fintexinc.core.presentation.ui.widget.TwoTabsSelector
-import com.fintexinc.core.presentation.ui.widget.chart.ChartPeriodSelector
-import com.fintexinc.core.presentation.ui.widget.chart.Period
 import com.fintexinc.core.presentation.ui.widget.list.collapsableLazyColumn
 import com.fintexinc.core.presentation.ui.widget.modal.AssetLiabilitiesModalBottomSheet
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
@@ -57,23 +56,24 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
-import ir.ehsannarmani.compose_charts.ColumnChart
-import ir.ehsannarmani.compose_charts.LineChart
-import ir.ehsannarmani.compose_charts.extensions.format
-import ir.ehsannarmani.compose_charts.models.AnimationMode
-import ir.ehsannarmani.compose_charts.models.Bars
-import ir.ehsannarmani.compose_charts.models.Bars.Data
-import ir.ehsannarmani.compose_charts.models.DividerProperties
-import ir.ehsannarmani.compose_charts.models.DotProperties
-import ir.ehsannarmani.compose_charts.models.DrawStyle
-import ir.ehsannarmani.compose_charts.models.GridProperties
-import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
-import ir.ehsannarmani.compose_charts.models.IndicatorCount
-import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
-import ir.ehsannarmani.compose_charts.models.LabelProperties
-import ir.ehsannarmani.compose_charts.models.Line
-import ir.ehsannarmani.compose_charts.models.PopupProperties
-import ir.ehsannarmani.compose_charts.models.StrokeStyle
+import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
+import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartType
+import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
+import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineBarChart
+import com.tangerine.charts.compose_charts.TangerineProjectionsChart
+import com.tangerine.charts.compose_charts.extensions.format
+import com.tangerine.charts.compose_charts.models.AnimationMode
+import com.tangerine.charts.compose_charts.models.DividerProperties
+import com.tangerine.charts.compose_charts.models.DotProperties
+import com.tangerine.charts.compose_charts.models.DrawStyle
+import com.tangerine.charts.compose_charts.models.GridProperties
+import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
+import com.tangerine.charts.compose_charts.models.IndicatorCount
+import com.tangerine.charts.compose_charts.models.LabelHelperProperties
+import com.tangerine.charts.compose_charts.models.LabelProperties
+import com.tangerine.charts.compose_charts.models.Line
+import com.tangerine.charts.compose_charts.models.PopupProperties
+import com.tangerine.charts.compose_charts.models.StrokeStyle
 
 @Composable
 fun MyNetWorthUI(
@@ -396,7 +396,7 @@ private fun NetWorthInfoUI(
                     )
                 }
 
-                2 -> ChangesToNetWorthUI()
+                2 -> ChangesToNetWorthUI(assets, liabilities)
             }
             if (showAccountsBottomSheet.value) {
                 AssetLiabilitiesModalBottomSheet(
@@ -491,7 +491,11 @@ private fun TangerineNetWorthUI(
 }
 
 @Composable
-private fun ChangesToNetWorthUI() {
+private fun ChangesToNetWorthUI(
+    assets: List<NameValueChecked>,
+    liabilities: List<NameValueChecked>
+) {
+    val period = remember { mutableStateOf<Period>(Period.SIX_MONTHS) }
     Text(
         modifier = Modifier
             .fillMaxWidth()
@@ -529,11 +533,11 @@ private fun ChangesToNetWorthUI() {
         )
     }
     Spacer(modifier = Modifier.height(18.dp))
-    NetWorthChangesChartUI()
+    NetWorthChangesChartUI(assets, liabilities, period.value)
     Spacer(modifier = Modifier.height(18.dp))
     ChartPeriodSelector(
         onPeriodSelected = {
-            // Handle period selection
+            period.value = it
         }
     )
 }
@@ -544,690 +548,131 @@ private fun NetWorthChartUI(
     liabilities: List<NameValueChecked>,
     period: Period
 ) {
-    val selectedBarIndex = remember {
-        mutableStateOf<Int?>(null)
-    }
-    val data = getNetWorthData(selectedBarIndex.value, assets, liabilities, period)
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 16.dp)
-    ) {
-        ColumnChart(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(148.dp),
-            data,
-            indicatorProperties = HorizontalIndicatorProperties(
-                count = IndicatorCount.StepBased(
-                    200000.0
-                ), contentBuilder = {
-                    if (it == 1000000.0) {
-                        return@HorizontalIndicatorProperties "$1M"
-                    }
-                    "$" + (it / 1000).format(0) + "K"
-                }),
-            gridProperties = GridProperties(
-                xAxisProperties = GridProperties.AxisProperties(
-                    style = StrokeStyle.Dashed(
-                        intervals = floatArrayOf(
-                            30f,
-                            30f
-                        ), phase = 25f
-                    )
-                ),
-                yAxisProperties = GridProperties.AxisProperties(enabled = false)
-            ),
-            labelHelperProperties = LabelHelperProperties(false),
-            dividerProperties = DividerProperties(false),
-            animationMode = AnimationMode.Together(),
-            animationDelay = 0,
-            animationSpec = tween(0),
-            onBarClick = {
-                selectedBarIndex.value = it.dataIndex
+    TangerineBarChart(
+        type = ChartType.NET_WORTH,
+        period = period,
+        data = Pair(
+            assets.filter { it.isChecked }.map {
+                DateValue(
+                    date = it.date,
+                    value = it.value
+                )
             },
-            popupProperties = PopupProperties(
-                textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
-                containerColor = Colors.Background,
-                mode = PopupProperties.Mode.PointMode(),
-                contentVerticalPadding = 10.dp,
-                contentHorizontalPadding = 12.dp
-            )
-        )
-    }
+            liabilities.filter { it.isChecked }.map {
+                DateValue(
+                    date = it.date,
+                    value = it.value
+                )
+            }
+        ),
+        enabledColors = Pair(Colors.TransactionIncome, Colors.TransactionLiability),
+        disabledColors = Pair(Colors.BrandBlack, Colors.BrandGray)
+    )
 }
 
 // TODO: refactor. Add logic
 @Composable
 private fun TangerineProjectionUI() {
-    LineChart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(244.dp)
-            .padding(horizontal = 18.dp),
-        data = remember {
-            listOf(
-                Line(
-                    "Today",
-                    listOf(600000.0, 800000.0, 1000000.0),
-                    dotProperties = DotProperties(enabled = true),
-                    drawStyle = DrawStyle.Stroke(2.dp),
-                    color = SolidColor(Color(0xFF12B76A)),
-                    curvedEdges = false
-                ),
-                Line(
-                    "Five Years",
-                    listOf(600000.0, 650000.0, 750000.0),
-                    color = SolidColor(Colors.BackgroundPrimary),
-                    drawStyle = DrawStyle.Stroke(
-                        strokeStyle = StrokeStyle.Dashed(
-                            intervals = floatArrayOf(
-                                30f,
-                                30f
-                            ), phase = 25f
-                        )
-                    ),
-                    curvedEdges = false
-                )
-            )
-        },
-        minValue = 600000.0,
-        maxValue = 1000000.0,
-        indicatorProperties = HorizontalIndicatorProperties(
-            count = IndicatorCount.StepBased(
-                200000.0
-            ), contentBuilder = {
-                if (it == 1000000.0) {
-                    return@HorizontalIndicatorProperties "$1M"
-                }
-                "$" + (it / 1000).format(0) + "K"
-            },
-            indicators = listOf(1000000.0, 900000.0, 800000.0, 700000.0, 600000.0)
-        ),
-        gridProperties = GridProperties(
-            xAxisProperties = GridProperties.AxisProperties(
-                style = StrokeStyle.Dashed(
-                    intervals = floatArrayOf(
-                        30f,
-                        30f
-                    ), phase = 25f
-                )
-            ),
-            yAxisProperties = GridProperties.AxisProperties(enabled = false)
-        ),
-        animationMode = AnimationMode.Together({ 0 }),
-        labelProperties = LabelProperties(
-            enabled = true,
-            labels = listOf("Today", "5 Years", "10 Years")
-        ),
-        animationDelay = 0,
-        labelHelperProperties = LabelHelperProperties(false),
-        dividerProperties = DividerProperties(false),
-        popupProperties = PopupProperties(
-            textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
-            containerColor = Colors.Background,
-            mode = PopupProperties.Mode.PointMode(),
-            contentVerticalPadding = 10.dp,
-            contentHorizontalPadding = 12.dp
-        )
-    )
+    TangerineProjectionsChart(
+         modifier = Modifier
+             .fillMaxWidth()
+             .height(244.dp)
+             .padding(horizontal = 18.dp),
+         data = remember {
+             listOf(
+                 Line(
+                     "Today",
+                     listOf(600000.0, 800000.0, 1000000.0),
+                     dotProperties = DotProperties(enabled = true),
+                     drawStyle = DrawStyle.Stroke(2.dp),
+                     color = SolidColor(Color(0xFF12B76A)),
+                     curvedEdges = false
+                 ),
+                 Line(
+                     "Five Years",
+                     listOf(600000.0, 650000.0, 750000.0),
+                     color = SolidColor(Colors.BackgroundPrimary),
+                     drawStyle = DrawStyle.Stroke(
+                         strokeStyle = StrokeStyle.Dashed(
+                             intervals = floatArrayOf(
+                                 30f,
+                                 30f
+                             ), phase = 25f
+                         )
+                     ),
+                     curvedEdges = false
+                 )
+             )
+         },
+         minValue = 600000.0,
+         maxValue = 1000000.0,
+         indicatorProperties = HorizontalIndicatorProperties(
+             count = IndicatorCount.StepBased(
+                 200000.0
+             ), contentBuilder = {
+                 if (it == 1000000.0) {
+                     return@HorizontalIndicatorProperties "$1M"
+                 }
+                 "$" + (it / 1000).format(0) + "K"
+             },
+             indicators = listOf(1000000.0, 900000.0, 800000.0, 700000.0, 600000.0)
+         ),
+         gridProperties = GridProperties(
+             xAxisProperties = GridProperties.AxisProperties(
+                 style = StrokeStyle.Dashed(
+                     intervals = floatArrayOf(
+                         30f,
+                         30f
+                     ), phase = 25f
+                 )
+             ),
+             yAxisProperties = GridProperties.AxisProperties(enabled = false)
+         ),
+         animationMode = AnimationMode.Together({ 0 }),
+         labelProperties = LabelProperties(
+             enabled = true,
+             labels = listOf("Today", "5 Years", "10 Years")
+         ),
+         animationDelay = 0,
+         labelHelperProperties = LabelHelperProperties(false),
+         dividerProperties = DividerProperties(false),
+         popupProperties = PopupProperties(
+             textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
+             containerColor = Colors.Background,
+             mode = PopupProperties.Mode.PointMode(),
+             contentVerticalPadding = 10.dp,
+             contentHorizontalPadding = 12.dp
+         )
+     )
 }
 
-// TODO: refactor. Add logic
 @Composable
-private fun NetWorthChangesChartUI() {
-    val selectedBarIndex = remember {
-        mutableStateOf<Int?>(null)
-    }
-    val data = getNetWorthChangesData(selectedBarIndex.value)
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 16.dp)
-    ) {
-        ColumnChart(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(148.dp),
-            data,
-            maxValue = 800000.0,
-            indicatorProperties = HorizontalIndicatorProperties(
-                count = IndicatorCount.StepBased(
-                    200000.0
-                ), contentBuilder = {
-                    if (it == 1000000.0) {
-                        return@HorizontalIndicatorProperties "$1M"
-                    }
-                    "$" + (it / 1000).format(0) + "K"
-                }),
-            gridProperties = GridProperties(
-                xAxisProperties = GridProperties.AxisProperties(
-                    style = StrokeStyle.Dashed(
-                        intervals = floatArrayOf(
-                            30f,
-                            30f
-                        ), phase = 25f
-                    )
-                ),
-                yAxisProperties = GridProperties.AxisProperties(enabled = false)
-            ),
-            labelHelperProperties = LabelHelperProperties(false),
-            dividerProperties = DividerProperties(false),
-            animationMode = AnimationMode.Together(),
-            animationDelay = 0,
-            animationSpec = tween(0),
-            onBarClick = {
-                selectedBarIndex.value = it.dataIndex
-            },
-            popupProperties = PopupProperties(
-                textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
-                containerColor = Colors.Background,
-                mode = PopupProperties.Mode.PointMode(),
-                contentVerticalPadding = 10.dp,
-                contentHorizontalPadding = 12.dp
-            )
-        )
-    }
-}
-
-
-// TODO: refactor. Add logic
-private fun getNetWorthData(
-    selectedIndex: Int?,
+private fun NetWorthChangesChartUI(
     assets: List<NameValueChecked>,
     liabilities: List<NameValueChecked>,
     period: Period
-): List<Bars> {
-    val dataForYear =  listOf(
-        Bars(
-            label = "Jan",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 1,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
+) {
+    TangerineBarChart(
+        type = ChartType.CASH_FLOW,
+        period = period,
+        data = Pair(
+            assets.filter { it.isChecked }.map {
+                DateValue(
+                    date = it.date,
+                    value = it.value
                 )
-            )
+            },
+            liabilities.filter { it.isChecked }.map {
+                DateValue(
+                    date = it.date,
+                    value = it.value * -1F
+                )
+            }
         ),
-        Bars(
-            label = "Feb",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        1,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 3,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        1,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Mar",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } * 2,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        2,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        2,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Apr",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 3,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        3,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } * 2,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        1,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "May",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } * 2,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        4,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        4,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Jun",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 2,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        5,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        5,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Jul",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 1,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        6,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        6,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Aug",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        7,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 3,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        7,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Sep",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } * 2,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        8,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        8,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Oct",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 3,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        9,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } * 2,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        9,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Nov",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } * 2,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        10,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        10,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Dec",
-            values = listOf(
-                Data(
-                    value = assets.filter { it.isChecked }.sumOf { it.value } / 2,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        11,
-                        Colors.TransactionIncome,
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = liabilities.filter { it.isChecked }.sumOf { it.value } / 1.5,
-                    color =  getColorForIndex(
-                        selectedIndex,
-                        11,
-                        Colors.TransactionLiability,
-                        Colors.BrandBlack
-                    )
-                )
-            )
-        )
-    )
-    return when (period) {
-        Period.SIX_MONTHS -> {
-            dataForYear.takeLast(6)
-        }
-
-        Period.ONE_YEAR -> {
-            dataForYear
-        }
-
-        Period.ONE_MONTH -> {
-           dataForYear.takeLast(1)
-        }
-
-        Period.THREE_MONTHS -> {
-            dataForYear.takeLast(3)
-        }
-
-        Period.ALL -> {
-            dataForYear
-        }
-    }
-}
-
-private fun getNetWorthChangesData(selectedIndex: Int?): List<Bars> {
-    return listOf(
-        Bars(
-            label = "Jan",
-            values = listOf(
-                Data(
-                    value = 300000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFF3E70FF),
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = -50000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFFFFC43F),
-                        Colors.BrandGray
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Feb",
-            values = listOf(
-                Data(
-                    value = 40000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFF3E70FF),
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = -400000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFFFFC43F),
-                        Colors.BrandGray
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Mar",
-            values = listOf(
-                Data(
-                    value = 300000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFF3E70FF),
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = -300000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFFFFC43F),
-                        Colors.BrandGray
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Apr",
-            values = listOf(
-                Data(
-                    value = 500000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFF3E70FF),
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = -200000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFFFFC43F),
-                        Colors.BrandGray
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "May",
-            values = listOf(
-                Data(
-                    value = 400000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFF3E70FF),
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = -150000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFFFFC43F),
-                        Colors.BrandGray
-                    )
-                )
-            )
-        ),
-        Bars(
-            label = "Jun",
-            values = listOf(
-                Data(
-                    value = 600000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFF3E70FF),
-                        Colors.BrandBlack
-                    ),
-                ),
-                Data(
-                    value = -100000.0,
-                    color = getColorForIndex(
-                        selectedIndex,
-                        0,
-                        Color(0xFFFFC43F),
-                        Colors.BrandGray
-                    )
-                )
-            )
-        )
+        enabledColors = Pair(Color(0xFF3E70FF), Color(0xFFFFC43F)),
+        disabledColors = Pair(Colors.BrandGray, Colors.BrandBlack)
     )
 }
-
-private fun getColorForIndex(
-    index: Int?,
-    currentIndex: Int,
-    colorEnabled: Color,
-    colorDisabled: Color
-): SolidColor {
-    return if (index == currentIndex || index == null) {
-        SolidColor(colorEnabled)
-    } else {
-        SolidColor(colorDisabled)
-    }
-}
-
-/*private fun getColorForIndexIncome(index: Int?, currentIndex: Int): SolidColor {
-    return if (index == currentIndex || index == null) {
-        SolidColor(Colors.TransactionIncome)
-    } else {
-        SolidColor(Colors.BrandBlack)
-    }
-}
-
-private fun getColorForIndexLiability(index: Int?, currentIndex: Int): SolidColor {
-    return if (index == currentIndex || index == null) {
-        SolidColor(Colors.TransactionLiability)
-    } else {
-        SolidColor(Colors.BrandGray)
-    }
-}
-
-private fun getColorForIndexIncomeChange(index: Int?, currentIndex: Int): SolidColor {
-    return if (index == currentIndex || index == null) {
-        SolidColor(Color(0xFF3E70FF))
-    } else {
-        SolidColor(Colors.BrandBlack)
-    }
-}
-
-private fun getColorForIndexLiabilityChange(index: Int?, currentIndex: Int): SolidColor {
-    return if (index == currentIndex || index == null) {
-        SolidColor(Color(0xFFFFC43F))
-    } else {
-        SolidColor(Colors.BrandGray)
-    }
-}*/
 
 @Composable
 private fun ActivityUI(activities: List<Transaction>, documents: List<Document>) {

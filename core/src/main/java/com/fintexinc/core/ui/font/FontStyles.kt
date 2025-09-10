@@ -76,6 +76,12 @@ object FontStyles {
         lineHeight = 20.sp
     )
 
+    val BodyExtraSmall = TextStyle(
+        fontFamily = tangerineCircularBook,
+        fontSize = 10.sp,
+        lineHeight = 12.sp
+    )
+
     val BodySmallBold = TextStyle(
         fontFamily = tangerineCircularBold,
         fontSize = 14.sp,

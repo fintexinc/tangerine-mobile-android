@@ -1,5 +1,8 @@
 package com.fintexinc.core.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Liability(
     val id: String,
     val userId: String,
@@ -9,5 +12,6 @@ data class Liability(
     val limit: Double,
     val interestRate: Double,
     val currency: String,
+    val linkedDate: String,
     val lastUpdated: String
 )

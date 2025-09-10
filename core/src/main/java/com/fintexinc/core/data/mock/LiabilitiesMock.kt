@@ -6,10 +6,11 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"userId\": \"INV-0001\",\n" +
         "        \"liabilityType\": \"CREDIT_CARD\",\n" +
         "        \"accountNumber\": \"5241-****-****-1122\",\n" +
-        "        \"balance\": 1243.55,\n" +
+        "        \"balance\": 420043.55,\n" +
         "        \"limit\": 5000.0,\n" +
         "        \"interestRate\": 19.99,\n" +
         "        \"currency\": \"CAD\",\n" +
+        "         \"linkedDate\": \"2025-01-10\",\n" +
         "        \"lastUpdated\": \"2025-08-20T12:30:00Z\"\n" +
         "    },\n" +
         "    {\n" +
@@ -17,7 +18,8 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"userId\": \"INV-0001\",\n" +
         "        \"liabilityType\": \"LOAN\",\n" +
         "        \"accountNumber\": \"LN-001-2021-7788\",\n" +
-        "        \"balance\": 8200.0,\n" +
+        "        \"balance\": 500002.0,\n" +
+        "         \"linkedDate\": \"2025-02-10\",\n" +
         "        \"limit\": 10000.0,\n" +
         "        \"interestRate\": 8.5,\n" +
         "        \"currency\": \"CAD\",\n" +
@@ -37,6 +39,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"principalOutstanding\": 355000.0,\n" +
         "        \"interestRateAnnualPercentage\": 5.29,\n" +
         "        \"rateType\": \"FIXED\",\n" +
+        "         \"linkedDate\": \"2025-03-10\",\n" +
         "        \"termYears\": 5,\n" +
         "        \"amortizationYears\": 25,\n" +
         "        \"paymentFrequency\": \"MONTHLY\",\n" +
@@ -52,12 +55,73 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityType\": \"CREDIT_CARD\",\n" +
         "        \"accountNumber\": \"4539-****-****-6677\",\n" +
-        "        \"balance\": 322.1,\n" +
+    "           \"linkedDate\": \"2025-04-10\",\n" +
+        "        \"balance\": 120002.1,\n" +
         "        \"limit\": 8000.0,\n" +
         "        \"interestRate\": 20.99,\n" +
         "        \"currency\": \"CAD\",\n" +
         "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
-        "    }\n" +
+        "    }, \n" +
+        "    {\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityType\": \"CREDIT_CARD\",\n" +
+        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "         \"linkedDate\": \"2025-05-10\",\n" +
+        "        \"balance\": 140002.1,\n" +
+        "        \"limit\": 8000.0,\n" +
+        "        \"interestRate\": 20.99,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "    }, \n" +
+        "    {\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityType\": \"CREDIT_CARD\",\n" +
+        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "         \"linkedDate\": \"2025-06-10\",\n" +
+        "        \"balance\": 340002.1,\n" +
+        "        \"limit\": 8000.0,\n" +
+        "        \"interestRate\": 20.99,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "    }, \n" +
+        "    {\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityType\": \"CREDIT_CARD\",\n" +
+        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "         \"linkedDate\": \"2025-07-10\",\n" +
+        "        \"balance\": 140002.1,\n" +
+        "        \"limit\": 8000.0,\n" +
+        "        \"interestRate\": 20.99,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "    }, \n" +
+        "    {\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityType\": \"CREDIT_CARD\",\n" +
+        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "         \"linkedDate\": \"2025-08-10\",\n" +
+        "        \"balance\": 500002.1,\n" +
+        "        \"limit\": 8000.0,\n" +
+        "        \"interestRate\": 20.99,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "    }, \n" +
+        "    {\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityType\": \"CREDIT_CARD\",\n" +
+        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "         \"linkedDate\": \"2025-09-10\",\n" +
+        "        \"balance\": 440002.1,\n" +
+        "        \"limit\": 8000.0,\n" +
+        "        \"interestRate\": 20.99,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "    } \n" +
         "]\n" +
         "\n" +
         "\n"

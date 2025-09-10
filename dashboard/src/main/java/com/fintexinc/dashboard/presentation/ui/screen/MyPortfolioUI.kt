@@ -44,22 +44,22 @@ import com.fintexinc.core.domain.model.DataPoint
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
-import com.fintexinc.core.presentation.ui.widget.chart.ChartPeriodSelector
-import com.fintexinc.core.presentation.ui.widget.chart.TangerinePieChart
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
-import ir.ehsannarmani.compose_charts.LineChart
-import ir.ehsannarmani.compose_charts.extensions.format
-import ir.ehsannarmani.compose_charts.models.DrawStyle
-import ir.ehsannarmani.compose_charts.models.GridProperties
-import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
-import ir.ehsannarmani.compose_charts.models.IndicatorCount
-import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
-import ir.ehsannarmani.compose_charts.models.LabelProperties
-import ir.ehsannarmani.compose_charts.models.Line
-import ir.ehsannarmani.compose_charts.models.Pie
-import ir.ehsannarmani.compose_charts.models.PopupProperties
+import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
+import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
+import com.tangerine.charts.compose_charts.LineChart
+import com.tangerine.charts.compose_charts.extensions.format
+import com.tangerine.charts.compose_charts.models.DrawStyle
+import com.tangerine.charts.compose_charts.models.GridProperties
+import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
+import com.tangerine.charts.compose_charts.models.IndicatorCount
+import com.tangerine.charts.compose_charts.models.LabelHelperProperties
+import com.tangerine.charts.compose_charts.models.LabelProperties
+import com.tangerine.charts.compose_charts.models.Line
+import com.tangerine.charts.compose_charts.models.Pie
+import com.tangerine.charts.compose_charts.models.PopupProperties
 
 @Composable
 fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: () -> Unit) {

@@ -1,4 +1,4 @@
-package com.fintexinc.core.data.utils
+package com.fintexinc.core.data.utils.currency
 
 import java.text.NumberFormat
 import java.util.Locale

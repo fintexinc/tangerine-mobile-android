@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.utils.formatCurrency
+import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
@@ -367,6 +367,7 @@ fun AssetLiabilitiesModalBottomSheet(
 data class NameValueChecked(
     val name: String,
     val subName: String,
+    val date: String,
     val value: Double,
     val isChecked: Boolean = true
 )

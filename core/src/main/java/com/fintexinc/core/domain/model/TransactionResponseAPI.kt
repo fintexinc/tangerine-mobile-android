@@ -1,5 +1,8 @@
 package com.fintexinc.core.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Transaction(
     val id: String,
     val accountId: String,
@@ -23,6 +26,7 @@ data class Transaction(
     val investmentDetails: InvestmentDetails
 )
 
+@Serializable
 data class InvestmentDetails(
     val fundCode: String,
     val fundName: String,

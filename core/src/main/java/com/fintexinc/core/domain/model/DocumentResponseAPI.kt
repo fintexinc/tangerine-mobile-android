@@ -1,9 +1,12 @@
 package com.fintexinc.core.domain.model
 
+import kotlinx.serialization.Serializable
+
 data class Documents(
     val documents: List<Document>
 )
 
+@Serializable
 data class Document(
     val id: String,
     val accountId: String,
@@ -22,6 +25,7 @@ data class Document(
     val documentDescription: String
 )
 
+@Serializable
 data class DocumentDate(
     val year: Int,
     val month: Int,

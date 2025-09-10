@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.utils.formatCurrency
+import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.domain.model.TransactionStatus
 import com.fintexinc.core.ui.color.Colors

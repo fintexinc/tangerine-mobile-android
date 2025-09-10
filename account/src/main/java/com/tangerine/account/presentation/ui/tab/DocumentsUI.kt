@@ -29,10 +29,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.utils.formatToString
+import com.fintexinc.core.data.utils.date.formatToString
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
-import com.fintexinc.core.presentation.ui.widget.list.SimpleNameValueItem
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R

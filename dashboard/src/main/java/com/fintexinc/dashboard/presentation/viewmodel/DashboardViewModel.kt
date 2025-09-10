@@ -35,6 +35,7 @@ class DashboardViewModel @Inject constructor(
         _state.value = State.Data(
             assets = mutableListOf<NameValueChecked>().apply {
                 addAll(assets.investment.map { it.toNameValue() })
+                addAll(assets.banking.map { it.toNameValue() })
                 addAll(assets.custom.map { it.toNameValue() })
             },
             liabilities = liabilities.map { it.toNameValue() },

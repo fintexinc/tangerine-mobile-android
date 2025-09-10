@@ -137,6 +137,14 @@ const val ACTIVITIES_MOCK = "[\n" +
         "        \"transactionDescription\": \"Paycheque deposit\",\n" +
         "        \"referenceNumber\": \"D-20250810-001\",\n" +
         "        \"transactionStatus\": \"COMPLETED\"\n" +
+        "        \"investmentDetails\": {\n" +
+        "        \"fundCode\": \"TAN-DIV\",\n" +
+        "        \"fundName\": \"Tangerine Dividend Portfolio\",\n" +
+        "        \"units\": 10.0,\n" +
+        "        \"navPerUnit\": 15.75,\n" +
+        "        \"distributionType\": \"DIVIDEND\",\n" +
+        "        \"taxYear\": 2025\n" +
+"        }\n" +
         "    },\n" +
         "    {\n" +
         "        \"id\": \"TXN-0006\",\n" +

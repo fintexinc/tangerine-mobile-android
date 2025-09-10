@@ -1,11 +1,15 @@
 package com.fintexinc.core.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AssetResponse(
     val investment: List<Investment>,
     val banking: List<Banking>,
     val custom: List<Custom>
 )
 
+@Serializable
 data class Investment(
     val id: String,
     val userId: String,
@@ -26,6 +30,7 @@ data class Investment(
 
 )
 
+@Serializable
 data class Banking(
     val id: String,
     val userId: String,
@@ -38,6 +43,7 @@ data class Banking(
     val lastUpdated: String
 )
 
+@Serializable
 data class Custom (
     val id: String,
     val userId: String,
@@ -48,12 +54,14 @@ data class Custom (
     val lastUpdated: String
 )
 
+@Serializable
 data class Beneficiary(
     val name: String,
     val relationship: String,
     val percentage: Double,
 )
 
+@Serializable
 data class Fund(
     val fundCode: String,
     val fundName: String,

@@ -1,4 +1,4 @@
-package com.fintexinc.core.presentation.ui.widget.chart
+package com.fintexinc.dashboard.presentation.ui.widget.chart
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,8 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
-import ir.ehsannarmani.compose_charts.PieChart
-import ir.ehsannarmani.compose_charts.models.Pie
+import com.tangerine.charts.compose_charts.PieChart
+import com.tangerine.charts.compose_charts.models.Pie
 
 @Composable
 fun TangerinePieChart(title: String, pieData: List<Pie>) {

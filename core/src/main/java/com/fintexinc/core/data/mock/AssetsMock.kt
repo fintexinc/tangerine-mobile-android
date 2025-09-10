@@ -21,13 +21,13 @@ const val ASSETS_MOCK = "{\n" +
         "                \"currency\": \"CAD\",\n" +
         "                \"units\": 152.347,\n" +
         "                \"navPerUnit\": 26.85,\n" +
-        "                \"priceAsOf\": \"2025-08-15\"\n" +
+        "                \"priceAsOf\": \"2025-09-15\"\n" +
         "            },\n" +
-        "            \"MarketValue\": 4090.52,\n" +
-        "            \"BookCost\": 3800.0,\n" +
-        "            \"GainLoss\": 290.52,\n" +
+        "            \"MarketValue\": 409000.52,\n" +
+        "            \"BookCost\": 280000.0,\n" +
+        "            \"GainLoss\": 290000.52,\n" +
         "            \"GainLossPercentage\": 7.64,\n" +
-        "            \"linkedDate\": \"2023-02-10\",\n" +
+        "            \"linkedDate\": \"2025-01-10\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:45:00Z\"\n" +
         "        },\n" +
         "        {\n" +
@@ -51,11 +51,11 @@ const val ASSETS_MOCK = "{\n" +
         "                \"navPerUnit\": 30.12,\n" +
         "                \"priceAsOf\": \"2025-08-15\"\n" +
         "            },\n" +
-        "            \"MarketValue\": 2951.76,\n" +
-        "            \"BookCost\": 3100.0,\n" +
+        "            \"MarketValue\": 295100.76,\n" +
+        "            \"BookCost\": 310000.0,\n" +
         "            \"GainLoss\": -148.24,\n" +
         "            \"GainLossPercentage\": -4.78,\n" +
-        "            \"linkedDate\": \"2022-11-05\",\n" +
+        "            \"linkedDate\": \"2025-02-05\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:45:00Z\"\n" +
         "        },\n" +
         "        {\n" +
@@ -77,11 +77,11 @@ const val ASSETS_MOCK = "{\n" +
         "                \"navPerUnit\": 15.75,\n" +
         "                \"priceAsOf\": \"2025-08-15\"\n" +
         "            },\n" +
-        "            \"MarketValue\": 3315.38,\n" +
-        "            \"BookCost\": 3200.0,\n" +
+        "            \"MarketValue\": 931005.38,\n" +
+        "            \"BookCost\": 320000.0,\n" +
         "            \"GainLoss\": 115.38,\n" +
         "            \"GainLossPercentage\": 3.61,\n" +
-        "            \"linkedDate\": \"2024-05-12\",\n" +
+        "            \"linkedDate\": \"2025-03-12\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:45:00Z\"\n" +
         "        }\n" +
         "    ],\n" +
@@ -92,8 +92,9 @@ const val ASSETS_MOCK = "{\n" +
         "            \"accountNumber\": \"011-1234567\",\n" +
         "            \"accountName\": \"Everyday Chequing\",\n" +
         "            \"accountType\": \"CHEQUING\",\n" +
-        "            \"accountBalance\": 2450.33,\n" +
-        "            \"linkedDate\": \"2021-06-01\",\n" +
+        "            \"accountBalance\": 845000.33,\n" +
+        "            \"currency\": \"CAD\",\n" +
+        "            \"linkedDate\": \"2025-04-01\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        },\n" +
         "        {\n" +
@@ -101,9 +102,32 @@ const val ASSETS_MOCK = "{\n" +
         "            \"userId\": \"INV-0002\",\n" +
         "            \"accountNumber\": \"011-7654321\",\n" +
         "            \"accountName\": \"Savings Account\",\n" +
+        "            \"currency\": \"CAD\",\n" +
         "            \"accountType\": \"SAVINGS\",\n" +
-        "            \"accountBalance\": 12450.10,\n" +
-        "            \"linkedDate\": \"2020-04-22\",\n" +
+        "            \"accountBalance\": 820450.10,\n" +
+        "            \"linkedDate\": \"2025-05-22\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "        }, \n" +
+        "        { \n" +
+        "            \"id\": \"ACCT-BNK-001\",\n" +
+        "            \"userId\": \"INV-0001\",\n" +
+        "            \"accountNumber\": \"011-1234567\",\n" +
+        "            \"accountName\": \"Everyday Chequing\",\n" +
+        "            \"accountType\": \"CHEQUING\",\n" +
+        "            \"accountBalance\": 845000.33,\n" +
+        "            \"currency\": \"CAD\",\n" +
+        "            \"linkedDate\": \"2025-06-01\",\n" +
+        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "        }, \n" +
+        "        { \n" +
+        "            \"id\": \"ACCT-BNK-002\",\n" +
+        "            \"userId\": \"INV-0002\",\n" +
+        "            \"accountNumber\": \"011-7654321\",\n" +
+        "            \"accountName\": \"Savings Account\",\n" +
+        "            \"currency\": \"CAD\",\n" +
+        "            \"accountType\": \"SAVINGS\",\n" +
+        "            \"accountBalance\": 820450.10,\n" +
+        "            \"linkedDate\": \"2025-07-22\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        }\n" +
         "    ],\n" +
@@ -113,8 +137,8 @@ const val ASSETS_MOCK = "{\n" +
         "            \"userId\": \"INV-0001\",\n" +
         "            \"assetName\": \"Toyota Corolla 2018\",\n" +
         "            \"assetType\": \"CAR\",\n" +
-        "            \"assetValue\": 12000.0,\n" +
-        "            \"linkedDate\": \"2024-03-15\",\n" +
+        "            \"assetValue\": 420000.0,\n" +
+        "            \"linkedDate\": \"2025-08-15\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        },\n" +
         "        {\n" +
@@ -123,7 +147,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"assetName\": \"Cottage in Muskoka\",\n" +
         "            \"assetType\": \"HOUSE\",\n" +
         "            \"assetValue\": 425000.0,\n" +
-        "            \"linkedDate\": \"2019-07-12\",\n" +
+        "            \"linkedDate\": \"2025-09-12\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        }\n" +
         "    ]\n" +

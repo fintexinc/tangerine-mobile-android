@@ -30,10 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.NameValue
-import com.fintexinc.core.data.utils.formatCurrency
+import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
-import com.fintexinc.core.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.core.presentation.ui.widget.list.SimpleNameValueItem
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
@@ -202,11 +201,11 @@ private fun AccountBalanceChartUI(showNetworkContribution: Boolean) {
         }
     }
     Spacer(modifier = Modifier.height(18.dp))
-    ChartPeriodSelector(
+    /*ChartPeriodSelector(
         onPeriodSelected = { period ->
 
         }
-    )
+    )*/
 }
 
 @Composable

@@ -13,6 +13,6 @@ class NetWorthProvider: NetWorthGateway {
     }
 
     override suspend fun getLiabilities(): List<Liability> {
-        return Json.decodeFromString(LIABILITIES_MOCK)
+        return Json { ignoreUnknownKeys = true }.decodeFromString(LIABILITIES_MOCK)
     }
 }

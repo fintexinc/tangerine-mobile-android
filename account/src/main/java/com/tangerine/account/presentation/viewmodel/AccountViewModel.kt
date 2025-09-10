@@ -14,6 +14,7 @@ import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Docum
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Positions
 import com.tangerine.account.presentation.viewmodel.AccountViewModel.State.Summary
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,11 +22,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-@HiltViewModel
+@HiltViewModel(assistedFactory = AccountViewModel.Factory::class)
 class AccountViewModel @AssistedInject constructor(
     @Assisted private val id: String,
     private val accountGateway: AccountGateway
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(id: String): AccountViewModel
+    }
 
     private val _state: MutableStateFlow<State> = MutableStateFlow<State>(State.Loading)
     val state: StateFlow<State>
