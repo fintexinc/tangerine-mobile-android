@@ -449,9 +449,9 @@ private fun TangerineNetWorthUI(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 18.dp),
-        text = "$600,000.00",
+        text = (assets.sumOf { it.value } - liabilities.sumOf { it.value }).formatCurrency(),
         style = FontStyles.DisplaySmall,
-        color = Colors.Text
+        color = Colors.TextPrimary
     )
     Spacer(modifier = Modifier.height(12.dp))
     Row(
@@ -469,8 +469,10 @@ private fun TangerineNetWorthUI(
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             modifier = Modifier.wrapContentSize(),
-            text = "$2,000.00",
-            style = FontStyles.TitleSmall
+            // Will be added in API
+            text = "$200 (1.87%)",
+            style = FontStyles.TitleSmall,
+            color = Colors.TextSuccess
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
@@ -501,9 +503,9 @@ private fun ChangesToNetWorthUI(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 18.dp),
-        text = "$600,000.00",
+        text = (assets.sumOf { it.value } - liabilities.sumOf { it.value }).formatCurrency(),
         style = FontStyles.DisplaySmall,
-        color = Colors.Text
+        color = Colors.TextPrimary
     )
     Spacer(modifier = Modifier.height(12.dp))
     Row(
@@ -521,8 +523,10 @@ private fun ChangesToNetWorthUI(
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             modifier = Modifier.wrapContentSize(),
-            text = "$2,000.00",
-            style = FontStyles.TitleSmall
+            // Will be added in API
+            text = "$200 (1.87%)",
+            style = FontStyles.TitleSmall,
+            color = Colors.TextSuccess
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
