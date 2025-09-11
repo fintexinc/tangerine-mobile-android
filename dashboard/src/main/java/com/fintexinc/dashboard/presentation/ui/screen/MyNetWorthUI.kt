@@ -565,13 +565,18 @@ private fun NetWorthChartUI(
                 )
             }
         ),
+        legendLabels = Triple(
+            stringResource(R.string.text_assets),
+            stringResource(R.string.text_liabilities),
+            stringResource(R.string.text_my_net_worth)
+        ),
         enabledColors = Pair(
-            SolidColor(Colors.TransactionIncome),
-            SolidColor(Colors.TransactionLiability)
+            Colors.TransactionIncome,
+            Colors.TransactionLiability
         ),
         disabledColors = Pair(
-            SolidColor(Colors.BrandBlack),
-            SolidColor(Colors.BrandGray)
+            Colors.BrandBlack,
+            Colors.BrandGray
         ),
     )
 }
@@ -582,7 +587,7 @@ private fun TangerineProjectionUI() {
     TangerineProjectionsChart(
         modifier = Modifier
             .fillMaxWidth()
-            .height(244.dp)
+            .height(284.dp)
             .padding(horizontal = 18.dp),
         data = remember {
             listOf(
@@ -675,13 +680,20 @@ private fun NetWorthChangesChartUI(
                 )
             }
         ),
+        legendLabels = Triple(
+            stringResource(R.string.text_increase),
+            stringResource(R.string.text_money_out),
+            stringResource(R.string.text_net_contributions)
+        ),
+        radius = 4.dp,
+        horizontalIndicatorStep = 400000.0,
         enabledColors = Pair(
-            SolidColor(Color(0xFF3E70FF)),
-            SolidColor(Color(0xFFFFC43F))
+            Color(0xFF3E70FF),
+            Color(0xFFFFC43F)
         ),
         disabledColors = Pair(
-            SolidColor(Colors.BrandGray),
-            SolidColor(Colors.BrandBlack)
+            Colors.BrandGray,
+            Colors.BrandBlack
         )
     )
 }

@@ -1,7 +1,6 @@
 package com.tangerine.charts.compose_charts
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -22,11 +21,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -36,13 +35,16 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -56,7 +58,6 @@ import com.tangerine.charts.compose_charts.extensions.drawGridLines
 import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.extensions.spaceBetween
 import com.tangerine.charts.compose_charts.extensions.split
-import com.tangerine.charts.compose_charts.models.AnimationMode
 import com.tangerine.charts.compose_charts.models.BarPopupData
 import com.tangerine.charts.compose_charts.models.Bars
 import com.tangerine.charts.compose_charts.models.DividerProperties
@@ -70,11 +71,9 @@ import com.tangerine.charts.compose_charts.models.SelectedBars
 import com.tangerine.charts.compose_charts.models.StrokeStyle
 import com.tangerine.charts.compose_charts.models.asRadiusPx
 import com.tangerine.charts.compose_charts.utils.HorizontalLabels
-import com.tangerine.charts.compose_charts.utils.ImplementRCAnimation
 import com.tangerine.charts.compose_charts.utils.calculateOffset
-import com.tangerine.charts.compose_charts.utils.checkRCMaxValue
-import com.tangerine.charts.compose_charts.utils.checkRCMinValue
 import com.tangerine.charts.compose_charts.utils.rememberComputedChartMaxValue
+import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
@@ -82,12 +81,14 @@ import kotlin.math.absoluteValue
 fun TangerineNetWorthChart(
     modifier: Modifier = Modifier,
     data: List<Bars>,
-
+    legendLabels: Triple<String, String, String>,
+    horizontalIndicatorStep: Double = 200000.0,
+    radius: Dp = 16.dp,
     dividerProperties: DividerProperties = DividerProperties(),
     maxValue: Double = data.maxOfOrNull { it.values.maxOfOrNull { it.value } ?: 0.0 } ?: 0.0,
     minValue: Double = if (data.any { it.values.any { it.value < 0 } }) -maxValue else 0.0,
-    enabledColors: Pair<Brush, Brush>,
-    disabledColors: Pair<Brush, Brush>,
+    enabledColors: Pair<Color, Color>,
+    disabledColors: Pair<Color, Color>,
     isNegativeValueReversed: Boolean = false,
     onBarClick: ((BarPopupData) -> Unit)? = null,
 ) {
@@ -95,10 +96,10 @@ fun TangerineNetWorthChart(
     val labelHelperProperties = LabelHelperProperties()
     val indicatorProperties = HorizontalIndicatorProperties(
         count = IndicatorCount.StepBased(
-            200000.0
+            horizontalIndicatorStep
         ), contentBuilder = {
-            if (it == 1000000.0) {
-                return@HorizontalIndicatorProperties "$1M"
+            if (it >= 1000000.0) {
+                return@HorizontalIndicatorProperties "$${(it / 1000000).format(2)}M"
             }
             "$" + (it / 1000).format(0) + "K"
         })
@@ -114,8 +115,6 @@ fun TangerineNetWorthChart(
         yAxisProperties = GridProperties.AxisProperties(enabled = false)
     )
     val labelProperties = LabelProperties(true)
-    checkRCMinValue(minValue, data)
-    checkRCMaxValue(maxValue, data)
 
     val density = LocalDensity.current
 
@@ -125,10 +124,6 @@ fun TangerineNetWorthChart(
                 it.properties.thickness.toPx() + it.properties.spacing.toPx()
             }.sum()
         } ?: 0f
-    }
-    val averageSpacingBetweenBars = with(density) {
-        data.map { it.values }.flatten()
-            .map { it.properties.spacing.toPx() }.average()
     }
 
     val barWithRect = remember {
@@ -174,18 +169,18 @@ fun TangerineNetWorthChart(
         mutableFloatStateOf(0f)
     }
 
-  /*
-    Let's leave in case we need animation
+    /*
+      Let's leave in case we need animation
 
-    ImplementRCAnimation(
-        data = data,
-        animationMode = AnimationMode.Together(),
-        spec = { tween(0) },
-        delay = 0L,
-        before = {
-            barWithRect.clear()
-        }
-    )*/
+      ImplementRCAnimation(
+          data = data,
+          animationMode = AnimationMode.Together(),
+          spec = { tween(0) },
+          delay = 0L,
+          before = {
+              barWithRect.clear()
+          }
+      )*/
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(modifier = modifier) {
@@ -388,14 +383,14 @@ fun TangerineNetWorthChart(
                                     val path = Path()
 
                                     val radius: Bars.Data.Radius = Bars.Data.Radius.Rectangle(
-                                        topLeft = 16.dp,
-                                        topRight = 16.dp,
-                                        bottomLeft = 16.dp,
-                                        bottomRight = 16.dp
+                                        topLeft = radius,
+                                        topRight = radius,
+                                        bottomLeft = radius,
+                                        bottomRight = radius
                                     )
 
                                     path.addRoundRect(rect = rect, radius = radius.asRadiusPx(this))
-                                    val brush = selectedValue.value?.let { selectedValue ->
+                                    val color = selectedValue.value?.let { selectedValue ->
                                         if (selectedValue.dataIndexes.first == dataIndex
                                             || selectedValue.dataIndexes.second == dataIndex
                                         ) {
@@ -422,7 +417,7 @@ fun TangerineNetWorthChart(
                                     }
                                     drawPath(
                                         path = path,
-                                        brush = brush,
+                                        brush = SolidColor(color),
                                         style = col.properties.style.getStyle(density.density)
                                     )
                                 }
@@ -430,116 +425,18 @@ fun TangerineNetWorthChart(
                         }
                     }
                     selectedValue.value?.let { selectedValue ->
-                        val screenSizeWidth = LocalConfiguration.current.screenWidthDp
-                        val offset = with(LocalDensity.current) {
-                            var offsetX = (selectedValue.offset.x.toDp() - 90.dp)
-                            if (offsetX < 0.dp) {
-                                offsetX = 0.dp
-                            } else if ((offsetX + 250.dp) >= screenSizeWidth.dp) {
-                                offsetX = screenSizeWidth.dp - 250.dp
-                            }
-                            Pair(
-                                offsetX.roundToPx(),
-                                ((selectedValue.offset.y.toDp() - 100.dp)).roundToPx()
-                            )
-                        }
-                        Popup(
-                            offset = IntOffset(offset.first, offset.second),
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .width(180.dp)
-                                    .wrapContentHeight()
-                                    .shadow(8.dp)
-                                    .background(
-                                        color = Color.White,
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                                    .padding(8.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight()
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(12.dp)
-                                            .background(color = Colors.TransactionIncome)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .wrapContentHeight(),
-                                        text = "Assets",
-                                        style = FontStyles.BodyExtraSmall
-                                    )
-                                    Text(
-                                        modifier = Modifier.wrapContentSize(),
-                                        text = selectedValue.bars.first.value.formatCurrency(),
-                                        style = FontStyles.BodyExtraSmall
-                                    )
-                                }
-                                Spacer(
-                                    modifier = Modifier.height(12.dp)
-                                )
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight()
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(12.dp)
-                                            .background(color = Colors.TransactionLiability)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .wrapContentHeight(),
-                                        text = "Liabilities",
-                                        style = FontStyles.BodyExtraSmall
-                                    )
-                                    Text(
-                                        modifier = Modifier.wrapContentSize(),
-                                        text = selectedValue.bars.second.value.formatCurrency(),
-                                        style = FontStyles.BodyExtraSmall
-                                    )
-                                }
-                                Spacer(
-                                    modifier = Modifier.height(12.dp)
-                                )
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    val barsDiff = (selectedValue.bars.first.value - abs(selectedValue.bars.second.value))
-                                    Box(
-                                        modifier = Modifier
-                                            .width(12.dp)
-                                            .height(2.dp)
-                                            .background(color = Colors.TransactionIncome)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .wrapContentHeight(),
-                                        text = "Net Worth",
-                                        style = FontStyles.BodyExtraSmall
-                                    )
-                                    Text(
-                                        modifier = Modifier.wrapContentSize(),
-                                        text = barsDiff.formatCurrency(),
-                                        style = FontStyles.BodyExtraSmall
-                                    )
-                                }
-                            }
-                        }
+                        ShowLegend(
+                            selectedValue = selectedValue,
+                            selectedColors = Pair(
+                                enabledColors.first,
+                                enabledColors.second
+                            ),
+                            legendLabels = legendLabels
+                        )
+                    }
+                    LaunchedEffect(selectedValue.value) {
+                        delay(3000L)
+                        selectedValue.value = null
                     }
                 }
             }
@@ -550,11 +447,130 @@ fun TangerineNetWorthChart(
                         .map { it.label }
                 },
                 indicatorProperties = indicatorProperties,
-                chartWidth = chartWidth.value,
+                chartWidth = chartWidth.floatValue,
                 density = density,
                 textMeasurer = textMeasurer,
                 xPadding = xPadding
             )
+        }
+    }
+}
+
+@Composable
+private fun ShowLegend(
+    selectedValue: SelectedBars,
+    selectedColors: Pair<Color, Color>,
+    legendLabels: Triple<String, String, String>,
+) {
+    val screenSizeWidth = LocalWindowInfo.current.containerSize.width
+    val offset = with(LocalDensity.current) {
+        var offsetX = (selectedValue.offset.x.toDp() - 90.dp)
+        if (offsetX < 0.dp) {
+            offsetX = 0.dp
+        } else if ((offsetX + 250.dp) >= screenSizeWidth.dp) {
+            offsetX = screenSizeWidth.dp - 250.dp
+        }
+        Pair(
+            offsetX.roundToPx(),
+            ((selectedValue.offset.y.toDp() - 100.dp)).roundToPx()
+        )
+    }
+    Popup(
+        offset = IntOffset(offset.first, offset.second),
+    ) {
+        Column(
+            modifier = Modifier
+                .width(180.dp)
+                .wrapContentHeight()
+                .shadow(8.dp)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(8.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(color = selectedColors.first)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentHeight(),
+                    text = legendLabels.first,
+                    style = FontStyles.BodyExtraSmall
+                )
+                Text(
+                    modifier = Modifier.wrapContentSize(),
+                    text = selectedValue.bars.first.value.formatCurrency(),
+                    style = FontStyles.BodyExtraSmall
+                )
+            }
+            Spacer(
+                modifier = Modifier.height(12.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(color = selectedColors.second)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentHeight(),
+                    text = legendLabels.second,
+                    style = FontStyles.BodyExtraSmall
+                )
+                Text(
+                    modifier = Modifier.wrapContentSize(),
+                    text = selectedValue.bars.second.value.formatCurrency(),
+                    style = FontStyles.BodyExtraSmall
+                )
+            }
+            Spacer(
+                modifier = Modifier.height(12.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val barsDiff =
+                    (selectedValue.bars.first.value - abs(selectedValue.bars.second.value))
+                Box(
+                    modifier = Modifier
+                        .width(12.dp)
+                        .height(2.dp)
+                        .background(color = Colors.TransactionIncome)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentHeight(),
+                    text = legendLabels.third,
+                    style = FontStyles.BodyExtraSmall
+                )
+                Text(
+                    modifier = Modifier.wrapContentSize(),
+                    text = barsDiff.formatCurrency(),
+                    style = FontStyles.BodyExtraSmall
+                )
+            }
         }
     }
 }

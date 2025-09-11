@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.DateValue
 import com.tangerine.charts.compose_charts.TangerineNetWorthChart
@@ -22,8 +23,11 @@ fun TangerineBarChart(
     negativeValuesPosition: NegativeValuesPosition,
     period: Period,
     data: Pair<List<DateValue>, List<DateValue>>,
-    enabledColors: Pair<Brush, Brush>,
-    disabledColors: Pair<Brush, Brush>,
+    legendLabels: Triple<String, String, String>,
+    horizontalIndicatorStep: Double = 200000.0,
+    radius: Dp = 16.dp,
+    enabledColors: Pair<Color, Color>,
+    disabledColors: Pair<Color, Color>,
 ) {
     val barsData = getMonthlyData(data, period)
 
@@ -36,8 +40,11 @@ fun TangerineBarChart(
         TangerineNetWorthChart(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(148.dp),
-            barsData,
+                .height(188.dp),
+            data = barsData,
+            legendLabels = legendLabels,
+            radius = radius,
+            horizontalIndicatorStep = horizontalIndicatorStep,
             enabledColors = Pair(
                 enabledColors.first,
                 enabledColors.second

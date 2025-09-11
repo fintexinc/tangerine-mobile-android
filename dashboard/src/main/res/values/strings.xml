@@ -34,6 +34,10 @@
     <string name="text_asset_mix">Asset Mix</string>
     <string name="text_geographic_exposure">Geographic Exposure</string>
     <string name="text_accounts">Accounts</string>
+    <string name="text_net_worth">Net Worth</string>
+    <string name="text_increase">Increase</string>
+    <string name="text_money_out">Money Out</string>
+    <string name="text_net_contributions">Net Contributions</string>
 
     
 </resources>
