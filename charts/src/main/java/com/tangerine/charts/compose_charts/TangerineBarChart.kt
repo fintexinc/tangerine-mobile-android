@@ -1,7 +1,6 @@
 package com.tangerine.charts.compose_charts
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -23,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,13 +41,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.ui.color.Colors
@@ -57,20 +53,21 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.charts.compose_charts.components.RCChartLabelHelper
 import com.tangerine.charts.compose_charts.extensions.addRoundRect
 import com.tangerine.charts.compose_charts.extensions.drawGridLines
+import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.extensions.spaceBetween
 import com.tangerine.charts.compose_charts.extensions.split
 import com.tangerine.charts.compose_charts.models.AnimationMode
 import com.tangerine.charts.compose_charts.models.BarPopupData
-import com.tangerine.charts.compose_charts.models.BarProperties
 import com.tangerine.charts.compose_charts.models.Bars
 import com.tangerine.charts.compose_charts.models.DividerProperties
 import com.tangerine.charts.compose_charts.models.GridProperties
 import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
+import com.tangerine.charts.compose_charts.models.IndicatorCount
 import com.tangerine.charts.compose_charts.models.IndicatorPosition
 import com.tangerine.charts.compose_charts.models.LabelHelperProperties
 import com.tangerine.charts.compose_charts.models.LabelProperties
-import com.tangerine.charts.compose_charts.models.PopupProperties
 import com.tangerine.charts.compose_charts.models.SelectedBars
+import com.tangerine.charts.compose_charts.models.StrokeStyle
 import com.tangerine.charts.compose_charts.models.asRadiusPx
 import com.tangerine.charts.compose_charts.utils.HorizontalLabels
 import com.tangerine.charts.compose_charts.utils.ImplementRCAnimation
@@ -78,45 +75,45 @@ import com.tangerine.charts.compose_charts.utils.calculateOffset
 import com.tangerine.charts.compose_charts.utils.checkRCMaxValue
 import com.tangerine.charts.compose_charts.utils.checkRCMinValue
 import com.tangerine.charts.compose_charts.utils.rememberComputedChartMaxValue
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
-
-// TODO: cleanup
 @Composable
 fun TangerineNetWorthChart(
     modifier: Modifier = Modifier,
     data: List<Bars>,
-    barProperties: BarProperties = BarProperties(),
-    onBarClick: ((BarPopupData) -> Unit)? = null,
-    onBarLongClick: ((BarPopupData) -> Unit)? = null,
-    labelProperties: LabelProperties = LabelProperties(
-        textStyle = TextStyle.Default,
-        enabled = true
-    ),
-    indicatorProperties: HorizontalIndicatorProperties = HorizontalIndicatorProperties(
-        textStyle = TextStyle.Default
-    ),
+
     dividerProperties: DividerProperties = DividerProperties(),
-    gridProperties: GridProperties = GridProperties(),
-    labelHelperProperties: LabelHelperProperties = LabelHelperProperties(),
-    animationMode: AnimationMode = AnimationMode.Together { it * 200L },
-    animationSpec: AnimationSpec<Float> = tween(500),
-    animationDelay: Long = 100,
-    textMeasurer: TextMeasurer = rememberTextMeasurer(),
-    popupProperties: PopupProperties = PopupProperties(
-        textStyle = TextStyle.Default.copy(
-            color = Color.White,
-            fontSize = 12.sp
-        )
-    ),
-    barAlphaDecreaseOnPopup: Float = .4f,
     maxValue: Double = data.maxOfOrNull { it.values.maxOfOrNull { it.value } ?: 0.0 } ?: 0.0,
     minValue: Double = if (data.any { it.values.any { it.value < 0 } }) -maxValue else 0.0,
     enabledColors: Pair<Brush, Brush>,
-    disabledColors: Pair<Brush, Brush>
+    disabledColors: Pair<Brush, Brush>,
+    isNegativeValueReversed: Boolean = false,
+    onBarClick: ((BarPopupData) -> Unit)? = null,
 ) {
+    val textMeasurer: TextMeasurer = rememberTextMeasurer()
+    val labelHelperProperties = LabelHelperProperties()
+    val indicatorProperties = HorizontalIndicatorProperties(
+        count = IndicatorCount.StepBased(
+            200000.0
+        ), contentBuilder = {
+            if (it == 1000000.0) {
+                return@HorizontalIndicatorProperties "$1M"
+            }
+            "$" + (it / 1000).format(0) + "K"
+        })
+    val gridProperties = GridProperties(
+        xAxisProperties = GridProperties.AxisProperties(
+            style = StrokeStyle.Dashed(
+                intervals = floatArrayOf(
+                    30f,
+                    30f
+                ), phase = 25f
+            )
+        ),
+        yAxisProperties = GridProperties.AxisProperties(enabled = false)
+    )
+    val labelProperties = LabelProperties(true)
     checkRCMinValue(minValue, data)
     checkRCMaxValue(maxValue, data)
 
@@ -125,15 +122,13 @@ fun TangerineNetWorthChart(
     val everyDataWidth = with(density) {
         data.maxOfOrNull { rowData ->
             rowData.values.map {
-                (it.properties?.thickness
-                    ?: barProperties.thickness).toPx() + (it.properties?.spacing
-                    ?: barProperties.spacing).toPx()
+                it.properties.thickness.toPx() + it.properties.spacing.toPx()
             }.sum()
         } ?: 0f
     }
     val averageSpacingBetweenBars = with(density) {
         data.map { it.values }.flatten()
-            .map { (it.properties?.spacing ?: barProperties.spacing).toPx() }.average()
+            .map { it.properties.spacing.toPx() }.average()
     }
 
     val barWithRect = remember {
@@ -179,23 +174,19 @@ fun TangerineNetWorthChart(
         mutableFloatStateOf(0f)
     }
 
-    LaunchedEffect(selectedValue.value) {
-        if (selectedValue.value != null) {
-            delay(popupProperties.duration)
-            popupAnimation.animateTo(0f, animationSpec = popupProperties.animationSpec)
-            selectedValue.value = null
-        }
-    }
+  /*
+    Let's leave in case we need animation
 
     ImplementRCAnimation(
         data = data,
-        animationMode = animationMode,
-        spec = { it.animationSpec ?: animationSpec },
-        delay = animationDelay,
+        animationMode = AnimationMode.Together(),
+        spec = { tween(0) },
+        delay = 0L,
         before = {
             barWithRect.clear()
         }
-    )
+    )*/
+
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(modifier = modifier) {
             if (labelHelperProperties.enabled) {
@@ -211,7 +202,6 @@ fun TangerineNetWorthChart(
                     .fillMaxSize()
                     .weight(1f)
             ) {
-                val scope = rememberCoroutineScope()
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -221,47 +211,37 @@ fun TangerineNetWorthChart(
                         modifier = Modifier
                             .fillMaxSize()
                             .pointerInput(Unit) {
-                                if (popupProperties.enabled) {
-                                    detectHorizontalDragGestures { change, dragAmount ->
-                                        barWithRect
-                                            .lastOrNull { popupData ->
-                                                change.position.x in popupData.rect.left..popupData.rect.right
-                                            }
-                                            ?.let { popupData ->
-                                                val firstPopupDataIndex =
-                                                    barWithRect.indexOf(popupData)
-                                                val secondPopupData =
-                                                    if (barWithRect.indexOf(popupData) % 2 == 0) {
-                                                        barWithRect[firstPopupDataIndex + 1]
-                                                    } else {
-                                                        barWithRect[firstPopupDataIndex - 1]
-                                                    }
-                                                selectedValue.value = SelectedBars(
-                                                    bars = Pair(popupData.bar, secondPopupData.bar),
-                                                    rect = popupData.rect,
-                                                    offset = Offset(
-                                                        popupData.rect.left,
-                                                        if (popupData.bar.value < 0) popupData.rect.bottom else popupData.rect.top
-                                                    ),
-                                                    dataIndexes = Pair(
-                                                        popupData.dataIndex,
-                                                        secondPopupData.dataIndex
-                                                    ),
-                                                    valueIndexes = Pair(
-                                                        popupData.valueIndex,
-                                                        secondPopupData.valueIndex
-                                                    )
-                                                )
-                                                scope.launch {
-                                                    if (popupAnimation.value != 1f && !popupAnimation.isRunning) {
-                                                        popupAnimation.animateTo(
-                                                            1f,
-                                                            animationSpec = popupProperties.animationSpec
-                                                        )
-                                                    }
+                                detectHorizontalDragGestures { change, dragAmount ->
+                                    barWithRect
+                                        .lastOrNull { popupData ->
+                                            change.position.x in popupData.rect.left..popupData.rect.right
+                                        }
+                                        ?.let { popupData ->
+                                            val firstPopupDataIndex =
+                                                barWithRect.indexOf(popupData)
+                                            val secondPopupData =
+                                                if (barWithRect.indexOf(popupData) % 2 == 0) {
+                                                    barWithRect[firstPopupDataIndex + 1]
+                                                } else {
+                                                    barWithRect[firstPopupDataIndex - 1]
                                                 }
-                                            }
-                                    }
+                                            selectedValue.value = SelectedBars(
+                                                bars = Pair(popupData.bar, secondPopupData.bar),
+                                                rect = popupData.rect,
+                                                offset = Offset(
+                                                    popupData.rect.left,
+                                                    if (popupData.bar.value < 0) popupData.rect.bottom else popupData.rect.top
+                                                ),
+                                                dataIndexes = Pair(
+                                                    popupData.dataIndex,
+                                                    secondPopupData.dataIndex
+                                                ),
+                                                valueIndexes = Pair(
+                                                    popupData.valueIndex,
+                                                    secondPopupData.valueIndex
+                                                )
+                                            )
+                                        }
                                 }
                             }
                             .pointerInput(Unit) {
@@ -281,45 +261,26 @@ fun TangerineNetWorthChart(
                                                     } else {
                                                         barWithRect[firstPopupDataIndex - 1]
                                                     }
-                                                if (popupProperties.enabled) {
-                                                    selectedValue.value = SelectedBars(
-                                                        bars = Pair(
-                                                            popupData.bar,
-                                                            secondPopupData.bar
-                                                        ),
-                                                        rect = popupData.rect,
-                                                        offset = Offset(
-                                                            popupData.rect.left,
-                                                            if (popupData.bar.value < 0) popupData.rect.bottom else popupData.rect.top
-                                                        ),
-                                                        dataIndexes = Pair(
-                                                            popupData.dataIndex,
-                                                            secondPopupData.dataIndex
-                                                        ),
-                                                        valueIndexes = Pair(
-                                                            popupData.valueIndex,
-                                                            secondPopupData.valueIndex
-                                                        )
+                                                selectedValue.value = SelectedBars(
+                                                    bars = Pair(
+                                                        popupData.bar,
+                                                        secondPopupData.bar
+                                                    ),
+                                                    rect = popupData.rect,
+                                                    offset = Offset(
+                                                        popupData.rect.left,
+                                                        if (popupData.bar.value < 0) popupData.rect.bottom else popupData.rect.top
+                                                    ),
+                                                    dataIndexes = Pair(
+                                                        popupData.dataIndex,
+                                                        secondPopupData.dataIndex
+                                                    ),
+                                                    valueIndexes = Pair(
+                                                        popupData.valueIndex,
+                                                        secondPopupData.valueIndex
                                                     )
-                                                    scope.launch {
-                                                        popupAnimation.snapTo(0f)
-                                                        popupAnimation.animateTo(
-                                                            1f,
-                                                            animationSpec = popupProperties.animationSpec
-                                                        )
-                                                    }
-                                                }
+                                                )
                                                 onBarClick?.invoke(popupData)
-                                            }
-                                    },
-                                    onLongPress = {
-                                        val position = Offset(it.x, it.y)
-                                        barWithRect
-                                            .lastOrNull { popupData ->
-                                                popupData.rect.contains(position)
-                                            }
-                                            ?.let { popupData ->
-                                                onBarLongClick?.invoke(popupData)
                                             }
                                     }
                                 )
@@ -374,32 +335,34 @@ fun TangerineNetWorthChart(
                             columnChart.values.forEachIndexed { valueIndex, col ->
                                 if (col.value != 0.0) {
                                     val stroke = when (data.size) {
-                                        1 -> (col.properties?.thickness
-                                            ?: barProperties.thickness).toPx() * 3f
+                                        1 -> col.properties.thickness.toPx() * 3f
 
-                                        3 -> (col.properties?.thickness
-                                            ?: barProperties.thickness).toPx() * 1.5f
+                                        3 -> col.properties.thickness.toPx() * 1.5f
 
-                                        6 -> (col.properties?.thickness
-                                            ?: barProperties.thickness).toPx()
+                                        6 -> col.properties.thickness.toPx()
 
-                                        else -> (col.properties?.thickness
-                                            ?: barProperties.thickness).toPx() / 1.5f
+                                        else -> col.properties.thickness.toPx() / 1.5f
                                     }
-                                    var spacing =
-                                        (col.properties?.spacing ?: barProperties.spacing).toPx()
+                                    val spacing = col.properties.spacing.toPx()
 
                                     val barHeight =
-                                        ((col.value * size.height) / (computedMaxValue - minValue)) * col.animator.value
+                                        ((col.value * size.height) / (computedMaxValue - minValue)) //* col.animator.value(let's leave in case we need animation)
                                     val everyBarWidth = (stroke + spacing)
 
                                     val barX = if (data.size == 1) {
                                         (valueIndex * everyBarWidth) + (barsAreaWidth / 2) - (stroke / 2) + everyBarWidth / 2
                                     } else {
-                                        (valueIndex * everyBarWidth) + (barsAreaWidth - everyDataWidth).spaceBetween(
-                                            itemCount = data.count(),
-                                            index = dataIndex
-                                        ) + xPadding
+                                        if (barHeight < 0.0 && isNegativeValueReversed) {
+                                            (valueIndex * everyBarWidth) + (barsAreaWidth - everyDataWidth).spaceBetween(
+                                                itemCount = data.count(),
+                                                index = dataIndex
+                                            ) + xPadding
+                                        } else {
+                                            (valueIndex * everyBarWidth) + (barsAreaWidth - everyDataWidth).spaceBetween(
+                                                itemCount = data.count(),
+                                                index = dataIndex
+                                            ) + xPadding
+                                        }
                                     }
 
                                     val rect = Rect(
@@ -432,11 +395,6 @@ fun TangerineNetWorthChart(
                                     )
 
                                     path.addRoundRect(rect = rect, radius = radius.asRadiusPx(this))
-                                    val alpha = if (rect == selectedValue.value?.rect) {
-                                        1f - (barAlphaDecreaseOnPopup * popupAnimation.value)
-                                    } else {
-                                        1f
-                                    }
                                     val brush = selectedValue.value?.let { selectedValue ->
                                         if (selectedValue.dataIndexes.first == dataIndex
                                             || selectedValue.dataIndexes.second == dataIndex
@@ -455,13 +413,17 @@ fun TangerineNetWorthChart(
                                                 }
                                             }
                                         }
-                                    } ?: col.color
+                                    } ?: run {
+                                        if (valueIndex % 2 == 0) {
+                                            enabledColors.first
+                                        } else {
+                                            enabledColors.second
+                                        }
+                                    }
                                     drawPath(
                                         path = path,
                                         brush = brush,
-                                        alpha = alpha,
-                                        style = (col.properties?.style
-                                            ?: barProperties.style).getStyle(density.density)
+                                        style = col.properties.style.getStyle(density.density)
                                     )
                                 }
                             }
@@ -555,6 +517,7 @@ fun TangerineNetWorthChart(
                                         .wrapContentHeight(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    val barsDiff = (selectedValue.bars.first.value - abs(selectedValue.bars.second.value))
                                     Box(
                                         modifier = Modifier
                                             .width(12.dp)
@@ -571,7 +534,7 @@ fun TangerineNetWorthChart(
                                     )
                                     Text(
                                         modifier = Modifier.wrapContentSize(),
-                                        text = (selectedValue.bars.first.value - selectedValue.bars.second.value).formatCurrency(),
+                                        text = barsDiff.formatCurrency(),
                                         style = FontStyles.BodyExtraSmall
                                     )
                                 }

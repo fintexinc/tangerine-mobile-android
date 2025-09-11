@@ -17,8 +17,8 @@ data class Bars(
         val id:Int = Random.nextInt(0, 999999),
         val label: String? = null,
         val value: Double,
-        val color: Brush,
-        val properties: BarProperties? = null,
+        val color: Brush? = null,
+        val properties: BarProperties = BarProperties(),
         val animationSpec: AnimationSpec<Float>? = null,
         val animator:Animatable<Float, AnimationVector1D> = Animatable(0f)
     ) {

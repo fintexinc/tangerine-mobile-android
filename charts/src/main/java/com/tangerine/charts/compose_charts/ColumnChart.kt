@@ -37,6 +37,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -421,7 +422,7 @@ fun ColumnChart(
                                     }
                                     drawPath(
                                         path = path,
-                                        brush = col.color,
+                                        brush = col.color ?: SolidColor(Color.Black),
                                         alpha = alpha,
                                         style = (col.properties?.style
                                             ?: barProperties.style).getStyle(density.density)

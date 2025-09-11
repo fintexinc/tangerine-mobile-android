@@ -27,6 +27,7 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -343,7 +344,7 @@ fun RowChart(
                                 }
                                 drawPath(
                                     path = path,
-                                    brush = bar.color,
+                                    brush = bar.color ?: SolidColor(Color.Black),
                                     alpha = alpha,
                                     style = (bar.properties?.style
                                         ?: barProperties.style).getStyle(density.density)

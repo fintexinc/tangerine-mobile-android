@@ -57,7 +57,7 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
-import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartType
+import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
 import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineBarChart
 import com.tangerine.charts.compose_charts.TangerineProjectionsChart
@@ -549,7 +549,7 @@ private fun NetWorthChartUI(
     period: Period
 ) {
     TangerineBarChart(
-        type = ChartType.NET_WORTH,
+        negativeValuesPosition = NegativeValuesPosition.REGULAR,
         period = period,
         data = Pair(
             assets.filter { it.isChecked }.map {
@@ -565,8 +565,14 @@ private fun NetWorthChartUI(
                 )
             }
         ),
-        enabledColors = Pair(Colors.TransactionIncome, Colors.TransactionLiability),
-        disabledColors = Pair(Colors.BrandBlack, Colors.BrandGray)
+        enabledColors = Pair(
+            SolidColor(Colors.TransactionIncome),
+            SolidColor(Colors.TransactionLiability)
+        ),
+        disabledColors = Pair(
+            SolidColor(Colors.BrandBlack),
+            SolidColor(Colors.BrandGray)
+        ),
     )
 }
 
@@ -574,76 +580,76 @@ private fun NetWorthChartUI(
 @Composable
 private fun TangerineProjectionUI() {
     TangerineProjectionsChart(
-         modifier = Modifier
-             .fillMaxWidth()
-             .height(244.dp)
-             .padding(horizontal = 18.dp),
-         data = remember {
-             listOf(
-                 Line(
-                     "Today",
-                     listOf(600000.0, 800000.0, 1000000.0),
-                     dotProperties = DotProperties(enabled = true),
-                     drawStyle = DrawStyle.Stroke(2.dp),
-                     color = SolidColor(Color(0xFF12B76A)),
-                     curvedEdges = false
-                 ),
-                 Line(
-                     "Five Years",
-                     listOf(600000.0, 650000.0, 750000.0),
-                     color = SolidColor(Colors.BackgroundPrimary),
-                     drawStyle = DrawStyle.Stroke(
-                         strokeStyle = StrokeStyle.Dashed(
-                             intervals = floatArrayOf(
-                                 30f,
-                                 30f
-                             ), phase = 25f
-                         )
-                     ),
-                     curvedEdges = false
-                 )
-             )
-         },
-         minValue = 600000.0,
-         maxValue = 1000000.0,
-         indicatorProperties = HorizontalIndicatorProperties(
-             count = IndicatorCount.StepBased(
-                 200000.0
-             ), contentBuilder = {
-                 if (it == 1000000.0) {
-                     return@HorizontalIndicatorProperties "$1M"
-                 }
-                 "$" + (it / 1000).format(0) + "K"
-             },
-             indicators = listOf(1000000.0, 900000.0, 800000.0, 700000.0, 600000.0)
-         ),
-         gridProperties = GridProperties(
-             xAxisProperties = GridProperties.AxisProperties(
-                 style = StrokeStyle.Dashed(
-                     intervals = floatArrayOf(
-                         30f,
-                         30f
-                     ), phase = 25f
-                 )
-             ),
-             yAxisProperties = GridProperties.AxisProperties(enabled = false)
-         ),
-         animationMode = AnimationMode.Together({ 0 }),
-         labelProperties = LabelProperties(
-             enabled = true,
-             labels = listOf("Today", "5 Years", "10 Years")
-         ),
-         animationDelay = 0,
-         labelHelperProperties = LabelHelperProperties(false),
-         dividerProperties = DividerProperties(false),
-         popupProperties = PopupProperties(
-             textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
-             containerColor = Colors.Background,
-             mode = PopupProperties.Mode.PointMode(),
-             contentVerticalPadding = 10.dp,
-             contentHorizontalPadding = 12.dp
-         )
-     )
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(244.dp)
+            .padding(horizontal = 18.dp),
+        data = remember {
+            listOf(
+                Line(
+                    "Today",
+                    listOf(600000.0, 800000.0, 1000000.0),
+                    dotProperties = DotProperties(enabled = true),
+                    drawStyle = DrawStyle.Stroke(2.dp),
+                    color = SolidColor(Color(0xFF12B76A)),
+                    curvedEdges = false
+                ),
+                Line(
+                    "Five Years",
+                    listOf(600000.0, 650000.0, 750000.0),
+                    color = SolidColor(Colors.BackgroundPrimary),
+                    drawStyle = DrawStyle.Stroke(
+                        strokeStyle = StrokeStyle.Dashed(
+                            intervals = floatArrayOf(
+                                30f,
+                                30f
+                            ), phase = 25f
+                        )
+                    ),
+                    curvedEdges = false
+                )
+            )
+        },
+        minValue = 600000.0,
+        maxValue = 1000000.0,
+        indicatorProperties = HorizontalIndicatorProperties(
+            count = IndicatorCount.StepBased(
+                200000.0
+            ), contentBuilder = {
+                if (it == 1000000.0) {
+                    return@HorizontalIndicatorProperties "$1M"
+                }
+                "$" + (it / 1000).format(0) + "K"
+            },
+            indicators = listOf(1000000.0, 900000.0, 800000.0, 700000.0, 600000.0)
+        ),
+        gridProperties = GridProperties(
+            xAxisProperties = GridProperties.AxisProperties(
+                style = StrokeStyle.Dashed(
+                    intervals = floatArrayOf(
+                        30f,
+                        30f
+                    ), phase = 25f
+                )
+            ),
+            yAxisProperties = GridProperties.AxisProperties(enabled = false)
+        ),
+        animationMode = AnimationMode.Together({ 0 }),
+        labelProperties = LabelProperties(
+            enabled = true,
+            labels = listOf("Today", "5 Years", "10 Years")
+        ),
+        animationDelay = 0,
+        labelHelperProperties = LabelHelperProperties(false),
+        dividerProperties = DividerProperties(false),
+        popupProperties = PopupProperties(
+            textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
+            containerColor = Colors.Background,
+            mode = PopupProperties.Mode.PointMode(),
+            contentVerticalPadding = 10.dp,
+            contentHorizontalPadding = 12.dp
+        )
+    )
 }
 
 @Composable
@@ -653,7 +659,7 @@ private fun NetWorthChangesChartUI(
     period: Period
 ) {
     TangerineBarChart(
-        type = ChartType.CASH_FLOW,
+        negativeValuesPosition = NegativeValuesPosition.REVERSED,
         period = period,
         data = Pair(
             assets.filter { it.isChecked }.map {
@@ -669,8 +675,14 @@ private fun NetWorthChangesChartUI(
                 )
             }
         ),
-        enabledColors = Pair(Color(0xFF3E70FF), Color(0xFFFFC43F)),
-        disabledColors = Pair(Colors.BrandGray, Colors.BrandBlack)
+        enabledColors = Pair(
+            SolidColor(Color(0xFF3E70FF)),
+            SolidColor(Color(0xFFFFC43F))
+        ),
+        disabledColors = Pair(
+            SolidColor(Colors.BrandGray),
+            SolidColor(Colors.BrandBlack)
+        )
     )
 }
 

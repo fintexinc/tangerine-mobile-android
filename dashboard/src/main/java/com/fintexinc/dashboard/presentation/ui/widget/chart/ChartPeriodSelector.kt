@@ -93,10 +93,10 @@ private fun ChartPeriodItem(
     )
 }
 
-enum class Period(val label: String) {
-    ONE_MONTH("1M"),
-    THREE_MONTHS("3M"),
-    SIX_MONTHS("6M"),
-    ONE_YEAR("1Y"),
-    ALL("All")
+enum class Period(val label: String, val countOfMonths: Int) {
+    ONE_MONTH("1M", 1),
+    THREE_MONTHS("3M", 3),
+    SIX_MONTHS("6M", 6),
+    ONE_YEAR("1Y", 12),
+    ALL("All", Int.MAX_VALUE)
 }
