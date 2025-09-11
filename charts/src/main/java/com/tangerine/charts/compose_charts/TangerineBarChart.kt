@@ -480,14 +480,14 @@ private fun ShowLegend(
     ) {
         Column(
             modifier = Modifier
-                .width(180.dp)
+                .width(240.dp)
                 .wrapContentHeight()
                 .shadow(8.dp)
                 .background(
                     color = Color.White,
                     shape = RoundedCornerShape(12.dp)
                 )
-                .padding(8.dp)
+                .padding(12.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -496,7 +496,7 @@ private fun ShowLegend(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(12.dp)
+                        .size(16.dp)
                         .background(color = selectedColors.first)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -505,12 +505,12 @@ private fun ShowLegend(
                         .weight(1f)
                         .wrapContentHeight(),
                     text = legendLabels.first,
-                    style = FontStyles.BodyExtraSmall
+                    style = FontStyles.BodySmall
                 )
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = selectedValue.bars.first.value.formatCurrency(),
-                    style = FontStyles.BodyExtraSmall
+                    style = FontStyles.BodySmall
                 )
             }
             Spacer(
@@ -523,7 +523,7 @@ private fun ShowLegend(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(12.dp)
+                        .size(16.dp)
                         .background(color = selectedColors.second)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -532,12 +532,12 @@ private fun ShowLegend(
                         .weight(1f)
                         .wrapContentHeight(),
                     text = legendLabels.second,
-                    style = FontStyles.BodyExtraSmall
+                    style = FontStyles.BodySmall
                 )
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = selectedValue.bars.second.value.formatCurrency(),
-                    style = FontStyles.BodyExtraSmall
+                    style = FontStyles.BodySmall
                 )
             }
             Spacer(
@@ -553,7 +553,7 @@ private fun ShowLegend(
                     (selectedValue.bars.first.value - abs(selectedValue.bars.second.value))
                 Box(
                     modifier = Modifier
-                        .width(12.dp)
+                        .width(16.dp)
                         .height(2.dp)
                         .background(color = Colors.TransactionIncome)
                 )
@@ -563,12 +563,12 @@ private fun ShowLegend(
                         .weight(1f)
                         .wrapContentHeight(),
                     text = legendLabels.third,
-                    style = FontStyles.BodyExtraSmall
+                    style = FontStyles.BodySmall
                 )
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = barsDiff.formatCurrency(),
-                    style = FontStyles.BodyExtraSmall
+                    style = FontStyles.BodySmall
                 )
             }
         }
