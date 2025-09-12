@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
 import com.fintexinc.core.domain.model.DataPoint
 import com.fintexinc.core.presentation.ui.datapoint.DataPointCollapsableUI
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
@@ -178,7 +179,7 @@ fun collapsableLazyColumn(
                             color = Colors.Primary,
                             shape = RoundedCornerShape(40.dp)
                         )
-                        .clickable {
+                        .clickableShape(RoundedCornerShape(40.dp)) {
                             onAddItemClick()
                         }
                         .padding(12.dp)

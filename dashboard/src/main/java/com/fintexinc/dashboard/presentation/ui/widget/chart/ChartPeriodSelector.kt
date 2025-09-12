@@ -2,8 +2,6 @@ package com.fintexinc.dashboard.presentation.ui.widget.chart
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
@@ -73,8 +72,8 @@ private fun ChartPeriodItem(
                 color = if (selectedPeriod == period) Colors.Background else Colors.BackgroundSubdued,
                 shape = CircleShape
             )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
+            .clickableShape(
+                CircleShape,
             ) {
                 onPeriodSelected(period)
             }
