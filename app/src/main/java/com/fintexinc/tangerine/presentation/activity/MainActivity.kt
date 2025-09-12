@@ -198,7 +198,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable<Dashboard>() {
                                 LaunchedEffect(true) {
-                                    dashboardViewModel.getData()
+                                    dashboardViewModel.loadData()
                                 }
                                 val state = dashboardViewModel.state.collectAsState()
                                 DashboardScreenUI(
@@ -206,8 +206,23 @@ class MainActivity : ComponentActivity() {
                                     onPlatformClicked = {
                                         dashboardViewModel.onPlatformClicked()
                                     },
-                                    onOpenAccount = {
+                                    onOpenAccountClicked = {
                                         navController.navigate(Account(it))
+                                    },
+                                    onAddAssetClicked = {
+                                        dashboardViewModel.onAddAssetClicked()
+                                    },
+                                    onAddAsset = { asset ->
+                                        dashboardViewModel.onAddAsset(asset)
+                                    },
+                                    onAddLiabilityClicked = {
+                                        dashboardViewModel.onAddLiabilityClicked()
+                                    },
+                                    onAddLiability = { liability ->
+                                        dashboardViewModel.onAddLiability(liability)
+                                    },
+                                    onBackButtonFromExternalScreenClicked = {
+                                        dashboardViewModel.loadData()
                                     },
                                     updateCheckedStates = { asset, assetStates, liabilities, liabilitiesStates ->
                                         dashboardViewModel.updateCheckedStates(

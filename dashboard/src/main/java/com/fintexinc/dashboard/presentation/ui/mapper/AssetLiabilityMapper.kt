@@ -9,21 +9,12 @@ import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 
 fun Liability.toNameValue() = NameValueChecked(
-    name = getByLiabilityType(liabilityType),
+    name = liabilityType.label,
     value = balance,
     subName = accountNumber,
     date = linkedDate,
     isChecked = true
 )
-
-fun getByLiabilityType(type: String): String {
-    return when (type.lowercase()) {
-        "credit_card" -> "Credit Card"
-        "mortgage" -> "Mortgage"
-        "loan" -> "Loan"
-        else -> "Other Liability"
-    }
-}
 
 fun Custom.toNameValue() = NameValueChecked(
     name = assetName,

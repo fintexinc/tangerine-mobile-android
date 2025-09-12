@@ -92,7 +92,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"accountNumber\": \"011-1234567\",\n" +
         "            \"accountName\": \"Everyday Chequing\",\n" +
         "            \"accountType\": \"CHEQUING\",\n" +
-        "            \"accountBalance\": 845000.33,\n" +
+        "            \"accountBalance\": 345000.33,\n" +
         "            \"currency\": \"CAD\",\n" +
         "            \"linkedDate\": \"2025-04-01\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
@@ -104,7 +104,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"accountName\": \"Savings Account\",\n" +
         "            \"currency\": \"CAD\",\n" +
         "            \"accountType\": \"SAVINGS\",\n" +
-        "            \"accountBalance\": 820450.10,\n" +
+        "            \"accountBalance\": 320450.10,\n" +
         "            \"linkedDate\": \"2025-05-22\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        }, \n" +
@@ -114,7 +114,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"accountNumber\": \"011-1234567\",\n" +
         "            \"accountName\": \"Everyday Chequing\",\n" +
         "            \"accountType\": \"CHEQUING\",\n" +
-        "            \"accountBalance\": 845000.33,\n" +
+        "            \"accountBalance\": 445000.33,\n" +
         "            \"currency\": \"CAD\",\n" +
         "            \"linkedDate\": \"2025-06-01\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
@@ -126,7 +126,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"accountName\": \"Savings Account\",\n" +
         "            \"currency\": \"CAD\",\n" +
         "            \"accountType\": \"SAVINGS\",\n" +
-        "            \"accountBalance\": 820450.10,\n" +
+        "            \"accountBalance\": 120450.10,\n" +
         "            \"linkedDate\": \"2025-07-22\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        }\n" +
@@ -136,8 +136,8 @@ const val ASSETS_MOCK = "{\n" +
         "            \"id\": \"ASSET-CUS-001\",\n" +
         "            \"userId\": \"INV-0001\",\n" +
         "            \"assetName\": \"Toyota Corolla 2018\",\n" +
-        "            \"assetType\": \"CAR\",\n" +
-        "            \"assetValue\": 420000.0,\n" +
+        "            \"assetType\": \"Land\",\n" +
+        "            \"assetValue\": 220000.0,\n" +
         "            \"linkedDate\": \"2025-08-15\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        },\n" +
@@ -145,8 +145,8 @@ const val ASSETS_MOCK = "{\n" +
         "            \"id\": \"ASSET-CUS-002\",\n" +
         "            \"userId\": \"INV-0002\",\n" +
         "            \"assetName\": \"Cottage in Muskoka\",\n" +
-        "            \"assetType\": \"HOUSE\",\n" +
-        "            \"assetValue\": 425000.0,\n" +
+        "            \"assetType\": \"Vacation Home\",\n" +
+        "            \"assetValue\": 225000.0,\n" +
         "            \"linkedDate\": \"2025-09-12\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        }\n" +

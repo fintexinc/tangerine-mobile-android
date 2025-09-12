@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.fintexinc.core.domain.gateway.AccountGateway
 import com.fintexinc.core.domain.gateway.NetWorthGateway
 import com.fintexinc.core.domain.model.Account
+import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.domain.model.Document
+import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
@@ -26,13 +28,15 @@ class DashboardViewModel @Inject constructor(
     val state: StateFlow<State>
         get() = _state.asStateFlow()
 
-    fun getData() = viewModelScope.launch {
+    private var softDataCache: State.Data? = null
+
+    private suspend fun getData(): State.Data {
         val accounts = accountGateway.getAccounts()
         val assets = netWorthGateway.getAssets()
         val liabilities = netWorthGateway.getLiabilities()
         val activities = accountGateway.getActivities()
         val documents = accountGateway.getDocuments()
-        _state.value = State.Data(
+        return State.Data(
             assets = mutableListOf<NameValueChecked>().apply {
                 addAll(assets.investment.map { it.toNameValue() })
                 addAll(assets.banking.map { it.toNameValue() })
@@ -45,8 +49,44 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
+    fun loadData() = viewModelScope.launch {
+        _state.value = getData().also {
+            softDataCache = it
+        }
+    }
+
     fun onPlatformClicked() {
         // Handle platform click event
+    }
+
+    fun onAddAssetClicked() {
+        _state.value = State.AddAsset
+    }
+
+    fun onAddAsset(asset: Custom) {
+        viewModelScope.launch {
+            val currentState = softDataCache ?: getData()
+            val updatedAssets = currentState.assets.toMutableList().apply {
+                add(asset.toNameValue())
+            }
+            _state.value = currentState.copy(assets = updatedAssets)
+            softDataCache = _state.value as? State.Data
+        }
+    }
+
+    fun onAddLiabilityClicked() {
+        _state.value = State.AddLiability
+    }
+
+    fun onAddLiability(liability: Liability) {
+        viewModelScope.launch {
+            val currentState = softDataCache ?: getData()
+            val updatedLiabilities = currentState.liabilities.toMutableList().apply {
+                add(liability.toNameValue())
+            }
+            _state.value = currentState.copy(liabilities = updatedLiabilities)
+            softDataCache = _state.value as? State.Data
+        }
     }
 
     fun updateCheckedStates(
@@ -83,5 +123,8 @@ class DashboardViewModel @Inject constructor(
             val activities: List<Transaction>,
             val documents: List<Document>
         ) : State()
+
+        object AddAsset : State()
+        object AddLiability : State()
     }
 }

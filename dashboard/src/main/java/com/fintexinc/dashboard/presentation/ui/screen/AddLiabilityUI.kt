@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.utils.date.DateUtils
 import com.fintexinc.core.domain.model.AssetType
 import com.fintexinc.core.domain.model.Custom
+import com.fintexinc.core.domain.model.Liability
+import com.fintexinc.core.domain.model.LiabilityType
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.add.AddItemSelection
 import com.fintexinc.core.presentation.ui.widget.add.AddItemText
@@ -49,8 +51,8 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 
 @Composable
-fun AddAssetUI(
-    onSaveAssetClick: (asset: Custom) -> Unit,
+fun AddLiabilityUI(
+    onSaveLiabilityClick: (liability: Liability) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit
 ) {
     Box(
@@ -58,19 +60,16 @@ fun AddAssetUI(
             .fillMaxSize()
             .background(color = Colors.Background)
     ) {
-        val showAssetTypeSelection = remember {
+        val showLiabilityTypeSelection = remember {
             mutableStateOf(false)
         }
-        val assetType = remember {
-            mutableStateOf(AssetType.OTHER)
+        val liabilityType = remember {
+            mutableStateOf(LiabilityType.OTHER)
         }
-        val assetName = remember {
+        val liabilityName = remember {
             mutableStateOf("")
         }
         val estimatedValue = remember {
-            mutableStateOf("")
-        }
-        val annAnnualizedRateOfReturn = remember {
             mutableStateOf("")
         }
         val showDialog = remember {
@@ -111,7 +110,7 @@ fun AddAssetUI(
                         .wrapContentHeight()
                         .padding(vertical = 18.dp)
                         .align(Alignment.Center),
-                    text = stringResource(R.string.title_add_an_asset),
+                    text = stringResource(R.string.title_add_liability),
                     style = FontStyles.HeadingRegular,
                     textAlign = TextAlign.Center
                 )
@@ -150,7 +149,7 @@ fun AddAssetUI(
                         .padding(start = 12.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.text_asset_will_update_chart),
+                        text = stringResource(R.string.text_liability_will_update_chart),
                         style = FontStyles.BodyMediumBold,
                         color = Colors.Text
                     )
@@ -158,24 +157,24 @@ fun AddAssetUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_asset_later),
+                        text = stringResource(R.string.text_you_can_remove_liability_later),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
                 }
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemSelection(
-                    title = stringResource(R.string.text_asset_type),
-                    text = assetType.value.label.ifEmpty { stringResource(R.string.text_make_selection) },
+                    title = stringResource(R.string.text_liability_type),
+                    text = liabilityType.value.label.ifEmpty { stringResource(R.string.text_make_selection) },
                     onAddItemSelectionClicked = {
-                        showAssetTypeSelection.value = true
+                        showLiabilityTypeSelection.value = true
                     }
                 )
                 AddItemText(
-                    title = stringResource(R.string.text_asset_name),
+                    title = stringResource(R.string.text_liability_name),
                     hint = stringResource(R.string.text_enter_name),
                     onTextChanged = { text ->
-                        assetName.value = text
+                        liabilityName.value = text
                     }
                 )
                 Spacer(modifier = Modifier.height(18.dp))
@@ -184,15 +183,6 @@ fun AddAssetUI(
                     hint = stringResource(R.string.text_currency),
                     onTextChanged = { text ->
                         estimatedValue.value = text
-                    },
-                    keyboardType = KeyboardType.Number
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                AddItemText(
-                    title = stringResource(R.string.text_annualized_rate_of_return),
-                    hint = "%",
-                    onTextChanged = { text ->
-                        annAnnualizedRateOfReturn.value = text
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -234,15 +224,18 @@ fun AddAssetUI(
                                 shape = RoundedCornerShape(40.dp)
                             )
                             .clickableShape(RoundedCornerShape(40.dp)) {
-                                onSaveAssetClick(
-                                    Custom(
+                                onSaveLiabilityClick(
+                                    Liability(
                                         id = "",
                                         userId = "",
-                                        assetName = assetName.value,
-                                        assetType = assetType.value,
-                                        assetValue = estimatedValue.value.toDoubleOrNull() ?: 0.0,
+                                        liabilityType = liabilityType.value,
+                                        accountNumber = "",
+                                        balance = estimatedValue.value.toDoubleOrNull() ?: 0.0,
                                         linkedDate = effectiveDate.value,
-                                        lastUpdated = revisitDate.value
+                                        limit = 0.0,
+                                        interestRate = 0.0,
+                                        currency = "$",
+                                        lastUpdated = effectiveDate.value
                                     )
                                 )
                             }
@@ -256,16 +249,16 @@ fun AddAssetUI(
                 }
             }
         }
-        if (showAssetTypeSelection.value) {
+        if (showLiabilityTypeSelection.value) {
             ItemTypeSelection (
-                itemTypes = AssetType.entries,
+                itemTypes = LiabilityType.entries,
                 itemTypeTitle = stringResource(R.string.text_asset_type),
                 onItemTypeSelected = {
-                    assetType.value = it as AssetType
-                    showAssetTypeSelection.value = false
+                    liabilityType.value = it as LiabilityType
+                    showLiabilityTypeSelection.value = false
                 },
                 onCancel = {
-                    showAssetTypeSelection.value = false
+                    showLiabilityTypeSelection.value = false
                 }
             )
         }

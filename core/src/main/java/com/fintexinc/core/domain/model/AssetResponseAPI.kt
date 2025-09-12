@@ -1,5 +1,7 @@
 package com.fintexinc.core.domain.model
 
+import com.fintexinc.core.data.model.ItemType
+import com.fintexinc.core.data.serializer.AssetTypeSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -44,11 +46,12 @@ data class Banking(
 )
 
 @Serializable
-data class Custom (
+data class Custom(
     val id: String,
     val userId: String,
     val assetName: String,
-    val assetType: String,
+    @Serializable(with = AssetTypeSerializer::class)
+    val assetType: AssetType,
     val assetValue: Double,
     val linkedDate: String,
     val lastUpdated: String
@@ -71,3 +74,17 @@ data class Fund(
     val navPerUnit: Double,
     val priceAsOf: String
 )
+
+enum class AssetType(override val label: String) : ItemType {
+    CASH_AND_CASH_EQUIVALENTS("Cash & Cash Equivalents"),
+    REGISTERED_ACCOUNT("Registered Account"),
+    INVESTMENT_ACCOUNT("Investment Account"),
+    CRYPTOCURRENCY("Cryptocurrency"),
+    PRIMARY_RESIDENCE("Primary Residence"),
+    RENTAL_PROPERTY("Rental Property"),
+    VACATION_HOME("Vacation Home"),
+    LAND("Land"),
+    VEHICLE("Vehicle"),
+    PERSONAL_PROPERTY("Personal Property"),
+    OTHER("Other")
+}

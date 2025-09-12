@@ -18,11 +18,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.domain.model.Custom
+import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.TwoTabsSelector
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.screen.AddAssetUI
+import com.fintexinc.dashboard.presentation.ui.screen.AddLiabilityUI
 import com.fintexinc.dashboard.presentation.ui.screen.MyNetWorthUI
 import com.fintexinc.dashboard.presentation.ui.screen.MyPortfolioUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
@@ -31,7 +35,12 @@ import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 fun DashboardScreenUI(
     state: DashboardViewModel.State,
     onPlatformClicked: () -> Unit,
-    onOpenAccount: (accountId: String) -> Unit,
+    onOpenAccountClicked: (accountId: String) -> Unit,
+    onAddAssetClicked : () -> Unit,
+    onAddAsset: (Custom) -> Unit,
+    onAddLiabilityClicked: () -> Unit,
+    onAddLiability: (Liability) -> Unit,
+    onBackButtonFromExternalScreenClicked: () -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
 ) {
     when (state) {
@@ -40,8 +49,27 @@ fun DashboardScreenUI(
                 CircularProgressIndicator()
             }
         }
-        is DashboardViewModel.State.Data -> Content(state, onPlatformClicked, onOpenAccount,
-            updateCheckedStates)
+        is DashboardViewModel.State.Data -> Content(
+            state = state,
+            onPlatformClicked = onPlatformClicked,
+            onOpenAccount = onOpenAccountClicked,
+            onAddAssetClicked = onAddAssetClicked,
+            onAddLiabilityClicked = onAddLiabilityClicked,
+            updateCheckedStates
+        )
+
+        DashboardViewModel.State.AddAsset -> {
+            AddAssetUI(
+                onSaveAssetClick = onAddAsset,
+                onBackButtonFromExternalScreenClicked = onBackButtonFromExternalScreenClicked
+            )
+        }
+        DashboardViewModel.State.AddLiability -> {
+            AddLiabilityUI(
+                onSaveLiabilityClick = onAddLiability,
+                onBackButtonFromExternalScreenClicked = onBackButtonFromExternalScreenClicked
+            )
+        }
     }
 }
 
@@ -50,6 +78,8 @@ private fun Content(
     state: DashboardViewModel.State.Data,
     onPlatformClicked: () -> Unit,
     onOpenAccount:(accountId: String) -> Unit,
+    onAddAssetClicked : () -> Unit,
+    onAddLiabilityClicked: () -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
 ) {
     Column(
@@ -86,7 +116,9 @@ private fun Content(
                     liabilities = state.liabilities,
                     activities = state.activities,
                     documents = state.documents,
-                    updateCheckedStates = updateCheckedStates
+                    updateCheckedStates = updateCheckedStates,
+                    onAddAssetClicked = onAddAssetClicked,
+                    onAddLiabilityClicked = onAddLiabilityClicked
                 )
             },
             onSecondTabSelected = {

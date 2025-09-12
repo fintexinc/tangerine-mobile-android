@@ -15,6 +15,7 @@ object Colors {
     val BackgroundHighlightSubdued = Color(0xFFF3E5F5)
     val BorderSubdued = Color(0xFFE0E0E0)
     val BorderPrimary = Color(0xFFEA7024)
+    val BorderInformation = Color(0xFF616161)
     val BackgroundSupplementary = Color(0xFFEEEEEE)
     val TransactionIncome = Color(0xFF43A047)
     val TransactionLiability = Color(0xFFD50000)

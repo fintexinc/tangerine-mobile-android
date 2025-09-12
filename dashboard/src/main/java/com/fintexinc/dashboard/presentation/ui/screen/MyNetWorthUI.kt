@@ -81,14 +81,16 @@ fun MyNetWorthUI(
     liabilities: List<NameValueChecked>,
     activities: List<Transaction>,
     documents: List<Document>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit,
+    onAddAssetClicked: () -> Unit,
+    onAddLiabilityClicked: () -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
     val textAddAsset = stringResource(R.string.text_add_asset)
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
-    val textAddLiability = stringResource(R.string.text_add_liability)
+    val textAddLiability = stringResource(R.string.title_add_liability)
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -114,7 +116,7 @@ fun MyNetWorthUI(
             subtitle = assets.sumOf { it.value }.formatCurrency(),
             addItemText = textAddAsset,
             onAddItemClick = {
-                // TODO: add logic
+                onAddAssetClicked()
             }
         )
         collapsableLazyColumn(
@@ -126,7 +128,7 @@ fun MyNetWorthUI(
             addItemText = textAddLiability,
             isLastList = true,
             onAddItemClick = {
-                // TODO: add logic
+                onAddLiabilityClicked()
             }
         )
         item {
