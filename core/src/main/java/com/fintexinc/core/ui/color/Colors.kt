@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.Color
 
 object Colors {
 
+    val Black = Color(0xFF000000)
+    val BackgroundInteractive = Color(0xFFF1F6FB)
     val BrandBlack = Color(0xFF333333)
     val BrandGray = Color(0xFF999999)
     val DarkGray = Color(0xFF7D7D7D)

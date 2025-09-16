@@ -1,22 +1,17 @@
 package com.fintexinc.core.presentation.ui.widget.modal
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -27,13 +22,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.utils.currency.formatCurrency
-import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
+import com.fintexinc.core.R
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
@@ -64,7 +58,7 @@ fun AssetLiabilitiesModalBottomSheet(
             isShowing.value = false
             updateCheckedStates(assets, assetsCheckStates, liabilities, liabilitiesCheckStates)
         },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(8.dp),
         containerColor = Colors.Background,
         dragHandle = null
     ) {
@@ -72,294 +66,132 @@ fun AssetLiabilitiesModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(16.dp)
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
-                verticalAlignment = Alignment.CenterVertically
+                    .wrapContentHeight()
+                    .padding(horizontal = 16.dp)
             ) {
                 Text(
                     modifier = Modifier
-                        .weight(1f)
-                        .wrapContentHeight(),
-                    text = title,
-                    style = FontStyles.TitleMediumMedium,
-                    color = Colors.BrandBlack
-                )
-                Image(
-                    modifier = Modifier
-                        .size(24.dp)
+                        .weight(0.33f)
+                        .wrapContentHeight()
                         .clickable {
                             isShowing.value = false
-                            updateCheckedStates(
-                                assets,
-                                assetsCheckStates,
-                                liabilities,
-                                liabilitiesCheckStates
-                            )
                         },
-                    painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
-                    contentDescription = "Close Icon",
+                    text = stringResource(R.string.text_cancel),
+                    style = FontStyles.BodyLarge,
+                    color = Colors.TextInteractive
                 )
-
+                Text(
+                    modifier = Modifier
+                        .weight(0.33f)
+                        .wrapContentHeight(),
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    style = FontStyles.BodyLargeBold,
+                    color = Colors.BrandBlack
+                )
+                Text(
+                    modifier = Modifier
+                        .weight(0.33f)
+                        .wrapContentHeight(),
+                    text = stringResource(R.string.text_done),
+                    textAlign = TextAlign.End,
+                    style = FontStyles.BodyLargeBold,
+                    color = Colors.BrandBlack
+                )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(
+                modifier = Modifier
+                    .height(1.dp)
+                    .background(Colors.BorderSubdued)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(horizontal = 16.dp)
+            ) {
+                ChipsWithTitle(
+                    title = stringResource(R.string.text_assets),
+                    items = assets,
+                    checkStates = assetsCheckStates,
+                    onItemCheckedChange = { index, isChecked ->
+                        assetsCheckStates[index] = isChecked
+                    }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                ChipsWithTitle(
+                    title = stringResource(R.string.text_liabilities),
+                    items = liabilities,
+                    checkStates = liabilitiesCheckStates,
+                    onItemCheckedChange = { index, isChecked ->
+                        liabilitiesCheckStates[index] = isChecked
+                    }
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun ChipsWithTitle(
+    title: String,
+    items: List<NameValueChecked>,
+    checkStates: MutableList<Boolean>,
+    onItemCheckedChange: (Int, Boolean) -> Unit
+) {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        text = title,
+        style = FontStyles.BodyLargeBold,
+        color = Colors.BrandBlack
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    // Chips
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items.forEachIndexed { index, item ->
+            val checked = checkStates[index]
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                text = "10 of 10 Accounts Selected",
-                style = FontStyles.BodyLarge,
-                color = Colors.TextSubdued
-            )
-            Spacer(
-                modifier = Modifier.height(24.dp)
-            )
-            TangerineSearchBar(contentPadding = PaddingValues(0.dp))
-            Spacer(
-                modifier = Modifier.height(24.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clickable {
-                        if (assetMainCheckState.value) {
-                            for (i in assetsCheckStates.indices) {
-                                assetsCheckStates[i] = false
-                            }
-                            assetMainCheckState.value = false
-                        } else {
-                            for (i in assetsCheckStates.indices) {
-                                assetsCheckStates[i] = true
-                            }
-                            assetMainCheckState.value = true
-                        }
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (assetMainCheckState.value) {
-                    Image(
-                        modifier = Modifier
-                            .wrapContentSize(),
-                        painter = painterResource(com.fintexinc.core.R.drawable.ic_checkmark),
-                        contentDescription = "Check Icon",
+                    .background(
+                        color = Colors.BackgroundInteractive,
+                        shape = RoundedCornerShape(16.dp)
                     )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .width(26.dp)
-                            .height(34.dp)
-                    ) {
-                        Spacer(
-                            modifier = Modifier
-                                .size(26.dp)
-                                .background(color = Colors.Background, CircleShape)
-                                .border(
-                                    1.dp, Colors.BackgroundPrimary, CircleShape
-                                )
-                                .align(Alignment.Center)
-                        )
-                    }
-                }
-                Spacer(
-                    modifier = Modifier.width(16.dp)
-                )
-                Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .wrapContentHeight()
-                        .padding(end = 24.dp),
-                    text = "Assets (${assets.size})",
-                    style = FontStyles.BodyLarge,
-                    color = Colors.BrandBlack
-                )
-            }
-            assets.forEachIndexed { index, asset ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .clickable {
-                            assetsCheckStates[index] = !assetsCheckStates[index]
-                        }
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (assetsCheckStates[index]) {
-                        Image(
-                            modifier = Modifier
-                                .wrapContentSize(),
-                            painter = painterResource(com.fintexinc.core.R.drawable.ic_checkmark),
-                            contentDescription = "Close Icon",
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .width(26.dp)
-                                .height(34.dp)
-                        ) {
-                            Spacer(
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .background(color = Colors.Background, CircleShape)
-                                    .border(
-                                        1.dp, Colors.BackgroundPrimary, CircleShape
-                                    )
-                                    .align(Alignment.Center)
+                    .then(
+                        if (checked) {
+                            Modifier.border(
+                                width = 1.dp,
+                                color = Colors.TextInteractive,
+                                shape = RoundedCornerShape(16.dp)
                             )
-                        }
-                    }
-                    Spacer(
-                        modifier = Modifier.width(16.dp)
-                    )
-                    Text(
-                        modifier = Modifier
-                            .weight(1f)
-                            .wrapContentHeight()
-                            .padding(end = 24.dp),
-                        text = asset.name,
-                        style = FontStyles.BodyLarge,
-                        color = Colors.BrandBlack
-                    )
-                    Text(
-                        modifier = Modifier.wrapContentSize(),
-                        text = asset.value.formatCurrency(),
-                        style = FontStyles.BodyLarge,
-                        color = Colors.TextSubdued,
-                        textAlign = TextAlign.End
-                    )
-                }
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Colors.BorderSubdued)
-                )
-            }
-            Spacer(
-                modifier = Modifier.height(24.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clickable {
-                        if (liabilitiesMainCheckState.value) {
-                            for (i in liabilitiesCheckStates.indices) {
-                                liabilitiesCheckStates[i] = false
-                            }
-                            liabilitiesMainCheckState.value = false
                         } else {
-                            for (i in liabilitiesCheckStates.indices) {
-                                liabilitiesCheckStates[i] = true
-                            }
-                            liabilitiesMainCheckState.value = true
+                            Modifier
                         }
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (liabilitiesMainCheckState.value) {
-                    Image(
-                        modifier = Modifier
-                            .wrapContentSize(),
-                        painter = painterResource(com.fintexinc.core.R.drawable.ic_checkmark),
-                        contentDescription = "Check Icon",
                     )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .width(26.dp)
-                            .height(34.dp)
-                    ) {
-                        Spacer(
-                            modifier = Modifier
-                                .size(26.dp)
-                                .background(color = Colors.Background, CircleShape)
-                                .border(
-                                    1.dp, Colors.BackgroundPrimary, CircleShape
-                                )
-                                .align(Alignment.Center)
-                        )
+                    .clickableShape(RoundedCornerShape(16.dp)) {
+                        val newChecked = !checkStates[index]
+                        checkStates[index] = newChecked
+                        onItemCheckedChange(index, newChecked)
                     }
-                }
-                Spacer(
-                    modifier = Modifier.width(16.dp)
-                )
-                Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .wrapContentHeight()
-                        .padding(end = 24.dp),
-                    text = "Liabilities (${liabilities.size})",
-                    style = FontStyles.BodyLarge,
-                    color = Colors.BrandBlack
-                )
-            }
-            liabilities.forEachIndexed { index, liability ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .clickable {
-                            liabilitiesCheckStates[index] = !liabilitiesCheckStates[index]
-                        }
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (liabilitiesCheckStates[index]) {
-                        Image(
-                            modifier = Modifier
-                                .wrapContentSize(),
-                            painter = painterResource(com.fintexinc.core.R.drawable.ic_checkmark),
-                            contentDescription = "Close Icon",
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .width(26.dp)
-                                .height(34.dp)
-                        ) {
-                            Spacer(
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .background(color = Colors.Background, CircleShape)
-                                    .border(
-                                        1.dp, Colors.BackgroundPrimary, CircleShape
-                                    )
-                                    .align(Alignment.Center)
-                            )
-                        }
-                    }
-                    Spacer(
-                        modifier = Modifier.width(16.dp)
-                    )
-                    Text(
-                        modifier = Modifier
-                            .weight(1f)
-                            .wrapContentHeight()
-                            .padding(end = 24.dp),
-                        text = liability.name,
-                        style = FontStyles.BodyLarge,
-                        color = Colors.BrandBlack
-                    )
-                    Text(
-                        modifier = Modifier.wrapContentSize(),
-                        text = liability.value.formatCurrency(),
-                        style = FontStyles.BodyLarge,
-                        color = Colors.TextSubdued,
-                        textAlign = TextAlign.End
-                    )
-                }
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Colors.BorderSubdued)
-                )
-            }
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                text = item.name,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextInteractive
+            )
         }
     }
 }
