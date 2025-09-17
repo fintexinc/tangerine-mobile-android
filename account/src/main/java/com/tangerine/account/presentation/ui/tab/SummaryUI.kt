@@ -122,7 +122,7 @@ private fun AccountBalanceUI() {
                         showNetworkContribution.value = !showNetworkContribution.value
                     },
                 painter = painterResource(R.drawable.ic_info),
-                contentDescription = "Info",
+                contentDescription = stringResource(R.string.description_icon_navigate_info),
                 tint = Colors.BrandBlack
             )
         }
@@ -142,7 +142,7 @@ private fun AccountBalanceUI() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
                 tint = Color(0xFF43A047),
-                contentDescription = "Increased Icon"
+                contentDescription = stringResource(R.string.description_icon_navigate_increased)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
@@ -275,7 +275,7 @@ private fun InvestorProfileUI(
         Icon(
             painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
             tint = Colors.BrandBlack,
-            contentDescription = "Expand Icon"
+            contentDescription = stringResource(R.string.description_icon_navigate_expand),
         )
     }
     if (expanded.value) {
@@ -468,7 +468,7 @@ private fun AccountDetailsUI(
         Icon(
             painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
             tint = Colors.BrandBlack,
-            contentDescription = "Expand Icon"
+            contentDescription = stringResource(R.string.description_icon_navigate_expand),
         )
     }
     if (expanded.value) {

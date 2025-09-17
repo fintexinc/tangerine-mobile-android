@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
@@ -55,7 +57,7 @@ fun TangerineSearchBar(
                 ) {
                     Icon(
                         painter = painterResource(com.fintexinc.core.R.drawable.ic_search),
-                        contentDescription = "Search Icon",
+                        contentDescription = stringResource(R.string.description_icon_search),
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -65,7 +67,7 @@ fun TangerineSearchBar(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .wrapContentHeight(),
-                                text = "Search",
+                                text = stringResource(R.string.text_search),
                                 style = FontStyles.BodyLarge,
                                 color = Colors.TextSubdued
                             )
@@ -80,7 +82,7 @@ fun TangerineSearchBar(
         Icon(
             modifier = Modifier.wrapContentSize(),
             painter = painterResource(com.fintexinc.core.R.drawable.ic_filter),
-            contentDescription = "Filter Icon",
+            contentDescription = stringResource(R.string.description_icon_filter),
             tint = Colors.BrandBlack
         )
     }

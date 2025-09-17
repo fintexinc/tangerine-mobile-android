@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_account_documents">Account Documents</string>
+
+<!--    <string name="description_icon_expand_collapse">Expand or collapse</string>-->
+    <string name="description_icon_back">Back</string>
+    <string name="description_icon_right">Right</string>
+
+</resources>

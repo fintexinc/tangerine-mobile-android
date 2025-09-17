@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
@@ -115,7 +116,7 @@ fun collapsableLazyColumn(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_down),
                 tint = Colors.BrandBlack,
-                contentDescription = "Expand/Collapse Icon",
+                contentDescription = stringResource(R.string.description_icon_expand_collapse),
             )
         }
     }

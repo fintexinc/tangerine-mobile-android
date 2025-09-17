@@ -2,6 +2,8 @@ package com.fintexinc.core.data.utils.date
 
 import com.fintexinc.core.domain.model.DocumentDate
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -47,4 +49,25 @@ fun DocumentDate.formatToString(): String {
     val monthName = if (month in 1..12) months[month] else "Unknown"
     val suffix = getDaySuffix(day)
     return "$monthName $day$suffix, $year"
+}
+
+fun formatDisplayDate(dateString: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+        val date = inputFormat.parse(dateString)
+        outputFormat.format(date ?: Date()).uppercase()
+    } catch (e: Exception) {
+        dateString
+    }
+}
+
+fun formatEffectiveDate(dateString: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+
+    val date = inputFormat.parse(dateString)
+    val formatted = outputFormat.format(date!!).uppercase()
+
+    return formatted
 }

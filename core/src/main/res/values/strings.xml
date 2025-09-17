@@ -4,4 +4,15 @@
     <string name="text_done">Done</string>
     <string name="text_assets">Assets</string>
     <string name="text_liabilities">Liabilities</string>
+    <string name="text_search">Search</string>
+    <string name="text_liabilities_count">Liabilities (%d)</string>
+    <string name="text_assets_count">Assets (%d)</string>
+
+    <string name="description_icon_expand_collapse">Expand or collapse</string>
+    <string name="description_icon_search">Search</string>
+    <string name="description_icon_filter">Filter</string>
+    <string name="description_icon_close">Close</string>
+    <string name="description_icon_check">Check</string>
+    <string name="description_icon_checkmark">Checkmark</string>
+    <string name="description_icon_add">Add</string>
 </resources>

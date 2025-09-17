@@ -1,6 +1,7 @@
 package com.fintexinc.dashboard.presentation.ui.mapper
 
 import com.fintexinc.core.data.utils.currency.formatCurrency
+import com.fintexinc.core.data.utils.date.formatEffectiveDate
 import com.fintexinc.core.domain.model.Banking
 import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.domain.model.DataPoint
@@ -8,12 +9,12 @@ import com.fintexinc.core.domain.model.Investment
 import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 
-fun Liability.toNameValue() = NameValueChecked(
+fun Liability.toNameValue(effectiveOnText: String) = NameValueChecked(
     name = liabilityType.label,
     value = balance,
-    subName = accountNumber,
+    subName = effectiveOnText.format(formatEffectiveDate(linkedDate)),
     date = linkedDate,
-    isChecked = true
+    isChecked = true,
 )
 
 fun Custom.toNameValue() = NameValueChecked(

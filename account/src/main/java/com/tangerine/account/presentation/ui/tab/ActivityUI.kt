@@ -64,7 +64,7 @@ fun ActivityUI(data: List<Transaction>) {
                 Icon(
                     modifier = Modifier.wrapContentSize(),
                     painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
-                    contentDescription = "Close Icon",
+                    contentDescription = stringResource(R.string.description_icon_close),
                     tint = Colors.BrandBlack
                 )
             }

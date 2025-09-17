@@ -1,5 +1,8 @@
 package com.fintexinc.dashboard.presentation.viewmodel
 
+import android.content.Context
+import android.provider.Settings.Global.getString
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fintexinc.core.domain.gateway.AccountGateway
@@ -11,7 +14,9 @@ import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
+import com.tangerine.charts.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +25,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val accountGateway: AccountGateway,
     private val netWorthGateway: NetWorthGateway,
 ) : ViewModel() {
@@ -35,14 +41,23 @@ class DashboardViewModel @Inject constructor(
         val assets = netWorthGateway.getAssets()
         val liabilities = netWorthGateway.getLiabilities()
         val activities = accountGateway.getActivities()
-        val documents = accountGateway.getDocuments()
+            .sortedByDescending { it.transactionDate }
+            .take(3)
+
+        val documents = accountGateway
+            .getDocuments()
+            .take(3)
         return State.Data(
             assets = mutableListOf<NameValueChecked>().apply {
                 addAll(assets.investment.map { it.toNameValue() })
                 addAll(assets.banking.map { it.toNameValue() })
                 addAll(assets.custom.map { it.toNameValue() })
             },
-            liabilities = liabilities.map { it.toNameValue() },
+            liabilities = liabilities.map {
+                it.toNameValue(
+                    context.getString(com.fintexinc.dashboard.R.string.text_effective_on)
+                )
+            },
             accounts = accounts,
             activities = activities,
             documents = documents
@@ -82,7 +97,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             val currentState = softDataCache ?: getData()
             val updatedLiabilities = currentState.liabilities.toMutableList().apply {
-                add(liability.toNameValue())
+                add(liability.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on)))
             }
             _state.value = currentState.copy(liabilities = updatedLiabilities)
             softDataCache = _state.value as? State.Data

@@ -63,7 +63,7 @@ fun DocumentsUI(documents: List<Document>, onOpenDocuments: () -> Unit = {}) {
                     .fillMaxSize()
                     .wrapContentHeight()
                     .padding(horizontal = 16.dp),
-                text = "All Documents",
+                text = stringResource(R.string.text_all_documents),
                 style = FontStyles.BodyLarge,
                 color = Colors.BrandBlack
             )
@@ -97,7 +97,7 @@ fun DocumentsUI(documents: List<Document>, onOpenDocuments: () -> Unit = {}) {
                         ) {
                             Icon(
                                 painter = painterResource(com.fintexinc.core.R.drawable.ic_search),
-                                contentDescription = "Search Icon",
+                                contentDescription = stringResource(R.string.description_icon_search),
                                 modifier = Modifier.padding(end = 8.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
@@ -157,7 +157,7 @@ fun DocumentsUI(documents: List<Document>, onOpenDocuments: () -> Unit = {}) {
                         modifier = Modifier
                             .wrapContentSize(),
                         painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
-                        contentDescription = "Arrow Right Icon",
+                        contentDescription = stringResource(R.string.description_icon_navigate_right),
                         tint = Colors.BrandBlack
                     )
                 }
@@ -223,7 +223,7 @@ private fun DocumentItemUI(
                 modifier = Modifier
                     .wrapContentSize(),
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
-                contentDescription = "Arrow Right Icon",
+                contentDescription = stringResource(R.string.description_icon_navigate_right),
                 tint = Colors.BrandBlack
             )
         }

@@ -37,8 +37,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.utils.date.DateUtils
-import com.fintexinc.core.domain.model.AssetType
-import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.domain.model.LiabilityType
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
@@ -64,7 +62,7 @@ fun AddLiabilityUI(
             mutableStateOf(false)
         }
         val liabilityType = remember {
-            mutableStateOf(LiabilityType.OTHER)
+            mutableStateOf<LiabilityType?>(null)
         }
         val liabilityName = remember {
             mutableStateOf("")
@@ -101,7 +99,7 @@ fun AddLiabilityUI(
                             onBackButtonFromExternalScreenClicked()
                         },
                     painter = painterResource(id = com.fintexinc.core.R.drawable.ic_back_arrow),
-                    contentDescription = "Back Arrow",
+                    contentDescription = stringResource(R.string.description_icon_back),
                     tint = Colors.BackgroundPrimary
                 )
                 Text(
@@ -163,13 +161,16 @@ fun AddLiabilityUI(
                     )
                 }
                 Spacer(modifier = Modifier.height(18.dp))
+
                 AddItemSelection(
                     title = stringResource(R.string.text_liability_type),
-                    text = liabilityType.value.label.ifEmpty { stringResource(R.string.text_make_selection) },
+                    text = liabilityType.value?.label?.takeIf { it.isNotEmpty() }
+                        ?: stringResource(R.string.text_make_selection),
                     onAddItemSelectionClicked = {
                         showLiabilityTypeSelection.value = true
                     }
                 )
+                Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_liability_name),
                     hint = stringResource(R.string.text_enter_name),
@@ -228,7 +229,7 @@ fun AddLiabilityUI(
                                     Liability(
                                         id = "",
                                         userId = "",
-                                        liabilityType = liabilityType.value,
+                                        liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                                         accountNumber = "",
                                         balance = estimatedValue.value.toDoubleOrNull() ?: 0.0,
                                         linkedDate = effectiveDate.value,
@@ -250,7 +251,7 @@ fun AddLiabilityUI(
             }
         }
         if (showLiabilityTypeSelection.value) {
-            ItemTypeSelection (
+            ItemTypeSelection(
                 itemTypes = LiabilityType.entries,
                 itemTypeTitle = stringResource(R.string.text_asset_type),
                 onItemTypeSelected = {
@@ -264,7 +265,8 @@ fun AddLiabilityUI(
         }
         if (showDialog.value != null) {
             @OptIn(ExperimentalMaterial3Api::class) val datePickerState = rememberDatePickerState()
-            @OptIn(ExperimentalMaterial3Api::class) DatePickerDialog(onDismissRequest = {
+            @OptIn(ExperimentalMaterial3Api::class) DatePickerDialog(
+                onDismissRequest = {
                 showDialog.value = null
             }, confirmButton = {
                 Button(onClick = {
@@ -288,13 +290,14 @@ fun AddLiabilityUI(
                         stringResource(R.string.text_ok), style = FontStyles.BodyMedium
                     )
                 }
-            }, dismissButton = {
-                Button(onClick = { showDialog.value = null }) {
-                    Text(
-                        stringResource(R.string.text_cancel), style = FontStyles.BodyMedium
-                    )
-                }
-            }) {
+            },
+                dismissButton = {
+                    Button(onClick = { showDialog.value = null }) {
+                        Text(
+                            stringResource(R.string.text_cancel), style = FontStyles.BodyMedium
+                        )
+                    }
+                }) {
                 DatePicker(state = datePickerState)
             }
         }

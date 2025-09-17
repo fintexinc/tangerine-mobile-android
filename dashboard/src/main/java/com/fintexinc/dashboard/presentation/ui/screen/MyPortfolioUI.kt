@@ -97,7 +97,7 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) ->
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
                 tint = Colors.BrandBlack,
-                contentDescription = "Close Icon"
+                contentDescription = stringResource(R.string.description_icon_close)
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
@@ -123,7 +123,7 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) ->
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_filter),
                 tint = Colors.BrandBlack,
-                contentDescription = "Filter"
+                contentDescription = stringResource(R.string.description_icon_filter)
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -241,7 +241,7 @@ private fun AccountListUI(
             Icon(
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
                 tint = Colors.BrandBlack,
-                contentDescription = "Expand Icon"
+                contentDescription = stringResource(R.string.description_icon_expand)
             )
         }
         if (expanded.value) {
@@ -311,7 +311,7 @@ private fun AccountListUI(
                                 } else {
                                     Color(0xFFD50000)
                                 },
-                                contentDescription = "Increased Icon"
+                                contentDescription = stringResource(R.string.description_icon_increase)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
@@ -332,7 +332,7 @@ private fun AccountListUI(
                         modifier = Modifier.wrapContentSize(),
                         painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
                         tint = Colors.BackgroundPrimary,
-                        contentDescription = "Details Icon"
+                        contentDescription = stringResource(R.string.description_view_details)
                     )
                 }
             }
@@ -402,7 +402,7 @@ private fun PerformanceChartUI() {
             modifier = Modifier.wrapContentSize(),
             painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
             tint = Color(0xFF43A047),
-            contentDescription = "Increased Icon"
+            contentDescription = stringResource(R.string.description_icon_increase)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(

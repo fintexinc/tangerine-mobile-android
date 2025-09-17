@@ -47,15 +47,32 @@
     <string name="text_make_selection">Make a selection</string>
     <string name="text_asset_name">Asset Name</string>
     <string name="text_enter_name">Enter a name</string>
-    <string name="text_estimated_value">Estimated value</string>
+    <string name="text_estimated_value">Estimate Pay down Rate</string>
     <string name="text_currency">$</string>
     <string name="text_annualized_rate_of_return">Annualized rate of return (%)</string>
     <string name="text_effective_date">Effective Date</string>
     <string name="text_revisit_date">Revisit Date (Optional)</string>
     <string name="text_ok">OK</string>
     <string name="text_cancel">Cancel</string>
-    <string name="text_liability_type">Liability type</string>
-    <string name="text_liability_name">Liability name</string>
+    <string name="text_liability_type">Liability Type</string>
+    <string name="text_liability_name">Liability Name</string>
+    <string name="text_view_more">View More</string>
+    <string name="text_projections">Projections</string>
+    <string name="text_cache_flow">Cache Flow</string>
+    <string name="text_percent">%</string>
+    <string name="text_effective_on">Effective on %s</string>
 
-    
+    // Descriptions
+    <string name="description_icon_notification">Notifications</string>
+    <string name="description_icon_all_accounts_expand">Expand all accounts</string>
+    <string name="description_icon_increase">Increase</string>
+    <string name="description_image_background_">Background</string>
+    <string name="description_icon_folder">Folder</string>
+
+    <string name="description_icon_back">Back</string>
+    <string name="description_icon_expand">Expand</string>
+    <string name="description_view_details">View details</string>
+    <string name="description_icon_close">Close</string>
+    <string name="description_icon_filter">Filter</string>
+    <string name="description_icon_open">Open</string>
 </resources>
