@@ -18,4 +18,14 @@
     <string name="text_investment_objective">Investment objective</string>
     <string name="text_time_horizon">Investment objective</string>
     <string name="text_living_expenses">Living Expenses</string>
+<string name="text_all_documents">All Documents</string>
+
+    <string name="description_icon_close">Close</string>
+    <string name="description_icon_search">Search</string>
+    <string name="description_icon_navigate_right">Navigate right</string>
+    <string name="description_icon_navigate_info">Info</string>
+    <string name="description_icon_navigate_increased">Increased</string>
+    <string name="description_icon_navigate_expand">Expand</string>
+    <string name="description_icon_navigate_back">Back</string>
+    <string name="description_icon_navigate_edit">Edit</string>
 </resources>

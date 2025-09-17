@@ -1,5 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -53,9 +54,12 @@ import com.fintexinc.core.presentation.ui.widget.list.collapsableLazyColumn
 import com.fintexinc.core.presentation.ui.widget.modal.AssetLiabilitiesModalBottomSheet
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
+import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
 import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
@@ -108,6 +112,9 @@ fun MyNetWorthUI(
                 NetWorthInfoUI(assets, liabilities, updateCheckedStates = updateCheckedStates)
             }
         }
+        val q = assets.map { it.toDataPoint() }
+        Log.e("sdsdsd","$q")
+
         collapsableLazyColumn(
             scope = this@LazyColumn,
             dataPoints = assets.map { it.toDataPoint() },
@@ -171,7 +178,7 @@ fun MyNetWorthUI(
                             .fillMaxWidth()
                             .wrapContentHeight(),
                         painter = painterResource(R.drawable.ic_saved_background),
-                        contentDescription = "Background"
+                        contentDescription = stringResource(R.string.description_image_background_),
                     )
                     Image(
                         modifier = Modifier
@@ -179,7 +186,7 @@ fun MyNetWorthUI(
                             .align(Alignment.TopCenter)
                             .padding(top = 16.dp),
                         painter = painterResource(R.drawable.ic_folder),
-                        contentDescription = "Folder Icon"
+                        contentDescription = stringResource(R.string.description_icon_folder)
                     )
                 }
             }
@@ -190,7 +197,10 @@ fun MyNetWorthUI(
         item {
             ColumnWithBorder {
                 Spacer(modifier = Modifier.height(18.dp))
-                ActivityUI(activities, documents)
+                ActivityUI(
+                    activities = activities,
+                    documents = documents,
+                )
             }
         }
         item {
@@ -302,7 +312,7 @@ private fun NetWorthNotificationUI() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(R.drawable.ic_bell),
                 tint = Colors.Background,
-                contentDescription = "Notification icon"
+                contentDescription = stringResource(R.string.description_icon_notification)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
@@ -366,8 +376,8 @@ private fun NetWorthInfoUI(
                         .wrapContentHeight(),
                     text = when (pageIndex) {
                         0 -> stringResource(R.string.text_my_net_worth)
-                        1 -> "Projections"
-                        2 -> "Cache Flow"
+                        1 -> stringResource(R.string.text_projections)
+                        2 -> stringResource(R.string.text_cache_flow)
                         else -> stringResource(R.string.text_my_net_worth)
                     },
                     style = FontStyles.BodyLarge
@@ -382,7 +392,7 @@ private fun NetWorthInfoUI(
                 Icon(
                     painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
                     tint = Color(0xFF006FD6),
-                    contentDescription = "All Accounts Open Icon",
+                    contentDescription = stringResource(R.string.description_icon_all_accounts_expand),
                 )
             }
             Spacer(modifier = Modifier.height(18.dp))
@@ -466,7 +476,7 @@ private fun TangerineNetWorthUI(
             modifier = Modifier.wrapContentSize(),
             painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
             tint = Color(0xFF43A047),
-            contentDescription = "Increased Icon"
+            contentDescription = stringResource(R.string.description_icon_increase),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
@@ -520,7 +530,7 @@ private fun ChangesToNetWorthUI(
             modifier = Modifier.wrapContentSize(),
             painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
             tint = Color(0xFF43A047),
-            contentDescription = "Increased Icon"
+            contentDescription = stringResource(R.string.description_icon_increase),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
@@ -705,7 +715,10 @@ private fun NetWorthChangesChartUI(
 }
 
 @Composable
-private fun ActivityUI(activities: List<Transaction>, documents: List<Document>) {
+private fun ActivityUI(
+    activities: List<Transaction>,
+    documents: List<Document>,
+) {
     Text(
         modifier = Modifier
             .fillMaxWidth()
@@ -717,15 +730,7 @@ private fun ActivityUI(activities: List<Transaction>, documents: List<Document>)
         firstTabTitle = stringResource(R.string.text_activity),
         secondTabTitle = stringResource(R.string.text_documents),
         onFirstTabSelected = {
-            ActivitiesUI(
-                activities.map {
-                    DataPoint(
-                        name = it.investmentDetails.fundName,
-                        subName = it.transactionDescription,
-                        value = it.transactionAmount.formatCurrency(),
-                    )
-                }
-            )
+            ActivitiesUI(transactions = activities)
         },
         onSecondTabSelected = {
             DocumentsUI(
@@ -741,13 +746,47 @@ private fun ActivityUI(activities: List<Transaction>, documents: List<Document>)
 }
 
 @Composable
-private fun ActivitiesUI(dataPoints: List<DataPoint>) {
+private fun ActivitiesUI(transactions: List<Transaction>) {
+    val groupedTransactions = remember(transactions) {
+        val grouped = transactions.groupByDate()
+        grouped
+    }
+
     Spacer(modifier = Modifier.height(18.dp))
-    dataPoints.forEach {
-        DataPointUI(
-            dataPoint = it,
-            isLastItem = dataPoints.last() == it
+
+    groupedTransactions.forEachIndexed { groupIndex, group ->
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            text = group.date,
+            style = FontStyles.BodyMedium,
+            color = Colors.TextSubdued
         )
+
+        group.transactions.forEachIndexed { index, transaction ->
+            TransactionItemUI(
+                transaction = transaction,
+                onClick = {
+                    // TODO() add navigation here
+                }
+            )
+
+            if (index < group.transactions.size - 1) {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .padding(horizontal = 12.dp)
+                        .background(Colors.BorderSubdued)
+                )
+            }
+        }
+
+        if (group != groupedTransactions.last()) {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
 
@@ -760,4 +799,13 @@ private fun DocumentsUI(dataPoints: List<DataPoint>) {
             isLastItem = dataPoints.last() == it
         )
     }
+
+    Spacer(modifier = Modifier.height(18.dp))
+
+    TextButton(
+        text = stringResource(R.string.text_view_more),
+        onClick = {
+            // TODO() add navigation
+        },
+    )
 }

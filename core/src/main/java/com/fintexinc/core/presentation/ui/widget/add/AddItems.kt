@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -28,11 +29,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.R
 import com.fintexinc.core.data.model.ItemType
-import com.fintexinc.core.domain.model.AssetType
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
-
 
 @Composable
 fun AddItemSelection(
@@ -40,56 +40,59 @@ fun AddItemSelection(
     text: String,
     onAddItemSelectionClicked: () -> Unit,
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(
-                color = Colors.Background,
-                shape = RoundedCornerShape(4.dp)
-            )
-            .clickable {
-                onAddItemSelectionClicked()
-            }
-            .padding(vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .weight(1f)
+                .fillMaxWidth()
                 .wrapContentHeight()
+                .background(
+                    color = Colors.Background,
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .clickable {
+                    onAddItemSelectionClicked()
+                }
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                text = title,
-                style = FontStyles.BodyMedium,
-                color = Colors.Text
-            )
-            Text(
+                    .weight(1f)
+                    .wrapContentHeight()
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    text = title,
+                    style = FontStyles.BodyMedium,
+                    color = Colors.Text
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    text = text,
+                    style = FontStyles.BodyLarge,
+                    color = Colors.TextSubdued
+                )
+            }
+            Icon(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                text = text,
-                style = FontStyles.BodyLarge,
-                color = Colors.TextSubdued
+                    .wrapContentSize()
+                    .padding(horizontal = 6.dp, vertical = 8.dp),
+                painter = painterResource(id = R.drawable.ic_arrow_down),
+                contentDescription = stringResource(R.string.description_icon_add),
+                tint = Colors.BrandBlack
             )
         }
-        Icon(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(horizontal = 6.dp, vertical = 8.dp),
-            painter = painterResource(id = com.fintexinc.core.R.drawable.ic_arrow_down),
-            contentDescription = "Add",
-            tint = Colors.BrandBlack
-        )
+
+        HorizontalDivider()
     }
-    Spacer(
-        modifier = Modifier
-            .height(1.dp)
-            .background(color = Colors.BorderSubdued)
-    )
 }
 
 @Composable
@@ -116,7 +119,9 @@ fun AddItemText(
             color = Colors.Text
         )
         BasicTextField(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             value = text.value,
             onValueChange = { newText ->
                 text.value = newText
@@ -137,10 +142,13 @@ fun AddItemText(
                 }
             },
         )
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+        HorizontalDivider()
     }
-    Spacer(
-        modifier = Modifier.height(18.dp)
-    )
     Spacer(
         modifier = Modifier
             .height(1.dp)

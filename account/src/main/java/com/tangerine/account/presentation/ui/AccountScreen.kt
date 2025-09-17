@@ -25,10 +25,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
+import com.tangerine.account.R
 import com.tangerine.account.presentation.ui.tab.ActivityUI
 import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
@@ -87,7 +89,7 @@ private fun Content(
                         onBackClicked()
                     },
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
-                contentDescription = "Back Icon",
+                contentDescription = stringResource(R.string.description_icon_navigate_back),
                 tint = Colors.Background,
             )
             Text(
@@ -101,7 +103,7 @@ private fun Content(
             )
             Icon(
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_edit),
-                contentDescription = "Edit Icon",
+                contentDescription = stringResource(R.string.description_icon_navigate_edit),
                 tint = Colors.Background,
             )
         }

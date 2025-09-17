@@ -19,11 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
+import com.tangerine.documents.R
 
 @Composable
 fun AccountDocumentsUI(onBackClicked: () -> Unit = {}) {
@@ -45,14 +47,14 @@ fun AccountDocumentsUI(onBackClicked: () -> Unit = {}) {
                     onBackClicked()
                 },
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
-                contentDescription = "Back Icon",
+                contentDescription = stringResource(R.string.description_icon_back),
                 tint = Colors.BackgroundPrimary,
             )
             Text(
                 modifier = Modifier
                     .weight(1f)
                     .wrapContentHeight(),
-                text = "Account Documents",
+                text = stringResource(R.string.text_account_documents),
                 style = FontStyles.HeadingMediumRegular,
                 color = Colors.BrandBlack,
                 textAlign = TextAlign.Center
@@ -152,8 +154,8 @@ private fun DocumentList(documents: List<Documents>) {
                                 modifier = Modifier
                                     .wrapContentSize(),
                                 painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
-                                contentDescription = "Arrow Right Icon",
-                                tint = Colors.BrandBlack
+                                contentDescription = stringResource(R.string.description_icon_right),
+                                tint = Colors.BrandBlack,
                             )
                         }
                     }

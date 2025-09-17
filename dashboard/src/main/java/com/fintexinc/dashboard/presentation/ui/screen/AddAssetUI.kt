@@ -102,7 +102,7 @@ fun AddAssetUI(
                             onBackButtonFromExternalScreenClicked()
                         },
                     painter = painterResource(id = com.fintexinc.core.R.drawable.ic_back_arrow),
-                    contentDescription = "Back Arrow",
+                    contentDescription = stringResource(R.string.description_icon_back),
                     tint = Colors.BackgroundPrimary
                 )
                 Text(
@@ -190,7 +190,7 @@ fun AddAssetUI(
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_annualized_rate_of_return),
-                    hint = "%",
+                    hint = stringResource(R.string.text_percent),
                     onTextChanged = { text ->
                         annAnnualizedRateOfReturn.value = text
                     },

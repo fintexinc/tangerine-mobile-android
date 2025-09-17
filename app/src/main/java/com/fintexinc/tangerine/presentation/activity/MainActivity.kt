@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -118,7 +119,7 @@ class MainActivity : ComponentActivity() {
                                             modifier = Modifier.size(24.dp),
                                             painter = painterResource(R.drawable.ic_menu_wealth),
                                             tint = if (bottomMenuSelectedItem.value == MenuItem.Wealth) Colors.BackgroundPrimary else Colors.BrandBlack,
-                                            contentDescription = "Accounts Icon"
+                                            contentDescription = stringResource(com.fintexinc.tangerine.R.string.description_icon_wealth)
                                         )
                                     }
                                 )
