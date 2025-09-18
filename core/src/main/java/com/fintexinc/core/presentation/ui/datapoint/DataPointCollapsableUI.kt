@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,7 +75,7 @@ fun DataPointCollapsableUI(
                     color = Colors.TextSubdued
                 )
             }
-            if(dataPoint.value != null) {
+            if (dataPoint.value != null) {
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = dataPoint.value,
@@ -121,21 +122,26 @@ fun DataPointUI(
                     style = FontStyles.BodyLarge,
                     color = Colors.BrandBlack
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = dataPoint.subName,
                     style = FontStyles.BodyMedium,
                     color = Colors.TextSubdued
                 )
             }
-            if(dataPoint.value != null) {
-                if(dataPoint.subValue != null) {
-                    Column {
+            if (dataPoint.value != null) {
+                if (dataPoint.subValue != null) {
+                    Column(
+                        modifier = Modifier.padding(end = 12.dp),
+                        horizontalAlignment = Alignment.End
+                    ) {
                         Text(
                             modifier = Modifier.wrapContentSize(),
                             text = dataPoint.value,
                             style = FontStyles.BodyLargeBold,
                             color = Colors.BrandBlack
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             modifier = Modifier.wrapContentSize(),
                             text = dataPoint.subValue,
@@ -160,13 +166,11 @@ fun DataPointUI(
                 )
             }
         }
-        if(!isLastItem) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Colors.BorderSubdued)
+        if (!isLastItem) {
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(
+                color = Colors.BorderSubdued,
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
     }

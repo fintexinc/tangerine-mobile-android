@@ -174,25 +174,6 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) ->
             onOpenAccount = onOpenAccount
         )
         Spacer(modifier = Modifier.height(30.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp),
-            text = stringResource(R.string.text_top_holdings),
-            style = FontStyles.TitleMediumBold
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp),
-            text = stringResource(R.string.text_largest_positions),
-            style = FontStyles.BodySmall,
-            color = Colors.DarkGray,
-        )
-        Spacer(modifier = Modifier.height(10.dp))
         TopHoldingsUI()
         Spacer(modifier = Modifier.height(30.dp))
     }
@@ -497,20 +478,55 @@ private fun GeographicExposure() {
 
 @Composable
 private fun TopHoldingsUI() {
-    ColumnWithBorder {
-        val dataPoints = listOf(
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)")
+    val dataPoints = listOf(
+        DataPoint("Bank of Nova Scotia", "BNS", "10,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "22,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "21,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "23,000 CAD", " (4.39%)")
+    ).sortedByDescending { dataPoint ->
+        dataPoint.value?.replace(",", "")?.replace(" CAD", "")?.toDoubleOrNull() ?: 0.0
+    }
+
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(
+                color = Colors.Background,
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp),
+            text = stringResource(R.string.text_top_holdings),
+            style = FontStyles.TitleMediumBold
         )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp),
+            text = stringResource(R.string.text_largest_positions),
+            style = FontStyles.BodySmall,
+            color = Colors.DarkGray,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
         dataPoints.forEachIndexed { index, dataPoint ->
             DataPointUI(
                 dataPoint = dataPoint,
                 isLastItem = dataPoints.size - 1 == index
             )
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
