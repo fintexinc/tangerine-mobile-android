@@ -1,8 +1,6 @@
 package com.fintexinc.dashboard.presentation.viewmodel
 
 import android.content.Context
-import android.provider.Settings.Global.getString
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fintexinc.core.domain.gateway.AccountGateway

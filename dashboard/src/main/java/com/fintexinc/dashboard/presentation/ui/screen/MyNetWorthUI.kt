@@ -1,6 +1,5 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -112,8 +111,6 @@ fun MyNetWorthUI(
                 NetWorthInfoUI(assets, liabilities, updateCheckedStates = updateCheckedStates)
             }
         }
-        val q = assets.map { it.toDataPoint() }
-        Log.e("sdsdsd","$q")
 
         collapsableLazyColumn(
             scope = this@LazyColumn,
