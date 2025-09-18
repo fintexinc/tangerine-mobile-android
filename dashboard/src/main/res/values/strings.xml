@@ -25,9 +25,9 @@
     <string name="text_new_market_insights">New market insights are available — stay informed with the latest trends and perspectives</string>
     <string name="text_check_in_update">Check-in and update</string>
     <string name="text_performance">Performance</string>
-    <string name="text_my_accounts">My Accounts</string>
-    <string name="format_registered_accounts">Registered Accounts (%d)</string>
-    <string name="format_non_registered_accounts">Non-Registered Accounts (%d)</string>
+    <string name="text_my_accounts">My Investment Accounts</string>
+    <string name="format_registered_accounts">Registered</string>
+    <string name="format_non_registered_accounts">Non-Registered</string>
     <string name="text_top_holdings">Top Holdings</string>
     <string name="text_largest_positions">Largest positions held across all accounts in this portfolio.</string>
     <string name="text_sector_exposure">Sector Exposure</string>
@@ -61,6 +61,8 @@
     <string name="text_cache_flow">Cache Flow</string>
     <string name="text_percent">%</string>
     <string name="text_effective_on">Effective on %s</string>
+    <string name="title_add_account">Add Account</string>
+    <string name="text_group_by">Group By</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>

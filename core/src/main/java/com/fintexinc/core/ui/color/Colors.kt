@@ -29,4 +29,5 @@ object Colors {
     val TextHighlight = Color(0xFF9C27B0)
     val Primary = Color(0xFFEA7024)
     val Transparent = Color(0x00000000)
+    val IconSupplementary = Color(0xFFBDBDBD)
 }

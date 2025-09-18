@@ -51,8 +51,8 @@ object FontStyles {
     )
     val BodyLargeBold = TextStyle(
         fontFamily = tangerineCircularBold,
-        fontSize = 16.sp,
-        lineHeight = 20.sp
+        fontSize = 18.sp,
+        lineHeight = 24.sp
     )
     val BodyLarge = TextStyle(
         fontFamily = tangerineCircularBook,
