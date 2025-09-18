@@ -1,5 +1,6 @@
 package com.fintexinc.core.presentation.ui.widget.modal
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -201,5 +202,6 @@ data class NameValueChecked(
     val subName: String,
     val date: String,
     val value: Double,
-    val isChecked: Boolean = true
+    val isChecked: Boolean = true,
+    @param:DrawableRes val iconResId: Int? = null,
 )

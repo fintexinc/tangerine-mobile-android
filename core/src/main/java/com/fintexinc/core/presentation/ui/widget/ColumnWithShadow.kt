@@ -14,11 +14,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.ui.color.Colors
 
 @Composable
 fun ColumnWithShadow(
+    outerHorizontalPadding: Dp = 18.dp,
     contentPadding: PaddingValues = PaddingValues(18.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -26,7 +28,7 @@ fun ColumnWithShadow(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 18.dp)
+            .padding(horizontal = outerHorizontalPadding)
             .shadow(4.dp, RoundedCornerShape(16.dp))
             .background(
                 color = Colors.Background,
