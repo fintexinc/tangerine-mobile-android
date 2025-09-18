@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="text_cancel">Cancel</string>
+    <string name="text_done">Done</string>
+    <string name="text_assets">Assets</string>
+    <string name="text_liabilities">Liabilities</string>
     <string name="text_search">Search</string>
     <string name="text_liabilities_count">Liabilities (%d)</string>
     <string name="text_assets_count">Assets (%d)</string>
