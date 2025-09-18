@@ -6,8 +6,8 @@
     <string name="text_my_portfolio">My Portfolio</string>
     <string name="text_tangerine_net_worth">Tangerine Net Worth</string>
     <string name="text_all_accounts">All Accounts</string>
-    <string name="text_well_done">Well done!</string>
-    <string name="text_you_increased_rrsp">You’ve increased RRSP contributions by $1500 this month</string>
+    <string name="text_welcome_to_tangerine_wealth">Welcome to Tangerine Wealth!</string>
+    <string name="text_track_your_net_worth">Tracking Your Net Worth: Start building your full financial picture. Enter your assets and debts below to see how your wealth is growing over time.</string>
     <string name="text_earned_this_month">earned this month</string>
     <string name="text_assets">Assets</string>
     <string name="text_add_asset">Add Asset</string>
