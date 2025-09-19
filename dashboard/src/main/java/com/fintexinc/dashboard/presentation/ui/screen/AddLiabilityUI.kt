@@ -47,6 +47,7 @@ import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import java.util.UUID
 
 @Composable
 fun AddLiabilityUI(
@@ -227,16 +228,17 @@ fun AddLiabilityUI(
                             .clickableShape(RoundedCornerShape(40.dp)) {
                                 onSaveLiabilityClick(
                                     Liability(
-                                        id = "",
-                                        userId = "",
+                                        id = UUID.randomUUID().toString(),
+                                        userId = UUID.randomUUID().toString(),
                                         liabilityType = liabilityType.value ?: LiabilityType.OTHER,
-                                        accountNumber = "",
+                                        accountNumber = UUID.randomUUID().toString(),
                                         balance = estimatedValue.value.toDoubleOrNull() ?: 0.0,
                                         linkedDate = effectiveDate.value,
                                         limit = 0.0,
                                         interestRate = 0.0,
                                         currency = "$",
-                                        lastUpdated = effectiveDate.value
+                                        lastUpdated = effectiveDate.value,
+                                        isCustomLiability = true
                                     )
                                 )
                             }

@@ -16,7 +16,7 @@ fun Liability.toNameValue(effectiveOnText: String) = NameValueChecked(
     subName = effectiveOnText.format(formatEffectiveDate(linkedDate)),
     date = linkedDate,
     isChecked = true,
-    iconResId = R.drawable.ic_liability
+    iconResId = if (isCustomLiability) R.drawable.ic_custom_liability else R.drawable.ic_liability
 )
 
 fun Custom.toNameValue() = NameValueChecked(
@@ -25,7 +25,7 @@ fun Custom.toNameValue() = NameValueChecked(
     subName = id,
     date = linkedDate,
     isChecked = true,
-    iconResId = R.drawable.ic_custom_asset_boat
+    iconResId = R.drawable.ic_custom_asset
 )
 
 fun Banking.toNameValue() = NameValueChecked(
