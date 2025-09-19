@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -31,10 +34,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.presentation.ui.widget.TabItem
+import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.ToolBar
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
+import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
 import com.tangerine.account.presentation.ui.tab.ActivityUI
 import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
@@ -67,6 +73,7 @@ fun AccountScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
     state: AccountViewModel.State,
@@ -78,6 +85,57 @@ private fun Content(
         mutableStateOf(AccountTab.SUMMARY)
     }
 
+    val showBottomSheet = state is AccountViewModel.State.Activities ||
+            state is AccountViewModel.State.Documents ||
+            state is AccountViewModel.State.Positions ||
+            state is AccountViewModel.State.Summary
+
+    if (showBottomSheet) {
+        val bottomSheetState = rememberBottomSheetScaffoldState()
+        val selectedBottomTab = remember { mutableStateOf(BottomSheetTab.TRANSACTIONS) }
+
+        BottomSheetScaffold(
+            scaffoldState = bottomSheetState,
+            sheetContent = {
+                BottomSheetTabsContent(
+                    selectedTab = selectedBottomTab.value,
+                    onTabSelected = { selectedBottomTab.value = it },
+                    state = state,
+                    onOpenDocuments = onOpenDocuments
+                )
+            },
+            sheetPeekHeight = 80.dp,
+            sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            sheetContainerColor = Colors.Background,
+            sheetShadowElevation = 16.dp,
+        ) {
+            MainPageContent(
+                state = state,
+                selectedTab = selectedTab,
+                onTabSelected = onTabSelected,
+                onBackClicked = onBackClicked,
+                onOpenDocuments = onOpenDocuments,
+            )
+        }
+    } else {
+        MainPageContent(
+            state = state,
+            selectedTab = selectedTab,
+            onTabSelected = onTabSelected,
+            onBackClicked = onBackClicked,
+            onOpenDocuments = onOpenDocuments,
+        )
+    }
+}
+
+@Composable
+private fun MainPageContent(
+    state: AccountViewModel.State,
+    selectedTab: MutableState<AccountTab>,
+    onTabSelected: (AccountTab) -> Unit,
+    onBackClicked: () -> Unit,
+    onOpenDocuments: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,6 +180,7 @@ private fun Content(
             }
         )
         Spacer(modifier = Modifier.height(24.dp))
+
         when (state) {
             is AccountViewModel.State.Activities -> ActivityUI(state.data)
             is AccountViewModel.State.Documents -> DocumentsUI(state.data, onOpenDocuments)
@@ -130,6 +189,39 @@ private fun Content(
             else -> {}
         }
     }
+}
+
+enum class BottomSheetTab {
+    TRANSACTIONS, DETAILS, DOCUMENTS
+}
+
+@Composable
+private fun BottomSheetTabsContent(
+    selectedTab: BottomSheetTab,
+    onTabSelected: (BottomSheetTab) -> Unit,
+    state: AccountViewModel.State,
+    onOpenDocuments: () -> Unit
+) {
+
+    TabsSelector(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        tabs = listOf(
+            TabItem(
+                title = stringResource(R.string.title_transactions),
+                content = {}
+            ),
+            TabItem(
+                title = stringResource(R.string.title_details),
+                content = {
+                    DetailsUi()
+                }
+            ),
+            TabItem(
+                title = stringResource(R.string.title_documents),
+                content = {}
+            )
+        )
+    )
 }
 
 @Composable

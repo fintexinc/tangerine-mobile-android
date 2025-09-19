@@ -29,6 +29,18 @@
     <string name="text_portfolio_as_of_date">Portfolio as of January 1, 2024.</string>
     <string name="title_allocation_holdings">Allocations &amp; Holdings</string>
     <string name="text_info_allocations">Information only: This is how we aim to manage your Portfolio. This percentages may change slightly over time.</string>
+    <string name="text_account_number">Account number</string>
+    <string name="text_account_name">Account name</string>
+    <string name="text_portfolio">Portfolio</string>
+    <string name="text_distributions">Distributions</string>
+    <string name="text_management_expense_ratio">Management Expense Ratio (MER)</string>
+    <string name="text_account_registration">Account registration</string>
+    <string name="text_account_type">Account type</string>
+    <string name="text_inception_date">Inception date</string>
+    <string name="text_beneficiaries">Beneficiaries</string>
+    <string name="title_details">Details</string>
+    <string name="title_transactions">Transactions</string>
+    <string name="title_documents">Documents</string>
 
     <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>

@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,16 +27,12 @@ import com.fintexinc.core.ui.color.Colors
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun TwoTabsSelector(
+fun TabsSelector(
     modifier: Modifier = Modifier,
-    firstTabTitle: String,
-    secondTabTitle: String,
-    onFirstTabSelected: @Composable () -> Unit,
-    onSecondTabSelected: @Composable () -> Unit,
+    tabs: List<TabItem>
 ) {
-    val mode = remember {
-        mutableStateOf<Mode>(Mode.FirstTab)
-    }
+    val selectedIndex = remember { mutableIntStateOf(0) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -46,82 +42,51 @@ fun TwoTabsSelector(
                 shape = RoundedCornerShape(8.dp)
             )
     ) {
-        Text(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(0.5f)
-                .padding(2.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    mode.value = Mode.FirstTab
-                }
-                .then(
-                    if (mode.value is Mode.FirstTab) {
-                        Modifier
-                            .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp))
-                            .background(
-                                color = Colors.Background,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .border(
-                                width = 0.5.dp,
-                                color = Colors.BorderSubdued,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                    } else {
-                        Modifier
-                    }.padding(vertical = 6.dp)
-                ),
-            text = firstTabTitle,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(0.5f)
-                .padding(2.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    mode.value = Mode.SecondTab
-                }
-                .then(
-                    if (mode.value is Mode.SecondTab) {
-                        Modifier
-                            .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp))
-                            .background(
-                                color = Colors.Background,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .border(
-                                width = 0.5.dp,
-                                color = Colors.BorderSubdued,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-
-                    } else {
-                        Modifier
-                    }.padding(vertical = 6.dp)
-                ),
-            text = secondTabTitle,
-            textAlign = TextAlign.Center
-        )
+        tabs.forEachIndexed { index, tab ->
+            Text(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .weight(1f / tabs.size)
+                    .padding(2.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable {
+                        selectedIndex.value = index
+                    }
+                    .then(
+                        if (selectedIndex.value == index) {
+                            Modifier
+                                .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp))
+                                .background(
+                                    color = Colors.Background,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .border(
+                                    width = 0.5.dp,
+                                    color = Colors.BorderSubdued,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                        } else {
+                            Modifier
+                        }.padding(vertical = 6.dp)
+                    ),
+                text = tab.title,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 
     AnimatedContent(
-        targetState = mode.value,
+        targetState = selectedIndex.value,
         transitionSpec = {
             fadeIn(animationSpec = tween(300)).togetherWith(fadeOut(animationSpec = tween(150)))
         },
         label = "tab_content"
-    ) { currentMode ->
-        when (currentMode) {
-            is Mode.FirstTab -> onFirstTabSelected()
-            is Mode.SecondTab -> onSecondTabSelected()
-        }
+    ) { index ->
+        tabs[index].content()
     }
 }
 
-sealed class Mode {
-    object FirstTab : Mode()
-    object SecondTab : Mode()
-}
+data class TabItem(
+    val title: String,
+    val content: @Composable () -> Unit
+)

@@ -43,7 +43,8 @@ import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
-import com.fintexinc.core.presentation.ui.widget.TwoTabsSelector
+import com.fintexinc.core.presentation.ui.widget.TabItem
+import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.list.collapsableLazyColumn
 import com.fintexinc.core.presentation.ui.widget.modal.AssetLiabilitiesModalBottomSheet
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
@@ -754,22 +755,28 @@ private fun ActivityUI(
         text = stringResource(R.string.text_what_is_going_on),
         style = FontStyles.TitleSmall
     )
-    TwoTabsSelector(
-        firstTabTitle = stringResource(R.string.text_activity),
-        secondTabTitle = stringResource(R.string.text_documents),
-        onFirstTabSelected = {
-            ActivitiesUI(transactions = activities)
-        },
-        onSecondTabSelected = {
-            DocumentsUI(
-                documents.map {
-                    DataPoint(
-                        name = it.documentName,
-                        subName = it.documentDate.formatToString()
+    TabsSelector(
+        tabs = listOf(
+            TabItem(
+                title = stringResource(R.string.text_activity),
+                content = {
+                    ActivitiesUI(transactions = activities)
+                }
+            ),
+            TabItem(
+                title = stringResource(R.string.text_documents),
+                content = {
+                    DocumentsUI(
+                        documents.map {
+                            DataPoint(
+                                name = it.documentName,
+                                subName = it.documentDate.formatToString()
+                            )
+                        }
                     )
                 }
             )
-        }
+        )
     )
 }
 
