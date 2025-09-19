@@ -52,6 +52,7 @@ fun TabsSelector(
                     .clip(RoundedCornerShape(8.dp))
                     .clickable {
                         selectedIndex.value = index
+                        tabs[index].onTabSelected?.invoke()
                     }
                     .then(
                         if (selectedIndex.value == index) {
@@ -90,5 +91,6 @@ fun TabsSelector(
 
 data class TabItem(
     val title: String,
-    val content: @Composable () -> Unit
+    val content: @Composable () -> Unit,
+    val onTabSelected: (() -> Unit)? = null,
 )
