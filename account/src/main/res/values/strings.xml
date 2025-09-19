@@ -18,8 +18,17 @@
     <string name="text_investment_objective">Investment objective</string>
     <string name="text_time_horizon">Investment objective</string>
     <string name="text_living_expenses">Living Expenses</string>
-<string name="text_all_documents">All Documents</string>
+    <string name="text_all_documents">All Documents</string>
+    <string name="title_account_return">Account Return</string>
+    <string name="text_earning_to_date">Earning to date</string>
+    <string name="text_net_investment_to_date">Net investment to date</string>
+    <string name="text_account_capital_gain_loss">Account Capital Gain/Loss</string>
+    <string name="text_account_return">Account Return</string>
+    <string name="text_total_units">Total units</string>
+    <string name="text_unit_price">Unit Price</string>
+    <string name="text_portfolio_as_of_date">Portfolio as of January 1, 2024.</string>
 
+    <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>
     <string name="description_icon_search">Search</string>
     <string name="description_icon_navigate_right">Navigate right</string>

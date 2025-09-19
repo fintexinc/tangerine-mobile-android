@@ -3,6 +3,7 @@ package com.tangerine.account.presentation.ui.tab
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,12 +11,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.NameValue
@@ -55,43 +57,211 @@ fun SummaryUI(account: Account) {
             .wrapContentHeight()
     ) {
         AccountBalanceUI()
-        Spacer(modifier = Modifier.height(12.dp))
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        AccountReturnData(
+            earningToDate = "+$21,234.56",
+            netInvestmentToDate = "$756,412.30",
+            accountCapitalGainLoss = "$10,000.00",
+            accountReturn = "+33.33%",
+            totalUnits = "650.4051",
+            unitPrice = "$12.5046"
+        )
         // TODO: figure out which data to show here
-        AccountDetailsUI(
-            listOf(
-                NameValue(
-                    name = "Net contributions",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Transfers",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Transferred Out",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Account Capital Gain/Loss",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Account Return",
-                    value = "+33.33%"
-                ),
+//        AccountDetailsUI(
+//            listOf(
+//                NameValue(
+//                    name = "Net contributions",
+//                    value = "$10,000.00"
+//                ),
+//                NameValue(
+//                    name = "Transfers",
+//                    value = "$10,000.00"
+//                ),
+//                NameValue(
+//                    name = "Transferred Out",
+//                    value = "$10,000.00"
+//                ),
+//                NameValue(
+//                    name = "Account Capital Gain/Loss",
+//                    value = "$10,000.00"
+//                ),
+//                NameValue(
+//                    name = "Account Return",
+//                    value = "+33.33%"
+//                ),
+//            )
+//        )
+//        Spacer(modifier = Modifier.height(18.dp))
+//        InvestorProfileUI(
+//            account = account,
+//            title = stringResource(R.string.text_investor_profile),
+//            buttonText = stringResource(R.string.button_edit_profile)
+//        )
+//        Spacer(modifier = Modifier.height(18.dp))
+//        AccountDetailsUI(
+//            title = stringResource(R.string.text_account_details)
+//        )
+//        Spacer(modifier = Modifier.height(48.dp))
+    }
+}
+
+@Composable
+private fun AccountReturnData(
+    earningToDate: String,
+    netInvestmentToDate: String,
+    accountCapitalGainLoss: String,
+    accountReturn: String,
+    totalUnits: String,
+    unitPrice: String,
+    modifier: Modifier = Modifier
+) {
+    val q: TextStyle = FontStyles.TitleSmall
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+            .background(color = Colors.Background, shape = RoundedCornerShape(16.dp))
+            .padding(horizontal = 18.dp)
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.title_account_return),
+            style = FontStyles.TitleSmall,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+
+        AccountReturnRow(
+            label = stringResource(R.string.text_earning_to_date),
+            value = earningToDate,
+            valueColor = Colors.TransactionIncome,
+            valueNameColor = Colors.Text,
+            hasInfoIcon = true,
+            valueNameStyle = FontStyles.BodyMediumBold,
+            valueStyle = FontStyles.TitleSmall
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HorizontalDivider(color = Colors.BorderSubdued)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AccountReturnRow(
+            label = stringResource(R.string.text_net_investment_to_date),
+            value = netInvestmentToDate,
+            valueColor = Colors.Text,
+            hasInfoIcon = true
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HorizontalDivider(color = Colors.BorderSubdued)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AccountReturnRow(
+            label = stringResource(R.string.text_account_capital_gain_loss),
+            value = accountCapitalGainLoss,
+            valueColor = Colors.Text,
+            hasInfoIcon = false
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HorizontalDivider(color = Colors.BorderSubdued)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AccountReturnRow(
+            label = stringResource(R.string.text_account_return),
+            value = accountReturn,
+            valueColor = Colors.Text,
+            hasInfoIcon = true
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HorizontalDivider(color = Colors.BorderSubdued)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AccountReturnRow(
+            label = stringResource(R.string.text_total_units),
+            value = totalUnits,
+            valueColor =Colors.Text,
+            hasInfoIcon = false
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HorizontalDivider(color = Colors.BorderSubdued)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AccountReturnRow(
+            label = stringResource(R.string.text_unit_price),
+            value = unitPrice,
+            valueColor = Colors.Text,
+            hasInfoIcon = true
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HorizontalDivider(color = Colors.BorderSubdued)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = stringResource(R.string.text_portfolio_as_of_date),
+            style = FontStyles.BodySmallItalic,
+            color = Colors.BorderInformation,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+    }
+}
+
+@Composable
+private fun AccountReturnRow(
+    label: String,
+    value: String,
+    valueColor: Color,
+    valueNameColor: Color = Colors.BorderInformation,
+    hasInfoIcon: Boolean,
+    valueNameStyle: TextStyle = FontStyles.BodyMedium,
+    valueStyle: TextStyle = FontStyles.BodyLarge,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = label,
+                style = valueNameStyle,
+                color = valueNameColor
             )
+
+            if (hasInfoIcon) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    painter = painterResource(R.drawable.ic_info),
+                    contentDescription = stringResource(R.string.description_info_icon),
+                    modifier = Modifier.size(16.dp),
+                    tint = Colors.TextInteractive,
+                )
+            }
+        }
+
+        Text(
+            text = value,
+            style = valueStyle,
+            color = valueColor,
+            textAlign = TextAlign.End
         )
-        Spacer(modifier = Modifier.height(18.dp))
-        InvestorProfileUI(
-            account = account,
-            title = stringResource(R.string.text_investor_profile),
-            buttonText = stringResource(R.string.button_edit_profile)
-        )
-        Spacer(modifier = Modifier.height(18.dp))
-        AccountDetailsUI(
-            title = stringResource(R.string.text_account_details)
-        )
-        Spacer(modifier = Modifier.height(48.dp))
     }
 }
 
