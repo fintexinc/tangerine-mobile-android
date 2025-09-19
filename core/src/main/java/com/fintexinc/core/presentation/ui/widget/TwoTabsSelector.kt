@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.font.FontStyles
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -70,7 +71,8 @@ fun TabsSelector(
                         }.padding(vertical = 6.dp)
                     ),
                 text = tab.title,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = if (selectedIndex.value == index) FontStyles.BodyMediumBold else FontStyles.BodyMedium
             )
         }
     }
