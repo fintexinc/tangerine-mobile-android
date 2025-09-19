@@ -6,24 +6,28 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.font.FontStyles
 
 @Composable
 fun TextButton(
     text: String,
     onClick: () -> Unit,
+    color: Color = Colors.BrandBlack,
     modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors().copy(
-            containerColor = Colors.BrandBlack
-        )
+            containerColor = color
+        ),
     ) {
         Text(
             text = text,
-            color = Colors.Background
+            color = Colors.Background,
+            style = FontStyles.BodyLargeBold,
         )
     }
 }
