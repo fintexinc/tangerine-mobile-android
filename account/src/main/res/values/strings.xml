@@ -27,6 +27,8 @@
     <string name="text_total_units">Total units</string>
     <string name="text_unit_price">Unit Price</string>
     <string name="text_portfolio_as_of_date">Portfolio as of January 1, 2024.</string>
+    <string name="title_allocation_holdings">Allocations &amp; Holdings</string>
+    <string name="text_info_allocations">Information only: This is how we aim to manage your Portfolio. This percentages may change slightly over time.</string>
 
     <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>
