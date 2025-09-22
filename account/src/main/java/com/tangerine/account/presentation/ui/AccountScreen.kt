@@ -43,6 +43,7 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
+import com.tangerine.account.presentation.ui.bottom_tab.DocumentsUi
 import com.tangerine.account.presentation.ui.tab.ActivityUI
 import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
@@ -213,7 +214,12 @@ private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
             ),
             TabItem(
                 title = stringResource(R.string.title_documents),
-                content = {}
+                content = {
+                    DocumentsUi()
+                },
+                onTabSelected = {
+                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                }
             )
         )
     )

@@ -34,30 +34,22 @@ import com.fintexinc.core.ui.font.FontStyles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetLiabilitiesModalBottomSheet(
+fun UniversalModalBottomSheet(
     isShowing: MutableState<Boolean>,
     title: String,
-    assets: List<NameValueChecked>,
-    liabilities: List<NameValueChecked>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    onDoneClick: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null,
+    content: @Composable () -> Unit
 ) {
-    val assetMainCheckState = remember {
-        mutableStateOf(true)
-    }
-    val assetsCheckStates = remember {
-        mutableStateListOf(*assets.map { it.isChecked }.toTypedArray())
-    }
-    val liabilitiesMainCheckState = remember {
-        mutableStateOf(true)
-    }
-    val liabilitiesCheckStates = remember {
-        mutableStateListOf(*liabilities.map { it.isChecked }.toTypedArray())
-    }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false
+    )
+
     ModalBottomSheet(
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        sheetState = sheetState,
         onDismissRequest = {
             isShowing.value = false
-            updateCheckedStates(assets, assetsCheckStates, liabilities, liabilitiesCheckStates)
+            onDismiss?.invoke()
         },
         shape = RoundedCornerShape(8.dp),
         containerColor = Colors.Background,
@@ -69,26 +61,27 @@ fun AssetLiabilitiesModalBottomSheet(
                 .wrapContentHeight()
         ) {
             Spacer(modifier = Modifier.height(16.dp))
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 24.dp)
             ) {
                 Text(
                     modifier = Modifier
-                        .weight(0.33f)
                         .wrapContentHeight()
                         .clickable {
                             isShowing.value = false
+                            onDismiss?.invoke()
                         },
                     text = stringResource(R.string.text_cancel),
-                    style = FontStyles.BodyLarge,
+                    style = FontStyles.BodyLargeBold,
                     color = Colors.TextInteractive
                 )
                 Text(
                     modifier = Modifier
-                        .weight(0.33f)
+                        .weight(1f)
                         .wrapContentHeight(),
                     text = title,
                     textAlign = TextAlign.Center,
@@ -97,46 +90,81 @@ fun AssetLiabilitiesModalBottomSheet(
                 )
                 Text(
                     modifier = Modifier
-                        .weight(0.33f)
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                        .clickable {
+                            onDoneClick?.invoke()
+                            isShowing.value = false
+                        },
                     text = stringResource(R.string.text_done),
                     textAlign = TextAlign.End,
                     style = FontStyles.BodyLargeBold,
-                    color = Colors.BrandBlack
+                    color = Colors.TextInteractive
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Spacer(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .height(1.dp)
                     .background(Colors.BorderSubdued)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
-            ) {
-                ChipsWithTitle(
-                    title = stringResource(R.string.text_assets),
-                    items = assets,
-                    checkStates = assetsCheckStates,
-                    onItemCheckedChange = { index, isChecked ->
-                        assetsCheckStates[index] = isChecked
-                    }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                ChipsWithTitle(
-                    title = stringResource(R.string.text_liabilities),
-                    items = liabilities,
-                    checkStates = liabilitiesCheckStates,
-                    onItemCheckedChange = { index, isChecked ->
-                        liabilitiesCheckStates[index] = isChecked
-                    }
-                )
-            }
-        }
 
+            content()
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+fun AssetLiabilitiesModalBottomSheet(
+    isShowing: MutableState<Boolean>,
+    title: String,
+    assets: List<NameValueChecked>,
+    liabilities: List<NameValueChecked>,
+    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+) {
+    val assetsCheckStates = remember {
+        mutableStateListOf(*assets.map { it.isChecked }.toTypedArray())
+    }
+    val liabilitiesCheckStates = remember {
+        mutableStateListOf(*liabilities.map { it.isChecked }.toTypedArray())
+    }
+
+    UniversalModalBottomSheet(
+        isShowing = isShowing,
+        title = title,
+        onDoneClick = {
+            updateCheckedStates(assets, assetsCheckStates, liabilities, liabilitiesCheckStates)
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+        ) {
+            ChipsWithTitle(
+                title = stringResource(R.string.text_assets),
+                items = assets,
+                checkStates = assetsCheckStates,
+                onItemCheckedChange = { index, isChecked ->
+                    assetsCheckStates[index] = isChecked
+                }
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            ChipsWithTitle(
+                title = stringResource(R.string.text_liabilities),
+                items = liabilities,
+                checkStates = liabilitiesCheckStates,
+                onItemCheckedChange = { index, isChecked ->
+                    liabilitiesCheckStates[index] = isChecked
+                }
+            )
+        }
     }
 }
 
