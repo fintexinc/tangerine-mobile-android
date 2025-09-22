@@ -59,7 +59,7 @@ internal fun FilterButton(
 
 @Preview(showBackground = true)
 @Composable
-fun FilterButtonPreview() {
+private fun FilterButtonPreview() {
     Row(
         modifier = Modifier
             .fillMaxWidth()

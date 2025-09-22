@@ -42,8 +42,8 @@ import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
-import com.tangerine.account.presentation.models.DateFilter
-import com.tangerine.account.presentation.models.DocumentTypeFilter
+import com.tangerine.account.presentation.models.DateFilterUi
+import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.ui.components.FilterButton
 
 @Composable
@@ -251,14 +251,14 @@ private fun DocumentItem(
 }
 
 @Composable
-fun DateFilterModalBottomSheet(
+private fun DateFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
     selectedDates: List<String>,
     onDatesSelected: (List<String>) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dateOptions = DateFilter.entries.map { stringResource(it.stringResId) }
-    val allOptionName = stringResource(DateFilter.ALL_DATES.stringResId)
+    val dateOptions = DateFilterUi.entries.map { stringResource(it.stringResId) }
+    val allOptionName = stringResource(DateFilterUi.ALL_DATES.stringResId)
 
     val selectedStates = remember {
         mutableStateListOf(*dateOptions.map { it in selectedDates }.toTypedArray())
@@ -297,14 +297,14 @@ fun DateFilterModalBottomSheet(
 }
 
 @Composable
-fun DocumentTypeFilterModalBottomSheet(
+private fun DocumentTypeFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
     selectedTypes: List<String>,
     onTypesSelected: (List<String>) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val documentTypeOptions = DocumentTypeFilter.entries.map { stringResource(it.stringResId) }
-    val allOptionName = stringResource(DocumentTypeFilter.ALL_DOCUMENTS.stringResId)
+    val documentTypeOptions = DocumentTypeFilterUi.entries.map { stringResource(it.stringResId) }
+    val allOptionName = stringResource(DocumentTypeFilterUi.ALL_DOCUMENTS.stringResId)
 
     val selectedStates = remember {
         mutableStateListOf(*documentTypeOptions.map { it in selectedTypes }.toTypedArray())
@@ -419,7 +419,7 @@ private fun MultiSelectChips(
 
 @Preview(showBackground = true)
 @Composable
-fun DocumentItemPreview() {
+private fun DocumentItemPreview() {
     DocumentItem(
         title = "title",
         date = "date",
@@ -429,6 +429,6 @@ fun DocumentItemPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun FilterButtonPreview() {
+private fun FilterButtonPreview() {
     DocumentsUi()
 }

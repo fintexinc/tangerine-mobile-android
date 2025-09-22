@@ -3,7 +3,7 @@ package com.tangerine.account.presentation.models
 import androidx.annotation.StringRes
 import com.tangerine.account.R
 
-enum class DateFilter(@StringRes val stringResId: Int, ) {
+enum class DateFilterUi(@StringRes val stringResId: Int, ) {
     ALL_DATES(R.string.filter_all_dates),
     LAST_30_DAYS(R.string.filter_last_30_days),
     LAST_60_DAYS(R.string.filter_last_60_days),
@@ -13,7 +13,7 @@ enum class DateFilter(@StringRes val stringResId: Int, ) {
     BY_MONTH(R.string.filter_by_month)
 }
 
-enum class DocumentTypeFilter(@StringRes val stringResId: Int) {
+enum class DocumentTypeFilterUi(@StringRes val stringResId: Int) {
     ALL_DOCUMENTS(R.string.filter_all_documents),
     ACCOUNT_DOCUMENTS(R.string.filter_account_documents),
     STATEMENTS(R.string.filter_statements),
