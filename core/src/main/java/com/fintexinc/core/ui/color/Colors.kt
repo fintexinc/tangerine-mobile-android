@@ -21,7 +21,7 @@ object Colors {
     val BackgroundSupplementary = Color(0xFFEEEEEE)
     val TransactionIncome = Color(0xFF43A047)
     val TransactionLiability = Color(0xFFD50000)
-    val Text = Color(0xFF000000)
+    val Text = Color(0xFF333333)
     val TextPrimary = Color(0xFFEA7024)
     val TextSuccess = Color(0xFF2E7D31)
     val TextInverse = Color(0xFFFFFFFF)

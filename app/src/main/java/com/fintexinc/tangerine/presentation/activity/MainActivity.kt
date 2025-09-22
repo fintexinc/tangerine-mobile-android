@@ -210,27 +210,31 @@ class MainActivity : ComponentActivity() {
                                     onOpenAccountClicked = {
                                         navController.navigate(Account(it))
                                     },
-                                    onAddAssetClicked = {
-                                        dashboardViewModel.onAddAssetClicked()
+                                    onAddAssetClicked = { dataPoint ->
+                                        dashboardViewModel.onAddAssetClicked(dataPoint)
                                     },
                                     onAddAsset = { asset ->
                                         dashboardViewModel.onAddAsset(asset)
                                     },
-                                    onAddLiabilityClicked = {
-                                        dashboardViewModel.onAddLiabilityClicked()
+                                    onDeleteAsset = { asset ->
+                                        dashboardViewModel.onDeleteAsset(asset)
+                                    },
+                                    onAddLiabilityClicked = { dataPoint ->
+                                        dashboardViewModel.onAddLiabilityClicked(dataPoint)
                                     },
                                     onAddLiability = { liability ->
                                         dashboardViewModel.onAddLiability(liability)
                                     },
+                                    onDeleteLiability = { liability ->
+                                        dashboardViewModel.onDeleteLiability(liability)
+                                    },
                                     onBackButtonFromExternalScreenClicked = {
                                         dashboardViewModel.loadData()
                                     },
-                                    updateCheckedStates = { asset, assetStates, liabilities, liabilitiesStates ->
+                                    updateCheckedStates = { assets, liabilities ->
                                         dashboardViewModel.updateCheckedStates(
-                                            asset,
-                                            assetStates,
+                                            assets,
                                             liabilities,
-                                            liabilitiesStates
                                         )
                                     }
                                 )

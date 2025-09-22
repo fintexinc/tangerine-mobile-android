@@ -33,10 +33,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.model.BankingUI
+import com.fintexinc.core.data.model.CustomUI
 import com.fintexinc.core.data.model.DateValue
+import com.fintexinc.core.data.model.InvestmentUI
+import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.formatToString
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
@@ -75,13 +79,15 @@ import com.tangerine.charts.compose_charts.models.StrokeStyle
 
 @Composable
 fun MyNetWorthUI(
-    assets: List<NameValueChecked>,
-    liabilities: List<NameValueChecked>,
+    banking: List<BankingUI>,
+    investment: List<InvestmentUI>,
+    custom: List<CustomUI>,
+    liabilities: List<LiabilityUI>,
     activities: List<Transaction>,
     documents: List<Document>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit,
-    onAddAssetClicked: () -> Unit,
-    onAddLiabilityClicked: () -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
+    onAddAssetClicked: (asset: DataPoint?) -> Unit,
+    onAddLiabilityClicked: (liability: DataPoint?) -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
@@ -89,6 +95,9 @@ fun MyNetWorthUI(
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
     val textAddLiability = stringResource(R.string.title_add_liability)
+    val assetsCheckedState =
+        banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
+    val liabilitiesCheckedState = liabilities.map { it.checkedState }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,37 +112,43 @@ fun MyNetWorthUI(
             ) {
                 NetWorthNotificationUI()
                 Spacer(modifier = Modifier.height(18.dp))
-                NetWorthInfoUI(assets, liabilities, updateCheckedStates)
+                NetWorthInfoUI(assetsCheckedState, liabilitiesCheckedState, updateCheckedStates)
                 Spacer(modifier = Modifier.height(18.dp))
                 ProjectionChartUI()
             }
         }
 
         item {
-            Spacer(modifier =  Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = assets.map { it.toDataPoint() },
+            dataPoints = assetsCheckedState.map { it.toDataPoint() },
             expanded = assetsExpanded,
             title = textAssets,
-            subtitle = assets.sumOf { it.value }.formatCurrency(),
+            subtitle = assetsCheckedState.sumOf { it.value }.formatCurrency(),
             addItemText = textAddAsset,
             onAddItemClick = {
-                onAddAssetClicked()
+                onAddAssetClicked(null)
+            },
+            onItemClick = { dataPoint ->
+                onAddAssetClicked(dataPoint)
             }
         )
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = liabilities.map { it.toDataPoint() },
+            dataPoints = liabilitiesCheckedState.map { it.toDataPoint() },
             expanded = liabilitiesExpanded,
             title = textLiabilities,
-            subtitle = liabilities.sumOf { it.value }.formatCurrency(),
+            subtitle = liabilitiesCheckedState.sumOf { it.value }.formatCurrency(),
             addItemText = textAddLiability,
             isLastList = true,
             onAddItemClick = {
-                onAddLiabilityClicked()
+                onAddLiabilityClicked(null)
+            },
+            onItemClick = { dataPoint ->
+                onAddLiabilityClicked(dataPoint)
             }
         )
         item {
@@ -354,7 +369,7 @@ private fun NetWorthNotificationUI() {
 private fun NetWorthInfoUI(
     assets: List<NameValueChecked>,
     liabilities: List<NameValueChecked>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     val showAccountsBottomSheet = remember { mutableStateOf(false) }
     Column(
@@ -764,6 +779,7 @@ private fun ActivityUI(
             DocumentsUI(
                 documents.map {
                     DataPoint(
+                        id = it.id,
                         name = it.documentName,
                         subName = it.documentDate.formatToString()
                     )

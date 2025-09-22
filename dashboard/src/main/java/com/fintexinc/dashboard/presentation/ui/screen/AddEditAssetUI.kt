@@ -1,7 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,18 +38,24 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.utils.date.DateUtils
 import com.fintexinc.core.domain.model.AssetType
 import com.fintexinc.core.domain.model.Custom
-import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.add.AddItemSelection
 import com.fintexinc.core.presentation.ui.widget.add.AddItemText
 import com.fintexinc.core.presentation.ui.widget.add.DateSelectionType
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
+import com.fintexinc.core.presentation.ui.widget.button.PrimaryButton
+import com.fintexinc.core.presentation.ui.widget.button.SecondaryButton
+import com.fintexinc.core.presentation.ui.widget.dialog.DeletePopup
+import com.fintexinc.core.presentation.ui.widget.dialog.UpdatePopup
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import java.util.UUID
 
 @Composable
-fun AddAssetUI(
+fun AddEditAssetUI(
+    asset: Custom?,
     onSaveAssetClick: (asset: Custom) -> Unit,
+    onDeleteAsset: (asset: Custom) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit
 ) {
     Box(
@@ -61,14 +66,20 @@ fun AddAssetUI(
         val showAssetTypeSelection = remember {
             mutableStateOf(false)
         }
+        val showUpdatePopup = remember {
+            mutableStateOf(false)
+        }
+        val showDeletePopup = remember {
+            mutableStateOf(false)
+        }
         val assetType = remember {
-            mutableStateOf(AssetType.OTHER)
+            mutableStateOf(asset?.assetType ?: AssetType.OTHER)
         }
         val assetName = remember {
-            mutableStateOf("")
+            mutableStateOf(asset?.assetName ?: "")
         }
         val estimatedValue = remember {
-            mutableStateOf("")
+            mutableStateOf(asset?.assetValue.toString())
         }
         val annAnnualizedRateOfReturn = remember {
             mutableStateOf("")
@@ -77,10 +88,10 @@ fun AddAssetUI(
             mutableStateOf<DateSelectionType?>(null)
         }
         val effectiveDate = remember {
-            mutableStateOf("")
+            mutableStateOf(asset?.lastUpdated ?: "")
         }
         val revisitDate = remember {
-            mutableStateOf("")
+            mutableStateOf(asset?.linkedDate ?: "")
         }
         Column(
             modifier = Modifier
@@ -173,6 +184,7 @@ fun AddAssetUI(
                 )
                 AddItemText(
                     title = stringResource(R.string.text_asset_name),
+                    text = assetName.value,
                     hint = stringResource(R.string.text_enter_name),
                     onTextChanged = { text ->
                         assetName.value = text
@@ -181,6 +193,7 @@ fun AddAssetUI(
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_estimated_value),
+                    text = estimatedValue.value,
                     hint = stringResource(R.string.text_currency),
                     onTextChanged = { text ->
                         estimatedValue.value = text
@@ -213,51 +226,38 @@ fun AddAssetUI(
                     }
                 )
                 Spacer(modifier = Modifier.height(40.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(horizontal = 18.dp)
-                        .padding(vertical = 12.dp, horizontal = 16.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .background(
-                                color = Colors.BackgroundPrimary,
-                                shape = RoundedCornerShape(40.dp)
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = Colors.Primary,
-                                shape = RoundedCornerShape(40.dp)
-                            )
-                            .clickableShape(RoundedCornerShape(40.dp)) {
-                                onSaveAssetClick(
-                                    Custom(
-                                        id = "",
-                                        userId = "",
-                                        assetName = assetName.value,
-                                        assetType = assetType.value,
-                                        assetValue = estimatedValue.value.toDoubleOrNull() ?: 0.0,
-                                        linkedDate = effectiveDate.value,
-                                        lastUpdated = revisitDate.value
-                                    )
-                                )
+                if (asset != null) {
+                    Column {
+                        PrimaryButton(stringResource(R.string.text_edit_asset)) {
+                            showUpdatePopup.value = true
+                        }
+                        SecondaryButton(
+                            text = stringResource(R.string.format_delete_item),
+                            onClick = {
+                                showDeletePopup.value = true
                             }
-                            .padding(12.dp)
-                            .align(Alignment.Center),
-                        text = stringResource(R.string.text_add_asset),
-                        textAlign = TextAlign.Center,
-                        style = FontStyles.HeadingLarge,
-                        color = Colors.TextInverse
-                    )
+                        )
+                    }
+                } else {
+                    PrimaryButton(stringResource(R.string.text_add_asset)) {
+                        onSaveAssetClick(
+                            Custom(
+                                id = asset?.id ?: UUID.randomUUID().toString(),
+                                userId = asset?.userId ?: "",
+                                assetName = assetName.value,
+                                assetType = assetType.value,
+                                assetValue = estimatedValue.value.toDoubleOrNull()
+                                    ?: 0.0,
+                                linkedDate = revisitDate.value,
+                                lastUpdated = effectiveDate.value
+                            )
+                        )
+                    }
                 }
             }
         }
         if (showAssetTypeSelection.value) {
-            ItemTypeSelection (
+            ItemTypeSelection(
                 itemTypes = AssetType.entries,
                 itemTypeTitle = stringResource(R.string.text_asset_type),
                 onItemTypeSelected = {
@@ -304,6 +304,47 @@ fun AddAssetUI(
             }) {
                 DatePicker(state = datePickerState)
             }
+        }
+        if (showUpdatePopup.value) {
+            UpdatePopup(
+                imageRes = R.drawable.ic_update_successful,
+                imageContentDescription = stringResource(R.string.description_icon_update_successful),
+                title = stringResource(R.string.text_update_successful),
+                text = stringResource(R.string.text_change_may_affect)
+            ) {
+                showUpdatePopup.value = false
+                onSaveAssetClick(
+                    Custom(
+                        id = asset?.id ?: UUID.randomUUID().toString(),
+                        userId = asset?.userId ?: "",
+                        assetName = assetName.value,
+                        assetType = assetType.value,
+                        assetValue = estimatedValue.value.toDoubleOrNull()
+                            ?: 0.0,
+                        linkedDate = revisitDate.value,
+                        lastUpdated = effectiveDate.value
+                    )
+                )
+            }
+        }
+        if (showDeletePopup.value) {
+            DeletePopup(
+                imageRes = R.drawable.ic_delete_item,
+                imageContentDescription = stringResource(R.string.description_icon_delete_item),
+                title = stringResource(
+                    R.string.format_delete_item,
+                    asset?.assetName ?: assetName.value
+                ),
+                text = stringResource(R.string.text_are_you_sure_you_want_to_delete_asset),
+                onDeleteClick = {
+                    asset?.let {
+                        onDeleteAsset(asset)
+                    }
+                },
+                onCancelClick = {
+                    showDeletePopup.value = false
+                }
+            )
         }
     }
 }
