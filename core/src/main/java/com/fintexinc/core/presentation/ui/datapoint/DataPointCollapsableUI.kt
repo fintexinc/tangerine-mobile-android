@@ -2,6 +2,7 @@ package com.fintexinc.core.presentation.ui.datapoint
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,19 +23,23 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
 @Composable
 fun DataPointCollapsableUI(
-    dataPoint: DataPoint
+    dataPoint: DataPoint,
+    onClick: (DataPoint) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
             .background(Colors.Background)
+            .clickable {
+                onClick(dataPoint)
+            }
             .drawBehind {
                 val strokeWidth = 1.dp.toPx()
                 val color = Colors.BorderSubdued
@@ -90,12 +95,21 @@ fun DataPointCollapsableUI(
                         )
                     }
                     if (dataPoint.value != null) {
-                        Text(
-                            modifier = Modifier.wrapContentSize(),
-                            text = dataPoint.value,
-                            style = FontStyles.BodyLargeBold,
-                            color = Colors.BrandBlack
-                        )
+                        Row {
+                            Text(
+                                modifier = Modifier.wrapContentSize(),
+                                text = dataPoint.value,
+                                style = FontStyles.BodyLargeBold,
+                                color = Colors.BrandBlack
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                modifier = Modifier.wrapContentSize(),
+                                painter = painterResource(R.drawable.ic_arrow_right),
+                                tint = Colors.BrandGray,
+                                contentDescription = "Open Item"
+                            )
+                        }
                     } else {
                         Icon(
                             modifier = Modifier.wrapContentSize(),

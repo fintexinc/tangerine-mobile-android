@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.domain.model.Custom
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
@@ -26,8 +27,8 @@ import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
-import com.fintexinc.dashboard.presentation.ui.screen.AddAssetUI
-import com.fintexinc.dashboard.presentation.ui.screen.AddLiabilityUI
+import com.fintexinc.dashboard.presentation.ui.screen.AddEditAssetUI
+import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
 import com.fintexinc.dashboard.presentation.ui.screen.MyNetWorthUI
 import com.fintexinc.dashboard.presentation.ui.screen.MyPortfolioUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
@@ -37,12 +38,14 @@ fun DashboardScreenUI(
     state: DashboardViewModel.State,
     onPlatformClicked: () -> Unit,
     onOpenAccountClicked: (accountId: String) -> Unit,
-    onAddAssetClicked : () -> Unit,
+    onAddAssetClicked : (DataPoint?) -> Unit,
     onAddAsset: (Custom) -> Unit,
-    onAddLiabilityClicked: () -> Unit,
+    onDeleteAsset: (Custom) -> Unit,
+    onAddLiabilityClicked: (DataPoint?) -> Unit,
     onAddLiability: (Liability) -> Unit,
+    onDeleteLiability: (Liability) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     when (state) {
         is DashboardViewModel.State.Loading -> {
@@ -59,15 +62,19 @@ fun DashboardScreenUI(
             updateCheckedStates
         )
 
-        DashboardViewModel.State.AddAsset -> {
-            AddAssetUI(
+        is DashboardViewModel.State.AddEditAsset -> {
+            AddEditAssetUI(
+                asset = state.asset,
                 onSaveAssetClick = onAddAsset,
+                onDeleteAsset = onDeleteAsset,
                 onBackButtonFromExternalScreenClicked = onBackButtonFromExternalScreenClicked
             )
         }
-        DashboardViewModel.State.AddLiability -> {
-            AddLiabilityUI(
+        is DashboardViewModel.State.AddEditLiability -> {
+            AddEditLiabilityUI(
+                liability = state.liability,
                 onSaveLiabilityClick = onAddLiability,
+                onDeleteLiability = onDeleteLiability,
                 onBackButtonFromExternalScreenClicked = onBackButtonFromExternalScreenClicked
             )
         }
@@ -79,9 +86,9 @@ private fun Content(
     state: DashboardViewModel.State.Data,
     onPlatformClicked: () -> Unit,
     onOpenAccount:(accountId: String) -> Unit,
-    onAddAssetClicked : () -> Unit,
-    onAddLiabilityClicked: () -> Unit,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    onAddAssetClicked : (dataPoint: DataPoint?) -> Unit,
+    onAddLiabilityClicked: (dataPoint: DataPoint?) -> Unit,
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -114,7 +121,9 @@ private fun Content(
                     title = stringResource(R.string.text_my_net_worth),
                     content = {
                         MyNetWorthUI(
-                            assets = state.assets,
+                            banking = state.bankingAssets,
+                            investment = state.investmentAssets,
+                            custom = state.customAssets,
                             liabilities = state.liabilities,
                             activities = state.activities,
                             documents = state.documents,
