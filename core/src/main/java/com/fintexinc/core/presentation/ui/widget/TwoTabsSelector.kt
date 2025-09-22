@@ -1,5 +1,11 @@
 package com.fintexinc.core.presentation.ui.widget
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,11 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.ui.color.Colors
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TwoTabsSelector(
     modifier: Modifier = Modifier,
@@ -43,6 +51,7 @@ fun TwoTabsSelector(
                 .wrapContentHeight()
                 .weight(0.5f)
                 .padding(2.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .clickable {
                     mode.value = Mode.FirstTab
                 }
@@ -71,6 +80,7 @@ fun TwoTabsSelector(
                 .wrapContentHeight()
                 .weight(0.5f)
                 .padding(2.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .clickable {
                     mode.value = Mode.SecondTab
                 }
@@ -96,9 +106,18 @@ fun TwoTabsSelector(
             textAlign = TextAlign.Center
         )
     }
-    when (mode.value) {
-        is Mode.FirstTab -> onFirstTabSelected()
-        is Mode.SecondTab -> onSecondTabSelected()
+
+    AnimatedContent(
+        targetState = mode.value,
+        transitionSpec = {
+            fadeIn(animationSpec = tween(300)).togetherWith(fadeOut(animationSpec = tween(150)))
+        },
+        label = "tab_content"
+    ) { currentMode ->
+        when (currentMode) {
+            is Mode.FirstTab -> onFirstTabSelected()
+            is Mode.SecondTab -> onSecondTabSelected()
+        }
     }
 }
 

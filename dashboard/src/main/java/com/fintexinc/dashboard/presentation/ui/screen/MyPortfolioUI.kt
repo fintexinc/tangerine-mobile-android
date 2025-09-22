@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +24,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,19 +33,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.DataPoint
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
+import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
@@ -63,7 +67,14 @@ import com.tangerine.charts.compose_charts.models.Pie
 import com.tangerine.charts.compose_charts.models.PopupProperties
 
 @Composable
-fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) -> Unit) {
+fun MyPortfolioUI(
+    accounts: List<Account>,
+    onOpenAccount: (accountId: String) -> Unit
+) {
+    val showInvestmentAccountsSelection = remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -108,27 +119,23 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) ->
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 18.dp)
-                .clickable {
-                    // Filter accounts
-                }
+                .clickable { showInvestmentAccountsSelection.value = true }
         ) {
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                modifier = Modifier.wrapContentHeight(),
                 text = stringResource(R.string.text_my_accounts),
                 style = FontStyles.TitleMediumBold
             )
+            Spacer(modifier = Modifier.weight(1.0f))
             Icon(
                 modifier = Modifier.wrapContentSize(),
-                painter = painterResource(com.fintexinc.core.R.drawable.ic_filter),
-                tint = Colors.BrandBlack,
+                painter = painterResource(com.fintexinc.core.R.drawable.icon_sliders_light),
+                tint = Colors.Primary,
                 contentDescription = stringResource(R.string.description_icon_filter)
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
         // TODO: add logic based on mocked data
-
         val registeredAccounts = accounts.map {
             AccountUI(
                 accountId = it.accountId,
@@ -139,15 +146,7 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) ->
                 percentageChange = 4.39
             )
         }
-        AccountListUI(
-            title = stringResource(
-                R.string.format_registered_accounts, registeredAccounts.size
-            ),
-            accounts = registeredAccounts,
-            onOpenAccount = onOpenAccount
-        )
         // TODO: ask for unregistered accounts
-        Spacer(modifier = Modifier.height(10.dp))
         val nonRegisteredAccounts = listOf(
             AccountUI(
                 registeredAccounts[0].accountId,
@@ -166,13 +165,37 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) ->
                 percentageChange = 4.39
             ),
         )
+
         AccountListUI(
-            title = stringResource(
-                R.string.format_non_registered_accounts, nonRegisteredAccounts.size
-            ),
-            accounts = nonRegisteredAccounts,
-            onOpenAccount = onOpenAccount
+            title = stringResource(R.string.format_registered_accounts),
+            accounts = registeredAccounts,
+            onOpenAccount = onOpenAccount,
+            totalSum = accounts.sumOf { it.income }.formatCurrency(),
+            isRoundedTop = true,
         )
+
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 18.dp),
+            color = Colors.BorderSubdued
+        )
+
+        AccountListUI(
+            title = stringResource(R.string.format_non_registered_accounts),
+            accounts = nonRegisteredAccounts,
+            onOpenAccount = onOpenAccount,
+            totalSum = accounts.sumOf { it.income }.formatCurrency(),
+            isRoundedTop = false,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(
+            text = stringResource(R.string.title_add_account),
+            onClick = {},
+            color = Colors.Primary,
+            modifier = Modifier.padding(horizontal = 18.dp)
+        )
+
         Spacer(modifier = Modifier.height(30.dp))
         Text(
             modifier = Modifier
@@ -196,40 +219,63 @@ fun MyPortfolioUI(accounts: List<Account>, onOpenAccount: (accountId: String) ->
         TopHoldingsUI()
         Spacer(modifier = Modifier.height(30.dp))
     }
+    // TODO: ask for mock item type
+    data class MockItemType(override val label: String) : ItemType
+
+    val mockItemTypes = listOf(
+        MockItemType("None"),
+        MockItemType("Registered/Non-Registered"),
+        MockItemType("AccountType"),
+    )
+
+    if (showInvestmentAccountsSelection.value) {
+        ItemTypeSelection(
+            itemTypeTitle = stringResource(R.string.text_group_by),
+            itemTypes = mockItemTypes,
+            onItemTypeSelected = {
+                showInvestmentAccountsSelection.value = false
+            },
+            onCancel = {
+                showInvestmentAccountsSelection.value = false
+            },
+        )
+    }
 }
 
 @Composable
 private fun AccountListUI(
     modifier: Modifier = Modifier,
     title: String,
+    totalSum: String,
     accounts: List<AccountUI>,
-    onOpenAccount: (accountId: String) -> Unit
+    onOpenAccount: (accountId: String) -> Unit,
+    isRoundedTop: Boolean = true
 ) {
+    val rowShape = if (isRoundedTop) {
+        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+    } else {
+        RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
+    }
     val expanded = remember {
         mutableStateOf(true)
     }
-    ColumnWithBorder(contentPadding = PaddingValues(0.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 18.dp)
+            .background(
+                color = Colors.Background,
+                shape = rowShape
+            )
+    ) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .then(
-                    if (expanded.value) {
-                        Modifier.background(
-                            color = Colors.BackgroundSubdued,
-                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        )
-                    } else {
-                        Modifier.background(
-                            color = Colors.BackgroundSubdued,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                    }
-                )
-                .clickable {
-                    expanded.value = !expanded.value
-                }
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .clip(shape = rowShape)
+                .clickable { expanded.value = !expanded.value }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -238,101 +284,77 @@ private fun AccountListUI(
                 style = FontStyles.BodyLargeBold,
                 color = Colors.BrandBlack
             )
+
+            Text(
+                modifier = Modifier,
+                text = totalSum,
+                style = FontStyles.BodyLargeBold,
+                color = Colors.BrandBlack
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
             Icon(
+                modifier = Modifier.rotate(if (expanded.value) 180f else 0f),
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
                 tint = Colors.BrandBlack,
                 contentDescription = stringResource(R.string.description_icon_expand)
             )
         }
+
         if (expanded.value) {
-            accounts.forEach { account ->
+            HorizontalDivider(color = Colors.BorderSubdued)
+            accounts.forEachIndexed { index, account ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
-                        .clickable {
-                            onOpenAccount(account.accountId)
-                        }
-                        .padding(horizontal = 12.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .clickable { onOpenAccount(account.accountId) }
+                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
-                        modifier = Modifier.weight(0.4F)
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
                             text = account.name,
                             style = FontStyles.BodyLarge,
                             color = Colors.Text
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            text = account.subName,
-                            style = FontStyles.BodyMedium,
-                            color = Colors.TextSubdued
-                        )
-                    }
-                    Column(
-                        modifier = Modifier
-                            .weight(0.5f)
-                            .wrapContentHeight()
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            text = account.value,
-                            style = FontStyles.BodyLargeBold,
-                            color = Colors.Text,
-                            textAlign = TextAlign.End
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                painter = painterResource(
-                                    if (account.valueChange >= 0) {
-                                        com.fintexinc.core.R.drawable.ic_arrow_up
-                                    } else {
-                                        com.fintexinc.core.R.drawable.ic_arrow_down
-                                    }
-                                ),
-                                tint = if (account.valueChange >= 0) {
-                                    Color(0xFF43A047)
-                                } else {
-                                    Color(0xFFD50000)
-                                },
-                                contentDescription = stringResource(R.string.description_icon_increase)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                modifier = Modifier.wrapContentSize(),
-                                text = String.format(
+                                text = account.value,
+                                style = FontStyles.BodyLargeBold,
+                                color = Colors.Text
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Text(
+                                text = "▲ " + String.format(
                                     "$%.2f (%.2f%%)",
                                     account.valueChange,
                                     account.percentageChange
                                 ),
                                 style = FontStyles.BodyMedium,
-                                color = Colors.TextSubdued,
-                                textAlign = TextAlign.End
+                                color = Colors.TextSuccess
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
+
                     Icon(
                         modifier = Modifier.wrapContentSize(),
                         painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
-                        tint = Colors.BackgroundPrimary,
+                        tint = Colors.IconSupplementary,
                         contentDescription = stringResource(R.string.description_view_details)
+                    )
+                }
+
+                if (index < accounts.size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        color = Colors.BorderSubdued,
+                        thickness = 1.dp
                     )
                 }
             }
@@ -522,3 +544,56 @@ data class AccountUI(
     val valueChange: Double,
     val percentageChange: Double
 )
+
+@Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
+@Composable
+fun AccountListUIPreview() {
+    val sampleAccounts = listOf(
+        AccountUI(
+            accountId = "1",
+            name = "Jack TFSA ***9019",
+            subName = "Effective on JAN 10, 2025",
+            value = "$28,230",
+            valueChange = 120.0,
+            percentageChange = 1.0
+        ),
+        AccountUI(
+            accountId = "2",
+            name = "Balanced Core Portfolio ***9019",
+            subName = "Effective on MAR 2, 2024",
+            value = "$50,000",
+            valueChange = 832.0,
+            percentageChange = 5.0
+        ),
+        AccountUI(
+            accountId = "3",
+            name = "Balanced ETF Portfolio ***9019",
+            subName = "Effective on MAR 2, 2024",
+            value = "$40,000",
+            valueChange = -250.0,
+            percentageChange = -4.0
+        )
+    )
+
+    Column(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        AccountListUI(
+            title = "Registered",
+            totalSum = "$650,000",
+            accounts = sampleAccounts,
+            onOpenAccount = { },
+            isRoundedTop = true
+        )
+
+        Spacer(modifier = Modifier.height(1.dp))
+
+        AccountListUI(
+            title = "Non-Registered",
+            totalSum = "$25,000",
+            accounts = listOf(sampleAccounts.first()),
+            onOpenAccount = { },
+            isRoundedTop = false
+        )
+    }
+}
