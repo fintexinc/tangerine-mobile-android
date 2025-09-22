@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
@@ -499,11 +499,11 @@ private fun GeographicExposure() {
 private fun TopHoldingsUI() {
     ColumnWithBorder {
         val dataPoints = listOf(
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)")
+            DataPoint("1", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
+            DataPoint("2", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
+            DataPoint("3", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
+            DataPoint("4", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
+            DataPoint("5", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)")
         )
         dataPoints.forEachIndexed { index, dataPoint ->
             DataPointUI(

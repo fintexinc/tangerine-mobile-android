@@ -1,10 +1,13 @@
 package com.fintexinc.dashboard.presentation.viewmodel
 
 import android.content.Context
-import android.provider.Settings.Global.getString
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fintexinc.core.data.model.BankingUI
+import com.fintexinc.core.data.model.CustomUI
+import com.fintexinc.core.data.model.DataPoint
+import com.fintexinc.core.data.model.InvestmentUI
+import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.domain.gateway.AccountGateway
 import com.fintexinc.core.domain.gateway.NetWorthGateway
 import com.fintexinc.core.domain.model.Account
@@ -14,7 +17,6 @@ import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
-import com.tangerine.charts.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -48,14 +50,28 @@ class DashboardViewModel @Inject constructor(
             .getDocuments()
             .take(3)
         return State.Data(
-            assets = mutableListOf<NameValueChecked>().apply {
-                addAll(assets.investment.map { it.toNameValue() })
-                addAll(assets.banking.map { it.toNameValue() })
-                addAll(assets.custom.map { it.toNameValue() })
+            bankingAssets = assets.banking.map {
+                BankingUI(
+                    it,
+                    it.toNameValue()
+                )
+            },
+            investmentAssets = assets.investment.map {
+                InvestmentUI(
+                    it,
+                    it.toNameValue()
+                )
+            },
+            customAssets = assets.custom.map {
+                CustomUI(
+                    it,
+                    it.toNameValue()
+                )
             },
             liabilities = liabilities.map {
-                it.toNameValue(
-                    context.getString(com.fintexinc.dashboard.R.string.text_effective_on)
+                LiabilityUI(
+                    it,
+                    it.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
                 )
             },
             accounts = accounts,
@@ -74,30 +90,91 @@ class DashboardViewModel @Inject constructor(
         // Handle platform click event
     }
 
-    fun onAddAssetClicked() {
-        _state.value = State.AddAsset
+    fun onAddAssetClicked(dataPoint: DataPoint?) = viewModelScope.launch {
+        _state.value =
+            State.AddEditAsset(
+                currentDataState().customAssets.firstOrNull { customAssetUI ->
+                    customAssetUI.asset.id == dataPoint?.id
+                }?.asset
+            )
     }
 
     fun onAddAsset(asset: Custom) {
         viewModelScope.launch {
-            val currentState = softDataCache ?: getData()
-            val updatedAssets = currentState.assets.toMutableList().apply {
-                add(asset.toNameValue())
-            }
-            _state.value = currentState.copy(assets = updatedAssets)
+            val currentState = currentDataState()
+            val updatedAssets =
+                if (currentState.customAssets.firstOrNull { it.asset.id == asset.id } != null) {
+                    currentState.customAssets.toMutableList().apply {
+                        val index = indexOfFirst { it.asset.id == asset.id }
+                        remove(get(index))
+                        add(index, CustomUI(asset, asset.toNameValue()))
+                    }
+                } else {
+                    currentState.customAssets.toMutableList().apply {
+                        add(CustomUI(asset, asset.toNameValue()))
+                    }
+                }
+            _state.value = currentState.copy(customAssets = updatedAssets)
             softDataCache = _state.value as? State.Data
         }
     }
 
-    fun onAddLiabilityClicked() {
-        _state.value = State.AddLiability
+    fun onDeleteAsset(asset: Custom) {
+        viewModelScope.launch {
+            val currentState = currentDataState()
+            val updatedAssets = currentState.customAssets.toMutableList().apply {
+                removeAll { it.asset.id == asset.id }
+            }
+            _state.value = currentState.copy(customAssets = updatedAssets)
+            softDataCache = _state.value as? State.Data
+        }
+    }
+
+    fun onAddLiabilityClicked(dataPoint: DataPoint?) = viewModelScope.launch {
+        _state.value =
+            State.AddEditLiability(
+                currentDataState().liabilities.firstOrNull { liabilityUI ->
+                    liabilityUI.liability.id == dataPoint?.id
+                }?.liability
+            )
     }
 
     fun onAddLiability(liability: Liability) {
         viewModelScope.launch {
-            val currentState = softDataCache ?: getData()
+            val currentState = currentDataState()
+            val updatedLiabilities =
+                if (currentState.liabilities.firstOrNull { it.liability.id == liability.id } != null) {
+                    currentState.liabilities.toMutableList().apply {
+                        val index = indexOfFirst { it.liability.id == liability.id }
+                        remove(get(index))
+                        add(
+                            index,
+                            LiabilityUI(
+                                liability,
+                                liability.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
+                            )
+                        )
+                    }
+                } else {
+                    currentState.liabilities.toMutableList().apply {
+                        add(
+                            LiabilityUI(
+                                liability,
+                                liability.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
+                            )
+                        )
+                    }
+                }
+            _state.value = currentState.copy(liabilities = updatedLiabilities)
+            softDataCache = _state.value as? State.Data
+        }
+    }
+
+    fun onDeleteLiability(liability: Liability) {
+        viewModelScope.launch {
+            val currentState = currentDataState()
             val updatedLiabilities = currentState.liabilities.toMutableList().apply {
-                add(liability.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on)))
+                removeAll { it.liability.id == liability.id }
             }
             _state.value = currentState.copy(liabilities = updatedLiabilities)
             softDataCache = _state.value as? State.Data
@@ -105,41 +182,60 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun updateCheckedStates(
-        assets: List<NameValueChecked>,
-        checkedStates: List<Boolean>,
-        liabilities: List<NameValueChecked>,
-        checkedLiabilityStates: List<Boolean>
-    ) {
+        assetStates: List<NameValueChecked>,
+        liabilityStates: List<NameValueChecked>,
+    ) = viewModelScope.launch {
+        val currentState = currentDataState()
         _state.value = State.Data(
-            liabilities = liabilities.mapIndexed { index, nameValueChecked ->
-                nameValueChecked.copy(
-                    isChecked = checkedLiabilityStates.getOrNull(index) ?: false
+            liabilities = currentState.liabilities.map { liabilityUI ->
+                liabilityUI.copy(
+                    checkedState = liabilityStates.find { state -> state.id == liabilityUI.liability.id }
+                        ?: liabilityUI.checkedState
                 )
             },
-            assets = assets.mapIndexed { index, nameValueChecked ->
-                nameValueChecked.copy(
-                    isChecked = checkedStates.getOrNull(
-                        index
-                    ) ?: false
+            bankingAssets = currentState.bankingAssets.map { bankingUI ->
+                bankingUI.copy(
+                    checkedState = assetStates.find { state -> state.id == bankingUI.asset.id }
+                        ?: bankingUI.checkedState
                 )
             },
-            accounts = (_state.value as? State.Data)?.accounts ?: emptyList(),
-            activities = (_state.value as? State.Data)?.activities ?: emptyList(),
-            documents = (_state.value as? State.Data)?.documents ?: emptyList()
+            investmentAssets = currentState.investmentAssets.map { investmentUI ->
+                investmentUI.copy(
+                    checkedState = assetStates.find { state -> state.id == investmentUI.asset.id }
+                        ?: investmentUI.checkedState
+                )
+            },
+            customAssets = currentState.customAssets.map { customUI ->
+                customUI.copy(
+                    checkedState = assetStates.find { state -> state.id == customUI.asset.id }
+                        ?: customUI.checkedState
+                )
+            },
+            accounts = currentState.accounts,
+            activities = currentState.activities,
+            documents = currentState.documents
         )
+    }
+
+    private suspend fun currentDataState(): State.Data {
+        return softDataCache ?: getData().also {
+            softDataCache = it
+        }
     }
 
     sealed class State {
         object Loading : State()
         data class Data(
-            val assets: List<NameValueChecked>,
-            val liabilities: List<NameValueChecked>,
+            val bankingAssets: List<BankingUI>,
+            val investmentAssets: List<InvestmentUI>,
+            val customAssets: List<CustomUI>,
+            val liabilities: List<LiabilityUI>,
             val accounts: List<Account>,
             val activities: List<Transaction>,
             val documents: List<Document>
         ) : State()
 
-        object AddAsset : State()
-        object AddLiability : State()
+        data class AddEditAsset(val asset: Custom?) : State()
+        data class AddEditLiability(val liability: Liability?) : State()
     }
 }

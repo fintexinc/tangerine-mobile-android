@@ -1,7 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,19 +38,24 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.utils.date.DateUtils
 import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.domain.model.LiabilityType
-import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.add.AddItemSelection
 import com.fintexinc.core.presentation.ui.widget.add.AddItemText
 import com.fintexinc.core.presentation.ui.widget.add.DateSelectionType
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
+import com.fintexinc.core.presentation.ui.widget.button.PrimaryButton
+import com.fintexinc.core.presentation.ui.widget.button.SecondaryButton
+import com.fintexinc.core.presentation.ui.widget.dialog.DeletePopup
+import com.fintexinc.core.presentation.ui.widget.dialog.UpdatePopup
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import java.util.UUID
 
 @Composable
-fun AddLiabilityUI(
+fun AddEditLiabilityUI(
+    liability: Liability?,
     onSaveLiabilityClick: (liability: Liability) -> Unit,
+    onDeleteLiability: (liability: Liability) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit
 ) {
     Box(
@@ -63,22 +67,31 @@ fun AddLiabilityUI(
             mutableStateOf(false)
         }
         val liabilityType = remember {
-            mutableStateOf<LiabilityType?>(null)
+            mutableStateOf(liability?.liabilityType)
         }
         val liabilityName = remember {
-            mutableStateOf("")
+            mutableStateOf(liability?.liabilityType?.label ?: "" )
         }
-        val estimatedValue = remember {
-            mutableStateOf("")
+        val currentBalance = remember {
+            mutableStateOf(liability?.balance?.toString() ?: "")
+        }
+        val monthlyPayment = remember {
+            mutableStateOf(liability?.interestRate?.toString() ?: "")
+        }
+        val effectiveDate = remember {
+            mutableStateOf(liability?.lastUpdated ?: "")
+        }
+        val revisitDate = remember {
+            mutableStateOf(liability?.linkedDate ?: "")
         }
         val showDialog = remember {
             mutableStateOf<DateSelectionType?>(null)
         }
-        val effectiveDate = remember {
-            mutableStateOf("")
+        val showUpdatePopup = remember {
+            mutableStateOf(false)
         }
-        val revisitDate = remember {
-            mutableStateOf("")
+        val showDeletePopup = remember {
+            mutableStateOf(false)
         }
         Column(
             modifier = Modifier
@@ -175,16 +188,28 @@ fun AddLiabilityUI(
                 AddItemText(
                     title = stringResource(R.string.text_liability_name),
                     hint = stringResource(R.string.text_enter_name),
+                    text = liabilityName.value,
                     onTextChanged = { text ->
                         liabilityName.value = text
                     }
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
-                    title = stringResource(R.string.text_estimated_value),
+                    title = stringResource(R.string.text_current_balance),
                     hint = stringResource(R.string.text_currency),
+                    text = currentBalance.value,
                     onTextChanged = { text ->
-                        estimatedValue.value = text
+                        currentBalance.value = text
+                    },
+                    keyboardType = KeyboardType.Number
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+                AddItemText(
+                    title = stringResource(R.string.text_monthly_payment),
+                    hint = stringResource(R.string.text_currency),
+                    text = monthlyPayment.value,
+                    onTextChanged = { text ->
+                        currentBalance.value = text
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -205,50 +230,36 @@ fun AddLiabilityUI(
                     }
                 )
                 Spacer(modifier = Modifier.height(40.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(horizontal = 18.dp)
-                        .padding(vertical = 12.dp, horizontal = 16.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .background(
-                                color = Colors.BackgroundPrimary,
-                                shape = RoundedCornerShape(40.dp)
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = Colors.Primary,
-                                shape = RoundedCornerShape(40.dp)
-                            )
-                            .clickableShape(RoundedCornerShape(40.dp)) {
-                                onSaveLiabilityClick(
-                                    Liability(
-                                        id = UUID.randomUUID().toString(),
-                                        userId = UUID.randomUUID().toString(),
-                                        liabilityType = liabilityType.value ?: LiabilityType.OTHER,
-                                        accountNumber = UUID.randomUUID().toString(),
-                                        balance = estimatedValue.value.toDoubleOrNull() ?: 0.0,
-                                        linkedDate = effectiveDate.value,
-                                        limit = 0.0,
-                                        interestRate = 0.0,
-                                        currency = "$",
-                                        lastUpdated = effectiveDate.value,
-                                        isCustomLiability = true
-                                    )
-                                )
+                if (liability != null) {
+                    Column {
+                        PrimaryButton(stringResource(R.string.text_edit_asset)) {
+                            showUpdatePopup.value = true
+                        }
+                        SecondaryButton(
+                            text = stringResource(R.string.format_delete_item),
+                            onClick = {
+                                showDeletePopup.value = true
                             }
-                            .padding(12.dp)
-                            .align(Alignment.Center),
-                        text = stringResource(R.string.text_add_asset),
-                        textAlign = TextAlign.Center,
-                        style = FontStyles.HeadingLarge,
-                        color = Colors.TextInverse
-                    )
+                        )
+                    }
+                } else {
+                    PrimaryButton(stringResource(R.string.text_add_asset)) {
+                        onSaveLiabilityClick(
+                            Liability(
+                                id = liability?.id ?: UUID.randomUUID().toString(),
+                                userId = liability?.userId ?: "",
+                                liabilityType = liabilityType.value ?: LiabilityType.OTHER,
+                                accountNumber = UUID.randomUUID().toString(),
+                                balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                                linkedDate = effectiveDate.value,
+                                limit = 0.0,
+                                interestRate = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                                currency = "$",
+                                lastUpdated = effectiveDate.value,
+                                isCustomLiability = true
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -302,6 +313,50 @@ fun AddLiabilityUI(
                 }) {
                 DatePicker(state = datePickerState)
             }
+        }
+        if (showUpdatePopup.value) {
+            UpdatePopup(
+                imageRes = R.drawable.ic_update_successful,
+                imageContentDescription = stringResource(R.string.description_icon_update_successful),
+                title = stringResource(R.string.text_update_successful),
+                text = stringResource(R.string.text_change_may_affect)
+            ) {
+                showUpdatePopup.value = false
+                onSaveLiabilityClick(
+                    Liability(
+                        id = liability?.id ?: UUID.randomUUID().toString(),
+                        userId = liability?.userId ?: "",
+                        liabilityType = liabilityType.value ?: LiabilityType.OTHER,
+                        accountNumber = UUID.randomUUID().toString(),
+                        balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                        linkedDate = effectiveDate.value,
+                        limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                        interestRate = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                        currency = "$",
+                        lastUpdated = effectiveDate.value,
+                        isCustomLiability = true
+                    )
+                )
+            }
+        }
+        if (showDeletePopup.value) {
+            DeletePopup(
+                imageRes = R.drawable.ic_delete_item,
+                imageContentDescription = stringResource(R.string.description_icon_delete_item),
+                title = stringResource(
+                    R.string.format_delete_item,
+                    liability?.liabilityType?.label ?: liabilityName.value
+                ),
+                text = stringResource(R.string.text_are_you_sure_you_want_to_delete_asset),
+                onDeleteClick = {
+                    liability?.let {
+                        onDeleteLiability(liability)
+                    }
+                },
+                onCancelClick = {
+                    showDeletePopup.value = false
+                }
+            )
         }
     }
 }

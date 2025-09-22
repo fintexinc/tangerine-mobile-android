@@ -39,7 +39,7 @@ fun AssetLiabilitiesModalBottomSheet(
     title: String,
     assets: List<NameValueChecked>,
     liabilities: List<NameValueChecked>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     val assetMainCheckState = remember {
         mutableStateOf(true)
@@ -57,7 +57,10 @@ fun AssetLiabilitiesModalBottomSheet(
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         onDismissRequest = {
             isShowing.value = false
-            updateCheckedStates(assets, assetsCheckStates, liabilities, liabilitiesCheckStates)
+            updateCheckedStates(
+                getNameValueCheckedUpdatedStates(assets, assetsCheckStates),
+                getNameValueCheckedUpdatedStates(liabilities, liabilitiesCheckStates)
+            )
         },
         shape = RoundedCornerShape(8.dp),
         containerColor = Colors.Background,
@@ -197,7 +200,19 @@ private fun ChipsWithTitle(
     }
 }
 
+private fun getNameValueCheckedUpdatedStates(
+    items: List<NameValueChecked>,
+    checkStates: List<Boolean>
+): List<NameValueChecked> {
+    return items.mapIndexed { index, item ->
+        item.copy(
+            isChecked = checkStates.getOrNull(index) ?: item.isChecked
+        )
+    }
+}
+
 data class NameValueChecked(
+    val id: String,
     val name: String,
     val subName: String,
     val date: String,
