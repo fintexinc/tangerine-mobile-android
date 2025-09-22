@@ -16,7 +16,9 @@ data class Liability(
     val interestRate: Double,
     val currency: String,
     val linkedDate: String,
-    val lastUpdated: String
+    val lastUpdated: String,
+    // TODO: find out how to differentiate between tangerine and custom liability
+    val isCustomLiability: Boolean = false
 )
 
 enum class LiabilityType(override val label: String): ItemType {

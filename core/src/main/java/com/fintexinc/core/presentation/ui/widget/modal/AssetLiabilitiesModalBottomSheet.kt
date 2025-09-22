@@ -21,7 +21,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,6 +36,9 @@ import com.fintexinc.core.ui.font.FontStyles
 fun UniversalModalBottomSheet(
     isShowing: MutableState<Boolean>,
     title: String,
+    assets: List<NameValueChecked>,
+    liabilities: List<NameValueChecked>,
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
     onDoneClick: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
     content: @Composable () -> Unit
@@ -50,6 +52,10 @@ fun UniversalModalBottomSheet(
         onDismissRequest = {
             isShowing.value = false
             onDismiss?.invoke()
+            updateCheckedStates(
+                getNameValueCheckedUpdatedStates(assets, assetsCheckStates),
+                getNameValueCheckedUpdatedStates(liabilities, liabilitiesCheckStates)
+            )
         },
         shape = RoundedCornerShape(8.dp),
         containerColor = Colors.Background,
@@ -225,7 +231,19 @@ private fun ChipsWithTitle(
     }
 }
 
+private fun getNameValueCheckedUpdatedStates(
+    items: List<NameValueChecked>,
+    checkStates: List<Boolean>
+): List<NameValueChecked> {
+    return items.mapIndexed { index, item ->
+        item.copy(
+            isChecked = checkStates.getOrNull(index) ?: item.isChecked
+        )
+    }
+}
+
 data class NameValueChecked(
+    val id: String,
     val name: String,
     val subName: String,
     val date: String,

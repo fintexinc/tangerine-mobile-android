@@ -99,11 +99,12 @@ fun AddItemSelection(
 fun AddItemText(
     title: String,
     hint: String,
+    text: String = "",
     onTextChanged: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
     val text = remember {
-        mutableStateOf("")
+        mutableStateOf(text)
     }
     Column(
         modifier = Modifier

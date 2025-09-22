@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.datapoint.DataPointCollapsableUI
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
@@ -42,7 +42,8 @@ fun collapsableLazyColumn(
     subtitle: String? = null,
     addItemText: String,
     isLastList: Boolean = false,
-    onAddItemClick: () -> Unit
+    onAddItemClick: () -> Unit,
+    onItemClick: (DataPoint) -> Unit
 ) = with(scope) {
     item {
         Row(
@@ -116,7 +117,8 @@ fun collapsableLazyColumn(
     if (expanded.value) {
         items(dataPoints) {
             DataPointCollapsableUI(
-                dataPoint = it
+                dataPoint = it,
+                onClick = onItemClick
             )
         }
         item {
