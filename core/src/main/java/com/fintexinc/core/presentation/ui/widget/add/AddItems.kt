@@ -200,12 +200,9 @@ fun ItemTypeSelection(
                     style = FontStyles.BodyLargeBold,
                     color = Colors.BrandBlack
                 )
+                Spacer(modifier = Modifier.weight(0.33f))
             }
-            Spacer(
-                modifier = Modifier
-                    .height(1.dp)
-                    .background(color = Colors.BorderSubdued)
-            )
+            HorizontalDivider(color = Colors.BorderSubdued)
             itemTypes.forEach {
                 Column {
                     Text(
@@ -220,10 +217,9 @@ fun ItemTypeSelection(
                         style = FontStyles.BodyLarge,
                         color = Colors.BrandBlack,
                     )
-                    Spacer(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .background(color = Colors.BorderSubdued)
+                    HorizontalDivider(
+                        color = Colors.BorderSubdued,
+                        modifier = Modifier.padding(horizontal = 30.dp),
                     )
                 }
             }

@@ -45,6 +45,7 @@ dependencies {
 
     // DI
     implementation(libs.android.hilt)
+    implementation(libs.androidx.foundation.layout)
     ksp(libs.android.hilt.compiler)
 
     // compose
@@ -62,4 +63,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Preview
+    debugImplementation (libs.androidx.ui.tooling)
+    debugImplementation (libs.androidx.ui.test.manifest)
 }

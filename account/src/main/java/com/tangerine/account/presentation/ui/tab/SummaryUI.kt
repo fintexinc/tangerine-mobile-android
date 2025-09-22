@@ -53,7 +53,6 @@ fun SummaryUI(account: Account) {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .verticalScroll(rememberScrollState())
     ) {
         AccountBalanceUI()
         Spacer(modifier = Modifier.height(12.dp))

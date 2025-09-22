@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.presentation.ui.widget.ToolBar
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
@@ -51,6 +55,7 @@ fun AccountScreen(
             }
             return
         }
+
         else -> {
             Content(
                 state = state,
@@ -69,48 +74,47 @@ private fun Content(
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit
 ) {
+    val selectedTab = remember {
+        mutableStateOf(AccountTab.SUMMARY)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Colors.BackgroundSubdued)
+            .verticalScroll(rememberScrollState())
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(Colors.BackgroundPrimary)
-                .padding(vertical = 12.dp, horizontal = 30.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .clickable {
-                        onBackClicked()
-                    },
-                painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
-                contentDescription = stringResource(R.string.description_icon_navigate_back),
-                tint = Colors.Background,
-            )
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight(),
-                text = "Jack Dawson TFSA\n79127912",
-                style = FontStyles.TitleMediumMedium,
-                color = Colors.Background,
-                textAlign = TextAlign.Center
-            )
-            Icon(
-                painter = painterResource(com.fintexinc.core.R.drawable.ic_edit),
-                contentDescription = stringResource(R.string.description_icon_navigate_edit),
-                tint = Colors.Background,
-            )
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        val selectedTab = remember {
-            mutableStateOf(AccountTab.SUMMARY)
-        }
+        ToolBar(
+            text = "Jack Dawson TFSA",
+            leftIcon = {
+                Icon(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clickable {
+                            onBackClicked()
+                        },
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
+                    contentDescription = stringResource(R.string.description_icon_navigate_back),
+                    tint = Colors.Primary,
+                )
+            },
+            rightIcon = {
+                Icon(
+                    painter = painterResource(com.fintexinc.core.R.drawable.icon_dots),
+                    contentDescription = stringResource(R.string.description_icon_navigate_edit),
+                    tint = Colors.Primary,
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clickable {}
+                )
+            }
+        )
+        AccountBalanceCard(
+            balance = "$28,230.00",
+            portfolioType = "Balanced Core Portfolio",
+            maskedAccountNumber = "***1234"
+        )
+
         AccountTabsUI(
             selectedTab,
             onTabSelected = { tab ->
@@ -125,6 +129,43 @@ private fun Content(
             is AccountViewModel.State.Summary -> SummaryUI(state.data)
             else -> {}
         }
+    }
+}
+
+@Composable
+private fun AccountBalanceCard(
+    balance: String,
+    portfolioType: String,
+    maskedAccountNumber: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .background(Colors.Background, shape = RoundedCornerShape(bottomEnd = 16.dp))
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = balance,
+            textAlign = TextAlign.Center,
+            color = Colors.BrandBlack,
+            style = FontStyles.DisplaySmall,
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = "$portfolioType $maskedAccountNumber",
+            color = Colors.BrandBlack,
+            textAlign = TextAlign.Center,
+            style = FontStyles.TitleSmall,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
