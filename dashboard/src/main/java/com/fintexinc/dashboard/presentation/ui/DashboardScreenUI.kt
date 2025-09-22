@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.domain.model.Liability
-import com.fintexinc.core.presentation.ui.widget.TwoTabsSelector
+import com.fintexinc.core.presentation.ui.widget.TabItem
+import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
@@ -110,32 +111,38 @@ private fun Content(
                 .shadow(2.dp)
         )
         Spacer(modifier = Modifier.height(12.dp))
-        TwoTabsSelector(
+        TabsSelector(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(start = 18.dp, top = 12.dp, end = 18.dp),
-            firstTabTitle = stringResource(R.string.text_my_net_worth),
-            secondTabTitle = stringResource(R.string.text_my_portfolio),
-            onFirstTabSelected = {
-                MyNetWorthUI(
-                    banking = state.bankingAssets,
-                    investment = state.investmentAssets,
-                    custom = state.customAssets,
-                    liabilities = state.liabilities,
-                    activities = state.activities,
-                    documents = state.documents,
-                    updateCheckedStates = updateCheckedStates,
-                    onAddAssetClicked = onAddAssetClicked,
-                    onAddLiabilityClicked = onAddLiabilityClicked
+            tabs = listOf(
+                TabItem(
+                    title = stringResource(R.string.text_my_net_worth),
+                    content = {
+                        MyNetWorthUI(
+                            banking = state.bankingAssets,
+                            investment = state.investmentAssets,
+                            custom = state.customAssets,
+                            liabilities = state.liabilities,
+                            activities = state.activities,
+                            documents = state.documents,
+                            updateCheckedStates = updateCheckedStates,
+                            onAddAssetClicked = onAddAssetClicked,
+                            onAddLiabilityClicked = onAddLiabilityClicked
+                        )
+                    }
+                ),
+                TabItem(
+                    title = stringResource(R.string.text_my_portfolio),
+                    content = {
+                        MyPortfolioUI(
+                            accounts = state.accounts,
+                            onOpenAccount = onOpenAccount
+                        )
+                    }
                 )
-            },
-            onSecondTabSelected = {
-                MyPortfolioUI(
-                    accounts = state.accounts,
-                    onOpenAccount = onOpenAccount
-                )
-            }
+            )
         )
     }
 }

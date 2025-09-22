@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -112,7 +113,7 @@ internal fun UniversalDataSection(
 }
 
 @Composable
-private fun DataSectionRow(
+internal fun DataSectionRow(
     label: String,
     value: String,
     valueColor: Color,
@@ -125,12 +126,13 @@ private fun DataSectionRow(
     isHighlighted: Boolean = false,
     showColorDot: Boolean = false,
     dotColor: Color = Color.Gray,
-    isMultiline: Boolean = false
+    isMultiline: Boolean = false,
+    paddingValues: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp)
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp),
+            .padding(paddingValues),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = if (isMultiline) Alignment.Top else Alignment.CenterVertically
     ) {
