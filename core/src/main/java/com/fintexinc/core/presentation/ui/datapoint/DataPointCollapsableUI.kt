@@ -67,7 +67,9 @@ fun DataPointCollapsableUI(
         ) {
             if (dataPoint.iconResId != null) {
                 Image(
-                    modifier = Modifier.wrapContentSize().padding(2.dp),
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(2.dp),
                     painter = painterResource(id = dataPoint.iconResId),
                     contentDescription = null
                 )
@@ -175,9 +177,6 @@ fun DataPointUI(
                         modifier = Modifier.padding(end = 12.dp),
                         horizontalAlignment = Alignment.End
                     ) {
-            if (dataPoint.value != null) {
-                if (dataPoint.subValue != null) {
-                    Column {
                         Text(
                             modifier = Modifier.wrapContentSize(),
                             text = dataPoint.value,

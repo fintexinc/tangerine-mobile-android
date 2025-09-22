@@ -44,7 +44,6 @@ import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.data.model.DataPoint
-import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
@@ -542,15 +541,80 @@ private fun TopHoldingsUI() {
         Spacer(modifier = Modifier.height(10.dp))
 
         dataPoints.forEachIndexed { index, dataPoint ->
-            DataPointUI(
-                dataPoint = dataPoint,
-                isLastItem = dataPoints.size - 1 == index
+            TopHoldingsItem(
+                holdingsName = dataPoint.id,
+                holdingsSubName = dataPoint.name,
+                sum = dataPoint.subName,
+                percent = dataPoint.value ?: ""
+            )
+
+            if (dataPoints.size - 1 != index) {
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun TopHoldingsItem(
+    holdingsName: String,
+    holdingsSubName: String,
+    sum: String,
+    percent: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+
+        Column(
+            modifier = Modifier.weight(0.66f),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Text(
+                text = holdingsName,
+                style = FontStyles.BodyLarge,
+                color = Colors.Text,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = holdingsSubName,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued,
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Column(
+            modifier = Modifier.weight(0.33f),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Text(
+                text = sum,
+                style = FontStyles.BodyLargeBold,
+                color = Colors.Text,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = percent,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued,
+            )
+        }
     }
 }
+
 
 data class AccountUI(
     val accountId: String,
