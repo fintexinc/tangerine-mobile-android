@@ -57,7 +57,7 @@ fun TangerineSearchBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(com.fintexinc.core.R.drawable.ic_search),
+                        painter = painterResource(R.drawable.ic_search),
                         contentDescription = stringResource(R.string.description_icon_search),
                         modifier = Modifier.padding(end = 8.dp)
                     )
