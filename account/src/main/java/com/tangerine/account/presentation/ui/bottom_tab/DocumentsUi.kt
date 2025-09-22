@@ -154,7 +154,7 @@ internal fun DocumentsUi(
                 selectedDates = newDates
                 showDateFilter = false
             },
-            onDismiss = { showDateFilter = false }
+            onDismiss = { showDateFilter = false },
         )
     }
 
@@ -168,7 +168,7 @@ internal fun DocumentsUi(
                 selectedDocumentTypes = newTypes
                 showDocumentFilter = false
             },
-            onDismiss = { showDocumentFilter = false }
+            onDismiss = { showDocumentFilter = false },
         )
     }
 }
@@ -179,7 +179,7 @@ private fun DocumentItem(
     date: String,
     onClick: () -> Unit,
     isLastItem: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
