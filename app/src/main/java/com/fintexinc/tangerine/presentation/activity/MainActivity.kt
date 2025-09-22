@@ -259,7 +259,7 @@ fun MainRoute(
                       dashboardViewModel.onPlatformClicked()
                     },
                     onOpenAccountClicked = {
-                      navController.navigate(Account(it))
+                        parentNavController.navigate(Routes.Account(it))
                     },
                     onAddAssetClicked = { dataPoint ->
                       dashboardViewModel.onAddAssetClicked(dataPoint)

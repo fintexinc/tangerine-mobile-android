@@ -36,9 +36,6 @@ import com.fintexinc.core.ui.font.FontStyles
 fun UniversalModalBottomSheet(
     isShowing: MutableState<Boolean>,
     title: String,
-    assets: List<NameValueChecked>,
-    liabilities: List<NameValueChecked>,
-    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
     onDoneClick: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
     content: @Composable () -> Unit
@@ -52,10 +49,6 @@ fun UniversalModalBottomSheet(
         onDismissRequest = {
             isShowing.value = false
             onDismiss?.invoke()
-            updateCheckedStates(
-                getNameValueCheckedUpdatedStates(assets, assetsCheckStates),
-                getNameValueCheckedUpdatedStates(liabilities, liabilitiesCheckStates)
-            )
         },
         shape = RoundedCornerShape(8.dp),
         containerColor = Colors.Background,
@@ -125,13 +118,14 @@ fun UniversalModalBottomSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssetLiabilitiesModalBottomSheet(
     isShowing: MutableState<Boolean>,
     title: String,
     assets: List<NameValueChecked>,
     liabilities: List<NameValueChecked>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     val assetsCheckStates = remember {
         mutableStateListOf(*assets.map { it.isChecked }.toTypedArray())
@@ -144,7 +138,10 @@ fun AssetLiabilitiesModalBottomSheet(
         isShowing = isShowing,
         title = title,
         onDoneClick = {
-            updateCheckedStates(assets, assetsCheckStates, liabilities, liabilitiesCheckStates)
+            updateCheckedStates(
+                getNameValueCheckedUpdatedStates(assets, assetsCheckStates),
+                getNameValueCheckedUpdatedStates(liabilities, liabilitiesCheckStates)
+            )
         }
     ) {
         Column(

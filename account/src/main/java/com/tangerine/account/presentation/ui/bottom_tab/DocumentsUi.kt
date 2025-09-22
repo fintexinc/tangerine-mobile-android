@@ -35,7 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
@@ -58,36 +58,42 @@ internal fun DocumentsUi(
     // TODO() mock data
     val documents = listOf(
         DataPoint(
+            id = "1",
             name = "CRM2 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = R.drawable.ic_file
         ),
         DataPoint(
+            id = "2",
             name = "CRM2 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = R.drawable.ic_file
         ),
         DataPoint(
+            id = "3",
             name = "CRM2 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = R.drawable.ic_file
         ),
         DataPoint(
+            id = "4",
             name = "CRM2 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = R.drawable.ic_file
         ),
         DataPoint(
+            id = "5",
             name = "CRM2 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = R.drawable.ic_file
         ),
         DataPoint(
+            id = "6",
             name = "CRM2 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
