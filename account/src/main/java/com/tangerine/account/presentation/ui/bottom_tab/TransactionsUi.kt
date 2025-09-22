@@ -231,10 +231,6 @@ internal fun TransactionsUi(
                             )
                         }
                     }
-
-//                    if (group != settledGroups.last()) {
-//                        item { Spacer(modifier = Modifier.height(16.dp)) }
-//                    }
                 }
             }
 
