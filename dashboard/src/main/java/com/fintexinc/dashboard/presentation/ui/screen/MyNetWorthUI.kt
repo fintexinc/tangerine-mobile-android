@@ -1,8 +1,5 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
-import android.util.Log
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,20 +7,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -40,16 +33,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.model.BankingUI
+import com.fintexinc.core.data.model.CustomUI
 import com.fintexinc.core.data.model.DateValue
+import com.fintexinc.core.data.model.InvestmentUI
+import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.formatToString
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
-import com.fintexinc.core.presentation.ui.widget.TwoTabsSelector
+import com.fintexinc.core.presentation.ui.widget.TabItem
+import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.list.collapsableLazyColumn
 import com.fintexinc.core.presentation.ui.widget.modal.AssetLiabilitiesModalBottomSheet
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
@@ -57,9 +56,9 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
-import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
 import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
@@ -81,13 +80,15 @@ import com.tangerine.charts.compose_charts.models.StrokeStyle
 
 @Composable
 fun MyNetWorthUI(
-    assets: List<NameValueChecked>,
-    liabilities: List<NameValueChecked>,
+    banking: List<BankingUI>,
+    investment: List<InvestmentUI>,
+    custom: List<CustomUI>,
+    liabilities: List<LiabilityUI>,
     activities: List<Transaction>,
     documents: List<Document>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit,
-    onAddAssetClicked: () -> Unit,
-    onAddLiabilityClicked: () -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
+    onAddAssetClicked: (asset: DataPoint?) -> Unit,
+    onAddLiabilityClicked: (liability: DataPoint?) -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
@@ -95,6 +96,9 @@ fun MyNetWorthUI(
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
     val textAddLiability = stringResource(R.string.title_add_liability)
+    val assetsCheckedState =
+        banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
+    val liabilitiesCheckedState = liabilities.map { it.checkedState }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,33 +113,43 @@ fun MyNetWorthUI(
             ) {
                 NetWorthNotificationUI()
                 Spacer(modifier = Modifier.height(18.dp))
-                NetWorthInfoUI(assets, liabilities, updateCheckedStates = updateCheckedStates)
+                NetWorthInfoUI(assetsCheckedState, liabilitiesCheckedState, updateCheckedStates)
+                Spacer(modifier = Modifier.height(18.dp))
+                ProjectionChartUI()
             }
         }
-        val q = assets.map { it.toDataPoint() }
-        Log.e("sdsdsd","$q")
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = assets.map { it.toDataPoint() },
+            dataPoints = assetsCheckedState.map { it.toDataPoint() },
             expanded = assetsExpanded,
             title = textAssets,
-            subtitle = assets.sumOf { it.value }.formatCurrency(),
+            subtitle = assetsCheckedState.sumOf { it.value }.formatCurrency(),
             addItemText = textAddAsset,
             onAddItemClick = {
-                onAddAssetClicked()
+                onAddAssetClicked(null)
+            },
+            onItemClick = { dataPoint ->
+                onAddAssetClicked(dataPoint)
             }
         )
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = liabilities.map { it.toDataPoint() },
+            dataPoints = liabilitiesCheckedState.map { it.toDataPoint() },
             expanded = liabilitiesExpanded,
             title = textLiabilities,
-            subtitle = liabilities.sumOf { it.value }.formatCurrency(),
+            subtitle = liabilitiesCheckedState.sumOf { it.value }.formatCurrency(),
             addItemText = textAddLiability,
             isLastList = true,
             onAddItemClick = {
-                onAddLiabilityClicked()
+                onAddLiabilityClicked(null)
+            },
+            onItemClick = { dataPoint ->
+                onAddLiabilityClicked(dataPoint)
             }
         )
         item {
@@ -296,43 +310,59 @@ fun MyNetWorthUI(
 
 @Composable
 private fun NetWorthNotificationUI() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(color = Colors.BackgroundSecondary, RoundedCornerShape(bottomStart = 16.dp))
-            .padding(16.dp)
+    ColumnWithShadow(
+        outerHorizontalPadding = 0.dp,
+        contentPadding = PaddingValues(0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            Icon(
-                modifier = Modifier.wrapContentSize(),
-                painter = painterResource(R.drawable.ic_bell),
-                tint = Colors.Background,
+            Image(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(start = 16.dp, top = 16.dp),
+                painter = painterResource(R.drawable.ic_welcome_notification),
                 contentDescription = stringResource(R.string.description_icon_notification)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                text = stringResource(R.string.text_well_done),
-                color = Colors.TextInverse,
-                style = FontStyles.BodyLargeBold
+                    .weight(1f)
+                    .wrapContentHeight()
+                    .padding(vertical = 16.dp)
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    text = stringResource(R.string.text_welcome_to_tangerine_wealth),
+                    color = Colors.TextSubdued,
+                    style = FontStyles.BodyMediumBold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    text = stringResource(R.string.text_track_your_net_worth),
+                    style = FontStyles.BodyMedium,
+                    color = Colors.TextSubdued
+                )
+            }
+            Icon(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(top = 12.dp, end = 12.dp)
+                    .align(Alignment.Top),
+                painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
+                tint = Colors.TextSubdued,
+                contentDescription = stringResource(
+                    R.string.description_icon_close
+                )
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            text = stringResource(R.string.text_you_increased_rrsp),
-            style = FontStyles.BodyLarge,
-            color = Colors.TextInverse
-        )
     }
 }
 
@@ -340,48 +370,56 @@ private fun NetWorthNotificationUI() {
 private fun NetWorthInfoUI(
     assets: List<NameValueChecked>,
     liabilities: List<NameValueChecked>,
-    updateCheckedStates: (List<NameValueChecked>, List<Boolean>, List<NameValueChecked>, List<Boolean>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { 3 })
     val showAccountsBottomSheet = remember { mutableStateOf(false) }
-    HorizontalPager(pagerState) { pageIndex ->
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            text = stringResource(R.string.text_my_net_worth),
+            style = FontStyles.TitleLarge,
+            color = Colors.BrandBlack
+        )
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(
-                    color = Colors.Background,
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                )
-                .border(
-                    width = 1.dp,
-                    color = Colors.BorderSubdued,
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                )
-                .padding(vertical = 16.dp)
         ) {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(),
+                text = (assets.sumOf { it.value } - liabilities.sumOf { it.value }).formatCurrency(),
+                style = FontStyles.DisplaySmall,
+                color = Colors.TextPrimary,
+                maxLines = 1
+            )
+            Spacer(
+                modifier = Modifier.width(8.dp)
+            )
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
-                    .clickable {
+                    .wrapContentSize()
+                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                    .background(
+                        color = Colors.BackgroundInteractive,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .clickableShape(RoundedCornerShape(16.dp)) {
                         showAccountsBottomSheet.value = true
-                    },
+                    }
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .wrapContentHeight(),
-                    text = when (pageIndex) {
-                        0 -> stringResource(R.string.text_my_net_worth)
-                        1 -> stringResource(R.string.text_projections)
-                        2 -> stringResource(R.string.text_cache_flow)
-                        else -> stringResource(R.string.text_my_net_worth)
-                    },
-                    style = FontStyles.BodyLarge
-                )
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = stringResource(R.string.text_all_accounts),
@@ -391,62 +429,68 @@ private fun NetWorthInfoUI(
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
-                    tint = Color(0xFF006FD6),
+                    tint = Colors.TextInteractive,
                     contentDescription = stringResource(R.string.description_icon_all_accounts_expand),
                 )
             }
-            Spacer(modifier = Modifier.height(18.dp))
-            when (pageIndex) {
-                0 -> TangerineNetWorthUI(assets, liabilities)
-                1 -> {
-                    TangerineProjectionUI()
-                    Spacer(modifier = Modifier.height(18.dp))
-                    ChartPeriodSelector(
-                        onPeriodSelected = {
-                            // Handle period selection
-                        }
-                    )
-                }
-
-                2 -> ChangesToNetWorthUI(assets, liabilities)
-            }
-            if (showAccountsBottomSheet.value) {
-                AssetLiabilitiesModalBottomSheet(
-                    title = stringResource(R.string.text_accounts),
-                    isShowing = showAccountsBottomSheet,
-                    assets = assets,
-                    liabilities = liabilities,
-                    updateCheckedStates = updateCheckedStates
-                )
-            }
-            Spacer(modifier = Modifier.height(18.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                repeat(pagerState.pageCount) { iteration ->
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .then(
-                                if (pagerState.currentPage == iteration) {
-                                    Modifier.background(Colors.BackgroundPrimary)
-                                } else {
-                                    Modifier
-                                        .border(
-                                            1.dp, Colors.BackgroundPrimary, CircleShape
-                                        )
-                                        .animateContentSize(tween(1000))
-                                }
-                            )
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-            }
         }
+    }
+    if (showAccountsBottomSheet.value) {
+        AssetLiabilitiesModalBottomSheet(
+            title = stringResource(R.string.text_accounts),
+            isShowing = showAccountsBottomSheet,
+            assets = assets,
+            liabilities = liabilities,
+            updateCheckedStates = updateCheckedStates
+        )
+    }
+}
+
+@Composable
+private fun ProjectionChartUI() {
+    val showAccountsBottomSheet = remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(
+                color = Colors.Background,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+            )
+            .border(
+                width = 1.dp,
+                color = Colors.BorderSubdued,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+            )
+            .padding(vertical = 16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+                .clickable {
+                    showAccountsBottomSheet.value = true
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(),
+                text = stringResource(R.string.text_projections),
+                style = FontStyles.BodyLarge
+            )
+
+        }
+        Spacer(modifier = Modifier.height(18.dp))
+        TangerineProjectionUI()
+        Spacer(modifier = Modifier.height(18.dp))
+        ChartPeriodSelector(
+            onPeriodSelected = {
+                // Handle period selection
+            }
+        )
     }
 }
 
@@ -726,22 +770,29 @@ private fun ActivityUI(
         text = stringResource(R.string.text_what_is_going_on),
         style = FontStyles.TitleSmall
     )
-    TwoTabsSelector(
-        firstTabTitle = stringResource(R.string.text_activity),
-        secondTabTitle = stringResource(R.string.text_documents),
-        onFirstTabSelected = {
-            ActivitiesUI(transactions = activities)
-        },
-        onSecondTabSelected = {
-            DocumentsUI(
-                documents.map {
-                    DataPoint(
-                        name = it.documentName,
-                        subName = it.documentDate.formatToString()
+    TabsSelector(
+        tabs = listOf(
+            TabItem(
+                title = stringResource(R.string.text_activity),
+                content = {
+                    ActivitiesUI(transactions = activities)
+                }
+            ),
+            TabItem(
+                title = stringResource(R.string.text_documents),
+                content = {
+                    DocumentsUI(
+                        documents.map {
+                            DataPoint(
+                                id = it.id,
+                                name = it.documentName,
+                                subName = it.documentDate.formatToString()
+                            )
+                        }
                     )
                 }
             )
-        }
+        )
     )
 }
 

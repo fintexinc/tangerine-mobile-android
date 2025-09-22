@@ -1,7 +1,5 @@
 package com.tangerine.account.presentation.ui.tab
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,9 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,16 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.model.NameValue
-import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
-import com.fintexinc.core.presentation.ui.widget.list.SimpleNameValueItem
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
+import com.tangerine.account.presentation.models.DataSectionItemUi
+import com.tangerine.account.presentation.ui.components.UniversalDataSection
 import com.tangerine.charts.compose_charts.LineChart
 import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.models.DrawStyle
@@ -53,46 +46,103 @@ fun SummaryUI(account: Account) {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .verticalScroll(rememberScrollState())
     ) {
         AccountBalanceUI()
-        Spacer(modifier = Modifier.height(12.dp))
-        // TODO: figure out which data to show here
-        AccountDetailsUI(
-            listOf(
-                NameValue(
-                    name = "Net contributions",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Transfers",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Transferred Out",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Account Capital Gain/Loss",
-                    value = "$10,000.00"
-                ),
-                NameValue(
-                    name = "Account Return",
-                    value = "+33.33%"
-                ),
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        val itemsData = listOf(
+            DataSectionItemUi(
+                label = stringResource(R.string.text_earning_to_date),
+                value = "+$21,234.56",
+                valueColor = Colors.TransactionIncome,
+                hasInfoIcon = true,
+                valueStyle = FontStyles.TitleSmall,
+                isHighlighted = true
+            ),
+            DataSectionItemUi(
+                label = stringResource(R.string.text_net_investment_to_date),
+                value = "$756,412.30",
+                hasInfoIcon = true
+            ),
+            DataSectionItemUi(
+                label = stringResource(R.string.text_account_capital_gain_loss),
+                value = "$10,000.00"
+            ),
+            DataSectionItemUi(
+                label = stringResource(R.string.text_account_return),
+                value = "+33.33%",
+                hasInfoIcon = true
+            ),
+            DataSectionItemUi(
+                label = stringResource(R.string.text_total_units),
+                value = "650.4051"
+            ),
+            DataSectionItemUi(
+                label = stringResource(R.string.text_unit_price),
+                value = "$12.5046",
+                hasInfoIcon = true
             )
         )
-        Spacer(modifier = Modifier.height(18.dp))
-        InvestorProfileUI(
-            account = account,
-            title = stringResource(R.string.text_investor_profile),
-            buttonText = stringResource(R.string.button_edit_profile)
+
+        val items = listOf(
+            DataSectionItemUi(
+                label = "Scotia U.S Equity Index\nTracker ETF",
+                value = "50%",
+                hasInfoIcon = false,
+                isMultiline = true,
+                showColorDot = true,
+                dotColor = Color(0xFF921616),
+            ),
+            DataSectionItemUi(
+                label = "Scotia International\nEquity Index Tracker ETF",
+                value = "29%",
+                hasInfoIcon = false,
+                isMultiline = true,
+                showColorDot = true,
+                dotColor = Color(0xFFE57373),
+            ),
+            DataSectionItemUi(
+                label = "Scotia Emerging Markets\nEquityIndex EF",
+                value = "15%",
+                hasInfoIcon = false,
+                isMultiline = true,
+                showColorDot = true,
+                dotColor = Color(0xFFFEAC5B),
+            ),
+            DataSectionItemUi(
+                label = "Scotia Canadian Large Cap\nEquity Index Tracker ETF",
+                value = "6%",
+                isMultiline = false,
+                showColorDot = true,
+                dotColor = Color(0xFFB2EBF2),
+            )
         )
-        Spacer(modifier = Modifier.height(18.dp))
-        AccountDetailsUI(
-            title = stringResource(R.string.text_account_details)
+
+        UniversalDataSection(
+            title = stringResource(R.string.title_allocation_holdings),
+            items = items,
+            showProgressBar = true,
         )
-        Spacer(modifier = Modifier.height(48.dp))
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = stringResource(R.string.text_info_allocations),
+            style = FontStyles.BodySmallItalic,
+            color = Colors.BorderInformation,
+            modifier = Modifier.padding(horizontal = 18.dp),
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        UniversalDataSection(
+            title = stringResource(R.string.text_account_return),
+            items = itemsData,
+            footerText = stringResource(R.string.text_portfolio_as_of_date)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
@@ -206,294 +256,4 @@ private fun AccountBalanceChartUI(showNetworkContribution: Boolean) {
 
         }
     )*/
-}
-
-@Composable
-private fun AccountDetailsUI(details: List<NameValue>) {
-    ColumnWithBorder {
-        details.forEach { detail ->
-            SimpleNameValueItem(
-                item = detail,
-                isLastItem = detail == details.last()
-            )
-        }
-    }
-}
-
-@Composable
-private fun InvestorProfileUI(
-    account: Account,
-    title: String,
-    buttonText: String,
-    onEditProfile: () -> Unit = {}
-) {
-    val expanded = remember {
-        mutableStateOf(true)
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 18.dp)
-            .then(
-                if (expanded.value) {
-                    Modifier
-                        .background(
-                            color = Colors.BackgroundSubdued,
-                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Colors.BorderSubdued,
-                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        )
-                } else {
-                    Modifier
-                        .background(
-                            color = Colors.BackgroundSubdued,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Colors.BorderSubdued,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                }
-            )
-            .clickable {
-                expanded.value = !expanded.value
-            }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = title,
-            style = FontStyles.BodyLargeBold,
-            color = Colors.BrandBlack
-        )
-        Icon(
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
-            tint = Colors.BrandBlack,
-            contentDescription = stringResource(R.string.description_icon_navigate_expand),
-        )
-    }
-    if (expanded.value) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp)
-                .background(
-                    color = Colors.Background,
-                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-                )
-                .border(
-                    width = 1.dp,
-                    color = Colors.BorderSubdued,
-                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-                )
-                .padding(18.dp)
-        ) {
-            val data = listOf(
-                NameValue(
-                    name = stringResource(
-                        R.string.text_income
-                    ),
-                    value = account.income.toDouble().formatCurrency()
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_household_net_worth
-                    ),
-                    value = account.householdNetWorth.toDouble().formatCurrency()
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_investment_knowledge
-                    ),
-                    value = account.investmentKnowledge
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_risk_tolerance_a
-                    ),
-                    value = account.riskToleranceInitial
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_risk_tolerance_b
-                    ),
-                    value = account.riskToleranceCurrent
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_overall_risk_tolerance
-                    ),
-                    value = account.overallRiskTolerance
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_investment_objective
-                    ),
-                    value = account.investmentObjective
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_time_horizon
-                    ),
-                    value = account.timeHorizon
-                ),
-                NameValue(
-                    name = stringResource(
-                        R.string.text_living_expenses
-                    ),
-                    value = account.livingExpenses.toDouble().formatCurrency()
-                )
-            )
-            data.forEach { item ->
-                SimpleNameValueItem(
-                    item = item
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .background(
-                            color = Colors.Transparent,
-                            shape = RoundedCornerShape(40.dp)
-                        )
-                        .border(
-                            width = 2.dp,
-                            color = Colors.Primary,
-                            shape = RoundedCornerShape(40.dp)
-                        )
-                        .clickable {
-                            onEditProfile()
-                        }
-                        .padding(12.dp)
-                        .align(Alignment.Center),
-                    text = buttonText,
-                    textAlign = TextAlign.Center,
-                    style = FontStyles.HeadingLarge,
-                    color = Colors.Primary
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AccountDetailsUI(
-    title: String
-) {
-    val expanded = remember {
-        mutableStateOf(true)
-    }
-    val data = listOf(
-        NameValue(
-            name = "Account type",
-            value = "TFSA"
-        ),
-        NameValue(
-            name = "Account Number",
-            value = "T-20250814-001"
-        ),
-        NameValue(
-            name = "Nickname",
-            value = "Test"
-        ),
-        NameValue(
-            name = "Account registration",
-            value = "2025-08-16"
-        ),
-        NameValue(
-            name = "Inception date",
-            value = "2025-08-16"
-        ),
-        NameValue(
-            name = "Beneficiaries",
-            value = "Test"
-        ),
-    )
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 18.dp)
-            .then(
-                if (expanded.value) {
-                    Modifier
-                        .background(
-                            color = Colors.BackgroundSubdued,
-                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Colors.BorderSubdued,
-                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        )
-                } else {
-                    Modifier
-                        .background(
-                            color = Colors.BackgroundSubdued,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Colors.BorderSubdued,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                }
-            )
-            .clickable {
-                expanded.value = !expanded.value
-            }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = title,
-            style = FontStyles.BodyLargeBold,
-            color = Colors.BrandBlack
-        )
-        Icon(
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
-            tint = Colors.BrandBlack,
-            contentDescription = stringResource(R.string.description_icon_navigate_expand),
-        )
-    }
-    if (expanded.value) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp)
-                .background(
-                    color = Colors.Background,
-                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-                )
-                .border(
-                    width = 1.dp,
-                    color = Colors.BorderSubdued,
-                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-                )
-                .padding(18.dp)
-        ) {
-            data.forEach { item ->
-                SimpleNameValueItem(
-                    item = item,
-                    isLastItem = item == data.last()
-                )
-            }
-        }
-    }
 }

@@ -16,6 +16,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +26,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -51,225 +53,256 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
+
                 val shouldShowSplashScreen = remember {
                     mutableStateOf(true)
                 }
-                val bottomMenuSelectedItem = remember {
-                    mutableStateOf<MenuItem>(
-                        MenuItem.Wealth
-                    )
-                }
-                if (shouldShowSplashScreen.value) {
-                    SplashScreenUI(
-                        onSplashComplete = {
-                            shouldShowSplashScreen.value = false
+
+                NavHost(navController, startDestination = Routes.Splash) {
+
+                    composable<Routes.Splash> {
+                        SplashScreenUI(
+                            onSplashComplete = {
+                                shouldShowSplashScreen.value = false
+                                navController.navigate(Routes.MainRoute)
+                            }
+                        )
+                    }
+
+                    composable<Routes.Account> {
+                        val args = it.toRoute<Routes.Account>()
+                        LaunchedEffect(true) {
+                            accountViewModel.getData(args.accountId)
                         }
-                    )
-                } else {
-                    Scaffold(
-                        bottomBar = {
-                            NavigationBar(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .shadow(16.dp)
-                                    .border(width = 1.dp, color = Colors.BorderSubdued),
-                                containerColor = Colors.Background, tonalElevation = 12.dp
-                            ) {
-                                NavigationBarItem(
-                                    modifier = Modifier.padding(top = 12.dp),
-                                    selected = bottomMenuSelectedItem == MenuItem.Accounts,
-                                    onClick = {
-                                        bottomMenuSelectedItem.value = MenuItem.Accounts
-                                        //navController.navigate(Account)
-                                    },
-                                    label = {
-                                        Text(
-                                            modifier = Modifier.wrapContentSize(),
-                                            text = "Accounts",
-                                            style = if (bottomMenuSelectedItem.value == MenuItem.Accounts) FontStyles.BodySmallBold else FontStyles.BodySmall
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(R.drawable.ic_menu_accounts),
-                                            tint = if (bottomMenuSelectedItem.value == MenuItem.Accounts) Colors.BackgroundPrimary else Colors.BrandBlack,
-                                            contentDescription = "Accounts Icon"
-                                        )
-                                    }
-                                )
-                                NavigationBarItem(
-                                    modifier = Modifier
-                                        .padding(top = 12.dp),
-                                    selected = bottomMenuSelectedItem == MenuItem.Wealth,
-                                    onClick = {
-                                        bottomMenuSelectedItem.value = MenuItem.Wealth
-                                        navController.navigate(Dashboard)
-                                    },
-                                    label = {
-                                        Text(
-                                            modifier = Modifier.wrapContentSize(),
-                                            text = "Wealth",
-                                            style = if (bottomMenuSelectedItem.value == MenuItem.Wealth) FontStyles.BodySmallBold else FontStyles.BodySmall
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(R.drawable.ic_menu_wealth),
-                                            tint = if (bottomMenuSelectedItem.value == MenuItem.Wealth) Colors.BackgroundPrimary else Colors.BrandBlack,
-                                            contentDescription = stringResource(com.fintexinc.tangerine.R.string.description_icon_wealth)
-                                        )
-                                    }
-                                )
-                                NavigationBarItem(
-                                    modifier = Modifier.padding(top = 12.dp),
-                                    selected = bottomMenuSelectedItem == MenuItem.Tracker,
-                                    onClick = {
-                                        bottomMenuSelectedItem.value = MenuItem.Tracker
-                                    },
-                                    label = {
-                                        Text(
-                                            modifier = Modifier.wrapContentSize(),
-                                            text = "Tracker",
-                                            style = if (bottomMenuSelectedItem.value == MenuItem.Tracker) FontStyles.BodySmallBold else FontStyles.BodySmall
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(R.drawable.ic_menu_tracker),
-                                            tint = if (bottomMenuSelectedItem.value == MenuItem.Tracker) Colors.BackgroundPrimary else Colors.BrandBlack,
-                                            contentDescription = "Accounts Icon"
-                                        )
-                                    }
-                                )
-                                NavigationBarItem(
-                                    modifier = Modifier.padding(top = 12.dp),
-                                    selected = bottomMenuSelectedItem == MenuItem.MoveMoney,
-                                    onClick = {
-                                        bottomMenuSelectedItem.value = MenuItem.MoveMoney
-                                    },
-                                    label = {
-                                        Text(
-                                            modifier = Modifier.wrapContentSize(),
-                                            text = "Money",
-                                            style = if (bottomMenuSelectedItem.value == MenuItem.MoveMoney) FontStyles.BodySmallBold else FontStyles.BodySmall
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(R.drawable.ic_menu_make_money),
-                                            tint = if (bottomMenuSelectedItem.value == MenuItem.MoveMoney) Colors.BackgroundPrimary else Colors.BrandBlack,
-                                            contentDescription = "Accounts Icon"
-                                        )
-                                    }
-                                )
-                                NavigationBarItem(
-                                    modifier = Modifier.padding(top = 12.dp),
-                                    selected = bottomMenuSelectedItem == MenuItem.More,
-                                    onClick = {
-                                        bottomMenuSelectedItem.value = MenuItem.More
-                                    },
-                                    label = {
-                                        Text(
-                                            modifier = Modifier.wrapContentSize(),
-                                            text = "More",
-                                            style = if (bottomMenuSelectedItem.value == MenuItem.More) FontStyles.BodySmallBold else FontStyles.BodySmall
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(R.drawable.ic_menu_more),
-                                            tint = if (bottomMenuSelectedItem.value == MenuItem.More) Colors.BackgroundPrimary else Colors.BrandBlack,
-                                            contentDescription = "Accounts Icon"
-                                        )
-                                    }
+                        val state = accountViewModel.state.collectAsState()
+                        AccountScreen(
+                            state = state.value,
+                            onBackClicked = {
+                                navController.popBackStack()
+                            },
+                            onOpenDocuments = {
+                                navController.navigate(Routes.Documents)
+                            },
+                            onTabSelected = { tab ->
+                                accountViewModel.onTabChanged(
+                                    tab = tab,
+                                    accountId = args.accountId
                                 )
                             }
-                        }
-                    ) { paddingValues ->
-                        NavHost(
-                            navController = navController,
-                            startDestination = Dashboard,
-                            modifier = Modifier.padding(paddingValues)
-                        ) {
-                            composable<Dashboard>() {
-                                LaunchedEffect(true) {
-                                    dashboardViewModel.loadData()
-                                }
-                                val state = dashboardViewModel.state.collectAsState()
-                                DashboardScreenUI(
-                                    state.value,
-                                    onPlatformClicked = {
-                                        dashboardViewModel.onPlatformClicked()
-                                    },
-                                    onOpenAccountClicked = {
-                                        navController.navigate(Account(it))
-                                    },
-                                    onAddAssetClicked = {
-                                        dashboardViewModel.onAddAssetClicked()
-                                    },
-                                    onAddAsset = { asset ->
-                                        dashboardViewModel.onAddAsset(asset)
-                                    },
-                                    onAddLiabilityClicked = {
-                                        dashboardViewModel.onAddLiabilityClicked()
-                                    },
-                                    onAddLiability = { liability ->
-                                        dashboardViewModel.onAddLiability(liability)
-                                    },
-                                    onBackButtonFromExternalScreenClicked = {
-                                        dashboardViewModel.loadData()
-                                    },
-                                    updateCheckedStates = { asset, assetStates, liabilities, liabilitiesStates ->
-                                        dashboardViewModel.updateCheckedStates(
-                                            asset,
-                                            assetStates,
-                                            liabilities,
-                                            liabilitiesStates
-                                        )
-                                    }
-                                )
-                            }
-                            composable<Account>() {
-                                val args = it.toRoute<Account>()
-                                LaunchedEffect(true) {
-                                    accountViewModel.getData(args.accountId)
-                                }
-                                val state = accountViewModel.state.collectAsState()
-                                AccountScreen(
-                                    state = state.value,
-                                    onBackClicked = {
-                                        navController.popBackStack()
-                                    },
-                                    onOpenDocuments = {
-                                        navController.navigate(Documents)
-                                    },
-                                    onTabSelected = { tab ->
-                                        accountViewModel.onTabChanged(
-                                            tab = tab,
-                                            accountId = args.accountId
-                                        )
-                                    }
-                                )
-                            }
-                            composable<Documents>() {
-                                AccountDocumentsUI(
-                                    onBackClicked = {
-                                        navController.popBackStack()
-                                    }
-                                )
-                            }
-                        }
+                        )
+                    }
+                    composable<Routes.MainRoute> {
+                        MainRoute(
+                            parentNavController = navController,
+                            dashboardViewModel = dashboardViewModel,
+                        )
                     }
                 }
             }
         }
     }
+
+}
+
+@Composable
+fun MainRoute(
+    parentNavController: NavHostController,
+    dashboardViewModel: DashboardViewModel
+) {
+    val tabNavController = rememberNavController()
+
+    val bottomMenuSelectedItem = remember {
+        mutableStateOf<Routes.MenuItem>(
+            Routes.MenuItem.Wealth
+        )
+    }
+
+    Scaffold(
+        bottomBar = {
+            NavigationBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .shadow(16.dp)
+                    .border(width = 1.dp, color = Colors.BorderSubdued),
+                containerColor = Colors.Background, tonalElevation = 12.dp
+            ) {
+                NavigationBarItem(
+                    modifier = Modifier.padding(top = 12.dp),
+                    selected = bottomMenuSelectedItem == Routes.MenuItem.Accounts,
+                    onClick = {
+                        bottomMenuSelectedItem.value = Routes.MenuItem.Accounts
+                        //navController.navigate(Account)
+                    },
+                    label = {
+                        Text(
+                            modifier = Modifier.wrapContentSize(),
+                            text = "Accounts",
+                            style = if (bottomMenuSelectedItem.value == Routes.MenuItem.Accounts) FontStyles.BodySmallBold else FontStyles.BodySmall
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_menu_accounts),
+                            tint = if (bottomMenuSelectedItem.value == Routes.MenuItem.Accounts) Colors.BackgroundPrimary else Colors.BrandBlack,
+                            contentDescription = "Accounts Icon"
+                        )
+                    }
+                )
+                NavigationBarItem(
+                    modifier = Modifier
+                        .padding(top = 12.dp),
+                    selected = bottomMenuSelectedItem == Routes.MenuItem.Wealth,
+                    onClick = {
+                        bottomMenuSelectedItem.value = Routes.MenuItem.Wealth
+                        tabNavController.navigate(Routes.Dashboard)
+                    },
+                    label = {
+                        Text(
+                            modifier = Modifier.wrapContentSize(),
+                            text = "Wealth",
+                            style = if (bottomMenuSelectedItem.value == Routes.MenuItem.Wealth) FontStyles.BodySmallBold else FontStyles.BodySmall
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_menu_wealth),
+                            tint = if (bottomMenuSelectedItem.value == Routes.MenuItem.Wealth) Colors.BackgroundPrimary else Colors.BrandBlack,
+                            contentDescription = stringResource(com.fintexinc.tangerine.R.string.description_icon_wealth)
+                        )
+                    }
+                )
+                NavigationBarItem(
+                    modifier = Modifier.padding(top = 12.dp),
+                    selected = bottomMenuSelectedItem == Routes.MenuItem.Tracker,
+                    onClick = {
+                        bottomMenuSelectedItem.value = Routes.MenuItem.Tracker
+                    },
+                    label = {
+                        Text(
+                            modifier = Modifier.wrapContentSize(),
+                            text = "Tracker",
+                            style = if (bottomMenuSelectedItem.value == Routes.MenuItem.Tracker) FontStyles.BodySmallBold else FontStyles.BodySmall
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_menu_tracker),
+                            tint = if (bottomMenuSelectedItem.value == Routes.MenuItem.Tracker) Colors.BackgroundPrimary else Colors.BrandBlack,
+                            contentDescription = "Accounts Icon"
+                        )
+                    }
+                )
+                NavigationBarItem(
+                    modifier = Modifier.padding(top = 12.dp),
+                    selected = bottomMenuSelectedItem == Routes.MenuItem.MoveMoney,
+                    onClick = {
+                        bottomMenuSelectedItem.value = Routes.MenuItem.MoveMoney
+                    },
+                    label = {
+                        Text(
+                            modifier = Modifier.wrapContentSize(),
+                            text = "Money",
+                            style = if (bottomMenuSelectedItem.value == Routes.MenuItem.MoveMoney) FontStyles.BodySmallBold else FontStyles.BodySmall
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_menu_make_money),
+                            tint = if (bottomMenuSelectedItem.value == Routes.MenuItem.MoveMoney) Colors.BackgroundPrimary else Colors.BrandBlack,
+                            contentDescription = "Accounts Icon"
+                        )
+                    }
+                )
+                NavigationBarItem(
+                    modifier = Modifier.padding(top = 12.dp),
+                    selected = bottomMenuSelectedItem == Routes.MenuItem.More,
+                    onClick = {
+                        bottomMenuSelectedItem.value = Routes.MenuItem.More
+                    },
+                    label = {
+                        Text(
+                            modifier = Modifier.wrapContentSize(),
+                            text = "More",
+                            style = if (bottomMenuSelectedItem.value == Routes.MenuItem.More) FontStyles.BodySmallBold else FontStyles.BodySmall
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_menu_more),
+                            tint = if (bottomMenuSelectedItem.value ==Routes.MenuItem.More) Colors.BackgroundPrimary else Colors.BrandBlack,
+                            contentDescription = "Accounts Icon"
+                        )
+                    }
+                )
+            }
+        }
+    ) { paddingValues ->
+        NavHost(
+            navController = tabNavController,
+            startDestination = Routes.Dashboard,
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            composable<Routes.Dashboard>() {
+                LaunchedEffect(true) {
+                    dashboardViewModel.loadData()
+                }
+                val state = dashboardViewModel.state.collectAsState()
+                DashboardScreenUI(
+                    state.value,
+                    onPlatformClicked = {
+                      dashboardViewModel.onPlatformClicked()
+                    },
+                    onOpenAccountClicked = {
+                      navController.navigate(Account(it))
+                    },
+                    onAddAssetClicked = { dataPoint ->
+                      dashboardViewModel.onAddAssetClicked(dataPoint)
+                    },
+                    onAddAsset = { asset ->
+                      dashboardViewModel.onAddAsset(asset)
+                    },
+                    onDeleteAsset = { asset ->
+                      dashboardViewModel.onDeleteAsset(asset)
+                    },
+                    onAddLiabilityClicked = { dataPoint ->
+                      dashboardViewModel.onAddLiabilityClicked(dataPoint)
+                    },
+                    onAddLiability = { liability ->
+                      dashboardViewModel.onAddLiability(liability)
+                    },
+                    onDeleteLiability = { liability ->
+                      dashboardViewModel.onDeleteLiability(liability)
+                    },
+                    onBackButtonFromExternalScreenClicked = {
+                      dashboardViewModel.loadData()
+                    },
+                    updateCheckedStates = { assets, liabilities ->
+                      dashboardViewModel.updateCheckedStates(
+                        assets,
+                        liabilities,
+                    )
+                  }
+                )
+            }
+
+            composable<Routes.Documents>() {
+                AccountDocumentsUI(
+                    onBackClicked = {
+                        parentNavController.popBackStack()
+                    }
+                )
+            }
+        }
+    }
+}
+
+object Routes {
 
     @Serializable
     object Dashboard
@@ -279,6 +312,12 @@ class MainActivity : ComponentActivity() {
 
     @Serializable
     object Documents
+
+    @Serializable
+    object Splash
+
+    @Serializable
+    object MainRoute
 
     sealed class MenuItem {
         object Accounts : MenuItem()

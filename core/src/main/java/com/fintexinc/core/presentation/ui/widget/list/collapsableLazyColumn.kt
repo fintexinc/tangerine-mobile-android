@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.datapoint.DataPointCollapsableUI
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
@@ -42,7 +42,8 @@ fun collapsableLazyColumn(
     subtitle: String? = null,
     addItemText: String,
     isLastList: Boolean = false,
-    onAddItemClick: () -> Unit
+    onAddItemClick: () -> Unit,
+    onItemClick: (DataPoint) -> Unit
 ) = with(scope) {
     item {
         Row(
@@ -76,22 +77,15 @@ fun collapsableLazyColumn(
                                             )
                                         )
                                 } else {
-                                    Modifier.drawBehind {
-                                        val strokeWidth = 1.dp.toPx()
-                                        val color = Colors.BorderSubdued
-                                        drawLine(
-                                            color = color,
-                                            start = Offset(0f, 0f),
-                                            end = Offset(0f, size.height),
-                                            strokeWidth = strokeWidth
+                                    Modifier
+                                        .border(
+                                            width = 1.dp,
+                                            color = Colors.BorderSubdued,
+                                            shape = RoundedCornerShape(
+                                                topStart = 16.dp,
+                                                topEnd = 16.dp
+                                            )
                                         )
-                                        drawLine(
-                                            color = color,
-                                            start = Offset(size.width, 0f),
-                                            end = Offset(size.width, size.height),
-                                            strokeWidth = strokeWidth
-                                        )
-                                    }
                                 })
                     }
                 )
@@ -123,14 +117,8 @@ fun collapsableLazyColumn(
     if (expanded.value) {
         items(dataPoints) {
             DataPointCollapsableUI(
-                dataPoint = it
-            )
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(18.dp)
-                    .background(Colors.BorderSubdued)
+                dataPoint = it,
+                onClick = onItemClick
             )
         }
         item {
@@ -164,6 +152,12 @@ fun collapsableLazyColumn(
                             end = Offset(size.width, size.height),
                             strokeWidth = strokeWidth
                         )
+                        drawLine(
+                            color = color,
+                            start = Offset(0f, size.height),
+                            end = Offset(size.width, size.height),
+                            strokeWidth = strokeWidth
+                        )
                     }
                     .padding(vertical = 12.dp, horizontal = 16.dp)
             ) {
@@ -172,12 +166,7 @@ fun collapsableLazyColumn(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .background(
-                            color = Colors.Transparent,
-                            shape = RoundedCornerShape(40.dp)
-                        )
-                        .border(
-                            width = 2.dp,
-                            color = Colors.Primary,
+                            color = Colors.BackgroundSecondary,
                             shape = RoundedCornerShape(40.dp)
                         )
                         .clickableShape(RoundedCornerShape(40.dp)) {
@@ -188,7 +177,7 @@ fun collapsableLazyColumn(
                     text = addItemText,
                     textAlign = TextAlign.Center,
                     style = FontStyles.HeadingLarge,
-                    color = Colors.Primary
+                    color = Colors.TextInverse
                 )
             }
         }

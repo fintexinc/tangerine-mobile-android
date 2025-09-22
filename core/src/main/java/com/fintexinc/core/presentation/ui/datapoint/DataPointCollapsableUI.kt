@@ -1,6 +1,8 @@
 package com.fintexinc.core.presentation.ui.datapoint
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.HorizontalDivider
@@ -21,19 +24,23 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
-import com.fintexinc.core.domain.model.DataPoint
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
 @Composable
 fun DataPointCollapsableUI(
-    dataPoint: DataPoint
+    dataPoint: DataPoint,
+    onClick: (DataPoint) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
             .background(Colors.Background)
+            .clickable {
+                onClick(dataPoint)
+            }
             .drawBehind {
                 val strokeWidth = 1.dp.toPx()
                 val color = Colors.BorderSubdued
@@ -50,44 +57,77 @@ fun DataPointCollapsableUI(
                     strokeWidth = strokeWidth
                 )
             }
-            .padding(vertical = 12.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(start = 12.dp, top = 16.dp, end = 12.dp),
+            verticalAlignment = Alignment.Top
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = dataPoint.name,
-                    style = FontStyles.BodyLarge,
-                    color = Colors.BrandBlack
+            if (dataPoint.iconResId != null) {
+                Image(
+                    modifier = Modifier.wrapContentSize().padding(2.dp),
+                    painter = painterResource(id = dataPoint.iconResId),
+                    contentDescription = null
                 )
-                Text(
-                    text = dataPoint.subName,
-                    style = FontStyles.BodyMedium,
-                    color = Colors.TextSubdued
-                )
+                Spacer(modifier = Modifier.width(12.dp))
             }
-            if (dataPoint.value != null) {
-                Text(
-                    modifier = Modifier.wrapContentSize(),
-                    text = dataPoint.value,
-                    style = FontStyles.BodyLargeBold,
-                    color = Colors.BrandBlack
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .wrapContentHeight()
+                    ) {
+                        Text(
+                            text = dataPoint.name,
+                            style = FontStyles.BodyLarge,
+                            color = Colors.BrandBlack
+                        )
+                        Text(
+                            text = dataPoint.subName,
+                            style = FontStyles.BodyMedium,
+                            color = Colors.TextSubdued
+                        )
+                    }
+                    if (dataPoint.value != null) {
+                        Row {
+                            Text(
+                                modifier = Modifier.wrapContentSize(),
+                                text = dataPoint.value,
+                                style = FontStyles.BodyLargeBold,
+                                color = Colors.BrandBlack
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                modifier = Modifier.wrapContentSize(),
+                                painter = painterResource(R.drawable.ic_arrow_right),
+                                tint = Colors.BrandGray,
+                                contentDescription = "Open Item"
+                            )
+                        }
+                    } else {
+                        Icon(
+                            modifier = Modifier.wrapContentSize(),
+                            painter = painterResource(R.drawable.ic_arrow_right),
+                            tint = Colors.BrandGray,
+                            contentDescription = "Open Item"
+                        )
+                    }
+                }
+                Spacer(
+                    modifier = Modifier.height(16.dp)
                 )
-            } else {
-                Icon(
-                    modifier = Modifier.wrapContentSize(),
-                    painter = painterResource(R.drawable.ic_arrow_right),
-                    tint = Colors.BrandGray,
-                    contentDescription = "Open Item"
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Colors.BorderSubdued)
                 )
             }
         }
@@ -135,6 +175,9 @@ fun DataPointUI(
                         modifier = Modifier.padding(end = 12.dp),
                         horizontalAlignment = Alignment.End
                     ) {
+            if (dataPoint.value != null) {
+                if (dataPoint.subValue != null) {
+                    Column {
                         Text(
                             modifier = Modifier.wrapContentSize(),
                             text = dataPoint.value,

@@ -6,11 +6,18 @@
     <string name="text_my_portfolio">My Portfolio</string>
     <string name="text_tangerine_net_worth">Tangerine Net Worth</string>
     <string name="text_all_accounts">All Accounts</string>
-    <string name="text_well_done">Well done!</string>
-    <string name="text_you_increased_rrsp">You’ve increased RRSP contributions by $1500 this month</string>
+    <string name="text_welcome_to_tangerine_wealth">Welcome to Tangerine Wealth!</string>
+    <string name="text_track_your_net_worth">Tracking Your Net Worth: Start building your full financial picture. Enter your assets and debts below to see how your wealth is growing over time.</string>
     <string name="text_earned_this_month">earned this month</string>
     <string name="text_assets">Assets</string>
     <string name="text_add_asset">Add Asset</string>
+    <string name="text_edit_asset">Edit Asset</string>
+    <string name="text_update_asset">Update Asset</string>
+    <string name="format_delete_item">Delete \"%s\"</string>
+    <string name="text_are_you_sure_you_want_to_delete_asset">Are you sure you want to delete this asset? This action will permanently remove it from your history.</string>
+    <string name="text_are_you_sure_you_want_to_delete_liability">Are you sure you want to delete this liability? This action will permanently remove it from your history.</string>
+    <string name="text_update_successful">Update successful</string>
+    <string name="text_change_may_affect">Changes take effect today and past\nrecords remain unchanged.</string>
     <string name="text_liabilities">Liabilities</string>
     <string name="title_add_liability">Add Liability</string>
     <string name="text_you_saved">You’ve saved $2,500 by investing with Tangerine.</string>
@@ -25,9 +32,9 @@
     <string name="text_new_market_insights">New market insights are available — stay informed with the latest trends and perspectives</string>
     <string name="text_check_in_update">Check-in and update</string>
     <string name="text_performance">Performance</string>
-    <string name="text_my_accounts">My Accounts</string>
-    <string name="format_registered_accounts">Registered Accounts (%d)</string>
-    <string name="format_non_registered_accounts">Non-Registered Accounts (%d)</string>
+    <string name="text_my_accounts">My Investment Accounts</string>
+    <string name="format_registered_accounts">Registered</string>
+    <string name="format_non_registered_accounts">Non-Registered</string>
     <string name="text_top_holdings">Top Holdings</string>
     <string name="text_largest_positions">Largest positions held across all accounts in this portfolio.</string>
     <string name="text_sector_exposure">Sector Exposure</string>
@@ -47,7 +54,9 @@
     <string name="text_make_selection">Make a selection</string>
     <string name="text_asset_name">Asset Name</string>
     <string name="text_enter_name">Enter a name</string>
-    <string name="text_estimated_value">Estimate Pay down Rate</string>
+    <string name="text_estimated_value">Estimated Value</string>
+    <string name="text_current_balance">Current Balance</string>
+    <string name="text_monthly_payment">Monthly Payment (optional)</string>
     <string name="text_currency">$</string>
     <string name="text_annualized_rate_of_return">Annualized rate of return (%)</string>
     <string name="text_effective_date">Effective Date</string>
@@ -61,6 +70,9 @@
     <string name="text_cache_flow">Cache Flow</string>
     <string name="text_percent">%</string>
     <string name="text_effective_on">Effective on %s</string>
+    <string name="text_back">Back</string>
+    <string name="title_add_account">Add Account</string>
+    <string name="text_group_by">Group By</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
@@ -75,4 +87,7 @@
     <string name="description_icon_close">Close</string>
     <string name="description_icon_filter">Filter</string>
     <string name="description_icon_open">Open</string>
+
+    <string name="description_icon_update_successful">Update successful</string>
+    <string name="description_icon_delete_item">Delete item</string>
 </resources>

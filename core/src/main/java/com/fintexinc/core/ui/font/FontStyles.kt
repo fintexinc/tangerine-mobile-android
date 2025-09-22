@@ -36,8 +36,18 @@ object FontStyles {
 
     val TitleSmall = TextStyle(
         fontFamily = tangerineCircularBold,
-        fontSize = 14.sp,
-        lineHeight = 19.sp
+        fontSize = 19.sp,
+        lineHeight = 24.sp
+    )
+    val TitleSmallRegular = TextStyle(
+        fontFamily = tangerineCircularBook,
+        fontSize = 19.sp,
+        lineHeight = 24.sp
+    )
+    val TitleLarge = TextStyle(
+        fontFamily = tangerineCircularMedium,
+        fontSize = 25.sp,
+        lineHeight = 30.sp
     )
     val TitleMediumBold = TextStyle(
         fontFamily = tangerineCircularBold,
@@ -51,8 +61,8 @@ object FontStyles {
     )
     val BodyLargeBold = TextStyle(
         fontFamily = tangerineCircularBold,
-        fontSize = 16.sp,
-        lineHeight = 20.sp
+        fontSize = 18.sp,
+        lineHeight = 24.sp
     )
     val BodyLarge = TextStyle(
         fontFamily = tangerineCircularBook,
@@ -86,6 +96,11 @@ object FontStyles {
         fontFamily = tangerineCircularBold,
         fontSize = 14.sp,
         lineHeight = 20.sp
+    )
+    val BodySmallItalic = TextStyle(
+        fontFamily = tangerineCircularBookItalic,
+        fontSize = 12.sp,
+        lineHeight = 14.sp
     )
     val DisplaySmall = TextStyle(
         fontFamily = tangerineCircularBold,
