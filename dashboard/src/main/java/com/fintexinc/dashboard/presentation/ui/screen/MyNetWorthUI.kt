@@ -780,7 +780,8 @@ private fun ActivityUI(
                             DataPoint(
                                 id = it.id,
                                 name = it.documentName,
-                                subName = it.documentDate.formatToString()
+                                subName = it.documentDate.formatToString(),
+                                iconResId = com.fintexinc.core.R.drawable.ic_document
                             )
                         }
                     )
@@ -799,38 +800,40 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
 
     Spacer(modifier = Modifier.height(18.dp))
 
-    groupedTransactions.forEachIndexed { groupIndex, group ->
+    Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+        groupedTransactions.forEachIndexed { groupIndex, group ->
 
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            text = group.date,
-            style = FontStyles.BodyMedium,
-            color = Colors.TextSubdued
-        )
-
-        group.transactions.forEachIndexed { index, transaction ->
-            TransactionItemUI(
-                transaction = transaction,
-                onClick = {
-                    // TODO() add navigation here
-                }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                text = group.date,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued
             )
 
-            if (index < group.transactions.size - 1) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .padding(horizontal = 12.dp)
-                        .background(Colors.BorderSubdued)
+            group.transactions.forEachIndexed { index, transaction ->
+                TransactionItemUI(
+                    transaction = transaction,
+                    onClick = {
+                        // TODO() add navigation here
+                    }
                 )
-            }
-        }
 
-        if (group != groupedTransactions.last()) {
-            Spacer(modifier = Modifier.height(16.dp))
+                if (index < group.transactions.size - 1) {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .padding(horizontal = 12.dp)
+                            .background(Colors.BorderSubdued)
+                    )
+                }
+            }
+
+            if (group != groupedTransactions.last()) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }
@@ -838,19 +841,22 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
 @Composable
 private fun DocumentsUI(dataPoints: List<DataPoint>) {
     Spacer(modifier = Modifier.height(18.dp))
-    dataPoints.forEach {
-        DataPointUI(
-            dataPoint = it,
-            isLastItem = dataPoints.last() == it
+
+    Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+        dataPoints.forEach {
+            DataPointUI(
+                dataPoint = it,
+                isLastItem = dataPoints.last() == it
+            )
+        }
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        TextButton(
+            text = stringResource(R.string.text_view_more),
+            onClick = {
+                // TODO() add navigation
+            },
         )
     }
-
-    Spacer(modifier = Modifier.height(18.dp))
-
-    TextButton(
-        text = stringResource(R.string.text_view_more),
-        onClick = {
-            // TODO() add navigation
-        },
-    )
 }
