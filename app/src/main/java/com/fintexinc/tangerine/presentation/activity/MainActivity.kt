@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -168,8 +169,13 @@ fun MainRoute(
                     icon = {
                         Icon(
                             modifier = Modifier.size(24.dp),
-                            painter = painterResource(R.drawable.ic_menu_wealth),
-                            tint = if (bottomMenuSelectedItem.value == Routes.MenuItem.Wealth) Colors.BackgroundPrimary else Colors.BrandBlack,
+                            painter =
+                                if (bottomMenuSelectedItem.value == Routes.MenuItem.Wealth){
+                                    painterResource(R.drawable.ic_menu_wealth_selected)
+                                } else {
+                                    painterResource(R.drawable.ic_menu_wealth_unselected)
+                                },
+                            tint = Color.Unspecified,
                             contentDescription = stringResource(com.fintexinc.tangerine.R.string.description_icon_wealth)
                         )
                     }
