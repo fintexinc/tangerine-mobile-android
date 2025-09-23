@@ -44,6 +44,7 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
 import com.tangerine.account.presentation.ui.bottom_tab.DocumentsUi
+import com.tangerine.account.presentation.ui.bottom_tab.TransactionsUi
 import com.tangerine.account.presentation.ui.tab.ActivityUI
 import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
@@ -201,7 +202,12 @@ private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
         tabs = listOf(
             TabItem(
                 title = stringResource(R.string.title_transactions),
-                content = {}
+                content = {
+                    TransactionsUi()
+                },
+                onTabSelected = {
+                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                }
             ),
             TabItem(
                 title = stringResource(R.string.title_details),
