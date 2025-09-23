@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -42,6 +44,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
@@ -55,7 +58,6 @@ import com.tangerine.charts.compose_charts.extensions.line_chart.PathData
 import com.tangerine.charts.compose_charts.extensions.line_chart.drawLineGradient
 import com.tangerine.charts.compose_charts.extensions.line_chart.getLinePath
 import com.tangerine.charts.compose_charts.extensions.line_chart.getPopupValue
-import com.tangerine.charts.compose_charts.extensions.spaceBetween
 import com.tangerine.charts.compose_charts.extensions.split
 import com.tangerine.charts.compose_charts.models.AnimationMode
 import com.tangerine.charts.compose_charts.models.DividerProperties
@@ -113,7 +115,8 @@ fun LineChart(
     maxValue: Double = data.maxOfOrNull { it.values.maxOfOrNull { it } ?: 0.0 } ?: 0.0,
     minValue: Double = if (data.any { it.values.any { it < 0.0 } }) data.minOfOrNull {
         it.values.minOfOrNull { it } ?: 0.0
-    } ?: 0.0 else 0.0
+    } ?: 0.0 else 0.0,
+    onValueSelected: ((Double?) -> Unit)? = null
 ) {
     if (data.isNotEmpty()) {
         require(minValue <= (data.minOfOrNull { it.values.minOfOrNull { it } ?: 0.0 } ?: 0.0)) {
@@ -141,6 +144,11 @@ fun LineChart(
     val chartWidth = remember {
         mutableFloatStateOf(0f)
     }
+
+    // Состояния для постоянного индикатора
+    val persistentIndicatorX = remember { mutableFloatStateOf(-1f) }
+    val persistentIndicatorValue = remember { mutableStateOf<Double?>(null) }
+    val persistentIndicatorPosition = remember { mutableStateOf<Offset?>(null) }
 
     val dotAnimators = remember {
         mutableStateListOf<List<Animatable<Float, AnimationVector1D>>>()
@@ -332,7 +340,37 @@ fun LineChart(
         }
     }
 
-    var onPressJob: Job? = null
+    fun showPersistentIndicator(
+        data: List<Line>,
+        size: IntSize,
+        position: Offset
+    ) {
+        val positionX = position.x.coerceIn(0f, size.width.toFloat())
+
+        val firstLine = data.firstOrNull() ?: return
+        val pathData = linesPathData.firstOrNull() ?: return
+
+        if (positionX >= pathData.xPositions[pathData.startIndex] &&
+            positionX <= pathData.xPositions[pathData.endIndex]
+        ) {
+            val fraction = (positionX / size.width)
+
+            val popupValue = getPopupValue(
+                points = firstLine.values,
+                fraction = fraction.toDouble(),
+                rounded = firstLine.curvedEdges ?: curvedEdges,
+                size = size.toSize(),
+                minValue = minValue,
+                maxValue = computedMaxValue
+            )
+
+            persistentIndicatorX.floatValue = positionX
+            persistentIndicatorValue.value = popupValue.calculatedValue
+            persistentIndicatorPosition.value = popupValue.offset
+
+            onValueSelected?.invoke(popupValue.calculatedValue)
+        }
+    }
 
     Column(modifier = modifier) {
         if (labelHelperProperties.enabled) {
@@ -359,17 +397,16 @@ fun LineChart(
                         .weight(1f)
                         .fillMaxSize()
                         .pointerInput(data, minValue, computedMaxValue, linesPathData) {
-                            if (!popupProperties.enabled || data.all { it.popupProperties?.enabled == false })
-                                return@pointerInput
-
-                            detectHorizontalDragGestures(
-                                onDragEnd = {
-                                    scope.launch {
-                                        hidePopup()
-                                    }
+                            detectDragGestures(
+                                onDragStart = { offset ->
+                                    showPersistentIndicator(
+                                        data = data,
+                                        size = size,
+                                        position = offset
+                                    )
                                 },
-                                onHorizontalDrag = { change, amount ->
-                                    showPopup(
+                                onDrag = { change, _ ->
+                                    showPersistentIndicator(
                                         data = data,
                                         size = size,
                                         position = change.position
@@ -377,30 +414,15 @@ fun LineChart(
                                 }
                             )
                         }
-                        .pointerInput(Unit) {
-                            if (!popupProperties.enabled || data.all { it.popupProperties?.enabled == false })
-                                return@pointerInput
-
+                        .pointerInput(data, minValue, computedMaxValue, linesPathData) {
                             detectTapGestures(
-                                onPress = {
-                                    if (onPressJob?.isActive == true) {
-                                        onPressJob?.cancel()
-                                        onPressJob = null
-                                    }
-
-                                    onPressJob = scope.launch {
-                                        showPopup(
-                                            data = data,
-                                            size = size,
-                                            position = it
-                                        )
-
-                                        tryAwaitRelease()
-                                        delay(timeMillis = popupProperties.duration)
-
-                                        hidePopup()
-                                    }
-                                },
+                                onTap = { offset ->
+                                    showPersistentIndicator(
+                                        data = data,
+                                        size = size,
+                                        position = offset
+                                    )
+                                }
                             )
                         }
                 ) {
@@ -539,6 +561,34 @@ fun LineChart(
                     if (zeroLineProperties.enabled && zeroLineProperties.zType == ZeroLineProperties.ZType.Above) {
                         drawZeroLine()
                     }
+
+                    if (persistentIndicatorX.floatValue > 0f) {
+                        val indicatorX = persistentIndicatorX.floatValue
+                        val indicatorPos = persistentIndicatorPosition.value
+
+                        drawLine(
+                            color = Color.Black,
+                            start = Offset(indicatorX, 0f),
+                            end = Offset(indicatorX, size.height),
+                            strokeWidth = 1.dp.toPx(),
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(14f, 8f), 0f) // обновленные значения
+                        )
+
+                        indicatorPos?.let { pos ->
+                            val correctedPos = pos.copy(x = indicatorX)
+                            drawCircle(
+                                color = Color.White,
+                                radius = 8.dp.toPx(),
+                                center = correctedPos
+                            )
+                            drawCircle(
+                                color = Color.Black,
+                                radius = 6.dp.toPx(),
+                                center = correctedPos
+                            )
+                        }
+                    }
+
                     popups.forEachIndexed { index, popup ->
                         drawPopup(
                             popup = popup,
@@ -572,7 +622,6 @@ fun LineChart(
         )
     }
 }
-
 
 @Composable
 private fun Indicators(
@@ -708,11 +757,3 @@ private fun DrawScope.drawPopup(
         )
     }
 }
-
-
-
-
-
-
-
-

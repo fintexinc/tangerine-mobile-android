@@ -1,5 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -448,12 +449,12 @@ private fun PerformanceChartUI() {
         data = listOf(
             Line(
                 label = "Performance",
-                values = listOf(1000.0, 15000.0),
+                values = listOf(1000.0, 15000.0, 2000.0, 4000.0,),
                 color = SolidColor(Color(0xFFEA7024)),
                 firstGradientFillColor = Color(0xFFFEC388),
                 secondGradientFillColor = Color(0x00FFFFFF),
-                curvedEdges = false,
-                drawStyle = DrawStyle.Fill
+                curvedEdges = true,
+                drawStyle = DrawStyle.Stroke(2.dp),
             )
         ),
         gridProperties = GridProperties(false),
@@ -472,7 +473,10 @@ private fun PerformanceChartUI() {
             mode = PopupProperties.Mode.PointMode(),
             contentVerticalPadding = 10.dp,
             contentHorizontalPadding = 12.dp
-        )
+        ),
+        onValueSelected = { it ->
+            Log.e("vbvbvb", "$it")
+        }
     )
     Spacer(modifier = Modifier.height(18.dp))
     ChartPeriodSelector(
