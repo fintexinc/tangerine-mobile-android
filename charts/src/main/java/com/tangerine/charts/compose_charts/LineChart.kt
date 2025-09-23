@@ -5,7 +5,6 @@ import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -44,7 +42,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
@@ -75,7 +72,6 @@ import com.tangerine.charts.compose_charts.utils.HorizontalLabels
 import com.tangerine.charts.compose_charts.utils.calculateOffset
 import com.tangerine.charts.compose_charts.utils.rememberComputedChartMaxValue
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -116,7 +112,7 @@ fun LineChart(
     minValue: Double = if (data.any { it.values.any { it < 0.0 } }) data.minOfOrNull {
         it.values.minOfOrNull { it } ?: 0.0
     } ?: 0.0 else 0.0,
-    onValueSelected: ((Double?) -> Unit)? = null
+    onValueSelected: ((Double?) -> Unit)? = null,
 ) {
     if (data.isNotEmpty()) {
         require(minValue <= (data.minOfOrNull { it.values.minOfOrNull { it } ?: 0.0 } ?: 0.0)) {
@@ -145,7 +141,6 @@ fun LineChart(
         mutableFloatStateOf(0f)
     }
 
-    // Состояния для постоянного индикатора
     val persistentIndicatorX = remember { mutableFloatStateOf(-1f) }
     val persistentIndicatorValue = remember { mutableStateOf<Double?>(null) }
     val persistentIndicatorPosition = remember { mutableStateOf<Offset?>(null) }
@@ -293,7 +288,7 @@ fun LineChart(
                             ?: 0f) else positionX
                     val fraction = (relevantX / size.width)
 
-                    val valueIndex = calculateValueIndex(
+                    val valueIndex = calculateValueIndexs(
                         fraction = fraction.toDouble(),
                         values = line.values,
                         pathData = pathData
@@ -643,7 +638,7 @@ private fun Indicators(
     }
 }
 
-private fun calculateValueIndex(
+private fun calculateValueIndexs(
     fraction: Double,
     values: List<Double>,
     pathData: PathData

@@ -408,37 +408,49 @@ private fun Charts() {
 @Composable
 private fun PerformanceChartUI() {
     Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        text = stringResource(R.string.text_performance),
-        style = FontStyles.BodyLarge
-    )
-    Spacer(modifier = Modifier.height(12.dp))
     Row(
-        modifier = Modifier
-            .wrapContentSize(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            modifier = Modifier.wrapContentSize(),
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
-            tint = Color(0xFF43A047),
-            contentDescription = stringResource(R.string.description_icon_increase)
+        Text(
+            modifier = Modifier
+                .weight(1.0f)
+                .wrapContentHeight(),
+            text = stringResource(R.string.text_performance),
+            style = FontStyles.TitleMediumMedium
         )
-        Spacer(modifier = Modifier.width(4.dp))
+        Icon(
+            painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
+            contentDescription = stringResource(R.string.description_info_icon),
+            modifier = Modifier.size(24.dp),
+            tint = Colors.TextInteractive,
+        )
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+        text = "Balance as of 17 Sep 2025",
+        color = Colors.TextSubdued,
+        style = FontStyles.BodySmallBold,
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
         Text(
             modifier = Modifier.wrapContentSize(),
             text = "$2,000.00",
-            style = FontStyles.TitleSmall
+            style = FontStyles.DisplaySmall,
+            color = Colors.Primary,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             modifier = Modifier.wrapContentSize(),
-            text = stringResource(R.string.text_earned_this_month),
-            style = FontStyles.BodyMedium,
-            color = Colors.TextSubdued
+            text = "$2,000 (4%)",
+            style = FontStyles.BodyLarge,
+            color = Colors.TextSuccess
         )
     }
     Spacer(modifier = Modifier.height(18.dp))
@@ -449,7 +461,7 @@ private fun PerformanceChartUI() {
         data = listOf(
             Line(
                 label = "Performance",
-                values = listOf(1000.0, 15000.0, 2000.0, 4000.0,),
+                values = listOf(1000.0, 15000.0, 2000.0, 4000.0),
                 color = SolidColor(Color(0xFFEA7024)),
                 firstGradientFillColor = Color(0xFFFEC388),
                 secondGradientFillColor = Color(0x00FFFFFF),
@@ -474,9 +486,9 @@ private fun PerformanceChartUI() {
             contentVerticalPadding = 10.dp,
             contentHorizontalPadding = 12.dp
         ),
-        onValueSelected = { it ->
-            Log.e("vbvbvb", "$it")
-        }
+        onValueSelected = { data ->
+
+        },
     )
     Spacer(modifier = Modifier.height(18.dp))
     ChartPeriodSelector(
