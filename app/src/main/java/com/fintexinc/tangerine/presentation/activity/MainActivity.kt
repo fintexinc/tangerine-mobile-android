@@ -285,6 +285,9 @@ class MainActivity : ComponentActivity() {
                         onBackButtonFromExternalScreenClicked = {
                             dashboardViewModel.loadData()
                         },
+                        onOpenDocumentsClicked = {
+                            tabNavController.navigate(Routes.Documents)
+                        },
                         updateCheckedStates = { assets, liabilities ->
                             dashboardViewModel.updateCheckedStates(
                                 assets,

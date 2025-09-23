@@ -89,7 +89,8 @@ fun MyNetWorthUI(
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onAddAssetClicked: (asset: DataPoint?) -> Unit,
     onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
-    onOpenJuiceArticle: (articleUrl: String) -> Unit
+    onOpenJuiceArticle: (articleUrl: String) -> Unit,
+    onOpenDocumentsClicked: () -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
@@ -215,6 +216,7 @@ fun MyNetWorthUI(
                 ActivityUI(
                     activities = activities,
                     documents = documents,
+                    onOpenDocumentsClicked = onOpenDocumentsClicked
                 )
             }
         }
@@ -756,6 +758,7 @@ private fun NetWorthChangesChartUI(
 private fun ActivityUI(
     activities: List<Transaction>,
     documents: List<Document>,
+    onOpenDocumentsClicked: () -> Unit
 ) {
     Text(
         modifier = Modifier
@@ -776,14 +779,15 @@ private fun ActivityUI(
                 title = stringResource(R.string.text_documents),
                 content = {
                     DocumentsUI(
-                        documents.map {
+                        dataPoints = documents.map {
                             DataPoint(
                                 id = it.id,
                                 name = it.documentName,
                                 subName = it.documentDate.formatToString(),
                                 iconResId = com.fintexinc.core.R.drawable.ic_document
                             )
-                        }
+                        },
+                        onOpenDocumentsClicked = onOpenDocumentsClicked
                     )
                 }
             )
@@ -839,14 +843,24 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
 }
 
 @Composable
-private fun DocumentsUI(dataPoints: List<DataPoint>) {
+private fun DocumentsUI(
+    dataPoints: List<DataPoint>,
+    onOpenDocumentsClicked: () -> Unit
+) {
     Spacer(modifier = Modifier.height(18.dp))
 
-    Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
         dataPoints.forEach {
             DataPointUI(
                 dataPoint = it,
-                isLastItem = dataPoints.last() == it
+                isLastItem = dataPoints.last() == it,
+                onClick = {
+                    onOpenDocumentsClicked()
+                }
             )
         }
 
@@ -855,7 +869,7 @@ private fun DocumentsUI(dataPoints: List<DataPoint>) {
         TextButton(
             text = stringResource(R.string.text_view_more),
             onClick = {
-                // TODO() add navigation
+
             },
         )
     }

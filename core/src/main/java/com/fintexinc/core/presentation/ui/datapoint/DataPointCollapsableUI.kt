@@ -136,13 +136,17 @@ fun DataPointCollapsableUI(
 @Composable
 fun DataPointUI(
     dataPoint: DataPoint,
+    onClick: (DataPoint) -> Unit = {},
     isLastItem: Boolean = false
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Colors.Background)
-            .padding(top = 12.dp),
+            .padding(top = 12.dp)
+            .clickable {
+                onClick(dataPoint)
+            },
         verticalAlignment = Alignment.Top
     ) {
         if (dataPoint.iconResId != null) {
