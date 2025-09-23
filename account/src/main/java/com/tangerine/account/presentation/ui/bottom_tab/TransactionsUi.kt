@@ -76,7 +76,7 @@ internal fun TransactionsUi(
                     amount = 2600.00,
                     date = "Jan 14, 2023",
                     type = TransactionUiType.SETTLED,
-                    additionalAmount1 = "$19.5200"
+                    additionalAmount1 = "$19.5200",
                 )
             )
         ),
@@ -393,19 +393,23 @@ private fun TransactionAmountSection(transaction: TransactionUi) {
         )
 
         if (transaction.type == TransactionUiType.SETTLED) {
-            Text(
-                text = "$19.5200",
-                style = FontStyles.BodySmall,
-                color = Colors.TextSubdued,
-            )
+            transaction.additionalAmount1?.let {
+                Text(
+                    text = transaction.additionalAmount1,
+                    style = FontStyles.BodySmall,
+                    color = Colors.TextSubdued,
+                )
+            }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            transaction.additionalAmount2?.let {
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = "133.1967",
-                style = FontStyles.BodySmall,
-                color = Colors.TextSubdued,
-            )
+                Text(
+                    text = it,
+                    style = FontStyles.BodySmallItalic,
+                    color = Colors.TextSubdued,
+                )
+            }
         }
     }
 
