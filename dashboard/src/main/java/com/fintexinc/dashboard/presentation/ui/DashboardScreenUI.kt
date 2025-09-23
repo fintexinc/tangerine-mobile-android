@@ -43,6 +43,7 @@ fun DashboardScreenUI(
     onDeleteAsset: (Custom) -> Unit,
     onAddLiabilityClicked: (DataPoint?) -> Unit,
     onAddLiability: (Liability) -> Unit,
+    onOpenJuiceArticle: (url: String) -> Unit,
     onDeleteLiability: (Liability) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
@@ -59,6 +60,7 @@ fun DashboardScreenUI(
             onOpenAccount = onOpenAccountClicked,
             onAddAssetClicked = onAddAssetClicked,
             onAddLiabilityClicked = onAddLiabilityClicked,
+            onOpenJuiceArticle = onOpenJuiceArticle,
             updateCheckedStates
         )
 
@@ -88,6 +90,7 @@ private fun Content(
     onOpenAccount:(accountId: String) -> Unit,
     onAddAssetClicked : (dataPoint: DataPoint?) -> Unit,
     onAddLiabilityClicked: (dataPoint: DataPoint?) -> Unit,
+    onOpenJuiceArticle: (url: String) -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     Column(
@@ -129,7 +132,8 @@ private fun Content(
                             documents = state.documents,
                             updateCheckedStates = updateCheckedStates,
                             onAddAssetClicked = onAddAssetClicked,
-                            onAddLiabilityClicked = onAddLiabilityClicked
+                            onAddLiabilityClicked = onAddLiabilityClicked,
+                            onOpenJuiceArticle = onOpenJuiceArticle
                         )
                     }
                 ),

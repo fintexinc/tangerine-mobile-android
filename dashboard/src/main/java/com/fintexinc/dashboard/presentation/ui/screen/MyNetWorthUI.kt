@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -31,16 +32,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.BankingUI
 import com.fintexinc.core.data.model.CustomUI
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.DateValue
 import com.fintexinc.core.data.model.InvestmentUI
 import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.formatToString
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
@@ -88,7 +88,8 @@ fun MyNetWorthUI(
     documents: List<Document>,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onAddAssetClicked: (asset: DataPoint?) -> Unit,
-    onAddLiabilityClicked: (liability: DataPoint?) -> Unit
+    onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
+    onOpenJuiceArticle: (articleUrl: String) -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
@@ -234,73 +235,66 @@ fun MyNetWorthUI(
                 color = Colors.BrandBlack
             )
         }
-        items(3) {
-            Row(
+        item {
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(176.dp)
-                    .padding(horizontal = 18.dp)
-                    .shadow(4.dp, RoundedCornerShape(16.dp))
-                    .background(color = Colors.BackgroundSubdued, RoundedCornerShape(16.dp)),
-                horizontalArrangement = Arrangement.End
+                    .padding(horizontal = 18.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(0.5F)
-                        .fillMaxHeight()
-                        .background(color = Colors.BorderSubdued)
-                )
-                Spacer(modifier = Modifier.width(24.dp))
-                Column(
-                    modifier = Modifier
-                        .weight(0.5F)
-                        .fillMaxHeight()
-                        .padding(vertical = 12.dp)
-                ) {
-                    Text(
+                items(3) {
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        text = stringResource(R.string.text_invest),
-                        style = FontStyles.BodySmall,
-                        color = Colors.TextSave
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        text = stringResource(R.string.text_invest_instructions),
-                        style = FontStyles.HeadingMedium,
-                        color = Colors.BrandBlack
-                    )
+                            .width(320.dp)
+                            .height(128.dp)
+                            .background(
+                                color = Colors.Background,
+                                RoundedCornerShape(16.dp)
+                            )
+                            .clickableShape(
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                // TODO: add actual info from mocks
+                                onOpenJuiceArticle("https://www.tangerine.ca/en/about-us/press-releases/pr-2024-10-18")
+                            },
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(128.dp)
+                                .fillMaxHeight()
+                                .background(
+                                    color = Colors.BorderSubdued,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column(
+                            modifier = Modifier
+                                .width(200.dp)
+                                .fillMaxHeight()
+                                .padding(horizontal = 16.dp, vertical = 12.dp)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                text = stringResource(R.string.text_invest),
+                                style = FontStyles.BodySmall,
+                                color = Colors.TextSave
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                text = stringResource(R.string.text_invest_instructions),
+                                style = FontStyles.HeadingMedium,
+                                color = Colors.BrandBlack
+                            )
+                        }
+                    }
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-        item {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 18.dp)
-                    .background(
-                        color = Colors.Background,
-                        shape = RoundedCornerShape(40.dp)
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = Colors.BorderSubdued,
-                        shape = RoundedCornerShape(40.dp)
-                    )
-                    .clickable {
-
-                    }
-                    .padding(vertical = 12.dp),
-                text = stringResource(R.string.text_show_more),
-                textAlign = TextAlign.Center,
-                style = FontStyles.HeadingLarge,
-                color = Colors.BrandBlack
-            )
         }
         item {
             Spacer(modifier = Modifier.height(48.dp))
