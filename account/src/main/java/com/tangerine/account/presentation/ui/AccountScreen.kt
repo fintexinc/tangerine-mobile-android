@@ -57,7 +57,8 @@ fun AccountScreen(
     state: AccountViewModel.State,
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
-    onTabSelected: (AccountTab) -> Unit
+    onTabSelected: (AccountTab) -> Unit,
+    navigateToTransactionDetailScreen: () -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -72,7 +73,8 @@ fun AccountScreen(
                 state = state,
                 onBackClicked = onBackClicked,
                 onOpenDocuments = onOpenDocuments,
-                onTabSelected = onTabSelected
+                onTabSelected = onTabSelected,
+                navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
             )
         }
     }
@@ -84,7 +86,8 @@ private fun Content(
     state: AccountViewModel.State,
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
-    onTabSelected: (AccountTab) -> Unit
+    onTabSelected: (AccountTab) -> Unit,
+    navigateToTransactionDetailScreen: () -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.SUMMARY)
@@ -101,7 +104,10 @@ private fun Content(
         BottomSheetScaffold(
             scaffoldState = bottomSheetState,
             sheetContent = {
-                BottomSheetTabsContent(bottomSheetState = bottomSheetState)
+                BottomSheetTabsContent(
+                    bottomSheetState = bottomSheetState,
+                    navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
+                )
             },
             sheetPeekHeight = 120.dp,
             sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
@@ -192,7 +198,10 @@ private fun MainPageContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
+private fun BottomSheetTabsContent(
+    bottomSheetState: BottomSheetScaffoldState,
+    navigateToTransactionDetailScreen: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
 
     TabsSelector(
@@ -221,7 +230,9 @@ private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
             TabItem(
                 title = stringResource(R.string.title_documents),
                 content = {
-                    DocumentsUi()
+                    DocumentsUi(
+                        navigateToTransactionDetailScreen = navigateToTransactionDetailScreen
+                    )
                 },
                 onTabSelected = {
                     scope.launch { bottomSheetState.bottomSheetState.expand() }

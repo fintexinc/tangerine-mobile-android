@@ -91,7 +91,10 @@ class MainActivity : ComponentActivity() {
                                     tab = tab,
                                     accountId = args.accountId
                                 )
-                            }
+                            },
+                            navigateToTransactionDetailScreen = {
+                                navController.navigate(Routes.TransactionDetail)
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {
@@ -310,6 +313,10 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
+
+                composable<Routes.TransactionDetail> {
+
+                }
             }
         }
     }
@@ -336,6 +343,9 @@ object Routes {
 
     @Serializable
     object MainRoute
+
+    @Serializable
+    object TransactionDetail
 
     sealed class MenuItem {
         object Accounts : MenuItem()

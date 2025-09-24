@@ -75,6 +75,10 @@ fun MyPortfolioUI(
         mutableStateOf(false)
     }
 
+    val selectedGroupingType = remember {
+        mutableStateOf(GroupingType.REGISTERED_STATUS)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -135,57 +139,117 @@ fun MyPortfolioUI(
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
-        // TODO: add logic based on mocked data
-        val registeredAccounts = accounts.map {
-            AccountUI(
-                accountId = it.accountId,
-                name = it.userId,
-                subName = it.accountId,
-                value = it.income.formatCurrency(),
-                valueChange = 832.01,
-                percentageChange = 4.39
-            )
+
+        when (selectedGroupingType.value) {
+            GroupingType.NONE -> {
+                val allAccountsUI = accounts.map {
+                    AccountUI(
+                        accountId = it.accountId,
+                        name = it.userId,
+                        subName = it.accountId,
+                        value = it.income.formatCurrency(),
+                        valueChange = 832.01,
+                        percentageChange = 4.39
+                    )
+                }
+
+                AccountListUI(
+                    title = "All Accounts",
+                    accounts = allAccountsUI,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                    isRoundedTop = true,
+                )
+            }
+
+            GroupingType.REGISTERED_STATUS -> {
+                val registeredAccounts = accounts.map {
+                    AccountUI(
+                        accountId = it.accountId,
+                        name = it.userId,
+                        subName = it.accountId,
+                        value = it.income.formatCurrency(),
+                        valueChange = 832.01,
+                        percentageChange = 4.39
+                    )
+                }
+
+                val nonRegisteredAccounts = listOf(
+                    AccountUI(
+                        accountId = "TFSA-001",
+                        name = "Jack Dawson TFSA",
+                        subName = "39024242",
+                        value = "20,000 CAD",
+                        valueChange = 832.01,
+                        percentageChange = 4.39
+                    ),
+                    AccountUI(
+                        accountId = "TFSA-002",
+                        name = "Jack Dawson TFSA",
+                        subName = "39024242",
+                        value = "20,000 CAD",
+                        valueChange = 832.01,
+                        percentageChange = 4.39
+                    ),
+                )
+
+                AccountListUI(
+                    title = stringResource(R.string.format_registered_accounts),
+                    accounts = registeredAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                    isRoundedTop = true,
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 18.dp),
+                    color = Colors.BorderSubdued
+                )
+
+                AccountListUI(
+                    title = stringResource(R.string.format_non_registered_accounts),
+                    accounts = nonRegisteredAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = "40,000 CAD",
+                    isRoundedTop = false,
+                )
+            }
+
+            GroupingType.ACCOUNT_TYPE -> {
+                val groupedByUser = accounts.groupBy { it.userId }
+                var isFirst = true
+
+                groupedByUser.forEach { (userId, userAccounts) ->
+                    val accountsUI = userAccounts.map {
+                        AccountUI(
+                            accountId = it.accountId,
+                            name = it.userId,
+                            subName = it.accountId,
+                            value = it.income.formatCurrency(),
+                            valueChange = 832.01,
+                            percentageChange = 4.39
+                        )
+                    }
+
+                    if (!isFirst) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 18.dp),
+                            color = Colors.BorderSubdued
+                        )
+                    }
+
+                    AccountListUI(
+                        title = userId,
+                        accounts = accountsUI,
+                        onOpenAccount = onOpenAccount,
+                        totalSum = userAccounts.sumOf { it.income }.formatCurrency(),
+                        isRoundedTop = isFirst,
+                    )
+
+                    isFirst = false
+                }
+            }
         }
-        // TODO: ask for unregistered accounts
-        val nonRegisteredAccounts = listOf(
-            AccountUI(
-                registeredAccounts[0].accountId,
-                name = "Jack Dawson TFSA",
-                subName = "39024242",
-                value = "20,000 CAD",
-                valueChange = 832.01,
-                percentageChange = 4.39
-            ),
-            AccountUI(
-                registeredAccounts[1].accountId,
-                name = "Jack Dawson TFSA",
-                subName = "39024242",
-                value = "20,000 CAD",
-                valueChange = 832.01,
-                percentageChange = 4.39
-            ),
-        )
-
-        AccountListUI(
-            title = stringResource(R.string.format_registered_accounts),
-            accounts = registeredAccounts,
-            onOpenAccount = onOpenAccount,
-            totalSum = accounts.sumOf { it.income }.formatCurrency(),
-            isRoundedTop = true,
-        )
-
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 18.dp),
-            color = Colors.BorderSubdued
-        )
-
-        AccountListUI(
-            title = stringResource(R.string.format_non_registered_accounts),
-            accounts = nonRegisteredAccounts,
-            onOpenAccount = onOpenAccount,
-            totalSum = accounts.sumOf { it.income }.formatCurrency(),
-            isRoundedTop = false,
-        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -219,20 +283,23 @@ fun MyPortfolioUI(
         TopHoldingsUI()
         Spacer(modifier = Modifier.height(30.dp))
     }
-    // TODO: ask for mock item type
-    data class MockItemType(override val label: String) : ItemType
 
-    val mockItemTypes = listOf(
-        MockItemType("None"),
-        MockItemType("Registered/Non-Registered"),
-        MockItemType("AccountType"),
+    data class FilterItemType(override val label: String, val type: GroupingType) : ItemType
+
+    val filterItemTypes = listOf(
+        FilterItemType("None", GroupingType.NONE),
+        FilterItemType("Registered/Non-Registered", GroupingType.REGISTERED_STATUS),
+        FilterItemType("AccountType", GroupingType.ACCOUNT_TYPE),
     )
 
     if (showInvestmentAccountsSelection.value) {
         ItemTypeSelection(
             itemTypeTitle = stringResource(R.string.text_group_by),
-            itemTypes = mockItemTypes,
-            onItemTypeSelected = {
+            itemTypes = filterItemTypes,
+            onItemTypeSelected = { selectedItem ->
+                if (selectedItem is FilterItemType) {
+                    selectedGroupingType.value = selectedItem.type
+                }
                 showInvestmentAccountsSelection.value = false
             },
             onCancel = {
@@ -240,6 +307,12 @@ fun MyPortfolioUI(
             },
         )
     }
+}
+
+enum class GroupingType(val label: String) {
+    NONE("None"),
+    REGISTERED_STATUS("Registered/Non-Registered"),
+    ACCOUNT_TYPE("AccountType")
 }
 
 @Composable
