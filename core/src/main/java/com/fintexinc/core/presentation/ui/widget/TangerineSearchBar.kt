@@ -29,7 +29,8 @@ import com.fintexinc.core.ui.font.FontStyles
 
 @Composable
 fun TangerineSearchBar(
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp)
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
+    isShowFilter: Boolean = true,
 ) {
     val searchText = remember {
         mutableStateOf("")
@@ -56,7 +57,7 @@ fun TangerineSearchBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(com.fintexinc.core.R.drawable.ic_search),
+                        painter = painterResource(R.drawable.ic_search),
                         contentDescription = stringResource(R.string.description_icon_search),
                         modifier = Modifier.padding(end = 8.dp)
                     )
@@ -78,12 +79,14 @@ fun TangerineSearchBar(
             },
             textStyle = FontStyles.BodyLarge.copy(color = Colors.BrandBlack)
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(
-            modifier = Modifier.wrapContentSize(),
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_filter),
-            contentDescription = stringResource(R.string.description_icon_filter),
-            tint = Colors.BrandBlack
-        )
+        if (isShowFilter){
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                modifier = Modifier.wrapContentSize(),
+                painter = painterResource(R.drawable.ic_filter),
+                contentDescription = stringResource(R.string.description_icon_filter),
+                tint = Colors.BrandBlack
+            )
+        }
     }
 }

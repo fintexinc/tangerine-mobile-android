@@ -41,6 +41,41 @@
     <string name="title_details">Details</string>
     <string name="title_transactions">Transactions</string>
     <string name="title_documents">Documents</string>
+    <string name="text_all_dates">All Dates</string>
+    <string name="filter_all_dates">All dates</string>
+    <string name="filter_last_30_days">Last 30 Days</string>
+    <string name="filter_last_60_days">Last 60 Days</string>
+    <string name="filter_last_90_days">Last 90 Days</string>
+    <string name="filter_12_month">12 Month</string>
+    <string name="filter_current_month">Current Month</string>
+    <string name="filter_by_month">By Month</string>
+    <string name="filter_all_documents">All documents</string>
+    <string name="filter_account_documents">Account Documents</string>
+    <string name="filter_statements">Statements</string>
+    <string name="filter_tax_documents">Tax Documents</string>
+    <string name="title_timeframe">Timeframe</string>
+    <string name="title_document_type">Document Type</string>
+    <string name="title_all_type">All Type</string>
+    <string name="title_all_status">All Status</string>
+    <string name="title_type">Type</string>
+    <string name="type_all_types">All types</string>
+    <string name="type_contributions_deposits">Contributions &amp; Deposits</string>
+    <string name="type_withdrawals">Withdrawals</string>
+    <string name="type_buys">Buys</string>
+    <string name="type_sells">Sells</string>
+    <string name="type_dividends_interest_1">Dividends &amp; Interest</string>
+    <string name="type_dividends_interest_2">Dividends &amp; Interest</string>
+    <string name="text_types_selected">types selected</string>
+    <string name="title_status">Status</string>
+    <string name="status_all_status">All status</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_failed">Failed</string>
+    <string name="text_statuses_selected">statuses selected</string>
+    <string name="text_dates_selected">dates selected</string>
+    <string name="title_settled_transactions">Settled Transactions</string>
+    <string name="title_pending_transactions">Pending Transactions</string>
 
     <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>
@@ -51,4 +86,8 @@
     <string name="description_icon_navigate_expand">Expand</string>
     <string name="description_icon_navigate_back">Back</string>
     <string name="description_icon_navigate_edit">Edit</string>
+    <string name="description_view_details">View details</string>
+    <string name="description_documents">Document</string>
+    <string name="description_icon_open">Open</string>
+
 </resources>
