@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -45,6 +46,7 @@ import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
+import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
@@ -574,7 +576,7 @@ private fun TopHoldingsItem(
     ) {
 
         Column(
-            modifier = Modifier.weight(0.66f),
+            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start,
         ) {
             Text(
@@ -595,7 +597,7 @@ private fun TopHoldingsItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Column(
-            modifier = Modifier.weight(0.33f),
+            modifier = Modifier.wrapContentWidth(),
             horizontalAlignment = Alignment.End,
         ) {
             Text(
@@ -614,7 +616,6 @@ private fun TopHoldingsItem(
         }
     }
 }
-
 
 data class AccountUI(
     val accountId: String,
