@@ -1,8 +1,7 @@
 package com.fintexinc.dashboard.presentation.ui.components
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,21 +9,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.R
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
+import com.fintexinc.dashboard.R
 
 @Composable
 internal fun TransactionItemUI(
@@ -39,13 +38,10 @@ internal fun TransactionItemUI(
             .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Box(
-            modifier = Modifier
-                .size(24.dp)
-                .background(
-                    color = Colors.BackgroundPrimary.copy(0.5f),
-                    shape = RoundedCornerShape(8.dp)
-                )
+        Icon(
+            painter = painterResource(R.drawable.ic_transaction),
+            tint = Color.Unspecified,
+            contentDescription = stringResource(R.string.description_icon_transaction),
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -93,9 +89,9 @@ internal fun TransactionItemUI(
                 .align(Alignment.CenterVertically)
                 .size(24.dp)
                 .padding(start = 8.dp),
-            painter = painterResource(R.drawable.ic_arrow_right),
+            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
             tint = Colors.BrandGray,
-            contentDescription = stringResource(com.fintexinc.dashboard.R.string.description_icon_open),
+            contentDescription = stringResource(R.string.description_icon_open),
         )
     }
 }
