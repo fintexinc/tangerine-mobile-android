@@ -87,6 +87,7 @@
     <string name="description_icon_filter">Filter</string>
     <string name="description_icon_open">Open</string>
     <string name="description_info_icon">Information</string>
+    <string name="description_icon_transaction">Transaction</string>
     <string name="description_icon_update_successful">Update successful</string>
     <string name="description_icon_delete_item">Delete item</string>
 </resources>
