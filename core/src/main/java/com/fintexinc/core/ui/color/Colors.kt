@@ -32,4 +32,5 @@ object Colors {
     val Primary = Color(0xFFEA7024)
     val Transparent = Color(0x00000000)
     val IconSupplementary = Color(0xFFBDBDBD)
+    val IconSubtitled = Color(0xFF757575)
 }

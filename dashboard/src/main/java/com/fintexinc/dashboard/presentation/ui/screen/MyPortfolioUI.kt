@@ -75,41 +75,68 @@ fun MyPortfolioUI(
         mutableStateOf(false)
     }
 
+    val isShowNewsBanner = remember {
+        mutableStateOf(true)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(18.dp))
-        RowWithShadow {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight()
+        if (isShowNewsBanner.value) {
+            Spacer(modifier = Modifier.height(18.dp))
+            RowWithShadow(
+                modifier = Modifier.clickable {
+                    // TODO() navigate to news
+                }
             ) {
-                Text(
+                Column(
+                    modifier = Modifier.wrapContentHeight(),
+                    verticalArrangement = Arrangement.Top,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_pictogram),
+                        contentDescription = stringResource(R.string.description_icon_pictogram),
+                        modifier = Modifier.size(40.dp),
+                        tint = Color.Unspecified,
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    text = stringResource(R.string.text_new_market_insights),
-                    style = FontStyles.BodyLarge
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
+                        .weight(1f)
+                        .wrapContentHeight()
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        text = stringResource(R.string.text_new_market_insights),
+                        style = FontStyles.BodyMedium,
+                        color = Colors.Text,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        text = stringResource(R.string.text_check_in_update),
+                        style = FontStyles.BodyMediumBold,
+                        color = Colors.TextInteractive,
+                    )
+                }
+                Icon(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    text = stringResource(R.string.text_check_in_update),
-                    style = FontStyles.BodyMedium,
-                    color = Colors.TextSubdued
+                        .size(24.dp)
+                        .clickable { isShowNewsBanner.value = false },
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
+                    tint = Colors.IconSubtitled,
+                    contentDescription = stringResource(R.string.description_icon_close),
                 )
             }
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
-                tint = Colors.BrandBlack,
-                contentDescription = stringResource(R.string.description_icon_close)
-            )
         }
         Spacer(modifier = Modifier.height(18.dp))
         Charts()

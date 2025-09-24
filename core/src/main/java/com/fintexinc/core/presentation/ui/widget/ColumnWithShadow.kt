@@ -68,10 +68,11 @@ fun ColumnWithBorder(
 
 @Composable
 fun RowWithShadow(
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 18.dp)
