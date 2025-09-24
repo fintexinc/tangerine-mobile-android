@@ -30,13 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.ToolBar
@@ -276,31 +275,30 @@ private fun AccountTabsUI(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AccountTab(
+            modifier = Modifier.weight(1f),
             label = stringResource(R.string.text_buy_funds),
-            icon = R.drawable.ic_funds,
+            icon = R.drawable.ic_funds_down,
             onClick = {
                 selectedTab.value = AccountTab.BUY_FUNDS
             },
-            modifier = Modifier.weight(1f)
         )
 
         AccountTab(
+            modifier = Modifier.weight(1f),
             label = stringResource(R.string.text_sell_funds),
-            icon = R.drawable.ic_funds,
+            icon = R.drawable.ic_funds_up,
             onClick = {
                 selectedTab.value = AccountTab.SELL_FUNDS
             },
-            modifier = Modifier.weight(1f),
-            isRotated = true,
         )
 
         AccountTab(
+            modifier = Modifier.weight(1f),
             label = stringResource(R.string.text_automatic_purchases),
             icon = R.drawable.ic_automatic_purchases,
             onClick = {
                 selectedTab.value = AccountTab.AUTOMATIC_PURCHASES
             },
-            modifier = Modifier.weight(1f)
         )
 
         AccountTab(
@@ -316,11 +314,10 @@ private fun AccountTabsUI(
 
 @Composable
 private fun AccountTab(
+    modifier: Modifier = Modifier,
     label: String,
     icon: Int,
     onClick: () -> Unit,
-    isRotated: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -334,15 +331,13 @@ private fun AccountTab(
                     clip = false
                 )
                 .background(color = Colors.Background, shape = RoundedCornerShape(12.dp))
-                .clip(RoundedCornerShape(12.dp))
-                .clickable { onClick() }
+                .clickableShape(shape = RoundedCornerShape(12.dp), onClick = { onClick() })
                 .padding(12.dp)
         ) {
             Icon(
                 painter = painterResource(icon),
                 contentDescription = label,
                 tint = Colors.Primary,
-                modifier = Modifier.rotate(if (isRotated) 180f else 0f)
             )
         }
 
