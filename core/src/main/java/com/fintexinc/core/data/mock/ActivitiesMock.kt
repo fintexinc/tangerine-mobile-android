@@ -31,6 +31,35 @@ const val ACTIVITIES_MOCK = "[\n" +
         "        }\n" +
         "    },\n" +
         "    {\n" +
+        "        \"id\": \"TXN-0009\",\n" +
+        "        \"accountId\": \"ACCT-INV-001\",\n" +
+        "        \"accountCategory\": \"INVESTMENT\",\n" +
+        "        \"accountType\": \"TFSA\",\n" +
+        "        \"productType\": \"MUTUAL_FUND\",\n" +
+        "        \"transactionDate\": \"2025-08-14\",\n" +
+        "        \"tradeDate\": \"2025-08-14\",\n" +
+        "        \"settlementDate\": \"2025-08-16\",\n" +
+        "        \"postedDate\": \"2025-08-16\",\n" +
+        "        \"transactionType\": \"CONTRIBUTION\",\n" +
+        "        \"tradeAction\": \"BUY\",\n" +
+        "        \"transactionAmount\": 500.0,\n" +
+        "        \"grossAmount\": 500.0,\n" +
+        "        \"feeAmount\": 0.0,\n" +
+        "        \"netAmount\": 500.0,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"transactionDescription\": \"TFSA contribution\",\n" +
+        "        \"referenceNumber\": \"T-20250814-001\",\n" +
+        "        \"transactionStatus\": \"SETTLED\",\n" +
+        "        \"investmentDetails\": {\n" +
+        "            \"fundCode\": \"TAN-BAL\",\n" +
+        "            \"fundName\": \"Tangerine Core Balanced Portfolio\",\n" +
+        "            \"units\": 18.6279,\n" +
+        "            \"navPerUnit\": 26.85,\n" +
+        "            \"distributionType\": \"DIVIDEND\",\n" +
+        "            \"taxYear\": 2025\n" +
+        "        }\n" +
+        "    },\n" +
+        "    {\n" +
         "        \"id\": \"TXN-0002\",\n" +
         "        \"accountId\": \"ACCT-INV-001\",\n" +
         "        \"accountCategory\": \"INVESTMENT\",\n" +

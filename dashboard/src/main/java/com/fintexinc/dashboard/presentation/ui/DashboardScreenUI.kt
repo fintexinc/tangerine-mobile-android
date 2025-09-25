@@ -43,8 +43,10 @@ fun DashboardScreenUI(
     onDeleteAsset: (Custom) -> Unit,
     onAddLiabilityClicked: (DataPoint?) -> Unit,
     onAddLiability: (Liability) -> Unit,
+    onOpenJuiceArticle: (url: String) -> Unit,
     onDeleteLiability: (Liability) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit,
+    onOpenDocumentsClicked: () -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     when (state) {
@@ -59,7 +61,9 @@ fun DashboardScreenUI(
             onOpenAccount = onOpenAccountClicked,
             onAddAssetClicked = onAddAssetClicked,
             onAddLiabilityClicked = onAddLiabilityClicked,
-            updateCheckedStates
+            onOpenJuiceArticle = onOpenJuiceArticle,
+            onOpenDocumentsClicked = onOpenDocumentsClicked,
+            updateCheckedStates = updateCheckedStates
         )
 
         is DashboardViewModel.State.AddEditAsset -> {
@@ -88,6 +92,8 @@ private fun Content(
     onOpenAccount:(accountId: String) -> Unit,
     onAddAssetClicked : (dataPoint: DataPoint?) -> Unit,
     onAddLiabilityClicked: (dataPoint: DataPoint?) -> Unit,
+    onOpenJuiceArticle: (url: String) -> Unit,
+    onOpenDocumentsClicked: () -> Unit = {},
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     Column(
@@ -129,7 +135,9 @@ private fun Content(
                             documents = state.documents,
                             updateCheckedStates = updateCheckedStates,
                             onAddAssetClicked = onAddAssetClicked,
-                            onAddLiabilityClicked = onAddLiabilityClicked
+                            onAddLiabilityClicked = onAddLiabilityClicked,
+                            onOpenJuiceArticle = onOpenJuiceArticle,
+                            onOpenDocumentsClicked = onOpenDocumentsClicked
                         )
                     }
                 ),
