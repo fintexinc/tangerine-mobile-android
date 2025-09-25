@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,13 +26,12 @@ import com.tangerine.charts.compose_charts.models.Pie
 
 @Composable
 fun TangerinePieChart(title: String, pieData: List<Pie>) {
-    Spacer(modifier = Modifier.height(12.dp))
     Text(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
         text = title,
-        style = FontStyles.BodyLarge
+        style = FontStyles.TitleMediumMedium
     )
     Spacer(modifier = Modifier.height(18.dp))
     PieChart(
@@ -39,9 +40,9 @@ fun TangerinePieChart(title: String, pieData: List<Pie>) {
             .height(210.dp),
         data = pieData,
         style = Pie.Style.Stroke(width = 24.dp),
-        spaceDegree = 5F,
+        spaceDegree = 18F,
     )
-    Spacer(modifier = Modifier.height(18.dp))
+    Spacer(modifier = Modifier.height(44.dp))
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +59,7 @@ fun TangerinePieChart(title: String, pieData: List<Pie>) {
                 Box(
                     modifier = Modifier
                         .size(8.dp)
-                        .background(color = it.color)
+                        .background(color = it.color, shape = CircleShape)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -67,16 +68,23 @@ fun TangerinePieChart(title: String, pieData: List<Pie>) {
                         .wrapContentHeight(),
                     text = it.label ?: "",
                     style = FontStyles.BodyMedium,
-                    color = Colors.BrandBlack
+                    color = Colors.Text
                 )
                 Text(
                     modifier = Modifier.wrapContentHeight(),
                     text = "${it.data}%",
                     style = FontStyles.BodyMedium,
-                    color = Colors.TextSubdued,
+                    color = Colors.Text,
                     textAlign = TextAlign.End
                 )
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            HorizontalDivider(color = Colors.BorderSubdued)
+
+            Spacer(modifier = Modifier.height(10.dp))
+
         }
     }
 }

@@ -366,7 +366,17 @@ private fun AccountListUI(
 private fun Charts() {
     val pagerState = rememberPagerState { 4 }
     HorizontalPager(pagerState) {
-        ColumnWithBorder {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 18.dp)
+                .background(
+                    color = Colors.Background,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(18.dp)
+        ) {
             when (it) {
                 0 -> PerformanceChartUI()
                 1 -> SectionExposureChartUI()
