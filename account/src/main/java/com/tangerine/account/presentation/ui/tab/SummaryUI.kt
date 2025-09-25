@@ -28,8 +28,8 @@ import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
-import com.tangerine.account.presentation.models.DataSectionItemUi
-import com.tangerine.account.presentation.ui.components.UniversalDataSection
+import com.fintexinc.core.ui.models.DataSectionItemUi
+import com.fintexinc.core.ui.components.UniversalDataSection
 import com.tangerine.charts.compose_charts.LineChart
 import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.models.DrawStyle
@@ -171,7 +171,7 @@ private fun AccountBalanceUI() {
                     .clickable {
                         showNetworkContribution.value = !showNetworkContribution.value
                     },
-                painter = painterResource(R.drawable.ic_info),
+                painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
                 contentDescription = stringResource(R.string.description_icon_navigate_info),
                 tint = Colors.BrandBlack
             )
@@ -186,7 +186,8 @@ private fun AccountBalanceUI() {
         )
         Spacer(modifier = Modifier.height(12.dp))
         Row(
-            modifier = Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.wrapContentSize(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 modifier = Modifier.wrapContentSize(),

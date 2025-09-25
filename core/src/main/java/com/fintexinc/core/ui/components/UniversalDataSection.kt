@@ -1,4 +1,4 @@
-package com.tangerine.account.presentation.ui.components
+package com.fintexinc.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,14 +28,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
-import com.tangerine.account.R
-import com.tangerine.account.presentation.models.DataSectionItemUi
+import com.fintexinc.core.ui.models.DataSectionItemUi
 
 @Composable
-internal fun UniversalDataSection(
-    title: String,
+fun UniversalDataSection(
+    title: String?,
     items: List<DataSectionItemUi>,
     footerText: String? = null,
     showProgressBar: Boolean = false,
@@ -49,11 +49,13 @@ internal fun UniversalDataSection(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = title,
-            style = FontStyles.TitleSmall,
-            modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
-        )
+        title?.let {
+            Text(
+                text = it,
+                style = FontStyles.TitleSmall,
+                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
+            )
+        }
 
         if (showProgressBar) {
             AllocationProgressBar(
@@ -113,7 +115,7 @@ internal fun UniversalDataSection(
 }
 
 @Composable
-internal fun DataSectionRow(
+fun DataSectionRow(
     label: String,
     value: String,
     valueColor: Color,

@@ -1,25 +1,21 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.android.hilt)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.detekt)
 }
 
 android {
-    namespace = "com.fintexinc.tangerine"
+    namespace = "com.fintexinc.tangerine.transaction_details"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.fintexinc.tangerine"
         minSdk = 24
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -29,7 +25,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -47,7 +42,6 @@ android {
 }
 
 dependencies {
-
     // core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -55,6 +49,7 @@ dependencies {
 
     // DI
     implementation(libs.android.hilt)
+    implementation(libs.androidx.ui.geometry)
     ksp(libs.android.hilt.compiler)
 
     // compose
@@ -66,17 +61,13 @@ dependencies {
     implementation(libs.compose.constraint.layout)
     implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.hilt.navigation.compose)
+
 
     // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // features
-    implementation(project(":dashboard"))
-    implementation(project(":account"))
-    implementation(project(":documents"))
+    // core
     implementation(project(":core"))
-    implementation(project(":transaction_details"))
 }

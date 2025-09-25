@@ -40,6 +40,8 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.presentation.ui.DashboardScreenUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI
+import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
+import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
 import com.tangerine.documents.presentation.ui.AccountDocumentsUI
@@ -50,6 +52,7 @@ import kotlinx.serialization.Serializable
 class MainActivity : ComponentActivity() {
     private val dashboardViewModel: DashboardViewModel by viewModels()
     private val accountViewModel: AccountViewModel by viewModels()
+    private val transactionDetailViewModel: TransactionDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,10 +100,20 @@ class MainActivity : ComponentActivity() {
                             },
                         )
                     }
+
                     composable<Routes.MainRoute> {
                         MainRoute(
                             parentNavController = navController,
                             dashboardViewModel = dashboardViewModel,
+                        )
+                    }
+
+                    composable<Routes.TransactionDetail> {
+                        val state = transactionDetailViewModel.state.collectAsState()
+
+                        TransactionDetailUi(
+                            state = state.value,
+                            onBackClick = { navController.popBackStack() },
                         )
                     }
                 }
@@ -312,10 +325,6 @@ class MainActivity : ComponentActivity() {
                             parentNavController.popBackStack()
                         }
                     )
-                }
-
-                composable<Routes.TransactionDetail> {
-
                 }
             }
         }
