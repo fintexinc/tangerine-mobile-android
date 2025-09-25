@@ -98,7 +98,7 @@ fun MyPortfolioUI(
                     Icon(
                         painter = painterResource(R.drawable.ic_pictogram),
                         contentDescription = stringResource(R.string.description_icon_pictogram),
-                        modifier = Modifier.size(40.dp),
+                        modifier = Modifier.wrapContentSize(),
                         tint = Color.Unspecified,
                     )
                 }
