@@ -24,9 +24,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.tangerine.charts.compose_charts.extensions.getAngleInDegree
 import com.tangerine.charts.compose_charts.extensions.isDegreeBetween
 import com.tangerine.charts.compose_charts.extensions.isInsideCircle
@@ -48,7 +51,9 @@ fun PieChart(
     colorAnimExitSpec: AnimationSpec<Color> = colorAnimEnterSpec,
     scaleAnimExitSpec: AnimationSpec<Float> = scaleAnimEnterSpec,
     spaceDegreeAnimExitSpec: AnimationSpec<Float> = spaceDegreeAnimEnterSpec,
-    style: Pie.Style = Pie.Style.Fill
+    style: Pie.Style = Pie.Style.Fill,
+    borderWidth: Dp = 4.dp,
+    borderColor: Color = Color(0xFFF7F7F7)
 ) {
 
     require(data.none { it.data < 0 }) {
@@ -138,41 +143,51 @@ fun PieChart(
         }
     }
 
-    Canvas(
-        modifier = modifier
-            .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    val angleInDegree = getAngleInDegree(
-                        touchTapOffset = offset,
-                        pieceOffset = pieChartCenter
-                    )
+    Canvas(modifier = modifier
+        .pointerInput(Unit) {
+            detectTapGestures { offset ->
+                val angleInDegree = getAngleInDegree(
+                    touchTapOffset = offset,
+                    pieceOffset = pieChartCenter
+                )
 
-                    pieces.firstOrNull { piece ->
-                        isDegreeBetween(angleInDegree, piece.startFromDegree, piece.endToDegree)
-                                && isInsideCircle(offset, pieChartCenter, piece.radius)
+                pieces.firstOrNull { piece ->
+                    isDegreeBetween(angleInDegree, piece.startFromDegree, piece.endToDegree)
+                            && isInsideCircle(offset, pieChartCenter, piece.radius) }
+                    ?.let {
+                        val (id, _) = it
+                        details.find { it.id == id }
+                            ?.let {
+                                onPieClick(it.pie)
+                            }
                     }
-                        ?.let {
-                            val (id, _) = it
-                            details.find { it.id == id }
-                                ?.let {
-                                    onPieClick(it.pie)
-                                }
-                        }
-                }
             }
+        }
     ) {
         pieChartCenter = center
 
         val radius: Float = when (style) {
             is Pie.Style.Fill -> {
-                (minOf(size.width, size.height) / 2)
+                (minOf(size.width, size.height) / 1.5f)
             }
 
             is Pie.Style.Stroke -> {
                 (minOf(size.width, size.height) / 2) - (style.width.toPx() / 2)
             }
         }
-        val total = details.sumOf { it.pie.data } // 360 degree for total
+
+        val borderWidthPx = borderWidth.toPx()
+        val total = details.sumOf { it.pie.data }
+
+        data class PathToDraw(
+            val path: Path,
+            val color: Color,
+            val style: DrawStyle,
+            val isBorder: Boolean = false
+        )
+
+        val pathsToDraw = mutableListOf<PathToDraw>()
+
         details.forEachIndexed { index, detail ->
             val degree = ((detail.pie.data * 360) / total)
 
@@ -192,16 +207,7 @@ fun PieChart(
                 0f
             }
 
-            val drawStyle = if (isStroke) {
-                Stroke(
-                    width = strokeWidth,
-                    cap = StrokeCap.Butt
-                )
-            } else Fill
-
-            val piecePath = if (degree >= 360.0) {
-                // draw circle instead of arc
-
+            if (degree >= 360.0) {
                 pieces.add(
                     PiePiece(
                         id = detail.id,
@@ -211,7 +217,7 @@ fun PieChart(
                     )
                 )
 
-                Path().apply {
+                val piecePath = Path().apply {
                     addOval(
                         oval = Rect(
                             center = center,
@@ -219,6 +225,32 @@ fun PieChart(
                         )
                     )
                 }
+
+                if (isStroke) {
+                    pathsToDraw.add(
+                        PathToDraw(
+                            path = piecePath,
+                            color = borderColor,
+                            style = Stroke(
+                                width = strokeWidth + borderWidthPx * 2,
+                                cap = StrokeCap.Round
+                            ),
+                            isBorder = true
+                        )
+                    )
+                }
+
+                pathsToDraw.add(
+                    PathToDraw(
+                        path = piecePath,
+                        color = detail.color.value,
+                        style = if (isStroke) {
+                            Stroke(width = strokeWidth)
+                        } else {
+                            Fill
+                        }
+                    )
+                )
             } else {
                 val beforeItems = data.filterIndexed { filterIndex, chart -> filterIndex < index }
                 val startFromDegree = beforeItems.sumOf { (it.data * 360) / total }
@@ -229,8 +261,26 @@ fun PieChart(
                 )
 
                 val arcStart = startFromDegree.toFloat() + detail.space.value + cornerAngle
-                val arcSweep =
-                    degree.toFloat() - ((detail.space.value * 2) + spaceDegree + (cornerAngle * 2))
+                val arcSweep = degree.toFloat() - ((detail.space.value * 2) + spaceDegree + (cornerAngle * 2))
+
+                if (isStroke && arcSweep > 0) {
+                    val borderPath = Path().apply {
+                        arcTo(arcRect, arcStart, arcSweep, true)
+                    }
+
+                    pathsToDraw.add(
+                        PathToDraw(
+                            path = borderPath,
+                            color = borderColor,
+                            style = Stroke(
+                                width = strokeWidth + borderWidthPx * 2,
+                                cap = StrokeCap.Round,
+                                join = StrokeJoin.Round
+                            ),
+                            isBorder = true
+                        )
+                    )
+                }
 
                 val piecePath = Path().apply {
                     if (arcSweep > 0) {
@@ -264,26 +314,39 @@ fun PieChart(
                         endToDegree = if (arcStart + arcSweep + cornerAngle >= 360f) 360f else arcStart + arcSweep + cornerAngle,
                     )
                 )
-                piecePath
-            }
 
-            if (isStroke && degree < 360.0) {
-                drawPath(
-                    path = piecePath,
-                    color = detail.color.value,
-                    style = Stroke(
-                        width = strokeWidth,
-                        cap = StrokeCap.Round,
-                        join = StrokeJoin.Round
-                    ),
-                )
-            } else {
-                drawPath(
-                    path = piecePath,
-                    color = detail.color.value,
-                    style = drawStyle,
+                pathsToDraw.add(
+                    PathToDraw(
+                        path = piecePath,
+                        color = detail.color.value,
+                        style = if (isStroke) {
+                            Stroke(
+                                width = strokeWidth,
+                                cap = StrokeCap.Round,
+                                join = StrokeJoin.Round
+                            )
+                        } else {
+                            Fill
+                        }
+                    )
                 )
             }
+        }
+
+        pathsToDraw.filter { it.isBorder }.forEach { pathData ->
+            drawPath(
+                path = pathData.path,
+                color = pathData.color,
+                style = pathData.style
+            )
+        }
+
+        pathsToDraw.filter { !it.isBorder }.forEach { pathData ->
+            drawPath(
+                path = pathData.path,
+                color = pathData.color,
+                style = pathData.style
+            )
         }
     }
 }
