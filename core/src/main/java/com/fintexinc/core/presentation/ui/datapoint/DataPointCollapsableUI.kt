@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +67,9 @@ fun DataPointCollapsableUI(
         ) {
             if (dataPoint.iconResId != null) {
                 Image(
-                    modifier = Modifier.wrapContentSize().padding(2.dp),
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(2.dp),
                     painter = painterResource(id = dataPoint.iconResId),
                     contentDescription = null
                 )
@@ -136,78 +139,93 @@ fun DataPointCollapsableUI(
 @Composable
 fun DataPointUI(
     dataPoint: DataPoint,
+    onClick: (DataPoint) -> Unit = {},
     isLastItem: Boolean = false
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Colors.Background)
             .padding(top = 12.dp)
+            .clickable {
+                onClick(dataPoint)
+            },
+        verticalAlignment = Alignment.Top
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
+        if (dataPoint.iconResId != null) {
+            Image(
+                modifier = Modifier.wrapContentSize(),
+                painter = painterResource(id = dataPoint.iconResId),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+        Column {
+            Row(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
                     .wrapContentHeight()
+                    .padding(horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = dataPoint.name,
-                    style = FontStyles.BodyLarge,
-                    color = Colors.BrandBlack
-                )
-                Text(
-                    text = dataPoint.subName,
-                    style = FontStyles.BodyMedium,
-                    color = Colors.TextSubdued
-                )
-            }
-            if (dataPoint.value != null) {
-                if (dataPoint.subValue != null) {
-                    Column {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentHeight()
+                ) {
+                    Text(
+                        text = dataPoint.name,
+                        style = FontStyles.BodyLarge,
+                        color = Colors.BrandBlack
+                    )
+                    Text(
+                        text = dataPoint.subName,
+                        style = FontStyles.BodyMedium,
+                        color = Colors.TextSubdued
+                    )
+                }
+                if (dataPoint.value != null) {
+                    if (dataPoint.subValue != null) {
+                        Column {
+                            Text(
+                                modifier = Modifier.wrapContentSize(),
+                                text = dataPoint.value,
+                                style = FontStyles.BodyLargeBold,
+                                color = Colors.BrandBlack
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                modifier = Modifier.wrapContentSize(),
+                                text = dataPoint.subValue,
+                                style = FontStyles.BodyMedium,
+                                color = Colors.TextSubdued
+                            )
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             modifier = Modifier.wrapContentSize(),
                             text = dataPoint.value,
-                            style = FontStyles.BodyLargeBold,
-                            color = Colors.BrandBlack
-                        )
-                        Text(
-                            modifier = Modifier.wrapContentSize(),
-                            text = dataPoint.subValue,
                             style = FontStyles.BodyMedium,
                             color = Colors.TextSubdued
                         )
                     }
                 } else {
-                    Text(
-                        modifier = Modifier.wrapContentSize(),
-                        text = dataPoint.value,
-                        style = FontStyles.BodyLargeBold,
-                        color = Colors.BrandBlack
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(R.drawable.ic_arrow_right),
+                        tint = Colors.BrandGray,
+                        contentDescription = "Open Item"
                     )
                 }
-            } else {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(R.drawable.ic_arrow_right),
-                    tint = Colors.BrandGray,
-                    contentDescription = "Open Item"
+            }
+            if (!isLastItem) {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
-        }
-        if (!isLastItem) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Colors.BorderSubdued)
-            )
         }
     }
 }

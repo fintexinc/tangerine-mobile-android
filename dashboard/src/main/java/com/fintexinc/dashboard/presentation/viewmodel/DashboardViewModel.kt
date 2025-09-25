@@ -42,41 +42,31 @@ class DashboardViewModel @Inject constructor(
         val accounts = accountGateway.getAccounts()
         val assets = netWorthGateway.getAssets()
         val liabilities = netWorthGateway.getLiabilities()
-        val activities = accountGateway.getActivities()
-            .sortedByDescending { it.transactionDate }
-            .take(3)
+        val activities = accountGateway.getActivities().sortedByDescending { it.transactionDate }
+            .take(ACTIVITIES_COUNT)
+        val documents = accountGateway.getDocuments().sortedWith(
+            compareBy({ it.documentDate.year }, { it.documentDate.month }, { it.documentDate.day })
+        ).take(ACTIVITIES_COUNT)
 
-        val documents = accountGateway
-            .getDocuments()
-            .take(3)
         return State.Data(
             bankingAssets = assets.banking.map {
                 BankingUI(
-                    it,
-                    it.toNameValue()
+                    it, it.toNameValue()
                 )
-            },
-            investmentAssets = assets.investment.map {
+            }, investmentAssets = assets.investment.map {
                 InvestmentUI(
-                    it,
-                    it.toNameValue()
+                    it, it.toNameValue()
                 )
-            },
-            customAssets = assets.custom.map {
+            }, customAssets = assets.custom.map {
                 CustomUI(
-                    it,
-                    it.toNameValue()
+                    it, it.toNameValue()
                 )
-            },
-            liabilities = liabilities.map {
+            }, liabilities = liabilities.map {
                 LiabilityUI(
                     it,
                     it.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
                 )
-            },
-            accounts = accounts,
-            activities = activities,
-            documents = documents
+            }, accounts = accounts, activities = activities, documents = documents
         )
     }
 
@@ -91,12 +81,11 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun onAddAssetClicked(dataPoint: DataPoint?) = viewModelScope.launch {
-        _state.value =
-            State.AddEditAsset(
-                currentDataState().customAssets.firstOrNull { customAssetUI ->
-                    customAssetUI.asset.id == dataPoint?.id
-                }?.asset
-            )
+        _state.value = State.AddEditAsset(
+            currentDataState().customAssets.firstOrNull { customAssetUI ->
+                customAssetUI.asset.id == dataPoint?.id
+            }?.asset
+        )
     }
 
     fun onAddAsset(asset: Custom) {
@@ -131,12 +120,11 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun onAddLiabilityClicked(dataPoint: DataPoint?) = viewModelScope.launch {
-        _state.value =
-            State.AddEditLiability(
-                currentDataState().liabilities.firstOrNull { liabilityUI ->
-                    liabilityUI.liability.id == dataPoint?.id
-                }?.liability
-            )
+        _state.value = State.AddEditLiability(
+            currentDataState().liabilities.firstOrNull { liabilityUI ->
+                liabilityUI.liability.id == dataPoint?.id
+            }?.liability
+        )
     }
 
     fun onAddLiability(liability: Liability) {
@@ -148,8 +136,7 @@ class DashboardViewModel @Inject constructor(
                         val index = indexOfFirst { it.liability.id == liability.id }
                         remove(get(index))
                         add(
-                            index,
-                            LiabilityUI(
+                            index, LiabilityUI(
                                 liability,
                                 liability.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
                             )
@@ -188,28 +175,20 @@ class DashboardViewModel @Inject constructor(
         val currentState = currentDataState()
         _state.value = State.Data(
             liabilities = currentState.liabilities.map { liabilityUI ->
-                liabilityUI.copy(
-                    checkedState = liabilityStates.find { state -> state.id == liabilityUI.liability.id }
-                        ?: liabilityUI.checkedState
-                )
+                liabilityUI.copy(checkedState = liabilityStates.find { state -> state.id == liabilityUI.liability.id }
+                    ?: liabilityUI.checkedState)
             },
             bankingAssets = currentState.bankingAssets.map { bankingUI ->
-                bankingUI.copy(
-                    checkedState = assetStates.find { state -> state.id == bankingUI.asset.id }
-                        ?: bankingUI.checkedState
-                )
+                bankingUI.copy(checkedState = assetStates.find { state -> state.id == bankingUI.asset.id }
+                    ?: bankingUI.checkedState)
             },
             investmentAssets = currentState.investmentAssets.map { investmentUI ->
-                investmentUI.copy(
-                    checkedState = assetStates.find { state -> state.id == investmentUI.asset.id }
-                        ?: investmentUI.checkedState
-                )
+                investmentUI.copy(checkedState = assetStates.find { state -> state.id == investmentUI.asset.id }
+                    ?: investmentUI.checkedState)
             },
             customAssets = currentState.customAssets.map { customUI ->
-                customUI.copy(
-                    checkedState = assetStates.find { state -> state.id == customUI.asset.id }
-                        ?: customUI.checkedState
-                )
+                customUI.copy(checkedState = assetStates.find { state -> state.id == customUI.asset.id }
+                    ?: customUI.checkedState)
             },
             accounts = currentState.accounts,
             activities = currentState.activities,
@@ -237,5 +216,9 @@ class DashboardViewModel @Inject constructor(
 
         data class AddEditAsset(val asset: Custom?) : State()
         data class AddEditLiability(val liability: Liability?) : State()
+    }
+
+    companion object {
+        private const val ACTIVITIES_COUNT = 5
     }
 }

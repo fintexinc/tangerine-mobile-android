@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -44,8 +45,8 @@ import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.data.model.DataPoint
-import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
+import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
@@ -197,25 +198,6 @@ fun MyPortfolioUI(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp),
-            text = stringResource(R.string.text_top_holdings),
-            style = FontStyles.TitleMediumBold
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp),
-            text = stringResource(R.string.text_largest_positions),
-            style = FontStyles.BodySmall,
-            color = Colors.DarkGray,
-        )
-        Spacer(modifier = Modifier.height(10.dp))
         TopHoldingsUI()
         Spacer(modifier = Modifier.height(30.dp))
     }
@@ -519,18 +501,117 @@ private fun GeographicExposure() {
 
 @Composable
 private fun TopHoldingsUI() {
-    ColumnWithBorder {
-        val dataPoints = listOf(
-            DataPoint("1", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("2", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("3", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("4", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("5", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)")
+    val dataPoints = listOf(
+        DataPoint("Bank of Nova Scotia", "BNS", "10,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "22,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "21,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "23,000 CAD", " (4.39%)")
+    ).sortedByDescending { dataPoint ->
+        dataPoint.value?.replace(",", "")?.replace(" CAD", "")?.toDoubleOrNull() ?: 0.0
+    }
+
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(
+                color = Colors.Background,
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp),
+            text = stringResource(R.string.text_top_holdings),
+            style = FontStyles.TitleMediumBold
         )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp),
+            text = stringResource(R.string.text_largest_positions),
+            style = FontStyles.BodySmall,
+            color = Colors.DarkGray,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
         dataPoints.forEachIndexed { index, dataPoint ->
-            DataPointUI(
-                dataPoint = dataPoint,
-                isLastItem = dataPoints.size - 1 == index
+            TopHoldingsItem(
+                holdingsName = dataPoint.id,
+                holdingsSubName = dataPoint.name,
+                sum = dataPoint.subName,
+                percent = dataPoint.value ?: ""
+            )
+
+            if (dataPoints.size - 1 != index) {
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun TopHoldingsItem(
+    holdingsName: String,
+    holdingsSubName: String,
+    sum: String,
+    percent: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Text(
+                text = holdingsName,
+                style = FontStyles.BodyLarge,
+                color = Colors.Text,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = holdingsSubName,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued,
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Column(
+            modifier = Modifier.wrapContentWidth(),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Text(
+                text = sum,
+                style = FontStyles.BodyLargeBold,
+                color = Colors.Text,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = percent,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued,
             )
         }
     }
