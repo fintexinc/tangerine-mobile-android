@@ -2,6 +2,7 @@ package com.tangerine.account.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,13 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.ToolBar
@@ -87,7 +87,7 @@ private fun Content(
     onTabSelected: (AccountTab) -> Unit
 ) {
     val selectedTab = remember {
-        mutableStateOf(AccountTab.SUMMARY)
+        mutableStateOf(AccountTab.BUY_FUNDS)
     }
 
     val showBottomSheet = state is AccountViewModel.State.Activities ||
@@ -172,12 +172,15 @@ private fun MainPageContent(
             maskedAccountNumber = "***1234"
         )
 
+        Spacer(modifier = Modifier.height(24.dp))
+
         AccountTabsUI(
             selectedTab,
             onTabSelected = { tab ->
                 onTabSelected(tab)
             }
         )
+
         Spacer(modifier = Modifier.height(24.dp))
 
         when (state) {
@@ -273,54 +276,98 @@ private fun AccountTabsUI(
     selectedTab: MutableState<AccountTab>,
     onTabSelected: @Composable (AccountTab) -> Unit = {}
 ) {
-    val tabs = listOf(
-        AccountTab.SUMMARY,
-        AccountTab.POSITIONS,
-        AccountTab.ACTIVITY,
-        AccountTab.DOCUMENTS
-    )
     onTabSelected(selectedTab.value)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        val offset = LocalDensity.current.run { 16.dp.toPx() }
-        tabs.forEach { tab ->
-            Text(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .then(
-                        if (selectedTab.value == tab) {
-                            Modifier.drawBehind {
-                                val strokeWidth = 3.dp.toPx()
-                                val y = size.height - strokeWidth / 2
-                                drawLine(
-                                    color = Colors.BackgroundPrimary,
-                                    start = Offset(offset / 2, y),
-                                    end = Offset(size.width - offset / 2, y),
-                                    strokeWidth = strokeWidth
-                                )
-                            }
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .clickable {
-                        selectedTab.value = tab
-                    }
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
-                text = tab.label,
-                style = FontStyles.BodySmallBold,
-                color = Colors.BrandBlack
+        AccountTab(
+            modifier = Modifier.weight(1f),
+            label = stringResource(R.string.text_buy_funds),
+            icon = R.drawable.ic_funds_down,
+            onClick = {
+                selectedTab.value = AccountTab.BUY_FUNDS
+            },
+        )
+
+        AccountTab(
+            modifier = Modifier.weight(1f),
+            label = stringResource(R.string.text_sell_funds),
+            icon = R.drawable.ic_funds_up,
+            onClick = {
+                selectedTab.value = AccountTab.SELL_FUNDS
+            },
+        )
+
+        AccountTab(
+            modifier = Modifier.weight(1f),
+            label = stringResource(R.string.text_automatic_purchases),
+            icon = R.drawable.ic_automatic_purchases,
+            onClick = {
+                selectedTab.value = AccountTab.AUTOMATIC_PURCHASES
+            },
+        )
+
+        AccountTab(
+            label = stringResource(R.string.text_switch_portfolio),
+            icon = R.drawable.ic_switch_portfolio,
+            onClick = {
+                selectedTab.value = AccountTab.SWITCH_PORTFOLIO
+            },
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun AccountTab(
+    modifier: Modifier = Modifier,
+    label: String,
+    icon: Int,
+    onClick: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    clip = false
+                )
+                .background(color = Colors.Background, shape = RoundedCornerShape(12.dp))
+                .clickableShape(shape = RoundedCornerShape(12.dp), onClick = { onClick() })
+                .padding(12.dp)
+        ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = label,
+                tint = Colors.Primary,
             )
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = label,
+            color = Colors.TextSubdued,
+            style = FontStyles.BodySmall,
+            maxLines = 2,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
 enum class AccountTab(val label: String) {
-    SUMMARY("Summary"),
-    POSITIONS("Positions"),
-    ACTIVITY("Activity"),
-    DOCUMENTS("Documents")
+    BUY_FUNDS("Buy_Funds"),
+    SELL_FUNDS("Sell_Funds"),
+    AUTOMATIC_PURCHASES("Automatic_Purchases"),
+    SWITCH_PORTFOLIO("Switch_Portfolio")
 }
