@@ -40,7 +40,7 @@ fun TangerinePieChart(title: String, pieData: List<Pie>) {
             .height(210.dp),
         data = pieData,
         style = Pie.Style.Stroke(width = 24.dp),
-        spaceDegree = 18F,
+        spaceDegree = 5F,
     )
     Spacer(modifier = Modifier.height(44.dp))
     Column(

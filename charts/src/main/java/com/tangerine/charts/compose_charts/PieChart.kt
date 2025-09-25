@@ -22,6 +22,8 @@ import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
@@ -136,26 +138,28 @@ fun PieChart(
         }
     }
 
-    Canvas(modifier = modifier
-        .pointerInput(Unit) {
-            detectTapGestures { offset ->
-                val angleInDegree = getAngleInDegree(
-                    touchTapOffset = offset,
-                    pieceOffset = pieChartCenter
-                )
+    Canvas(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    val angleInDegree = getAngleInDegree(
+                        touchTapOffset = offset,
+                        pieceOffset = pieChartCenter
+                    )
 
-                pieces.firstOrNull { piece ->
-                    isDegreeBetween(angleInDegree, piece.startFromDegree, piece.endToDegree)
-                        && isInsideCircle(offset, pieChartCenter, piece.radius) }
-                    ?.let {
-                        val (id, _) = it
-                        details.find { it.id == id }
-                            ?.let {
-                                onPieClick(it.pie)
-                            }
+                    pieces.firstOrNull { piece ->
+                        isDegreeBetween(angleInDegree, piece.startFromDegree, piece.endToDegree)
+                                && isInsideCircle(offset, pieChartCenter, piece.radius)
                     }
+                        ?.let {
+                            val (id, _) = it
+                            details.find { it.id == id }
+                                ?.let {
+                                    onPieClick(it.pie)
+                                }
+                        }
+                }
             }
-        }
     ) {
         pieChartCenter = center
 
@@ -172,11 +176,29 @@ fun PieChart(
         details.forEachIndexed { index, detail ->
             val degree = ((detail.pie.data * 360) / total)
 
-            val drawStyle = if ((detail.pie.style ?: style) is Pie.Style.Stroke) {
-                Stroke(width = ((detail.pie.style ?: style) as Pie.Style.Stroke).width.toPx())
+            val currentStyle = (detail.pie.style ?: style)
+            val isStroke = currentStyle is Pie.Style.Stroke
+
+            val strokeWidth = if (isStroke) {
+                (currentStyle as Pie.Style.Stroke).width.toPx()
             } else {
-                Fill
+                0f
             }
+
+            val cornerRadius = strokeWidth / 2f
+            val cornerAngle = if (isStroke && degree < 360.0) {
+                Math.toDegrees(cornerRadius / (radius * detail.scale.value).toDouble()).toFloat()
+            } else {
+                0f
+            }
+
+            val drawStyle = if (isStroke) {
+                Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Butt
+                )
+            } else Fill
+
             val piecePath = if (degree >= 360.0) {
                 // draw circle instead of arc
 
@@ -206,14 +228,17 @@ fun PieChart(
                     radius = radius * detail.scale.value
                 )
 
-                val arcStart = startFromDegree.toFloat() + detail.space.value
-                val arcSweep = degree.toFloat() - ((detail.space.value * 2) + spaceDegree)
+                val arcStart = startFromDegree.toFloat() + detail.space.value + cornerAngle
+                val arcSweep =
+                    degree.toFloat() - ((detail.space.value * 2) + spaceDegree + (cornerAngle * 2))
 
                 val piecePath = Path().apply {
-                    arcTo(arcRect, arcStart, arcSweep, true)
+                    if (arcSweep > 0) {
+                        arcTo(arcRect, arcStart, arcSweep, true)
+                    }
                 }
 
-                if ((detail.pie.style ?: style) is Pie.Style.Fill) {
+                if (currentStyle is Pie.Style.Fill) {
                     pathMeasure.setPath(piecePath, false)
                     piecePath.reset()
                     val start = pathMeasure.getPosition(0f)
@@ -235,18 +260,30 @@ fun PieChart(
                     PiePiece(
                         id = detail.id,
                         radius = radius * detail.scale.value,
-                        startFromDegree = arcStart,
-                        endToDegree = if (arcStart + arcSweep >= 360f) 360f else arcStart + arcSweep,
+                        startFromDegree = arcStart - cornerAngle,
+                        endToDegree = if (arcStart + arcSweep + cornerAngle >= 360f) 360f else arcStart + arcSweep + cornerAngle,
                     )
                 )
                 piecePath
             }
 
-            drawPath(
-                path = piecePath,
-                color = detail.color.value,
-                style = drawStyle,
-            )
+            if (isStroke && degree < 360.0) {
+                drawPath(
+                    path = piecePath,
+                    color = detail.color.value,
+                    style = Stroke(
+                        width = strokeWidth,
+                        cap = StrokeCap.Round,
+                        join = StrokeJoin.Round
+                    ),
+                )
+            } else {
+                drawPath(
+                    path = piecePath,
+                    color = detail.color.value,
+                    style = drawStyle,
+                )
+            }
         }
     }
 }
