@@ -149,7 +149,7 @@ const val PERFORMANCE_MOCK = "[\n" +
         "        \"id\": \"PERF-ACCT-INV-003-2025-03\",\n" +
         "        \"accountId\": \"ACCT-INV-003\",\n" +
         "        \"accountType\": \"INVESTMENT\",\n" +
-        "        \"value\": 3200.0,\n" +
+        "        \"value\": 1200.0,\n" +
         "        \"currency\": \"CAD\",\n" +
         "        \"date\": {\"month\": 3, \"year\": 2025}\n" +
         "    },\n" +
@@ -181,7 +181,7 @@ const val PERFORMANCE_MOCK = "[\n" +
         "        \"id\": \"PERF-ACCT-INV-003-2025-07\",\n" +
         "        \"accountId\": \"ACCT-INV-003\",\n" +
         "        \"accountType\": \"INVESTMENT\",\n" +
-        "        \"value\": 3310.0,\n" +
+        "        \"value\": 1310.0,\n" +
         "        \"currency\": \"CAD\",\n" +
         "        \"date\": {\"month\": 7, \"year\": 2025}\n" +
         "    },\n" +
@@ -205,7 +205,7 @@ const val PERFORMANCE_MOCK = "[\n" +
         "        \"id\": \"PERF-ACCT-BNK-001-2025-02\",\n" +
         "        \"accountId\": \"ACCT-BNK-001\",\n" +
         "        \"accountType\": \"BANKING\",\n" +
-        "        \"value\": 2200.0,\n" +
+        "        \"value\": 3200.0,\n" +
         "        \"currency\": \"CAD\",\n" +
         "        \"date\": {\"month\": 2, \"year\": 2025}\n" +
         "    },\n" +
@@ -221,7 +221,7 @@ const val PERFORMANCE_MOCK = "[\n" +
         "        \"id\": \"PERF-ACCT-BNK-001-2025-04\",\n" +
         "        \"accountId\": \"ACCT-BNK-001\",\n" +
         "        \"accountType\": \"BANKING\",\n" +
-        "        \"value\": 2350.0,\n" +
+        "        \"value\": 1350.0,\n" +
         "        \"currency\": \"CAD\",\n" +
         "        \"date\": {\"month\": 4, \"year\": 2025}\n" +
         "    },\n" +
@@ -248,6 +248,14 @@ const val PERFORMANCE_MOCK = "[\n" +
         "        \"value\": 2440.0,\n" +
         "        \"currency\": \"CAD\",\n" +
         "        \"date\": {\"month\": 7, \"year\": 2025}\n" +
+        "    },\n" +
+        "    {\n" +
+        "        \"id\": \"PERF-ACCT-BNK-001-2025-07\",\n" +
+        "        \"accountId\": \"ACCT-BNK-001\",\n" +
+        "        \"accountType\": \"BANKING\",\n" +
+        "        \"value\": 34400.0,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"date\": {\"month\": 9, \"year\": 2025}\n" +
         "    },\n" +
         "    {\n" +
         "        \"id\": \"PERF-ACCT-BNK-001-2025-08\",\n" +
@@ -312,6 +320,14 @@ const val PERFORMANCE_MOCK = "[\n" +
         "        \"value\": 12400.0,\n" +
         "        \"currency\": \"CAD\",\n" +
         "        \"date\": {\"month\": 7, \"year\": 2025}\n" +
+        "    },\n" +
+        "    {\n" +
+        "        \"id\": \"PERF-ACCT-BNK-002-2025-07\",\n" +
+        "        \"accountId\": \"ACCT-BNK-002\",\n" +
+        "        \"accountType\": \"BANKING\",\n" +
+        "        \"value\": 12400.0,\n" +
+        "        \"currency\": \"CAD\",\n" +
+        "        \"date\": {\"month\": 9, \"year\": 2025}\n" +
         "    },\n" +
         "    {\n" +
         "        \"id\": \"PERF-ACCT-BNK-002-2025-08\",\n" +

@@ -45,6 +45,7 @@ import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.data.model.DataPoint
+import com.fintexinc.core.domain.model.Performance
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
@@ -54,6 +55,8 @@ import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
+import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
+import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineLineChart
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
 import com.tangerine.charts.compose_charts.LineChart
 import com.tangerine.charts.compose_charts.extensions.format
@@ -70,6 +73,7 @@ import com.tangerine.charts.compose_charts.models.PopupProperties
 @Composable
 fun MyPortfolioUI(
     accounts: List<Account>,
+    performance: List<Performance>,
     onOpenAccount: (accountId: String) -> Unit
 ) {
     val showInvestmentAccountsSelection = remember {
@@ -113,7 +117,7 @@ fun MyPortfolioUI(
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
-        Charts()
+        Charts(performance)
         Spacer(modifier = Modifier.height(18.dp))
         Row(
             modifier = Modifier
@@ -364,12 +368,12 @@ private fun AccountListUI(
 }
 
 @Composable
-private fun Charts() {
+private fun Charts(performance: List<Performance>) {
     val pagerState = rememberPagerState { 4 }
     HorizontalPager(pagerState) {
         ColumnWithBorder {
             when (it) {
-                0 -> PerformanceChartUI()
+                0 -> PerformanceChartUI(performance)
                 1 -> SectionExposureChartUI()
                 2 -> AssetMixChartUI()
                 3 -> GeographicExposure()
@@ -406,7 +410,10 @@ private fun Charts() {
 }
 
 @Composable
-private fun PerformanceChartUI() {
+private fun PerformanceChartUI(performance: List<Performance>) {
+    val period = remember {
+        mutableStateOf(Period.SIX_MONTHS)
+    }
     Spacer(modifier = Modifier.height(12.dp))
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -454,46 +461,15 @@ private fun PerformanceChartUI() {
         )
     }
     Spacer(modifier = Modifier.height(18.dp))
-    LineChart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
-        data = listOf(
-            Line(
-                label = "Performance",
-                values = listOf(1000.0, 15000.0, 2000.0, 4000.0),
-                color = SolidColor(Color(0xFFEA7024)),
-                firstGradientFillColor = Color(0xFFFEC388),
-                secondGradientFillColor = Color(0x00FFFFFF),
-                curvedEdges = true,
-                drawStyle = DrawStyle.Stroke(2.dp),
-            )
-        ),
-        gridProperties = GridProperties(false),
-        indicatorProperties = HorizontalIndicatorProperties(
-            count = IndicatorCount.StepBased(
-                3000.0
-            ), contentBuilder = {
-                (it / 1000).format(0) + "K"
-            }, indicators = (listOf(1000.0, 6000.0, 15000.0))
-        ),
-        labelProperties = LabelProperties(enabled = true, labels = listOf("Jan", "Jun", "Dec")),
-        labelHelperProperties = LabelHelperProperties(false),
-        popupProperties = PopupProperties(
-            textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
-            containerColor = Colors.Background,
-            mode = PopupProperties.Mode.PointMode(),
-            contentVerticalPadding = 10.dp,
-            contentHorizontalPadding = 12.dp
-        ),
-        onValueSelected = { data ->
 
-        },
+    TangerineLineChart(
+        performance = performance,
+        period = period.value
     )
     Spacer(modifier = Modifier.height(18.dp))
     ChartPeriodSelector(
         onPeriodSelected = {
-            // Handle period selection
+            period.value = it
         }
     )
 }

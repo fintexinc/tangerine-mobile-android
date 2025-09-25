@@ -14,6 +14,7 @@ import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Liability
+import com.fintexinc.core.domain.model.Performance
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
@@ -46,26 +47,33 @@ class DashboardViewModel @Inject constructor(
         val documents = accountGateway.getDocuments().sortedWith(
             compareBy({ it.documentDate.year }, { it.documentDate.month }, { it.documentDate.day })
         )
+        val performance = accountGateway.getPerformance().sortedWith(
+            compareBy({ it.date.year }, { it.date.month })
+        )
 
         return State.Data(
             bankingAssets = assets.banking.map {
-            BankingUI(
-                it, it.toNameValue()
-            )
-        }, investmentAssets = assets.investment.map {
-            InvestmentUI(
-                it, it.toNameValue()
-            )
-        }, customAssets = assets.custom.map {
-            CustomUI(
-                it, it.toNameValue()
-            )
-        }, liabilities = liabilities.map {
-            LiabilityUI(
-                it,
-                it.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
-            )
-        }, accounts = accounts, activities = activities, documents = documents
+                BankingUI(
+                    it, it.toNameValue()
+                )
+            }, investmentAssets = assets.investment.map {
+                InvestmentUI(
+                    it, it.toNameValue()
+                )
+            }, customAssets = assets.custom.map {
+                CustomUI(
+                    it, it.toNameValue()
+                )
+            }, liabilities = liabilities.map {
+                LiabilityUI(
+                    it,
+                    it.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
+                )
+            },
+            accounts = accounts,
+            activities = activities,
+            documents = documents,
+            performance = performance
         )
     }
 
@@ -174,9 +182,9 @@ class DashboardViewModel @Inject constructor(
         val currentState = currentDataState()
         _state.value = State.Data(
             liabilities = currentState.liabilities.map { liabilityUI ->
-            liabilityUI.copy(checkedState = liabilityStates.find { state -> state.id == liabilityUI.liability.id }
-                ?: liabilityUI.checkedState)
-        },
+                liabilityUI.copy(checkedState = liabilityStates.find { state -> state.id == liabilityUI.liability.id }
+                    ?: liabilityUI.checkedState)
+            },
             bankingAssets = currentState.bankingAssets.map { bankingUI ->
                 bankingUI.copy(checkedState = assetStates.find { state -> state.id == bankingUI.asset.id }
                     ?: bankingUI.checkedState)
@@ -191,7 +199,8 @@ class DashboardViewModel @Inject constructor(
             },
             accounts = currentState.accounts,
             activities = currentState.activities,
-            documents = currentState.documents
+            documents = currentState.documents,
+            performance = currentState.performance
         )
     }
 
@@ -210,7 +219,8 @@ class DashboardViewModel @Inject constructor(
             val liabilities: List<LiabilityUI>,
             val accounts: List<Account>,
             val activities: List<Transaction>,
-            val documents: List<Document>
+            val documents: List<Document>,
+            val performance: List<Performance>
         ) : State()
 
         data class AddEditAsset(val asset: Custom?) : State()

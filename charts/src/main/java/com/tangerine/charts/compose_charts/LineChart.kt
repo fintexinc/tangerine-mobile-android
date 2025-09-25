@@ -112,7 +112,7 @@ fun LineChart(
     minValue: Double = if (data.any { it.values.any { it < 0.0 } }) data.minOfOrNull {
         it.values.minOfOrNull { it } ?: 0.0
     } ?: 0.0 else 0.0,
-    onValueSelected: ((Double?) -> Unit)? = null,
+    onValueSelected: ((Int, Double) -> Unit)? = null,
 ) {
     if (data.isNotEmpty()) {
         require(minValue <= (data.minOfOrNull { it.values.minOfOrNull { it } ?: 0.0 } ?: 0.0)) {
@@ -363,7 +363,7 @@ fun LineChart(
             persistentIndicatorValue.value = popupValue.calculatedValue
             persistentIndicatorPosition.value = popupValue.offset
 
-            onValueSelected?.invoke(popupValue.calculatedValue)
+            onValueSelected?.invoke(0, 0.0)
         }
     }
 
