@@ -41,6 +41,10 @@
     <string name="title_details">Details</string>
     <string name="title_transactions">Transactions</string>
     <string name="title_documents">Documents</string>
+    <string name="text_buy_funds">Buy\nFunds</string>
+    <string name="text_sell_funds">Sell\nFunds</string>
+    <string name="text_automatic_purchases">Automatic\nPurchases</string>
+    <string name="text_switch_portfolio">Switch\nPortfolio</string>
     <string name="text_all_dates">All Dates</string>
     <string name="filter_all_dates">All dates</string>
     <string name="filter_last_30_days">Last 30 Days</string>
