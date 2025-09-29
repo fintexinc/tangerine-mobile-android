@@ -375,7 +375,17 @@ private fun AccountListUI(
 private fun Charts() {
     val pagerState = rememberPagerState { 4 }
     HorizontalPager(pagerState) {
-        ColumnWithBorder {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 18.dp)
+                .background(
+                    color = Colors.Background,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(18.dp)
+        ) {
             when (it) {
                 0 -> PerformanceChartUI()
                 1 -> SectionExposureChartUI()
@@ -497,7 +507,7 @@ private fun SectionExposureChartUI() {
         title = stringResource(R.string.text_sector_exposure),
         pieData = listOf(
             Pie("Technology", 50.0, color = Color(0xFF0D7C75)),
-            Pie("Finance", 30.0, color = Color(0xFFFEAC5B)),
+            Pie("Finance", 10.0, color = Color(0xFFFEAC5B)),
             Pie("Healthcare", 20.0, color = Color(0xFFEC407A))
         )
     )
