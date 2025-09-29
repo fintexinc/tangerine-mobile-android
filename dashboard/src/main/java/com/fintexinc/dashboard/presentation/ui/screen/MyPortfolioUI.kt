@@ -480,7 +480,7 @@ private fun SectionExposureChartUI() {
         title = stringResource(R.string.text_sector_exposure),
         pieData = listOf(
             Pie("Technology", 50.0, color = Color(0xFF0D7C75)),
-            Pie("Finance", 30.0, color = Color(0xFFFEAC5B)),
+            Pie("Finance", 10.0, color = Color(0xFFFEAC5B)),
             Pie("Healthcare", 20.0, color = Color(0xFFEC407A))
         )
     )
