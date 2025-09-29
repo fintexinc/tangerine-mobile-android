@@ -48,7 +48,11 @@ import com.tangerine.charts.compose_charts.models.LabelProperties
 import com.tangerine.charts.compose_charts.models.Line
 
 @Composable
-fun SummaryUI(account: Account) {
+fun SummaryUI(
+    account: Account,
+    returnsData: List<ReturnsItemUi>,
+    holdingsData: List<ReturnsItemUi>,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,86 +122,8 @@ fun SummaryUI(account: Account) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // TODO() mock data
-        val returnsData = listOf(
-            ReturnsItemUi(
-                label = "1 months",
-                amount = "$50.42",
-                percentage = "+1.85%",
-                isPositive = true,
-                showArrow = true
-            ),
-            ReturnsItemUi(
-                label = "3 months",
-                amount = "$145.90",
-                percentage = "+4.54%",
-                isPositive = true,
-                showArrow = true
-            ),
-            ReturnsItemUi(
-                label = "6 months",
-                amount = "$145.90",
-                percentage = "+4.54%",
-                isPositive = true,
-                showArrow = true
-            ),
-            ReturnsItemUi(
-                label = "Year to date",
-                amount = "$202.33",
-                percentage = "-11.35%",
-                isPositive = false,
-                showArrow = true
-            ),
-            ReturnsItemUi(
-                label = "1 Year",
-                amount = "$202.33",
-                percentage = "-7.35%",
-                isPositive = false,
-                showArrow = true
-            ),
-            ReturnsItemUi(
-                label = "Current portfolio to date",
-                amount = "$893.90",
-                percentage = "+23.54%",
-                isPositive = true,
-                hasInfoIcon = true,
-                showArrow = true
-            )
-        )
-
-        val holdingsData = listOf(
-            ReturnsItemUi(
-                label = "Market value",
-                amount = "$2,733.30",
-                hasInfoIcon = true,
-                showArrow = false
-            ),
-            ReturnsItemUi(
-                label = "Distributions",
-                amount = "+$21,234.56",
-                hasInfoIcon = true,
-                showArrow = false
-            ),
-            ReturnsItemUi(
-                label = "Book value",
-                amount = "$2,733.30",
-                hasInfoIcon = true,
-                showArrow = false
-            ),
-            ReturnsItemUi(
-                label = "Total units",
-                amount = "432",
-                showArrow = false
-            ),
-            ReturnsItemUi(
-                label = "Unit price",
-                amount = "$233.22",
-                showArrow = false
-            )
-        )
-
         ReturnsOverTimeSection(
-            title = "Returns over time",
+            title = stringResource(R.string.text_returns_over_time),
             returnsItems = returnsData,
             holdingsItems = holdingsData,
             footerText = "Portfolio as of January 1, 2024.",

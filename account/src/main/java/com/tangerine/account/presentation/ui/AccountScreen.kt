@@ -187,7 +187,12 @@ private fun MainPageContent(
             is AccountViewModel.State.Activities -> ActivityUI(state.data)
             is AccountViewModel.State.Documents -> DocumentsUI(state.data, onOpenDocuments)
             is AccountViewModel.State.Positions -> PositionsUI(state.data)
-            is AccountViewModel.State.Summary -> SummaryUI(state.data)
+            is AccountViewModel.State.Summary -> SummaryUI(
+                account = state.data,
+                returnsData = state.returnsItems,
+                holdingsData = state.holdingsItems,
+            )
+
             else -> {}
         }
     }

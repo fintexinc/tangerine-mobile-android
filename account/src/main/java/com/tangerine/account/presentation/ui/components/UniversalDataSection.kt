@@ -35,11 +35,11 @@ import com.tangerine.account.presentation.models.DataSectionItemUi
 
 @Composable
 internal fun UniversalDataSection(
+    modifier: Modifier = Modifier,
     title: String,
     items: List<DataSectionItemUi>,
     footerText: String? = null,
     showProgressBar: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier

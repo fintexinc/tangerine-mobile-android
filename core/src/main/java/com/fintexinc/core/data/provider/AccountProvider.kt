@@ -3,9 +3,11 @@ package com.fintexinc.core.data.provider
 import com.fintexinc.core.data.mock.ACCOUNTS_MOCK
 import com.fintexinc.core.data.mock.ACTIVITIES_MOCK
 import com.fintexinc.core.data.mock.DOCUMENTS_MOCK
+import com.fintexinc.core.data.mock.PERFORMANCE_MOCK
 import com.fintexinc.core.domain.gateway.AccountGateway
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.Document
+import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.domain.model.Transaction
 import kotlinx.serialization.json.Json
 
@@ -29,5 +31,9 @@ class AccountProvider: AccountGateway {
 
     override suspend fun getDocumentsByAccountId(accountId: String): List<Document> {
         return getDocuments().filter { it.accountId == accountId }
+    }
+
+    override suspend fun getPerformanceData(): List<PerformanceItem> {
+        return Json.decodeFromString(PERFORMANCE_MOCK)
     }
 }
