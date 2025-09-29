@@ -1,6 +1,8 @@
 package com.tangerine.account.presentation.ui.tab
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,9 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
@@ -29,6 +35,7 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DataSectionItemUi
+import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.ui.components.UniversalDataSection
 import com.tangerine.charts.compose_charts.LineChart
 import com.tangerine.charts.compose_charts.extensions.format
@@ -49,41 +56,7 @@ fun SummaryUI(account: Account) {
     ) {
         AccountBalanceUI()
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        val itemsData = listOf(
-            DataSectionItemUi(
-                label = stringResource(R.string.text_earning_to_date),
-                value = "+$21,234.56",
-                valueColor = Colors.TransactionIncome,
-                hasInfoIcon = true,
-                valueStyle = FontStyles.TitleSmall,
-                isHighlighted = true
-            ),
-            DataSectionItemUi(
-                label = stringResource(R.string.text_net_investment_to_date),
-                value = "$756,412.30",
-                hasInfoIcon = true
-            ),
-            DataSectionItemUi(
-                label = stringResource(R.string.text_account_capital_gain_loss),
-                value = "$10,000.00"
-            ),
-            DataSectionItemUi(
-                label = stringResource(R.string.text_account_return),
-                value = "+33.33%",
-                hasInfoIcon = true
-            ),
-            DataSectionItemUi(
-                label = stringResource(R.string.text_total_units),
-                value = "650.4051"
-            ),
-            DataSectionItemUi(
-                label = stringResource(R.string.text_unit_price),
-                value = "$12.5046",
-                hasInfoIcon = true
-            )
-        )
+        Spacer(modifier = Modifier.height(40.dp))
 
         val items = listOf(
             DataSectionItemUi(
@@ -119,6 +92,15 @@ fun SummaryUI(account: Account) {
             )
         )
 
+        Text(
+            text = stringResource(R.string.title_balanced_core_portfolio),
+            color = Colors.Text,
+            style = FontStyles.TitleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         UniversalDataSection(
             title = stringResource(R.string.title_allocation_holdings),
             items = items,
@@ -136,13 +118,94 @@ fun SummaryUI(account: Account) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        UniversalDataSection(
-            title = stringResource(R.string.text_account_return),
-            items = itemsData,
-            footerText = stringResource(R.string.text_portfolio_as_of_date)
+        // TODO() mock data
+        val returnsData = listOf(
+            ReturnsItemUi(
+                label = "1 months",
+                amount = "$50.42",
+                percentage = "+1.85%",
+                isPositive = true,
+                showArrow = true
+            ),
+            ReturnsItemUi(
+                label = "3 months",
+                amount = "$145.90",
+                percentage = "+4.54%",
+                isPositive = true,
+                showArrow = true
+            ),
+            ReturnsItemUi(
+                label = "6 months",
+                amount = "$145.90",
+                percentage = "+4.54%",
+                isPositive = true,
+                showArrow = true
+            ),
+            ReturnsItemUi(
+                label = "Year to date",
+                amount = "$202.33",
+                percentage = "-11.35%",
+                isPositive = false,
+                showArrow = true
+            ),
+            ReturnsItemUi(
+                label = "1 Year",
+                amount = "$202.33",
+                percentage = "-7.35%",
+                isPositive = false,
+                showArrow = true
+            ),
+            ReturnsItemUi(
+                label = "Current portfolio to date",
+                amount = "$893.90",
+                percentage = "+23.54%",
+                isPositive = true,
+                hasInfoIcon = true,
+                showArrow = true
+            )
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        val holdingsData = listOf(
+            ReturnsItemUi(
+                label = "Market value",
+                amount = "$2,733.30",
+                hasInfoIcon = true,
+                showArrow = false
+            ),
+            ReturnsItemUi(
+                label = "Distributions",
+                amount = "+$21,234.56",
+                hasInfoIcon = true,
+                showArrow = false
+            ),
+            ReturnsItemUi(
+                label = "Book value",
+                amount = "$2,733.30",
+                hasInfoIcon = true,
+                showArrow = false
+            ),
+            ReturnsItemUi(
+                label = "Total units",
+                amount = "432",
+                showArrow = false
+            ),
+            ReturnsItemUi(
+                label = "Unit price",
+                amount = "$233.22",
+                showArrow = false
+            )
+        )
+
+        ReturnsOverTimeSection(
+            title = "Returns over time",
+            returnsItems = returnsData,
+            holdingsItems = holdingsData,
+            footerText = "Portfolio as of January 1, 2024.",
+            modifier = Modifier.padding(16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(120.dp))
+
     }
 }
 
@@ -256,4 +319,172 @@ private fun AccountBalanceChartUI(showNetworkContribution: Boolean) {
 
         }
     )*/
+}
+
+@Composable
+fun ReturnsOverTimeSection(
+    modifier: Modifier = Modifier,
+    title: String,
+    returnsItems: List<ReturnsItemUi>,
+    holdingsItems: List<ReturnsItemUi>,
+    footerText: String? = null
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = Colors.Background,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(16.dp)
+    ) {
+        Text(
+            text = title,
+            style = FontStyles.TitleSmall,
+            color = Colors.Text,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+
+        returnsItems.forEachIndexed { index, item ->
+            ReturnsRowSimple(
+                item = item,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (index < returnsItems.size - 1) {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    thickness = 1.dp
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    thickness = 1.dp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.text_how_calculate),
+            color = Colors.TextInteractive,
+            style = FontStyles.BodyLargeBold,
+        )
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        Text(
+            text = stringResource(R.string.text_holding_summary),
+            style = FontStyles.TitleSmall,
+            color = Colors.Text,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        holdingsItems.forEachIndexed { index, item ->
+            ReturnsRowSimple(
+                item = item,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (index < holdingsItems.size - 1) {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    thickness = 1.dp
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    thickness = 1.dp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+
+        footerText?.let {
+            Text(
+                text = it,
+                style = FontStyles.BodySmallItalic,
+                color = Colors.TextSubdued,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReturnsRowSimple(
+    modifier: Modifier = Modifier,
+    item: ReturnsItemUi,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = item.label,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued,
+            )
+
+            if (item.hasInfoIcon) {
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = stringResource(R.string.description_info_icon),
+                    modifier = Modifier.size(16.dp),
+                    tint = Colors.TextInteractive
+                )
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (item.showArrow && item.isPositive != null) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .rotate(if (item.isPositive) 180f else 0f),
+                    tint = if (item.isPositive) Colors.TextSuccess else Colors.TransactionLiability,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+
+            Text(
+                text = item.amount,
+                style = FontStyles.BodyLarge,
+                color = when {
+                    item.showArrow && item.isPositive != null -> {
+                        if (item.isPositive) Colors.TextSuccess else Colors.TransactionLiability
+                    }
+
+                    item.amount.startsWith("+") -> Colors.TextSuccess
+                    item.amount.startsWith("-") -> Colors.TransactionLiability
+                    else -> Colors.Text
+                }
+            )
+
+            item.percentage?.let {
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = it,
+                    style = FontStyles.BodyMedium,
+                    color = if (item.isPositive == true) Colors.TextSuccess else Colors.TransactionLiability
+                )
+            }
+        }
+    }
 }
