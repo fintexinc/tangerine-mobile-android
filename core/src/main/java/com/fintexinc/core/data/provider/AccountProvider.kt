@@ -9,7 +9,7 @@ import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
 import kotlinx.serialization.json.Json
 
-class AccountProvider: AccountGateway {
+class AccountProvider : AccountGateway {
 
     override suspend fun getActivities(): List<Transaction> {
         return Json.decodeFromString(ACTIVITIES_MOCK)
@@ -29,5 +29,9 @@ class AccountProvider: AccountGateway {
 
     override suspend fun getDocumentsByAccountId(accountId: String): List<Document> {
         return getDocuments().filter { it.accountId == accountId }
+    }
+
+    override suspend fun getDocumentsById(documentId: String): Document? {
+        return getDocuments().find { it.id == documentId }
     }
 }

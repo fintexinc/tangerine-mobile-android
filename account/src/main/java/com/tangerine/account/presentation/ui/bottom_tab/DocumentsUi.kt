@@ -46,7 +46,7 @@ import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 @Composable
 internal fun DocumentsUi(
     modifier: Modifier = Modifier,
-    navigateToTransactionDetailScreen: () -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
@@ -136,7 +136,7 @@ internal fun DocumentsUi(
                     title = document.name,
                     date = document.subName,
                     onClick = {
-                        navigateToTransactionDetailScreen()
+                        navigateToTransactionDetailScreen("1")// TODO() - delete mock
                     },
                     isLastItem = index == documents.lastIndex,
                 )
@@ -175,11 +175,11 @@ internal fun DocumentsUi(
 
 @Composable
 private fun DocumentItem(
+    modifier: Modifier = Modifier,
     title: String,
     date: String,
     onClick: () -> Unit,
     isLastItem: Boolean = false,
-    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier

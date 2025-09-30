@@ -51,14 +51,15 @@ import com.fintexinc.core.ui.components.UniversalDataSection
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.core.ui.models.DataSectionItemUi
 import com.fintexinc.tangerine.transaction_details.R
+import com.fintexinc.tangerine.transaction_details.models.DocumentUi
 import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
 
 @Composable
 fun TransactionDetailUi(
     state: TransactionDetailViewModel.State,
     onBackClick: () -> Unit,
+    onSaveNote: (String) -> Unit,
 ) {
-
     when (state) {
         is TransactionDetailViewModel.State.Loading -> {
             Box(
@@ -72,8 +73,10 @@ fun TransactionDetailUi(
 
         is TransactionDetailViewModel.State.Data -> {
             Content(
-                state = state,
+                transaction = state.document,
                 onBackClick = onBackClick,
+                onSaveNote = onSaveNote,
+                documentItems = state.documentItems,
             )
         }
     }
@@ -81,44 +84,13 @@ fun TransactionDetailUi(
 
 @Composable
 private fun Content(
-    state: TransactionDetailViewModel.State,
+    transaction: DocumentUi,
+    documentItems: List<DataSectionItemUi>,
     onBackClick: () -> Unit,
+    onSaveNote: (String) -> Unit,
 ) {
-    // TODO() mock data
-    val transactionItems = listOf(
-        DataSectionItemUi(
-            label = "Status",
-            value = "Completed",
-            valueColor = Colors.Text,
-            valueStyle = FontStyles.BodyLarge
-        ),
-        DataSectionItemUi(
-            label = "Sent from",
-            value = "CHQ ***2003",
-            valueColor = Colors.Text,
-            valueStyle = FontStyles.BodyLarge
-        ),
-        DataSectionItemUi(
-            label = "Sent to",
-            value = "Jack TFSA ***7912",
-            valueColor = Colors.Text,
-            valueStyle = FontStyles.BodyLarge
-        ),
-        DataSectionItemUi(
-            label = "Category",
-            value = "Investment",
-            valueColor = Colors.Text,
-            valueStyle = FontStyles.BodyLarge
-        ),
-        DataSectionItemUi(
-            label = "Transaction date",
-            value = "August 4, 2025",
-            valueColor = Colors.Text,
-            valueStyle = FontStyles.BodyLarge
-        )
-    )
-
     var showBottomSheet by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -138,29 +110,20 @@ private fun Content(
                     tint = Colors.Primary,
                 )
             },
-            rightIcon = {
-                Icon(
-                    painter = painterResource(com.fintexinc.core.R.drawable.icon_dots),
-                    contentDescription = stringResource(R.string.description_icon_navigate_edit),
-                    tint = Colors.Primary,
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .clickable {}
-                )
-            }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "$1,000.00",
+            text = transaction.amount,
             color = Colors.Primary,
             style = FontStyles.DisplaySmall,
         )
+
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Deposit to TFSA ***7912",
+            text = transaction.description,
             color = Colors.Text,
             style = FontStyles.BodyLargeBold,
         )
@@ -169,21 +132,22 @@ private fun Content(
 
         UniversalDataSection(
             title = null,
-            items = transactionItems
+            items = documentItems
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         NoteUI(
-            addNoteClick = {
-                showBottomSheet = true
-            },
+            addNoteClick = { showBottomSheet = true }
         )
     }
+
     if (showBottomSheet) {
         AddNoteBottomSheet(
+            initialNote = transaction.note ?: "",
             onDismiss = { showBottomSheet = false },
             onSave = { note ->
+                onSaveNote(note)
                 showBottomSheet = false
             }
         )
@@ -253,10 +217,11 @@ private fun NoteUI(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNoteBottomSheet(
+    initialNote: String = "",
     onDismiss: () -> Unit,
     onSave: (String) -> Unit,
 ) {
-    var noteText by remember { mutableStateOf("") }
+    var noteText by remember { mutableStateOf(initialNote) }
 
     ModalBottomSheet(
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),

@@ -58,7 +58,7 @@ fun AccountScreen(
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
-    navigateToTransactionDetailScreen: () -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -87,7 +87,7 @@ private fun Content(
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
-    navigateToTransactionDetailScreen: () -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -203,7 +203,7 @@ private fun MainPageContent(
 @Composable
 private fun BottomSheetTabsContent(
     bottomSheetState: BottomSheetScaffoldState,
-    navigateToTransactionDetailScreen: () -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 

@@ -13,4 +13,5 @@ interface AccountGateway {
     suspend fun getDocumentsByAccountId(accountId: String): List<Document> {
         return getDocuments().filter { it.accountId == accountId }
     }
+    suspend fun getDocumentsById(documentId: String): Document?
 }

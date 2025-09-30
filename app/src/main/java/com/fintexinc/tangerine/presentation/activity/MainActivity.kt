@@ -95,8 +95,8 @@ class MainActivity : ComponentActivity() {
                                     accountId = args.accountId
                                 )
                             },
-                            navigateToTransactionDetailScreen = {
-                                navController.navigate(Routes.TransactionDetail)
+                            navigateToTransactionDetailScreen = { transactionId ->
+                                navController.navigate(Routes.TransactionDetail(transactionId))
                             },
                         )
                     }
@@ -109,11 +109,18 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable<Routes.TransactionDetail> {
+                        val args = it.toRoute<Routes.TransactionDetail>()
+
+                        LaunchedEffect(args.transactionId) {
+                            transactionDetailViewModel.loadTransaction(args.transactionId)
+                        }
+
                         val state = transactionDetailViewModel.state.collectAsState()
 
                         TransactionDetailUi(
                             state = state.value,
                             onBackClick = { navController.popBackStack() },
+                            onSaveNote = { note -> transactionDetailViewModel.onSaveNote(note) },
                         )
                     }
                 }
@@ -354,7 +361,7 @@ object Routes {
     object MainRoute
 
     @Serializable
-    object TransactionDetail
+    data class TransactionDetail(val transactionId: String)
 
     sealed class MenuItem {
         object Accounts : MenuItem()
