@@ -35,15 +35,15 @@ class AccountViewModel @Inject constructor(
 
     fun onTabChanged(tab: AccountTab, accountId: String) = viewModelScope.launch {
         when (tab) {
-            AccountTab.SUMMARY -> {
+            AccountTab.BUY_FUNDS -> {
                 _state.value = Summary(accountGateway.getAccountById(accountId))
             }
 
-            AccountTab.ACTIVITY -> {
+            AccountTab.AUTOMATIC_PURCHASES -> {
                 _state.value = Activities(accountGateway.getActivities())
             }
 
-            AccountTab.POSITIONS -> {
+            AccountTab.SELL_FUNDS -> {
                 _state.value = Positions(
                     listOf(
                         NameValue(
@@ -79,7 +79,7 @@ class AccountViewModel @Inject constructor(
                 )
             }
 
-            AccountTab.DOCUMENTS -> {
+            AccountTab.SWITCH_PORTFOLIO -> {
                 _state.value = Documents(accountGateway.getDocumentsByAccountId(accountId))
             }
         }
