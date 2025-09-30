@@ -199,8 +199,8 @@ private fun MainPageContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         when (state) {
-            is AccountViewModel.State.Activities -> ActivityUI(state.data)
-            is AccountViewModel.State.Documents -> DocumentsUI(state.data, onOpenDocuments)
+            is AccountViewModel.State.Activities -> {} //ActivityUI(state.data)
+            is AccountViewModel.State.Documents -> {} //DocumentsUI(state.data, onOpenDocuments)
             is AccountViewModel.State.Positions -> PositionsUI(state.data)
             is AccountViewModel.State.Summary -> SummaryUI(state.data)
             else -> {}
