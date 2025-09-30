@@ -1,5 +1,8 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,8 +26,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -56,6 +61,7 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.components.Banner
 import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
@@ -101,6 +107,8 @@ fun MyNetWorthUI(
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
     val liabilitiesCheckedState = liabilities.map { it.checkedState }
+    var isBannerVisible by remember { mutableStateOf(true) }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,55 +163,13 @@ fun MyNetWorthUI(
             }
         )
         item {
-            Spacer(modifier = Modifier.height(18.dp))
-            ColumnWithShadow {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(
-                            start = 16.dp,
-                            top = 16.dp,
-                            end = 40.dp
-                        ),
-                    text = stringResource(R.string.text_you_saved),
-                    style = FontStyles.BodyLarge,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(
-                            start = 16.dp,
-                            end = 40.dp,
-                            bottom = 16.dp
-                        ),
-                    text = stringResource(R.string.text_money_stays),
-                    style = FontStyles.BodyMedium,
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(end = 20.dp)
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        painter = painterResource(R.drawable.ic_saved_background),
-                        contentDescription = stringResource(R.string.description_image_background_),
-                    )
-                    Image(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .align(Alignment.TopCenter)
-                            .padding(top = 16.dp),
-                        painter = painterResource(R.drawable.ic_folder),
-                        contentDescription = stringResource(R.string.description_icon_folder)
-                    )
+            AnimatedVisibility(
+                visible = isBannerVisible,
+                exit = fadeOut() + shrinkVertically(),
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Banner(closeBannerClick = { isBannerVisible = false })
                 }
             }
         }
@@ -804,7 +770,11 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
 
     Spacer(modifier = Modifier.height(18.dp))
 
-    Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
         groupedTransactions.forEachIndexed { groupIndex, group ->
 
             Text(
