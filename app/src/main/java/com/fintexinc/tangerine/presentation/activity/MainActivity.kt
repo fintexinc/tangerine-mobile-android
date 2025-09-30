@@ -288,6 +288,9 @@ class MainActivity : ComponentActivity() {
                         onOpenJuiceArticle = { url ->
                             goToJuiceArticle(url)
                         },
+                        onOpenJuiceSection = {
+                            goToJuiceSection()
+                        },
                         onBackButtonFromExternalScreenClicked = {
                             dashboardViewModel.loadData()
                         },
@@ -316,6 +319,11 @@ class MainActivity : ComponentActivity() {
 
     private fun goToJuiceArticle(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+        this.startActivity(intent)
+    }
+
+    private fun goToJuiceSection() {
+        val intent = Intent(Intent.ACTION_VIEW, "https://www.tangerine.ca/en/thejuice".toUri())
         this.startActivity(intent)
     }
 }

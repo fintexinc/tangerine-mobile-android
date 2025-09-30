@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -89,6 +90,7 @@ fun MyNetWorthUI(
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onAddAssetClicked: (asset: DataPoint?) -> Unit,
     onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
+    onOpenJuiceSection: () -> Unit,
     onOpenJuiceArticle: (articleUrl: String) -> Unit,
     onOpenDocumentsClicked: () -> Unit
 ) {
@@ -227,15 +229,37 @@ fun MyNetWorthUI(
             Spacer(modifier = Modifier.height(18.dp))
         }
         item {
-            Text(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 22.dp),
-                text = stringResource(R.string.text_articles_you_might_like),
-                style = FontStyles.TitleMediumBold,
-                color = Colors.BrandBlack
-            )
+                    .clickable {
+                        onOpenJuiceSection()
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(start = 22.dp),
+                    text = stringResource(R.string.text_articles_you_might_like),
+                    style = FontStyles.TitleMediumBold,
+                    color = Colors.BrandBlack
+                )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(28.dp),
+                    painter = painterResource(id = com.fintexinc.core.R.drawable.ic_arrow_right),
+                    tint = Colors.IconSubtitled,
+                    contentDescription = stringResource(R.string.description_icon_open),
+                )
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
         }
         item {
             LazyRow(
@@ -257,7 +281,7 @@ fun MyNetWorthUI(
                                 shape = RoundedCornerShape(16.dp)
                             ) {
                                 // TODO: add actual info from mocks
-                                onOpenJuiceArticle("https://www.tangerine.ca/en/about-us/press-releases/pr-2024-10-18")
+                                onOpenJuiceArticle("https://www.tangerine.ca/en/thejuice/invest/what-should-you-do-with-your-cash")
                             },
                         horizontalArrangement = Arrangement.End
                     ) {
@@ -804,7 +828,11 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
 
     Spacer(modifier = Modifier.height(18.dp))
 
-    Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
         groupedTransactions.forEachIndexed { groupIndex, group ->
 
             Text(
