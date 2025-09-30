@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @HiltViewModel
@@ -66,7 +67,7 @@ class AccountViewModel @Inject constructor(
             ?.date
             ?: return emptyList()
 
-        // Use last data from mock data for correct calculation here
+        // Use last data from mock data for correct calculation here. For backend need to be changed
         val currentMonth = latestDate.month
         val currentYear = latestDate.year
 
@@ -162,42 +163,60 @@ class AccountViewModel @Inject constructor(
     private fun calculateHoldings(
         performanceData: List<PerformanceItem>
     ): List<ReturnsItemUi> {
-        val currentMarketValue = performanceData
+        val latestDate = performanceData
             .maxByOrNull { it.date.year * 12 + it.date.month }
-            ?.let { latestItem ->
-                performanceData
-                    .filter { it.date == latestItem.date }
-                    .sumOf { it.value }
-            } ?: 0.0
+            ?.date ?: return emptyList()
+
+        val currentMarketValue = performanceData
+            .filter { it.date == latestDate }
+            .sumOf { it.value }
+
+        val bookValue = performanceData
+            .minByOrNull { it.date.year * 12 + it.date.month }
+            ?.value ?: 0.0
+
+        val distributions = currentMarketValue - bookValue
+
+        val totalUnits = 432.0 // TODO: get from API
+        val unitPrice = currentMarketValue / totalUnits
 
         return listOf(
             ReturnsItemUi(
                 label = context.getString(R.string.text_market_value),
                 amount = formatCurrency(currentMarketValue),
                 hasInfoIcon = true,
-                showArrow = false
+                showArrow = false,
+                isPositive = null
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_distributions),
-                amount = "+${formatCurrency(21234.56)}",
+                amount = if (distributions >= 0) {
+                    "+${formatCurrency(distributions)}"
+                } else {
+                    formatCurrency(abs(distributions))
+                },
                 hasInfoIcon = true,
-                showArrow = false
+                showArrow = false,
+                isPositive = distributions >= 0
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_book_value),
-                amount = formatCurrency(2733.30),
+                amount = formatCurrency(bookValue),
                 hasInfoIcon = true,
-                showArrow = false
+                showArrow = false,
+                isPositive = null
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_total_units),
-                amount = "432", // TODO() mock data
-                showArrow = false
+                amount = totalUnits.toInt().toString(),
+                showArrow = false,
+                isPositive = null
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_unit_price),
-                amount = formatCurrency(233.22),
-                showArrow = false
+                amount = formatCurrency(unitPrice),
+                showArrow = false,
+                isPositive = null
             )
         )
     }

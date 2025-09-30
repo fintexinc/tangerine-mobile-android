@@ -248,7 +248,7 @@ private fun AccountBalanceChartUI(showNetworkContribution: Boolean) {
 }
 
 @Composable
-fun ReturnsOverTimeSection(
+private fun ReturnsOverTimeSection(
     modifier: Modifier = Modifier,
     title: String,
     returnsItems: List<ReturnsItemUi>,
@@ -272,7 +272,7 @@ fun ReturnsOverTimeSection(
         )
 
         returnsItems.forEachIndexed { index, item ->
-            ReturnsRowSimple(
+            ReturnsRow(
                 item = item,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -311,7 +311,7 @@ fun ReturnsOverTimeSection(
         Spacer(modifier = Modifier.height(24.dp))
 
         holdingsItems.forEachIndexed { index, item ->
-            ReturnsRowSimple(
+            ReturnsRow(
                 item = item,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -344,7 +344,7 @@ fun ReturnsOverTimeSection(
 }
 
 @Composable
-private fun ReturnsRowSimple(
+private fun ReturnsRow(
     modifier: Modifier = Modifier,
     item: ReturnsItemUi,
 ) {
