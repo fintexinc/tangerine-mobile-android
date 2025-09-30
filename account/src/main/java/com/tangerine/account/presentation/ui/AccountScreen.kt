@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +22,7 @@ import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -31,6 +33,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +45,7 @@ import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.ToolBar
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
+import com.fintexinc.core.ui.utils.ScreenUtils.GetPercentageOfScreenHeight
 import com.tangerine.account.R
 import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
 import com.tangerine.account.presentation.ui.bottom_tab.DocumentsUi
@@ -103,10 +108,20 @@ private fun Content(
             sheetContent = {
                 BottomSheetTabsContent(bottomSheetState = bottomSheetState)
             },
-            sheetPeekHeight = 120.dp,
-            sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            sheetPeekHeight = 84.dp,
+            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             sheetContainerColor = Colors.Background,
             sheetShadowElevation = 16.dp,
+            sheetDragHandle = {
+                Surface(
+                    modifier =
+                        Modifier.padding(top = 8.dp, bottom = 14.dp),
+                    color = Colors.BorderSubdued,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Box(Modifier.size(width = 24.dp, height = 4.dp))
+                }
+            }
         ) {
             MainPageContent(
                 state = state,
@@ -197,7 +212,7 @@ private fun MainPageContent(
 @Composable
 private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
     val scope = rememberCoroutineScope()
-
+    val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
     TabsSelector(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -230,7 +245,8 @@ private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
                     scope.launch { bottomSheetState.bottomSheetState.expand() }
                 }
             )
-        )
+        ),
+        contentMaxHeight = tabsContentMaxHeight
     )
 }
 
