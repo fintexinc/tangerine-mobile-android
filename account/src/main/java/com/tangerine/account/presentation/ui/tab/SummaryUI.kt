@@ -173,7 +173,7 @@ private fun AccountBalanceUI() {
                     },
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
                 contentDescription = stringResource(R.string.description_icon_navigate_info),
-                tint = Colors.BrandBlack
+                tint = Colors.BrandBlack,
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
@@ -187,7 +187,7 @@ private fun AccountBalanceUI() {
         Spacer(modifier = Modifier.height(12.dp))
         Row(
             modifier = Modifier.wrapContentSize(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.wrapContentSize(),

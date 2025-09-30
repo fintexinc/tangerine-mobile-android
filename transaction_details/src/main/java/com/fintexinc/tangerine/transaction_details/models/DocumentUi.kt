@@ -12,5 +12,5 @@ data class DocumentUi(
     val sentTo: String,
     val category: String,
     val transactionDate: String,
-    val note: String? = null
+    val note: String? = null,
 )

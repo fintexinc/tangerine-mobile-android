@@ -39,13 +39,13 @@ fun UniversalDataSection(
     items: List<DataSectionItemUi>,
     footerText: String? = null,
     showProgressBar: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .padding(horizontal = 18.dp)
             .fillMaxWidth()
-            .background(color = Colors.Background, shape = RoundedCornerShape(16.dp))
+            .background(color = Colors.Background, shape = RoundedCornerShape(16.dp)),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -53,14 +53,14 @@ fun UniversalDataSection(
             Text(
                 text = it,
                 style = FontStyles.TitleSmall,
-                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
             )
         }
 
         if (showProgressBar) {
             AllocationProgressBar(
                 items = items,
-                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
             )
         }
 

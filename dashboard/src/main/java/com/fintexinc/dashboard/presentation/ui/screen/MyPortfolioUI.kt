@@ -182,7 +182,7 @@ fun MyPortfolioUI(
                 }
 
                 AccountListUI(
-                    title = "All Accounts",
+                    title = stringResource(R.string.text_all_accounts),
                     accounts = allAccountsUI,
                     onOpenAccount = onOpenAccount,
                     totalSum = accounts.sumOf { it.income }.formatCurrency(),
@@ -198,7 +198,7 @@ fun MyPortfolioUI(
                         subName = it.accountId,
                         value = it.income.formatCurrency(),
                         valueChange = 832.01,
-                        percentageChange = 4.39
+                        percentageChange = 4.39,
                     )
                 }
 
@@ -209,7 +209,7 @@ fun MyPortfolioUI(
                         subName = "39024242",
                         value = "20,000 CAD",
                         valueChange = 832.01,
-                        percentageChange = 4.39
+                        percentageChange = 4.39,
                     ),
                     AccountUI(
                         accountId = "TFSA-002",
@@ -217,7 +217,7 @@ fun MyPortfolioUI(
                         subName = "39024242",
                         value = "20,000 CAD",
                         valueChange = 832.01,
-                        percentageChange = 4.39
+                        percentageChange = 4.39,
                     ),
                 )
 
@@ -231,7 +231,7 @@ fun MyPortfolioUI(
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 18.dp),
-                    color = Colors.BorderSubdued
+                    color = Colors.BorderSubdued,
                 )
 
                 AccountListUI(
@@ -255,14 +255,14 @@ fun MyPortfolioUI(
                             subName = it.accountId,
                             value = it.income.formatCurrency(),
                             valueChange = 832.01,
-                            percentageChange = 4.39
+                            percentageChange = 4.39,
                         )
                     }
 
                     if (!isFirst) {
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 18.dp),
-                            color = Colors.BorderSubdued
+                            color = Colors.BorderSubdued,
                         )
                     }
 
@@ -285,7 +285,7 @@ fun MyPortfolioUI(
             text = stringResource(R.string.title_add_account),
             onClick = {},
             color = Colors.Primary,
-            modifier = Modifier.padding(horizontal = 18.dp)
+            modifier = Modifier.padding(horizontal = 18.dp),
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -295,10 +295,14 @@ fun MyPortfolioUI(
 
     data class FilterItemType(override val label: String, val type: GroupingType) : ItemType
 
+    val textNone = stringResource(R.string.text_none)
+    val textRegisterNonReg = stringResource(R.string.text_register_non_reg)
+    val textAccountTYpe = stringResource(R.string.text_account_type)
+
     val filterItemTypes = listOf(
-        FilterItemType("None", GroupingType.NONE),
-        FilterItemType("Registered/Non-Registered", GroupingType.REGISTERED_STATUS),
-        FilterItemType("AccountType", GroupingType.ACCOUNT_TYPE),
+        FilterItemType(textNone, GroupingType.NONE),
+        FilterItemType(textRegisterNonReg, GroupingType.REGISTERED_STATUS),
+        FilterItemType(textAccountTYpe, GroupingType.ACCOUNT_TYPE),
     )
 
     if (showInvestmentAccountsSelection.value) {
@@ -318,7 +322,7 @@ fun MyPortfolioUI(
     }
 }
 
-enum class GroupingType(val label: String) {
+enum class GroupingType(label: String) {
     NONE("None"),
     REGISTERED_STATUS("Registered/Non-Registered"),
     ACCOUNT_TYPE("AccountType")

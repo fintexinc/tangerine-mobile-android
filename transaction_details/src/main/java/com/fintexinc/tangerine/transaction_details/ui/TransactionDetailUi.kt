@@ -132,13 +132,13 @@ private fun Content(
 
         UniversalDataSection(
             title = null,
-            items = documentItems
+            items = documentItems,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         NoteUI(
-            addNoteClick = { showBottomSheet = true }
+            addNoteClick = { showBottomSheet = true },
         )
     }
 
@@ -149,7 +149,7 @@ private fun Content(
             onSave = { note ->
                 onSaveNote(note)
                 showBottomSheet = false
-            }
+            },
         )
     }
 }
@@ -194,7 +194,7 @@ private fun NoteUI(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(vertical = 52.dp)
+            modifier = Modifier.padding(vertical = 52.dp),
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_pictogram),
@@ -232,7 +232,7 @@ fun AddNoteBottomSheet(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .padding(top = 24.dp)
+            .padding(top = 24.dp),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -240,18 +240,18 @@ fun AddNoteBottomSheet(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp),
             ) {
                 TextButton(
                     onClick = onDismiss,
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Colors.TextInteractive
                     ),
-                    modifier = Modifier.align(Alignment.CenterStart)
+                    modifier = Modifier.align(Alignment.CenterStart),
                 ) {
                     Text(
                         text = stringResource(R.string.text_cancel),
-                        style = FontStyles.BodyLarge
+                        style = FontStyles.BodyLarge,
                     )
                 }
 
@@ -259,7 +259,7 @@ fun AddNoteBottomSheet(
                     text = stringResource(R.string.text_aad_note),
                     style = FontStyles.TitleSmall,
                     color = Colors.Text,
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center),
                 )
             }
 
@@ -286,14 +286,14 @@ fun AddNoteBottomSheet(
                     cursorColor = Colors.Text
                 ),
                 textStyle = FontStyles.BodyMedium.copy(color = Colors.Text),
-                maxLines = 8
+                maxLines = 8,
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             HorizontalDivider(
                 color = Colors.BorderSubdued,
                 thickness = 0.5.dp,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
 
             Spacer(modifier = Modifier.weight(1.0f))

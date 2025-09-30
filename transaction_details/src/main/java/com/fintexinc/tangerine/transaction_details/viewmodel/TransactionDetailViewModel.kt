@@ -1,7 +1,6 @@
 package com.fintexinc.tangerine.transaction_details.viewmodel
 
 import android.content.Context
-import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fintexinc.core.domain.gateway.AccountGateway
@@ -62,7 +61,7 @@ class TransactionDetailViewModel @Inject constructor(
 
             _state.value = State.Data(
                 document = updatedTransaction,
-                documentItems = createDataSectionItems(updatedTransaction)
+                documentItems = createDataSectionItems(updatedTransaction),
             )
         }
     }
@@ -73,31 +72,31 @@ class TransactionDetailViewModel @Inject constructor(
                 label = context.getString(R.string.text_status),
                 value = document.status,
                 valueColor = document.statusColor,
-                valueStyle = FontStyles.BodyLarge
+                valueStyle = FontStyles.BodyLarge,
             ),
             DataSectionItemUi(
                 label = context.getString(R.string.text_sent_from),
                 value = document.sentFrom,
                 valueColor = Colors.Text,
-                valueStyle = FontStyles.BodyLarge
+                valueStyle = FontStyles.BodyLarge,
             ),
             DataSectionItemUi(
                 label = context.getString(R.string.text_sent_to),
                 value = document.sentTo,
                 valueColor = Colors.Text,
-                valueStyle = FontStyles.BodyLarge
+                valueStyle = FontStyles.BodyLarge,
             ),
             DataSectionItemUi(
                 label = context.getString(R.string.text_category),
                 value = document.category,
                 valueColor = Colors.Text,
-                valueStyle = FontStyles.BodyLarge
+                valueStyle = FontStyles.BodyLarge,
             ),
             DataSectionItemUi(
                 label = context.getString(R.string.text_transaction_date),
                 value = document.transactionDate,
                 valueColor = Colors.Text,
-                valueStyle = FontStyles.BodyLarge
+                valueStyle = FontStyles.BodyLarge,
             )
         )
     }
