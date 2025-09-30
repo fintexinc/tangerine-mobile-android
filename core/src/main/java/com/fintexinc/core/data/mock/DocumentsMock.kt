@@ -68,6 +68,23 @@ const val DOCUMENTS_MOCK = "[\n" +
         "        \"readStatus\": \"NEW\",\n" +
         "        \"viewedAt\": \"2025-08-20T12:00:00Z\",\n" +
         "        \"documentDescription\": \"Non-Registered statement for July 2025\"\n" +
+        "    },\n" +
+        "    {\n" +
+        "        \"id\": \"DOC-005\",\n" +
+        "        \"accountId\": \"ACCT-INV-005\",\n" +
+        "        \"documentType\": \"STATEMENT\",\n" +
+        "        \"documentName\": \"Monthly Statement - September 2025\",\n" +
+        "        \"documentDate\": {\"day\": 31, \"month\": 9, \"year\": 2025},\n" +
+        "        \"language\": \"EN\",\n" +
+        "        \"contentType\": \"application/pdf\",\n" +
+        "        \"fileFormat\": \"PDF\",\n" +
+        "        \"fileSizeBytes\": 217554,\n" +
+        "        \"pageCount\": 5,\n" +
+        "        \"downloadUrl\": \"https://cdn.example.com/docs/ACCT-INV-003/2025-07-statement.pdf\",\n" +
+        "        \"documentStatus\": \"COMPLETED\",\n" +
+        "        \"readStatus\": \"NEW\",\n" +
+        "        \"viewedAt\": \"2025-08-20T12:00:00Z\",\n" +
+        "        \"documentDescription\": \"Non-Registered statement for July 2025\"\n" +
         "    }\n" +
         "]\n" +
         "\n"

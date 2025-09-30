@@ -22,7 +22,7 @@
     <string name="title_add_liability">Add Liability</string>
     <string name="text_you_saved">You’ve saved $2,500 by investing with Tangerine.</string>
     <string name="text_money_stays">More money stays in your pocket — just the way it should be.</string>
-    <string name="text_what_is_going_on">Here’s what’s going on</string>
+    <string name="text_recent_investment_activity_and_document">Recent Investment\nActivity &amp; Documents</string>
     <string name="text_activity">Activity</string>
     <string name="text_documents">Documents</string>
     <string name="text_articles_you_might_like">Articles you might like</string>
@@ -65,7 +65,7 @@
     <string name="text_cancel">Cancel</string>
     <string name="text_liability_type">Liability Type</string>
     <string name="text_liability_name">Liability Name</string>
-    <string name="text_view_more">View More</string>
+    <string name="text_see_investment_documents">See Investment documents</string>
     <string name="text_projections">Projections</string>
     <string name="text_cache_flow">Cache Flow</string>
     <string name="text_percent">%</string>

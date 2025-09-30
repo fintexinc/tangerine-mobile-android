@@ -788,9 +788,10 @@ private fun ActivityUI(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        text = stringResource(R.string.text_what_is_going_on),
+        text = stringResource(R.string.text_recent_investment_activity_and_document),
         style = FontStyles.TitleSmall
     )
+    Spacer(modifier = Modifier.height(16.dp))
     TabsSelector(
         tabs = listOf(
             TabItem(
@@ -895,7 +896,7 @@ private fun DocumentsUI(
         Spacer(modifier = Modifier.height(18.dp))
 
         TextButton(
-            text = stringResource(R.string.text_view_more),
+            text = stringResource(R.string.text_see_investment_documents),
             onClick = {
 
             },
