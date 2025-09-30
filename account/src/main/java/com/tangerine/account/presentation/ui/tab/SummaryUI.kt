@@ -46,12 +46,13 @@ import com.tangerine.charts.compose_charts.models.IndicatorCount
 import com.tangerine.charts.compose_charts.models.LabelHelperProperties
 import com.tangerine.charts.compose_charts.models.LabelProperties
 import com.tangerine.charts.compose_charts.models.Line
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SummaryUI(
     account: Account,
-    returnsData: List<ReturnsItemUi>,
-    holdingsData: List<ReturnsItemUi>,
+    returnsData: ImmutableList<ReturnsItemUi>,
+    holdingsData: ImmutableList<ReturnsItemUi>,
 ) {
     Column(
         modifier = Modifier
@@ -251,8 +252,8 @@ private fun AccountBalanceChartUI(showNetworkContribution: Boolean) {
 private fun ReturnsOverTimeSection(
     modifier: Modifier = Modifier,
     title: String,
-    returnsItems: List<ReturnsItemUi>,
-    holdingsItems: List<ReturnsItemUi>,
+    returnsItems: ImmutableList<ReturnsItemUi>,
+    holdingsItems: ImmutableList<ReturnsItemUi>,
     footerText: String? = null
 ) {
     Column(
