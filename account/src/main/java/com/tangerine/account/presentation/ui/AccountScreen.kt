@@ -57,7 +57,7 @@ fun AccountScreen(
     state: AccountViewModel.State,
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
-    onTabSelected: (AccountTab) -> Unit
+    onTabSelected: (AccountTab) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -72,7 +72,7 @@ fun AccountScreen(
                 state = state,
                 onBackClicked = onBackClicked,
                 onOpenDocuments = onOpenDocuments,
-                onTabSelected = onTabSelected
+                onTabSelected = onTabSelected,
             )
         }
     }
@@ -84,7 +84,7 @@ private fun Content(
     state: AccountViewModel.State,
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
-    onTabSelected: (AccountTab) -> Unit
+    onTabSelected: (AccountTab) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -101,7 +101,19 @@ private fun Content(
         BottomSheetScaffold(
             scaffoldState = bottomSheetState,
             sheetContent = {
-                BottomSheetTabsContent(bottomSheetState = bottomSheetState)
+                when (state) {
+                    is AccountViewModel.State.Summary -> {
+                        BottomSheetTabsContent(
+                            bottomSheetState = bottomSheetState,
+                        )
+                    }
+
+                    else -> {
+                        BottomSheetTabsContent(
+                            bottomSheetState = bottomSheetState,
+                        )
+                    }
+                }
             },
             sheetPeekHeight = 120.dp,
             sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),

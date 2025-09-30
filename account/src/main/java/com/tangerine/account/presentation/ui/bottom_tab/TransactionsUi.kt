@@ -61,7 +61,7 @@ internal fun TransactionsUi(
             transactions = listOf(
                 TransactionUi(
                     id = "3",
-                    description = "Transfer In - Tangerine data mock",
+                    description = "Transfer In 1 - Tangerine data mock",
                     fromAccount = "Savings Account Transac data mock",
                     amount = 2600.00,
                     date = "Jan 14, 2023",
@@ -71,7 +71,7 @@ internal fun TransactionsUi(
                 ),
                 TransactionUi(
                     id = "4",
-                    description = "Transfer In - Tangerine data mock",
+                    description = "Transfer In 2- Tangerine data mock",
                     fromAccount = "Savings Account Transac data mock",
                     amount = 2600.00,
                     date = "Jan 14, 2023",
@@ -103,7 +103,7 @@ internal fun TransactionsUi(
             transactions = listOf(
                 TransactionUi(
                     id = "1",
-                    description = "Purchase - Tangerine data mock",
+                    description = "Purchase 1- Tangerine data mock",
                     fromAccount = "From: CHQSingleAutoKeep",
                     amount = 66.00,
                     date = "Oct 14, 2023",
@@ -111,7 +111,7 @@ internal fun TransactionsUi(
                 ),
                 TransactionUi(
                     id = "2",
-                    description = "Purchase - Tangerine ...",
+                    description = "Purchase 2- Tangerine ...",
                     fromAccount = "From: CHQSingleAutoKeep",
                     amount = 50.00,
                     date = "Oct 14, 2023",
@@ -133,6 +133,34 @@ internal fun TransactionsUi(
     var showStatusFilter by remember { mutableStateOf(false) }
     var selectedStatuses by remember { mutableStateOf(listOf(TransactionStatusFilter.ALL_STATUS.name)) }
 
+    var searchText by remember { mutableStateOf("") }
+
+    fun filterTransactionGroups(groups: List<TransactionGroup>, query: String): List<TransactionGroup> {
+        if (query.isBlank()) return groups
+
+        return groups.mapNotNull { group ->
+            val filteredTransactions = group.transactions.filter { transaction ->
+                transaction.description.contains(query, ignoreCase = true)
+            }
+            if (filteredTransactions.isNotEmpty()) {
+                group.copy(transactions = filteredTransactions)
+            } else {
+                null
+            }
+        }
+    }
+
+    val filteredPendingGroups = remember(searchText, pendingGroups) {
+        filterTransactionGroups(pendingGroups, searchText)
+    }
+
+    val filteredSettledGroups = remember(searchText, settledGroups) {
+        filterTransactionGroups(settledGroups, searchText)
+    }
+
+    val hasSearchResults = filteredPendingGroups.isNotEmpty() || filteredSettledGroups.isNotEmpty()
+    val isSearching = searchText.isNotBlank()
+
     Column {
         LazyColumn(
             modifier = modifier
@@ -141,6 +169,8 @@ internal fun TransactionsUi(
         ) {
             item {
                 TangerineSearchBar(
+                    searchText = searchText,
+                    onSearchTextChange = { searchText = it },
                     isShowFilter = false,
                 )
             }
@@ -176,65 +206,69 @@ internal fun TransactionsUi(
 
             item { Spacer(modifier = Modifier.height(24.dp)) }
 
-            item {
-                TransactionsSectionHeader(
-                    title = stringResource(R.string.title_pending_transactions).uppercase(),
-                    isExpanded = isPendingExpanded,
-                    onExpandToggle = { isPendingExpanded = !isPendingExpanded },
-                )
-            }
+            if (isSearching && !hasSearchResults) {
+                //TODO() Empty screen here
+            } else {
+                item {
+                    TransactionsSectionHeader(
+                        title = stringResource(R.string.title_pending_transactions).uppercase(),
+                        isExpanded = isPendingExpanded,
+                        onExpandToggle = { isPendingExpanded = !isPendingExpanded },
+                    )
+                }
 
-            if (isPendingExpanded) {
-                pendingGroups.forEach { group ->
-                    item {
-                        TransactionDateHeader(date = group.date)
-                    }
+                if (isPendingExpanded) {
+                    filteredPendingGroups.forEach { group ->
+                        item {
+                            TransactionDateHeader(date = group.date)
+                        }
 
-                    items(group.transactions) { transaction ->
-                        TransactionItem(
-                            transaction = transaction,
-                            onClick = { },
-                        )
-                    }
+                        items(group.transactions) { transaction ->
+                            TransactionItem(
+                                transaction = transaction,
+                                onClick = { },
+                            )
+                        }
 
-                    if (group != pendingGroups.last()) {
-                        item { Spacer(modifier = Modifier.height(16.dp)) }
+                        if (group != filteredPendingGroups.last()) {
+                            item { Spacer(modifier = Modifier.height(16.dp)) }
+                        }
                     }
                 }
-            }
 
-            item {
-                TransactionsSectionHeader(
-                    title = stringResource(R.string.title_settled_transactions).uppercase(),
-                    isExpanded = isSettledExpanded,
-                    onExpandToggle = { isSettledExpanded = !isSettledExpanded }
-                )
-            }
+                item {
+                    TransactionsSectionHeader(
+                        title = stringResource(R.string.title_settled_transactions).uppercase(),
+                        isExpanded = isSettledExpanded,
+                        onExpandToggle = { isSettledExpanded = !isSettledExpanded }
+                    )
+                }
 
-            if (isSettledExpanded) {
-                settledGroups.forEach { group ->
-                    item {
-                        TransactionDateHeader(group.date)
-                    }
+                if (isSettledExpanded) {
+                    filteredSettledGroups.forEach { group ->
+                        item {
+                            TransactionDateHeader(group.date)
+                        }
 
-                    items(group.transactions) { transaction ->
-                        TransactionItem(
-                            transaction = transaction,
-                            onClick = { },
-                        )
-
-                        if (transaction != group.transactions.last()) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                thickness = 0.5.dp,
-                                color = Color.Gray.copy(alpha = 0.2f),
+                        items(group.transactions) { transaction ->
+                            TransactionItem(
+                                transaction = transaction,
+                                onClick = { },
                             )
+
+                            if (transaction != group.transactions.last()) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    thickness = 0.5.dp,
+                                    color = Color.Gray.copy(alpha = 0.2f),
+                                )
+                            }
                         }
                     }
                 }
             }
-
         }
+
         if (showDateFilter) {
             DateFilterModalBottomSheet(
                 isShowing = remember { mutableStateOf(showDateFilter) }.apply {
@@ -283,9 +317,8 @@ internal fun TransactionsUi(
     }
 }
 
-
 @Composable
-private fun TransactionDateHeader(date: String,) {
+private fun TransactionDateHeader(date: String) {
     Text(
         text = date,
         style = FontStyles.BodySmall,
