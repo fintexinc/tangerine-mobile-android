@@ -27,22 +27,23 @@ import com.tangerine.account.presentation.models.DateFilterUi
 @Composable
 internal fun DateFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
-    selectedDates: List<String>,
-    onDatesSelected: (List<String>) -> Unit,
-    onDismiss: () -> Unit,
+    selectedDates: List<DateFilterUi>,
+    onDatesSelected: (List<DateFilterUi>) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    val dateOptions = DateFilterUi.entries.map { stringResource(it.stringResId) }
+    val dateEnums = DateFilterUi.entries
+    val dateOptions = dateEnums.map { stringResource(it.stringResId) }
     val allOptionName = stringResource(DateFilterUi.ALL_DATES.stringResId)
 
-    val selectedStates = remember {
-        mutableStateListOf(*dateOptions.map { it in selectedDates }.toTypedArray())
+    val selectedStates = remember(selectedDates) {
+        mutableStateListOf(*dateEnums.map { it in selectedDates }.toTypedArray())
     }
 
     UniversalModalBottomSheet(
         isShowing = isShowing,
         title = stringResource(R.string.title_timeframe),
         onDoneClick = {
-            val selected = dateOptions.filterIndexed { index, _ -> selectedStates[index] }
+            val selected = dateEnums.filterIndexed { index, _ -> selectedStates[index] }
             onDatesSelected(selected)
         },
         onDismiss = onDismiss,

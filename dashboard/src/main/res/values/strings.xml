@@ -73,6 +73,9 @@
     <string name="text_back">Back</string>
     <string name="title_add_account">Add Account</string>
     <string name="text_group_by">Group By</string>
+    <string name="text_none">None</string>
+    <string name="text_registered_non_registered">Registered/Non-Registered</string>
+    <string name="text_account_type">AccountType</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
