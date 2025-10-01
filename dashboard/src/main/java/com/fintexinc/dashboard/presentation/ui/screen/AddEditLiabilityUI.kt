@@ -70,7 +70,7 @@ fun AddEditLiabilityUI(
             mutableStateOf(liability?.liabilityType)
         }
         val liabilityName = remember {
-            mutableStateOf(liability?.liabilityType?.label ?: "" )
+            mutableStateOf(liability?.liabilityType?.label ?: "")
         }
         val currentBalance = remember {
             mutableStateOf(liability?.balance?.toString() ?: "")
@@ -125,7 +125,11 @@ fun AddEditLiabilityUI(
                         .wrapContentHeight()
                         .padding(vertical = 18.dp)
                         .align(Alignment.Center),
-                    text = stringResource(R.string.title_add_liability),
+                    text = if (liability != null) {
+                        stringResource(R.string.title_edit_liability)
+                    } else {
+                        stringResource(R.string.title_add_liability)
+                    },
                     style = FontStyles.HeadingRegular,
                     textAlign = TextAlign.Center
                 )
@@ -212,7 +216,7 @@ fun AddEditLiabilityUI(
                     hint = stringResource(R.string.text_currency),
                     text = monthlyPayment.value,
                     onTextChanged = { text ->
-                        currentBalance.value = text
+                        monthlyPayment.value = text
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -251,7 +255,7 @@ fun AddEditLiabilityUI(
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
-                            text = stringResource(R.string.format_delete_item, "liability"),
+                            text = stringResource(R.string.format_delete_item, "Liability"),
                             onClick = {
                                 showDeletePopup.value = true
                             }
@@ -259,7 +263,7 @@ fun AddEditLiabilityUI(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    PrimaryButton(stringResource(R.string.text_add, "liability")) {
+                    PrimaryButton(stringResource(R.string.text_add, "Liability")) {
                         onSaveLiabilityClick(
                             Liability(
                                 id = liability?.id ?: UUID.randomUUID().toString(),
@@ -296,30 +300,30 @@ fun AddEditLiabilityUI(
             @OptIn(ExperimentalMaterial3Api::class) val datePickerState = rememberDatePickerState()
             @OptIn(ExperimentalMaterial3Api::class) DatePickerDialog(
                 onDismissRequest = {
-                showDialog.value = null
-            }, confirmButton = {
-                Button(onClick = {
-                    val dateFormatter = DateUtils.formatMillisToDateSimpleDateFormat(
-                        datePickerState.selectedDateMillis ?: 0L
-                    )
-                    when (showDialog.value) {
-                        is DateSelectionType.EffectiveDate -> {
-                            effectiveDate.value = dateFormatter
-                        }
-
-                        is DateSelectionType.RevisitDate -> {
-                            revisitDate.value = dateFormatter
-                        }
-
-                        else -> {}
-                    }
                     showDialog.value = null
-                }) {
-                    Text(
-                        stringResource(R.string.text_ok), style = FontStyles.BodyMedium
-                    )
-                }
-            },
+                }, confirmButton = {
+                    Button(onClick = {
+                        val dateFormatter = DateUtils.formatMillisToDateSimpleDateFormat(
+                            datePickerState.selectedDateMillis ?: 0L
+                        )
+                        when (showDialog.value) {
+                            is DateSelectionType.EffectiveDate -> {
+                                effectiveDate.value = dateFormatter
+                            }
+
+                            is DateSelectionType.RevisitDate -> {
+                                revisitDate.value = dateFormatter
+                            }
+
+                            else -> {}
+                        }
+                        showDialog.value = null
+                    }) {
+                        Text(
+                            stringResource(R.string.text_ok), style = FontStyles.BodyMedium
+                        )
+                    }
+                },
                 dismissButton = {
                     Button(onClick = { showDialog.value = null }) {
                         Text(

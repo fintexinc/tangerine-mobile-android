@@ -120,9 +120,9 @@ class MainActivity : ComponentActivity() {
                     composable<Routes.AddEditAsset> {
                         val args = it.toRoute<Routes.AddEditAsset>()
                         AddEditAssetUI(
-                            asset = if (args.assetId != null) dashboardViewModel.getCustomAssetById(
-                                args.assetId
-                            ) else null,
+                            asset = if (args.assetId != null) {
+                                dashboardViewModel.getCustomAssetById(args.assetId)
+                            } else null,
                             onSaveAssetClick = { asset ->
                                 dashboardViewModel.onAddAsset(asset)
                                 navController.popBackStack()
@@ -139,9 +139,9 @@ class MainActivity : ComponentActivity() {
                     composable<Routes.AddEditLiability> {
                         val args = it.toRoute<Routes.AddEditLiability>()
                         AddEditLiabilityUI(
-                            liability = if (args.liabilityId != null) dashboardViewModel.getLiabilityById(
-                                args.liabilityId
-                            ) else null,
+                            liability = if (args.liabilityId != null) {
+                                dashboardViewModel.getLiabilityById(args.liabilityId)
+                            } else null,
                             onSaveLiabilityClick = { liability ->
                                 dashboardViewModel.onAddLiability(liability)
                                 navController.popBackStack()

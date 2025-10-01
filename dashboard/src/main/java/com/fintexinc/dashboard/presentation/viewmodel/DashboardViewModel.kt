@@ -97,6 +97,12 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun onAddAssetClicked(dataPoint: DataPoint?) = viewModelScope.launch {
+        if (dataPoint != null && currentDataState().customAssets.firstOrNull {
+                it.asset.id == dataPoint.id
+            } == null
+        ) {
+            return@launch
+        }
         _action.emit(
             Action.AddEditAsset(dataPoint?.id)
         )

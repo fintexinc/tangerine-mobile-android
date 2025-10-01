@@ -13,13 +13,14 @@
     <string name="text_add">Add %s</string>
     <string name="text_edit_asset">Edit Asset</string>
     <string name="text_update_asset">Update Asset</string>
-    <string name="format_delete_item">Delete \"%s\"</string>
+    <string name="format_delete_item">Delete %s</string>
     <string name="text_are_you_sure_you_want_to_delete_asset">Are you sure you want to delete this asset? This action will permanently remove it from your history.</string>
     <string name="text_are_you_sure_you_want_to_delete_liability">Are you sure you want to delete this liability? This action will permanently remove it from your history.</string>
     <string name="text_update_successful">Update successful</string>
     <string name="text_change_may_affect">Changes take effect today and past\nrecords remain unchanged.</string>
     <string name="text_liabilities">Liabilities</string>
-    <string name="title_add_liability">Add Liability</string>
+    <string name="title_add_liability">Add an External Liability</string>
+    <string name="title_edit_liability">Edit Liability</string>
     <string name="text_you_saved">You’ve saved $2,500 by investing with Tangerine.</string>
     <string name="text_money_stays">More money stays in your pocket — just the way it should be.</string>
     <string name="text_recent_investment_activity_and_document">Recent Investment\nActivity &amp; Documents</string>
@@ -45,7 +46,8 @@
     <string name="text_increase">Increase</string>
     <string name="text_money_out">Money Out</string>
     <string name="text_net_contributions">Net Contributions</string>
-    <string name="title_add_an_asset">Add an Asset</string>
+    <string name="title_add_an_asset">Add an External Asset</string>
+    <string name="title_edit_asset">Edit Asset</string>
     <string name="text_gain_complete_picture_asset">Gain a more complete picture of your net worth by adding an asset here. This will show up under the External Asset section and update your total net worth balance. We will also include it in your net worth projections using the annual growth rate you provide.</string>
     <string name="text_you_can_remove_later">You can edit or delete this %s at any time, or set a reminder to keep its value current.</string>
     <string name="text_gain_complete_picture_liability">Gain a more complete picture of your net worth by adding a liability here. This will instantly show up under External Liabilities section and update your total net worth balance. We will also include it in your net worth projections, using the Monthly Payment and Annual Interest Rate you provide.</string>

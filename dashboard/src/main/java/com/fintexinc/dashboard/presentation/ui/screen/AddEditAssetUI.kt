@@ -122,7 +122,11 @@ fun AddEditAssetUI(
                         .wrapContentHeight()
                         .padding(vertical = 18.dp)
                         .align(Alignment.Center),
-                    text = stringResource(R.string.title_add_an_asset),
+                    text = if (asset != null) {
+                        stringResource(R.string.text_edit_asset)
+                    } else {
+                        stringResource(R.string.title_add_an_asset)
+                    },
                     style = FontStyles.HeadingRegular,
                     textAlign = TextAlign.Center
                 )
@@ -234,7 +238,7 @@ fun AddEditAssetUI(
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
-                            text = stringResource(R.string.format_delete_item, "asset"),
+                            text = stringResource(R.string.format_delete_item, "Asset"),
                             onClick = {
                                 showDeletePopup.value = true
                             }
@@ -242,7 +246,7 @@ fun AddEditAssetUI(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    PrimaryButton(stringResource(R.string.text_add, "asset")) {
+                    PrimaryButton(stringResource(R.string.text_add, "Asset")) {
                         onSaveAssetClick(
                             Custom(
                                 id = asset?.id ?: UUID.randomUUID().toString(),
