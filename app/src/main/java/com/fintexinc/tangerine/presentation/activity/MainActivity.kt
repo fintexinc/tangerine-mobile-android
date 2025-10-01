@@ -92,8 +92,15 @@ class MainActivity : ComponentActivity() {
                                     accountId = args.accountId
                                 )
                             },
-                            onSearchQueryChanged = { searchText ->
-                                accountViewModel.onSearchTransactionsQueryChanged(searchText)
+                            onSearchQueryChanged = { searchTransactionText ->
+                                accountViewModel.onSearchTransactionsQueryChanged(
+                                    searchTransactionText
+                                )
+                            },
+                            onSearchDocumentQueryChanged = { searchDocumentText ->
+                                accountViewModel.onBottomSheetDocumentsSearchQueryChanged(
+                                    searchDocumentText
+                                )
                             },
                         )
                     }

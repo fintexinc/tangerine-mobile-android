@@ -48,57 +48,14 @@ import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 @Composable
 internal fun DocumentsUi(
     modifier: Modifier = Modifier,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    documents: List<DataPoint>,
 ) {
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
     var selectedDates by remember { mutableStateOf(listOf(DateFilterUi.ALL_DATES)) }
     var selectedDocumentTypes by remember { mutableStateOf(listOf(DocumentTypeFilterUi.ALL_DOCUMENTS)) }
-
-    // TODO() mock data
-    val documents = listOf(
-        DataPoint(
-            id = "1",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "2",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "3",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "4",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "5",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "6",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-    )
 
     Column(
         modifier = modifier
@@ -106,7 +63,9 @@ internal fun DocumentsUi(
             .background(Colors.Background)
     ) {
         TangerineSearchBar(
-            isShowFilter = false
+            searchText = searchQuery,
+            onSearchTextChange = onSearchQueryChanged,
+            isShowFilter = false,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -131,14 +90,18 @@ internal fun DocumentsUi(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            itemsIndexed(documents) { index, document ->
-                DocumentItem(
-                    title = document.name,
-                    date = document.subName,
-                    onClick = {},
-                    isLastItem = index == documents.lastIndex,
-                )
+        if (documents.isEmpty() && searchQuery.isNotBlank()) {
+            // TODO() Empty state
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                itemsIndexed(documents) { index, document ->
+                    DocumentItem(
+                        title = document.name,
+                        date = document.subName,
+                        onClick = {},
+                        isLastItem = index == documents.lastIndex,
+                    )
+                }
             }
         }
     }
@@ -294,20 +257,4 @@ internal fun DocumentTypeFilterModalBottomSheet(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun DocumentItemPreview() {
-    DocumentItem(
-        title = "title",
-        date = "date",
-        onClick = {},
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun FilterButtonPreview() {
-    DocumentsUi()
 }

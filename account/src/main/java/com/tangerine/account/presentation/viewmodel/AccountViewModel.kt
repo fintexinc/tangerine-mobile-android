@@ -3,11 +3,13 @@ package com.tangerine.account.presentation.viewmodel
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.NameValue
 import com.fintexinc.core.domain.gateway.AccountGateway
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
+import com.tangerine.account.R
 import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.models.TransactionUi
 import com.tangerine.account.presentation.models.TransactionUiType
@@ -38,6 +40,7 @@ class AccountViewModel @Inject constructor(
         )
 
         loadTransactions()
+        loadBottomSheetDocuments()
     }
 
     fun onTabChanged(tab: AccountTab, accountId: String) = viewModelScope.launch {
@@ -221,6 +224,95 @@ class AccountViewModel @Inject constructor(
         )
     }
 
+    fun loadBottomSheetDocuments() = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+
+        val allDocuments = getMockBottomSheetDocuments()
+
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = current.bottomSheet.copy(
+                    documents = BottomSheetDocumentsState(
+                        all = allDocuments,
+                        query = "",
+                        filtered = allDocuments
+                    )
+                )
+            )
+        )
+    }
+
+    fun onBottomSheetDocumentsSearchQueryChanged(query: String) {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return
+        val bottomSheet = current.bottomSheet
+
+        val filteredDocuments = if (query.isBlank()) {
+            bottomSheet.documents.all
+        } else {
+            bottomSheet.documents.all.filter { document ->
+                document.name.contains(query, ignoreCase = true) ||
+                        document.subName.contains(query, ignoreCase = true)
+            }
+        }
+
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = bottomSheet.copy(
+                    documents = bottomSheet.documents.copy(
+                        query = query,
+                        filtered = filteredDocuments
+                    )
+                )
+            )
+        )
+    }
+
+    private fun getMockBottomSheetDocuments(): List<DataPoint> {
+        return listOf(
+            DataPoint(
+                id = "1",
+                name = "CRM1 Annual Charges and Compensation Report 2024",
+                subName = "MAR 14, 2023",
+                value = null,
+                iconResId = R.drawable.ic_file
+            ),
+            DataPoint(
+                id = "2",
+                name = "CRM2 Annual Charges and Compensation Report 2024",
+                subName = "MAR 14, 2023",
+                value = null,
+                iconResId = R.drawable.ic_file
+            ),
+            DataPoint(
+                id = "3",
+                name = "CRM3 Annual Charges and Compensation Report 2024",
+                subName = "MAR 14, 2023",
+                value = null,
+                iconResId = R.drawable.ic_file
+            ),
+            DataPoint(
+                id = "4",
+                name = "CRM4 Annual Charges and Compensation Report 2024",
+                subName = "MAR 14, 2023",
+                value = null,
+                iconResId = R.drawable.ic_file
+            ),
+            DataPoint(
+                id = "5",
+                name = "CRM5 Annual Charges and Compensation Report 2024",
+                subName = "MAR 14, 2023",
+                value = null,
+                iconResId = R.drawable.ic_file
+            ),
+            DataPoint(
+                id = "6",
+                name = "CRM6 Annual Charges and Compensation Report 2024",
+                subName = "MAR 14, 2023",
+                value = null,
+                iconResId = R.drawable.ic_file
+            ),
+        )
+    }
 
     // ===================== STATE CLASSES =====================
 
@@ -244,7 +336,13 @@ class AccountViewModel @Inject constructor(
     data class BottomSheetState(
         val transactions: TransactionsState = TransactionsState(),
         val details: DetailsState = DetailsState(),
-        val documents: DocumentsState = DocumentsState()
+        val documents: BottomSheetDocumentsState = BottomSheetDocumentsState()
+    )
+
+    data class BottomSheetDocumentsState(
+        val all: List<DataPoint> = emptyList(),
+        val query: String = "",
+        val filtered: List<DataPoint> = emptyList()
     )
 
     data class TransactionsState(

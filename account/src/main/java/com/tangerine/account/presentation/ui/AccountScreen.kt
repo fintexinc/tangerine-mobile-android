@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
@@ -60,6 +61,7 @@ fun AccountScreen(
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
+    onSearchDocumentQueryChanged: (String) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -76,6 +78,7 @@ fun AccountScreen(
                 onOpenDocuments = onOpenDocuments,
                 onTabSelected = onTabSelected,
                 onSearchQueryChanged = onSearchQueryChanged,
+                onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
             )
         }
     }
@@ -89,6 +92,7 @@ private fun Content(
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
+    onSearchDocumentQueryChanged: (String) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -108,6 +112,9 @@ private fun Content(
                     searchText = state.mainState.bottomSheet.transactions.query,
                     settledGroups = state.mainState.bottomSheet.transactions.settledGroups,
                     pendingGroups = state.mainState.bottomSheet.transactions.pendingGroups,
+                    onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
+                    documentSearchQuery = state.mainState.bottomSheet.documents.query,
+                    documents = state.mainState.bottomSheet.documents.filtered,
                 )
             },
             sheetPeekHeight = 120.dp,
@@ -223,6 +230,9 @@ private fun BottomSheetTabsContent(
     searchText: String,
     settledGroups: List<TransactionGroup>,
     pendingGroups: List<TransactionGroup>,
+    onSearchDocumentQueryChanged: (String) -> Unit,
+    documentSearchQuery: String,
+    documents: List<DataPoint>,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -257,7 +267,11 @@ private fun BottomSheetTabsContent(
             TabItem(
                 title = stringResource(R.string.title_documents),
                 content = {
-                    DocumentsUi()
+                    DocumentsUi(
+                        searchQuery = documentSearchQuery,
+                        onSearchQueryChanged = onSearchDocumentQueryChanged,
+                        documents = documents,
+                    )
                 },
                 onTabSelected = {
                     scope.launch { bottomSheetState.bottomSheetState.expand() }
