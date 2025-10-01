@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,14 +46,13 @@ import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.data.model.DataPoint
-import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
-import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.models.AccountUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
 import com.tangerine.charts.compose_charts.LineChart
@@ -72,12 +72,24 @@ fun MyPortfolioUI(
     accounts: List<Account>,
     onOpenAccount: (accountId: String) -> Unit
 ) {
+    // TODO: ask for mock item type
+    data class MockItemType(override val label: String) : ItemType
+
+    val mockItemTypes = listOf(
+        MockItemType(stringResource(R.string.text_none)),
+        MockItemType(stringResource(R.string.text_registered_non_registered)),
+        MockItemType(stringResource(R.string.text_account_type)),
+    )
+
     val showInvestmentAccountsSelection = remember {
         mutableStateOf(false)
     }
 
     val isShowNewsBanner = remember {
         mutableStateOf(true)
+    }
+    val selectedFilterType = remember {
+        mutableStateOf(mockItemTypes[1])
     }
 
     Column(
@@ -147,7 +159,10 @@ fun MyPortfolioUI(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 18.dp)
-                .clickable { showInvestmentAccountsSelection.value = true }
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { showInvestmentAccountsSelection.value = true }
         ) {
             Text(
                 modifier = Modifier.wrapContentHeight(),
@@ -194,26 +209,86 @@ fun MyPortfolioUI(
             ),
         )
 
-        AccountListUI(
-            title = stringResource(R.string.format_registered_accounts),
-            accounts = registeredAccounts,
-            onOpenAccount = onOpenAccount,
-            totalSum = accounts.sumOf { it.income }.formatCurrency(),
-            isRoundedTop = true,
-        )
+        when (selectedFilterType.value.label) {
+            stringResource(R.string.text_none) -> {
+                val allAccounts = registeredAccounts + nonRegisteredAccounts
+                AccountListUI(
+                    title = stringResource(R.string.text_all_accounts),
+                    accounts = allAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = (accounts.sumOf { it.income } * 2).formatCurrency(),
+                    isRoundedTop = true,
+                )
+            }
 
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 18.dp),
-            color = Colors.BorderSubdued
-        )
+            stringResource(R.string.text_registered_non_registered) -> {
+                AccountListUI(
+                    title = stringResource(R.string.format_registered_accounts),
+                    accounts = registeredAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                    isRoundedTop = true,
+                )
 
-        AccountListUI(
-            title = stringResource(R.string.format_non_registered_accounts),
-            accounts = nonRegisteredAccounts,
-            onOpenAccount = onOpenAccount,
-            totalSum = accounts.sumOf { it.income }.formatCurrency(),
-            isRoundedTop = false,
-        )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 18.dp),
+                    color = Colors.BorderSubdued
+                )
+
+                AccountListUI(
+                    title = stringResource(R.string.format_non_registered_accounts),
+                    accounts = nonRegisteredAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                    isRoundedTop = false,
+                )
+            }
+
+            stringResource(R.string.text_account_type) -> {
+                // TODO() Mock for ui
+                val tfsaAccounts =
+                    registeredAccounts.filter { it.name.contains("TFSA", ignoreCase = true) } +
+                            nonRegisteredAccounts.filter {
+                                it.name.contains(
+                                    "TFSA",
+                                    ignoreCase = true
+                                )
+                            }
+
+                if (tfsaAccounts.isNotEmpty()) {
+                    AccountListUI(
+                        title = "TFSA",
+                        accounts = tfsaAccounts,
+                        onOpenAccount = onOpenAccount,
+                        totalSum = "$650,000",
+                        isRoundedTop = true,
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 18.dp),
+                        color = Colors.BorderSubdued
+                    )
+                }
+
+                val nonRegAccounts =
+                    registeredAccounts.filter { !it.name.contains("TFSA", ignoreCase = true) } +
+                            nonRegisteredAccounts.filter {
+                                !it.name.contains(
+                                    "TFSA",
+                                    ignoreCase = true
+                                )
+                            }
+
+                if (nonRegAccounts.isNotEmpty()) {
+                    AccountListUI(
+                        title = stringResource(R.string.format_non_registered_accounts),
+                        accounts = nonRegAccounts,
+                        onOpenAccount = onOpenAccount,
+                        totalSum = "$25,000",
+                        isRoundedTop = true,
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -228,20 +303,13 @@ fun MyPortfolioUI(
         TopHoldingsUI()
         Spacer(modifier = Modifier.height(30.dp))
     }
-    // TODO: ask for mock item type
-    data class MockItemType(override val label: String) : ItemType
-
-    val mockItemTypes = listOf(
-        MockItemType("None"),
-        MockItemType("Registered/Non-Registered"),
-        MockItemType("AccountType"),
-    )
 
     if (showInvestmentAccountsSelection.value) {
         ItemTypeSelection(
             itemTypeTitle = stringResource(R.string.text_group_by),
             itemTypes = mockItemTypes,
-            onItemTypeSelected = {
+            onItemTypeSelected = { selectedType ->
+                selectedFilterType.value = selectedType as MockItemType
                 showInvestmentAccountsSelection.value = false
             },
             onCancel = {
@@ -653,15 +721,6 @@ private fun TopHoldingsItem(
         }
     }
 }
-
-data class AccountUI(
-    val accountId: String,
-    val name: String,
-    val subName: String,
-    val value: String,
-    val valueChange: Double,
-    val percentageChange: Double
-)
 
 @Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
 @Composable

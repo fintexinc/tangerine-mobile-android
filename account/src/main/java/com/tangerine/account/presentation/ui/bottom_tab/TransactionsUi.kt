@@ -125,13 +125,13 @@ internal fun TransactionsUi(
     var isSettledExpanded by remember { mutableStateOf(true) }
 
     var showDateFilter by remember { mutableStateOf(false) }
-    var selectedDates by remember { mutableStateOf(listOf(DateFilterUi.ALL_DATES.name)) }
+    var selectedDates by remember { mutableStateOf(listOf(DateFilterUi.ALL_DATES)) }
 
     var showTypeFilter by remember { mutableStateOf(false) }
-    var selectedTypes by remember { mutableStateOf(listOf(TransactionTypeFilterUi.ALL_TYPES.name)) }
+    var selectedTypes by remember { mutableStateOf(listOf(TransactionTypeFilterUi.ALL_TYPES)) }
 
     var showStatusFilter by remember { mutableStateOf(false) }
-    var selectedStatuses by remember { mutableStateOf(listOf(TransactionStatusFilter.ALL_STATUS.name)) }
+    var selectedStatuses by remember { mutableStateOf(listOf(TransactionStatusFilter.ALL_STATUS)) }
 
     Column {
         LazyColumn(
@@ -155,19 +155,19 @@ internal fun TransactionsUi(
                 ) {
                     item {
                         FilterButton(
-                            text = stringResource(R.string.text_all_dates),
+                            text = stringResource(selectedDates.firstOrNull()?.stringResId ?: R.string.filter_all_dates),
                             onClick = { showDateFilter = true },
                         )
                     }
                     item {
                         FilterButton(
-                            text = stringResource(R.string.title_all_type),
+                            text = stringResource(selectedTypes.firstOrNull()?.stringResId ?: R.string.type_all_types),
                             onClick = { showTypeFilter = true },
                         )
                     }
                     item {
                         FilterButton(
-                            text = stringResource(R.string.title_all_status),
+                            text = stringResource(selectedStatuses.firstOrNull()?.stringResId ?: R.string.status_all_status),
                             onClick = { showStatusFilter = true },
                         )
                     }
@@ -282,7 +282,6 @@ internal fun TransactionsUi(
         }
     }
 }
-
 
 @Composable
 private fun TransactionDateHeader(date: String,) {
@@ -425,22 +424,23 @@ private fun TransactionAmountSection(transaction: TransactionUi) {
 @Composable
 internal fun TypeFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
-    selectedTypes: List<String>,
-    onTypesSelected: (List<String>) -> Unit,
-    onDismiss: () -> Unit,
+    selectedTypes: List<TransactionTypeFilterUi>,
+    onTypesSelected: (List<TransactionTypeFilterUi>) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    val typeOptions = TransactionTypeFilterUi.entries.map { stringResource(it.stringResId) }
+    val typeEnums = TransactionTypeFilterUi.entries
+    val typeOptions = typeEnums.map { stringResource(it.stringResId) }
     val allOptionName = stringResource(TransactionTypeFilterUi.ALL_TYPES.stringResId)
 
-    val selectedStates = remember {
-        mutableStateListOf(*typeOptions.map { it in selectedTypes }.toTypedArray())
+    val selectedStates = remember(selectedTypes) {
+        mutableStateListOf(*typeEnums.map { it in selectedTypes }.toTypedArray())
     }
 
     UniversalModalBottomSheet(
         isShowing = isShowing,
         title = stringResource(R.string.title_type),
         onDoneClick = {
-            val selected = typeOptions.filterIndexed { index, _ -> selectedStates[index] }
+            val selected = typeEnums.filterIndexed { index, _ -> selectedStates[index] }
             onTypesSelected(selected)
         },
         onDismiss = onDismiss,
@@ -471,22 +471,23 @@ internal fun TypeFilterModalBottomSheet(
 @Composable
 internal fun StatusFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
-    selectedStatuses: List<String>,
-    onStatusesSelected: (List<String>) -> Unit,
-    onDismiss: () -> Unit,
+    selectedStatuses: List<TransactionStatusFilter>,
+    onStatusesSelected: (List<TransactionStatusFilter>) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    val statusOptions = TransactionStatusFilter.entries.map { stringResource(it.stringResId) }
+    val statusEnums = TransactionStatusFilter.entries
+    val statusOptions = statusEnums.map { stringResource(it.stringResId) }
     val allOptionName = stringResource(TransactionStatusFilter.ALL_STATUS.stringResId)
 
-    val selectedStates = remember {
-        mutableStateListOf(*statusOptions.map { it in selectedStatuses }.toTypedArray())
+    val selectedStates = remember(selectedStatuses) {
+        mutableStateListOf(*statusEnums.map { it in selectedStatuses }.toTypedArray())
     }
 
     UniversalModalBottomSheet(
         isShowing = isShowing,
         title = stringResource(R.string.title_status),
         onDoneClick = {
-            val selected = statusOptions.filterIndexed { index, _ -> selectedStates[index] }
+            val selected = statusEnums.filterIndexed { index, _ -> selectedStates[index] }
             onStatusesSelected(selected)
         },
         onDismiss = onDismiss
