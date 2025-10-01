@@ -150,7 +150,7 @@ internal fun DataSectionRow(
             if (hasInfoIcon) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    painter = painterResource(R.drawable.ic_info),
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
                     contentDescription = stringResource(R.string.description_info_icon),
                     modifier = Modifier.size(16.dp),
                     tint = Colors.TextInteractive,
@@ -203,8 +203,8 @@ private fun AllocationProgressBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .height(12.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .background(Colors.BorderSubdued)
         ) {
             items.forEachIndexed { index, item ->

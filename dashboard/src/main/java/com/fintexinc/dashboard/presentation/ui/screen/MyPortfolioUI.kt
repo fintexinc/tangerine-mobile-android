@@ -30,6 +30,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,15 +38,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
+import com.fintexinc.core.data.utils.date.DateUtils.monthName
 import com.fintexinc.core.domain.model.Account
-import com.fintexinc.core.data.model.DataPoint
+import com.fintexinc.core.domain.model.Performance
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
@@ -54,22 +56,15 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.models.AccountUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
+import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
+import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineLineChart
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
-import com.tangerine.charts.compose_charts.LineChart
-import com.tangerine.charts.compose_charts.extensions.format
-import com.tangerine.charts.compose_charts.models.DrawStyle
-import com.tangerine.charts.compose_charts.models.GridProperties
-import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
-import com.tangerine.charts.compose_charts.models.IndicatorCount
-import com.tangerine.charts.compose_charts.models.LabelHelperProperties
-import com.tangerine.charts.compose_charts.models.LabelProperties
-import com.tangerine.charts.compose_charts.models.Line
 import com.tangerine.charts.compose_charts.models.Pie
-import com.tangerine.charts.compose_charts.models.PopupProperties
 
 @Composable
 fun MyPortfolioUI(
     accounts: List<Account>,
+    performance: List<Performance>,
     onOpenAccount: (accountId: String) -> Unit
 ) {
     // TODO: ask for mock item type
@@ -152,7 +147,7 @@ fun MyPortfolioUI(
             }
         }
         Spacer(modifier = Modifier.height(18.dp))
-        Charts()
+        Charts(performance)
         Spacer(modifier = Modifier.height(18.dp))
         Row(
             modifier = Modifier
@@ -440,7 +435,7 @@ private fun AccountListUI(
 }
 
 @Composable
-private fun Charts() {
+private fun Charts(performance: List<Performance>) {
     val pagerState = rememberPagerState { 4 }
     HorizontalPager(pagerState) {
         Column(
@@ -455,7 +450,7 @@ private fun Charts() {
                 .padding(18.dp)
         ) {
             when (it) {
-                0 -> PerformanceChartUI()
+                0 -> PerformanceChartUI(performance)
                 1 -> SectionExposureChartUI()
                 2 -> AssetMixChartUI()
                 3 -> GeographicExposure()
@@ -492,79 +487,66 @@ private fun Charts() {
 }
 
 @Composable
-private fun PerformanceChartUI() {
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        text = stringResource(R.string.text_performance),
-        style = FontStyles.BodyLarge
-    )
+private fun PerformanceChartUI(performance: List<Performance>) {
+    val period = remember {
+        mutableStateOf(Period.SIX_MONTHS)
+    }
+    val performanceValue = remember {
+        mutableDoubleStateOf(performance.last().value)
+    }
+    val asOfDateValue = remember {
+        mutableStateOf(performance.last().date)
+    }
     Spacer(modifier = Modifier.height(12.dp))
     Row(
-        modifier = Modifier
-            .wrapContentSize(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Text(
+            modifier = Modifier
+                .weight(1.0f)
+                .wrapContentHeight(),
+            text = stringResource(R.string.text_performance),
+            style = FontStyles.TitleMediumMedium
+        )
         Icon(
-            modifier = Modifier.wrapContentSize(),
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
-            tint = Color(0xFF43A047),
-            contentDescription = stringResource(R.string.description_icon_increase)
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = "$2,000.00",
-            style = FontStyles.TitleSmall
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = stringResource(R.string.text_earned_this_month),
-            style = FontStyles.BodyMedium,
-            color = Colors.TextSubdued
+            painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
+            contentDescription = stringResource(R.string.description_info_icon),
+            modifier = Modifier.size(24.dp),
+            tint = Colors.TextInteractive,
         )
     }
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+        text = stringResource(
+            R.string.format_performance_as_of_date,
+            asOfDateValue.value.month.monthName(),
+            asOfDateValue.value.year
+        ),
+        color = Colors.TextSubdued,
+        style = FontStyles.BodySmallBold,
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    Text(
+        modifier = Modifier.wrapContentSize(),
+        text = performanceValue.doubleValue.formatCurrency(),
+        style = FontStyles.DisplaySmall,
+        color = Colors.Primary,
+    )
     Spacer(modifier = Modifier.height(18.dp))
-    LineChart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
-        data = listOf(
-            Line(
-                label = "Performance",
-                values = listOf(1000.0, 15000.0),
-                color = SolidColor(Color(0xFFEA7024)),
-                firstGradientFillColor = Color(0xFFFEC388),
-                secondGradientFillColor = Color(0x00FFFFFF),
-                curvedEdges = false,
-                drawStyle = DrawStyle.Fill
-            )
-        ),
-        gridProperties = GridProperties(false),
-        indicatorProperties = HorizontalIndicatorProperties(
-            count = IndicatorCount.StepBased(
-                3000.0
-            ), contentBuilder = {
-                (it / 1000).format(0) + "K"
-            }, indicators = (listOf(1000.0, 6000.0, 15000.0))
-        ),
-        labelProperties = LabelProperties(enabled = true, labels = listOf("Jan", "Jun", "Dec")),
-        labelHelperProperties = LabelHelperProperties(false),
-        popupProperties = PopupProperties(
-            textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
-            containerColor = Colors.Background,
-            mode = PopupProperties.Mode.PointMode(),
-            contentVerticalPadding = 10.dp,
-            contentHorizontalPadding = 12.dp
-        )
+
+    TangerineLineChart(
+        performance = performance,
+        period = period.value,
+        onIndexSelected = {
+            performanceValue.doubleValue = performance[it].value
+            asOfDateValue.value = performance[it].date
+        }
     )
     Spacer(modifier = Modifier.height(18.dp))
     ChartPeriodSelector(
         onPeriodSelected = {
-            // Handle period selection
+            period.value = it
         }
     )
 }

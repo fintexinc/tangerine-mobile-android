@@ -73,13 +73,13 @@ fun AddEditAssetUI(
             mutableStateOf(false)
         }
         val assetType = remember {
-            mutableStateOf(asset?.assetType ?: AssetType.OTHER)
+            mutableStateOf(asset?.assetType)
         }
         val assetName = remember {
             mutableStateOf(asset?.assetName ?: "")
         }
         val estimatedValue = remember {
-            mutableStateOf(asset?.assetValue.toString())
+            mutableStateOf(if (asset?.assetValue == null) "" else asset.assetValue.toString())
         }
         val annAnnualizedRateOfReturn = remember {
             mutableStateOf("")
@@ -122,7 +122,11 @@ fun AddEditAssetUI(
                         .wrapContentHeight()
                         .padding(vertical = 18.dp)
                         .align(Alignment.Center),
-                    text = stringResource(R.string.title_add_an_asset),
+                    text = if (asset != null) {
+                        stringResource(R.string.text_edit_asset)
+                    } else {
+                        stringResource(R.string.title_add_an_asset)
+                    },
                     style = FontStyles.HeadingRegular,
                     textAlign = TextAlign.Center
                 )
@@ -161,7 +165,7 @@ fun AddEditAssetUI(
                         .padding(start = 12.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.text_asset_will_update_chart),
+                        text = stringResource(R.string.text_gain_complete_picture_asset),
                         style = FontStyles.BodyMediumBold,
                         color = Colors.Text
                     )
@@ -169,7 +173,7 @@ fun AddEditAssetUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_asset_later),
+                        text = stringResource(R.string.text_you_can_remove_later),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
@@ -177,7 +181,7 @@ fun AddEditAssetUI(
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemSelection(
                     title = stringResource(R.string.text_asset_type),
-                    text = assetType.value.label.ifEmpty { stringResource(R.string.text_make_selection) },
+                    text = assetType.value?.label ?: stringResource(R.string.text_make_selection),
                     onAddItemSelectionClicked = {
                         showAssetTypeSelection.value = true
                     }
@@ -204,6 +208,7 @@ fun AddEditAssetUI(
                 AddItemText(
                     title = stringResource(R.string.text_annualized_rate_of_return),
                     hint = stringResource(R.string.text_percent),
+                    info = stringResource(R.string.text_ann_rate_of_return_info),
                     onTextChanged = { text ->
                         annAnnualizedRateOfReturn.value = text
                     },
@@ -213,6 +218,7 @@ fun AddEditAssetUI(
                 AddItemSelection(
                     title = stringResource(R.string.text_effective_date),
                     text = effectiveDate.value,
+                    info = stringResource(R.string.text_revisited_date_info, "asset"),
                     onAddItemSelectionClicked = {
                         showDialog.value = DateSelectionType.EffectiveDate
                     }
@@ -232,20 +238,21 @@ fun AddEditAssetUI(
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
-                            text = stringResource(R.string.format_delete_item),
+                            text = stringResource(R.string.format_delete_item, "Asset"),
                             onClick = {
                                 showDeletePopup.value = true
                             }
                         )
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    PrimaryButton(stringResource(R.string.text_add_asset)) {
+                    PrimaryButton(stringResource(R.string.text_add, "Asset")) {
                         onSaveAssetClick(
                             Custom(
                                 id = asset?.id ?: UUID.randomUUID().toString(),
                                 userId = asset?.userId ?: "",
                                 assetName = assetName.value,
-                                assetType = assetType.value,
+                                assetType = assetType.value ?: AssetType.OTHER,
                                 assetValue = estimatedValue.value.toDoubleOrNull()
                                     ?: 0.0,
                                 linkedDate = revisitDate.value,
@@ -318,7 +325,7 @@ fun AddEditAssetUI(
                         id = asset?.id ?: UUID.randomUUID().toString(),
                         userId = asset?.userId ?: "",
                         assetName = assetName.value,
-                        assetType = assetType.value,
+                        assetType = assetType.value ?: AssetType.OTHER,
                         assetValue = estimatedValue.value.toDoubleOrNull()
                             ?: 0.0,
                         linkedDate = revisitDate.value,

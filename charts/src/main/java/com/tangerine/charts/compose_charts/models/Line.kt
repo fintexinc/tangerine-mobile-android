@@ -14,7 +14,7 @@ data class Line(
     val color: Brush,
     val firstGradientFillColor: Color? = null,
     val secondGradientFillColor: Color? = null,
-    val drawStyle: DrawStyle = DrawStyle.Stroke(2.dp),
+    val drawStyle: DrawStyle = DrawStyle.Stroke(80.dp),
     val strokeAnimationSpec: AnimationSpec<Float> = tween(2000),
     val gradientAnimationSpec: AnimationSpec<Float> = tween(2000),
     val gradientAnimationDelay: Long = 1000,

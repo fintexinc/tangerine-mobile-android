@@ -11,6 +11,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
@@ -30,7 +34,8 @@ import com.fintexinc.core.ui.font.FontStyles
 @Composable
 fun TabsSelector(
     modifier: Modifier = Modifier,
-    tabs: List<TabItem>
+    tabs: List<TabItem>,
+    contentMaxHeight: Dp = Dp.Unspecified,
 ) {
     val selectedIndex = remember { mutableIntStateOf(0) }
 
@@ -79,6 +84,13 @@ fun TabsSelector(
     }
 
     AnimatedContent(
+        modifier = Modifier.fillMaxWidth().then(
+            if(contentMaxHeight != Dp.Unspecified) {
+                Modifier.heightIn(max = contentMaxHeight)
+            } else {
+                Modifier.wrapContentHeight()
+            }
+        ),
         targetState = selectedIndex.value,
         transitionSpec = {
             fadeIn(animationSpec = tween(300)).togetherWith(fadeOut(animationSpec = tween(150)))
