@@ -1,5 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.widget.chart
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -12,6 +13,7 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.charts.compose_charts.LineChart
 import com.tangerine.charts.compose_charts.extensions.format
+import com.tangerine.charts.compose_charts.models.DotProperties
 import com.tangerine.charts.compose_charts.models.DrawStyle
 import com.tangerine.charts.compose_charts.models.GridProperties
 import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
@@ -24,11 +26,13 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.Month
 import org.threeten.bp.format.TextStyle
 import java.util.Locale
-import kotlin.text.toLong
-import kotlin.times
 
 @Composable
-fun TangerineLineChart(performance: List<Performance>, period: Period) {
+fun TangerineLineChart(
+    performance: List<Performance>,
+    period: Period,
+    onIndexSelected: (Int) -> Unit
+) {
 
     val data = getPerformanceByMonth(performance, period)
 
@@ -40,6 +44,11 @@ fun TangerineLineChart(performance: List<Performance>, period: Period) {
             Line(
                 label = "Performance",
                 values = data.map { it.value },
+                dotProperties = DotProperties(
+                    enabled = true,
+                    radius = 4.dp,
+                    color = SolidColor(Color(0xFFEA7024))
+                ),
                 color = SolidColor(Color(0xFFEA7024)),
                 firstGradientFillColor = Color(0xFFFEC388),
                 secondGradientFillColor = Color(0x00FFFFFF),
@@ -64,8 +73,8 @@ fun TangerineLineChart(performance: List<Performance>, period: Period) {
             contentVerticalPadding = 10.dp,
             contentHorizontalPadding = 12.dp
         ),
-        onValueSelected = { index, data ->
-
+        onValueSelected = { index, value ->
+            onIndexSelected(index)
         },
     )
 }
@@ -76,7 +85,7 @@ private fun getPerformanceByMonth(
 ): Map<String, Double> {
     val today = LocalDate.now()
     val monthsToInclude = period.countOfMonths
-    val startDate = today.minusMonths((monthsToInclude - 1).toLong()).withDayOfMonth(1)
+    val startDate = today.minusMonths((monthsToInclude + 1).toLong()).withDayOfMonth(1)
     val endDate = today.withDayOfMonth(today.lengthOfMonth()) // last day of current month
 
     return performances

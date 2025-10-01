@@ -1,6 +1,5 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -29,6 +28,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,15 +36,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
+import com.fintexinc.core.data.utils.date.DateUtils.monthName
 import com.fintexinc.core.domain.model.Account
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.domain.model.Performance
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
@@ -58,17 +58,7 @@ import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineLineChart
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
-import com.tangerine.charts.compose_charts.LineChart
-import com.tangerine.charts.compose_charts.extensions.format
-import com.tangerine.charts.compose_charts.models.DrawStyle
-import com.tangerine.charts.compose_charts.models.GridProperties
-import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
-import com.tangerine.charts.compose_charts.models.IndicatorCount
-import com.tangerine.charts.compose_charts.models.LabelHelperProperties
-import com.tangerine.charts.compose_charts.models.LabelProperties
-import com.tangerine.charts.compose_charts.models.Line
 import com.tangerine.charts.compose_charts.models.Pie
-import com.tangerine.charts.compose_charts.models.PopupProperties
 
 @Composable
 fun MyPortfolioUI(
@@ -414,6 +404,12 @@ private fun PerformanceChartUI(performance: List<Performance>) {
     val period = remember {
         mutableStateOf(Period.SIX_MONTHS)
     }
+    val performanceValue = remember {
+        mutableDoubleStateOf(performance.last().value)
+    }
+    val asOfDateValue = remember {
+        mutableStateOf(performance.last().date)
+    }
     Spacer(modifier = Modifier.height(12.dp))
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -435,36 +431,30 @@ private fun PerformanceChartUI(performance: List<Performance>) {
     }
     Spacer(modifier = Modifier.height(16.dp))
     Text(
-        text = "Balance as of 17 Sep 2025",
+        text = stringResource(
+            R.string.format_performance_as_of_date,
+            asOfDateValue.value.month.monthName(),
+            asOfDateValue.value.year
+        ),
         color = Colors.TextSubdued,
         style = FontStyles.BodySmallBold,
     )
     Spacer(modifier = Modifier.height(4.dp))
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = "$2,000.00",
-            style = FontStyles.DisplaySmall,
-            color = Colors.Primary,
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = "$2,000 (4%)",
-            style = FontStyles.BodyLarge,
-            color = Colors.TextSuccess
-        )
-    }
+    Text(
+        modifier = Modifier.wrapContentSize(),
+        text = performanceValue.doubleValue.formatCurrency(),
+        style = FontStyles.DisplaySmall,
+        color = Colors.Primary,
+    )
     Spacer(modifier = Modifier.height(18.dp))
 
     TangerineLineChart(
         performance = performance,
-        period = period.value
+        period = period.value,
+        onIndexSelected = {
+            performanceValue.doubleValue = performance[it].value
+            asOfDateValue.value = performance[it].date
+        }
     )
     Spacer(modifier = Modifier.height(18.dp))
     ChartPeriodSelector(

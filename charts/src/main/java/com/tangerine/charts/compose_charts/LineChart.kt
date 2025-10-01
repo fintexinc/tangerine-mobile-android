@@ -158,7 +158,8 @@ fun LineChart(
         mutableStateListOf<PathData>()
     }
 
-    val computedMaxValue = rememberComputedChartMaxValue(minValue, maxValue, indicatorProperties.count)
+    val computedMaxValue =
+        rememberComputedChartMaxValue(minValue, maxValue, indicatorProperties.count)
     val indicators = remember(indicatorProperties.indicators, minValue, maxValue) {
         indicatorProperties.indicators.ifEmpty {
             split(
@@ -288,7 +289,7 @@ fun LineChart(
                             ?: 0f) else positionX
                     val fraction = (relevantX / size.width)
 
-                    val valueIndex = calculateValueIndexs(
+                    val valueIndex = calculateValueIndex(
                         fraction = fraction.toDouble(),
                         values = line.values,
                         pathData = pathData
@@ -350,6 +351,12 @@ fun LineChart(
         ) {
             val fraction = (positionX / size.width)
 
+            val valueIndex = calculateValueIndex(
+                fraction = fraction.toDouble(),
+                values = firstLine.values,
+                pathData = pathData
+            )
+
             val popupValue = getPopupValue(
                 points = firstLine.values,
                 fraction = fraction.toDouble(),
@@ -363,7 +370,7 @@ fun LineChart(
             persistentIndicatorValue.value = popupValue.calculatedValue
             persistentIndicatorPosition.value = popupValue.offset
 
-            onValueSelected?.invoke(0, 0.0)
+            onValueSelected?.invoke(valueIndex, 0.0)
         }
     }
 
@@ -376,7 +383,11 @@ fun LineChart(
             )
             Spacer(modifier = Modifier.height(labelHelperPadding))
         }
-        Row(modifier = Modifier.fillMaxSize().weight(1f)) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)
+        ) {
             if (indicatorProperties.enabled) {
                 if (indicatorProperties.position == IndicatorPosition.Horizontal.Start) {
                     Indicators(
@@ -566,7 +577,10 @@ fun LineChart(
                             start = Offset(indicatorX, 0f),
                             end = Offset(indicatorX, size.height),
                             strokeWidth = 1.dp.toPx(),
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(14f, 8f), 0f) // обновленные значения
+                            pathEffect = PathEffect.dashPathEffect(
+                                floatArrayOf(14f, 8f),
+                                0f
+                            ) // обновленные значения
                         )
 
                         indicatorPos?.let { pos ->
@@ -638,17 +652,25 @@ private fun Indicators(
     }
 }
 
-private fun calculateValueIndexs(
+
+private fun calculateValueIndex(
     fraction: Double,
     values: List<Double>,
     pathData: PathData
 ): Int {
     val xPosition = (fraction * pathData.path.getBounds().width).toFloat()
-    val closestXIndex = pathData.xPositions.indexOfFirst { x ->
-        x >= xPosition
-    }
+    val closestXIndex =
+        // since there is no space after last point, we need to lower the equal check
+        if (pathData.xPositions.last() <= xPosition + 30) {
+            values.size
+        } else {
+            pathData.xPositions.indexOfFirst { x ->
+                x >= xPosition
+            }
+        }
     return if (closestXIndex >= 0) closestXIndex else values.size - 1
 }
+
 
 private fun DrawScope.drawPopup(
     popup: Popup,
