@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @HiltViewModel
@@ -41,10 +42,14 @@ class AccountViewModel @Inject constructor(
     fun getData(id: String) {
         viewModelScope.launch {
             val account = accountGateway.getAccountById(id)
-            val performanceData = accountGateway.getPerformanceData()
+            val allPerformanceData = accountGateway.getPerformanceData()
 
-            val returnsItems = calculateReturns(performanceItems = performanceData)
-            val holdingsItems = calculateHoldings(performanceData = performanceData)
+            val accountPerformanceData = allPerformanceData.filter {
+                it.accountId == "ACCT-INV-001" // TODO()
+            }
+
+            val returnsItems = calculateReturns(performanceItems = accountPerformanceData)
+            val holdingsItems = calculateHoldings(performanceData = accountPerformanceData)
 
             _state.value = State.Summary(
                 data = account,
@@ -56,33 +61,77 @@ class AccountViewModel @Inject constructor(
 
     private fun calculateReturns(
         performanceItems: List<PerformanceItem>,
-        currentMonth: Int = 8,
-        currentYear: Int = 2025
     ): List<ReturnsItemUi> {
+        val latestDate = performanceItems
+            .maxByOrNull { it.date.year * 12 + it.date.month }
+            ?.date
+            ?: return emptyList()
+
+        // Use last data from mock data for correct calculation here. For backend need to be changed
+        val currentMonth = latestDate.month
+        val currentYear = latestDate.year
+
         val monthlyTotals = performanceItems
             .groupBy { it.date }
             .mapValues { entry ->
                 entry.value.sumOf { it.value }
             }
 
+        fun getDateMonthsAgo(monthsAgo: Int): PerformanceDate {
+            var month = currentMonth - monthsAgo
+            var year = currentYear
+
+            while (month <= 0) {
+                month += 12
+                year -= 1
+            }
+
+            return PerformanceDate(month, year)
+        }
+
         val currentValue = monthlyTotals[PerformanceDate(currentMonth, currentYear)] ?: 0.0
-        val oneMonthAgo = monthlyTotals[PerformanceDate(currentMonth - 1, currentYear)] ?: 0.0
-        val threeMonthsAgo = monthlyTotals[PerformanceDate(currentMonth - 3, currentYear)] ?: 0.0
-        val sixMonthsAgo = monthlyTotals[PerformanceDate(currentMonth - 6, currentYear)] ?: 0.0
-        val yearStart = monthlyTotals[PerformanceDate(1, currentYear)] ?: 0.0
-        val oneYearAgo = monthlyTotals[PerformanceDate(currentMonth, currentYear - 1)] ?: 0.0
-        val portfolioStart = monthlyTotals.values.minOrNull() ?: 0.0
+        val oneMonthAgoValue = monthlyTotals[getDateMonthsAgo(1)] ?: 0.0
+        val threeMonthsAgoValue = monthlyTotals[getDateMonthsAgo(3)] ?: 0.0
+        val sixMonthsAgoValue = monthlyTotals[getDateMonthsAgo(6)] ?: 0.0
+        val yearStartValue = monthlyTotals[PerformanceDate(1, currentYear)] ?: 0.0
+        val oneYearAgoValue = monthlyTotals[PerformanceDate(currentMonth, currentYear - 1)] ?: 0.0
+
+        val portfolioStartValue = performanceItems
+            .minByOrNull { it.date.year * 12 + it.date.month }
+            ?.let { earliestItem ->
+                monthlyTotals[earliestItem.date] ?: 0.0
+            } ?: 0.0
 
         return listOf(
-            createReturnItem("1 month", currentValue, oneMonthAgo),
-            createReturnItem("3 months", currentValue, threeMonthsAgo),
-            createReturnItem("6 months", currentValue, sixMonthsAgo),
-            createReturnItem("Year to date", currentValue, yearStart),
-            createReturnItem("1 Year", currentValue, oneYearAgo),
             createReturnItem(
-                label = "Current portfolio to date",
+                context.getString(R.string.text_month_1),
+                currentValue,
+                oneMonthAgoValue
+            ),
+            createReturnItem(
+                context.getString(R.string.text_months_3),
+                currentValue,
+                threeMonthsAgoValue
+            ),
+            createReturnItem(
+                context.getString(R.string.text_months_6),
+                currentValue,
+                sixMonthsAgoValue
+            ),
+            createReturnItem(
+                context.getString(R.string.text_year_to_date),
+                currentValue,
+                yearStartValue
+            ),
+            createReturnItem(
+                context.getString(R.string.text_year_1),
+                currentValue,
+                oneYearAgoValue
+            ),
+            createReturnItem(
+                label = context.getString(R.string.text_current_portfolio_to_date),
                 currentValue = currentValue,
-                previousValue = portfolioStart,
+                previousValue = portfolioStartValue,
                 hasInfoIcon = true
             )
         )
@@ -114,42 +163,60 @@ class AccountViewModel @Inject constructor(
     private fun calculateHoldings(
         performanceData: List<PerformanceItem>
     ): List<ReturnsItemUi> {
-        val currentMarketValue = performanceData
+        val latestDate = performanceData
             .maxByOrNull { it.date.year * 12 + it.date.month }
-            ?.let { latestItem ->
-                performanceData
-                    .filter { it.date == latestItem.date }
-                    .sumOf { it.value }
-            } ?: 0.0
+            ?.date ?: return emptyList()
+
+        val currentMarketValue = performanceData
+            .filter { it.date == latestDate }
+            .sumOf { it.value }
+
+        val bookValue = performanceData
+            .minByOrNull { it.date.year * 12 + it.date.month }
+            ?.value ?: 0.0
+
+        val distributions = currentMarketValue - bookValue
+
+        val totalUnits = 432.0 // TODO: get from API
+        val unitPrice = currentMarketValue / totalUnits
 
         return listOf(
             ReturnsItemUi(
                 label = context.getString(R.string.text_market_value),
                 amount = formatCurrency(currentMarketValue),
                 hasInfoIcon = true,
-                showArrow = false
+                showArrow = false,
+                isPositive = null
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_distributions),
-                amount = "+${formatCurrency(21234.56)}",
+                amount = if (distributions >= 0) {
+                    "+${formatCurrency(distributions)}"
+                } else {
+                    formatCurrency(abs(distributions))
+                },
                 hasInfoIcon = true,
-                showArrow = false
+                showArrow = false,
+                isPositive = distributions >= 0
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_book_value),
-                amount = formatCurrency(2733.30),
+                amount = formatCurrency(bookValue),
                 hasInfoIcon = true,
-                showArrow = false
+                showArrow = false,
+                isPositive = null
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_total_units),
-                amount = "432", // TODO() mock data
-                showArrow = false
+                amount = totalUnits.toInt().toString(),
+                showArrow = false,
+                isPositive = null
             ),
             ReturnsItemUi(
                 label = context.getString(R.string.text_unit_price),
-                amount = formatCurrency(233.22),
-                showArrow = false
+                amount = formatCurrency(unitPrice),
+                showArrow = false,
+                isPositive = null
             )
         )
     }
