@@ -50,6 +50,8 @@ import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
 import com.tangerine.account.presentation.ui.bottom_tab.DocumentsUi
 import com.tangerine.account.presentation.ui.bottom_tab.TransactionsUi
+import com.tangerine.account.presentation.ui.tab.ActivityUI
+import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
 import com.tangerine.account.presentation.ui.tab.SummaryUI
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
