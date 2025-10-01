@@ -160,7 +160,7 @@ private fun AccountBalanceUI() {
                     .clickable {
                         showNetworkContribution.value = !showNetworkContribution.value
                     },
-                painter = painterResource(R.drawable.ic_info),
+                painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
                 contentDescription = stringResource(R.string.description_icon_navigate_info),
                 tint = Colors.BrandBlack
             )

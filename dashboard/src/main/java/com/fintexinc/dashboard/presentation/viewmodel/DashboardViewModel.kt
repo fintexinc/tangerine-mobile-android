@@ -14,12 +14,14 @@ import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Liability
+import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +38,20 @@ class DashboardViewModel @Inject constructor(
     val state: StateFlow<State>
         get() = _state.asStateFlow()
 
+    private val _action = MutableSharedFlow<Action>()
+    val action: MutableSharedFlow<Action>
+        get() = _action
+
     private var softDataCache: State.Data? = null
+
+
+    init {
+        viewModelScope.launch {
+            _state.value = getData().also {
+                softDataCache = it
+            }
+        }
+    }
 
     private suspend fun getData(): State.Data {
         val accounts = accountGateway.getAccounts()
@@ -47,6 +62,9 @@ class DashboardViewModel @Inject constructor(
         val documents = accountGateway.getDocuments().sortedWith(
             compareBy({ it.documentDate.year }, { it.documentDate.month }, { it.documentDate.day })
         ).take(ACTIVITIES_COUNT)
+        val performance = accountGateway.getPerformance().sortedWith(
+            compareBy({ it.date.year }, { it.date.month })
+        )
 
         return State.Data(
             bankingAssets = assets.banking.map {
@@ -66,14 +84,20 @@ class DashboardViewModel @Inject constructor(
                     it,
                     it.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
                 )
-            }, accounts = accounts, activities = activities, documents = documents
+            },
+            accounts = accounts,
+            activities = activities,
+            documents = documents,
+            performance = performance
         )
     }
 
-    fun loadData() = viewModelScope.launch {
-        _state.value = getData().also {
-            softDataCache = it
-        }
+    fun getCustomAssetById(id: String): Custom? {
+        return softDataCache?.customAssets?.firstOrNull { it.asset.id == id }?.asset
+    }
+
+    fun getLiabilityById(id: String): Liability? {
+        return softDataCache?.liabilities?.firstOrNull { it.liability.id == id }?.liability
     }
 
     fun onPlatformClicked() {
@@ -81,10 +105,14 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun onAddAssetClicked(dataPoint: DataPoint?) = viewModelScope.launch {
-        _state.value = State.AddEditAsset(
-            currentDataState().customAssets.firstOrNull { customAssetUI ->
-                customAssetUI.asset.id == dataPoint?.id
-            }?.asset
+        if (dataPoint != null && currentDataState().customAssets.firstOrNull {
+                it.asset.id == dataPoint.id
+            } == null
+        ) {
+            return@launch
+        }
+        _action.emit(
+            Action.AddEditAsset(dataPoint?.id)
         )
     }
 
@@ -120,10 +148,8 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun onAddLiabilityClicked(dataPoint: DataPoint?) = viewModelScope.launch {
-        _state.value = State.AddEditLiability(
-            currentDataState().liabilities.firstOrNull { liabilityUI ->
-                liabilityUI.liability.id == dataPoint?.id
-            }?.liability
+        _action.emit(
+            Action.AddEditLiability(dataPoint?.id)
         )
     }
 
@@ -192,7 +218,8 @@ class DashboardViewModel @Inject constructor(
             },
             accounts = currentState.accounts,
             activities = currentState.activities,
-            documents = currentState.documents
+            documents = currentState.documents,
+            performance = currentState.performance
         )
     }
 
@@ -211,11 +238,14 @@ class DashboardViewModel @Inject constructor(
             val liabilities: List<LiabilityUI>,
             val accounts: List<Account>,
             val activities: List<Transaction>,
-            val documents: List<Document>
+            val documents: List<Document>,
+            val performance: List<Performance>
         ) : State()
+    }
 
-        data class AddEditAsset(val asset: Custom?) : State()
-        data class AddEditLiability(val liability: Liability?) : State()
+    sealed class Action {
+        data class AddEditAsset(val assetId: String?) : Action()
+        data class AddEditLiability(val liabilityId: String?) : Action()
     }
 
     companion object {

@@ -94,6 +94,8 @@
     <string name="text_book_value">Book value</string>
     <string name="text_portfolio_as_of">Portfolio as of %s</string>
     <string name="text_how_calculate">How we calculate returns</string>
+    <string name="text_portfolio_info">Portfolio Info</string>
+    <string name="text_account_info">Account Info</string>
 
     <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>

@@ -11,11 +11,12 @@ import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.domain.model.Transaction
 import kotlinx.serialization.json.Json
 
-class AccountProvider: AccountGateway {
+class AccountProvider : AccountGateway {
 
     override suspend fun getActivities(): List<Transaction> {
         return Json.decodeFromString(ACTIVITIES_MOCK)
     }
+
     override suspend fun getAccounts(): List<Account> {
         return Json.decodeFromString(ACCOUNTS_MOCK)
     }
