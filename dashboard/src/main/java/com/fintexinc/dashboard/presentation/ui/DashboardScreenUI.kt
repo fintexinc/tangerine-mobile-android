@@ -124,6 +124,7 @@ private fun Content(
                     content = {
                         MyPortfolioUI(
                             accounts = state.accounts,
+                            performance = state.performance,
                             onOpenAccount = onOpenAccount
                         )
                     }

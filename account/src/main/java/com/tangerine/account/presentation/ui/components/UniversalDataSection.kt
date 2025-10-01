@@ -150,7 +150,7 @@ internal fun DataSectionRow(
             if (hasInfoIcon) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    painter = painterResource(R.drawable.ic_info),
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
                     contentDescription = stringResource(R.string.description_info_icon),
                     modifier = Modifier.size(16.dp),
                     tint = Colors.TextInteractive,

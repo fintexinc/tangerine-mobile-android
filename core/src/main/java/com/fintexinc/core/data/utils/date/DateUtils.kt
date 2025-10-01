@@ -17,4 +17,11 @@ object DateUtils {
         val date = java.util.Date(millis)
         return sdf.format(date)
     }
+
+    fun Int.monthName(): String {
+        val months = listOf(
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        )
+        return if (this in 1..12) months[this - 1] else ""
+    }
 }

@@ -91,7 +91,6 @@ fun HorizontalLabels(
                         softWrap = !shouldRotate,
                     )
                 }
-
             }
         }
     }
