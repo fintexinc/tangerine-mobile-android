@@ -91,7 +91,10 @@ class MainActivity : ComponentActivity() {
                                     tab = tab,
                                     accountId = args.accountId
                                 )
-                            }
+                            },
+                            onSearchQueryChanged = { searchText ->
+                                accountViewModel.onSearchTransactionsQueryChanged(searchText)
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {

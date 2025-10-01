@@ -42,6 +42,7 @@ import com.fintexinc.core.presentation.ui.widget.ToolBar
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
+import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
 import com.tangerine.account.presentation.ui.bottom_tab.DocumentsUi
 import com.tangerine.account.presentation.ui.bottom_tab.TransactionsUi
@@ -58,6 +59,7 @@ fun AccountScreen(
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -73,6 +75,7 @@ fun AccountScreen(
                 onBackClicked = onBackClicked,
                 onOpenDocuments = onOpenDocuments,
                 onTabSelected = onTabSelected,
+                onSearchQueryChanged = onSearchQueryChanged,
             )
         }
     }
@@ -85,15 +88,13 @@ private fun Content(
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
     }
 
-    val showBottomSheet = state is AccountViewModel.State.Activities ||
-            state is AccountViewModel.State.Documents ||
-            state is AccountViewModel.State.Positions ||
-            state is AccountViewModel.State.Summary
+    val showBottomSheet = state is AccountViewModel.State.Loaded
 
     if (showBottomSheet) {
         val bottomSheetState = rememberBottomSheetScaffoldState()
@@ -101,19 +102,13 @@ private fun Content(
         BottomSheetScaffold(
             scaffoldState = bottomSheetState,
             sheetContent = {
-                when (state) {
-                    is AccountViewModel.State.Summary -> {
-                        BottomSheetTabsContent(
-                            bottomSheetState = bottomSheetState,
-                        )
-                    }
-
-                    else -> {
-                        BottomSheetTabsContent(
-                            bottomSheetState = bottomSheetState,
-                        )
-                    }
-                }
+                BottomSheetTabsContent(
+                    bottomSheetState = bottomSheetState,
+                    onSearchQueryChanged = onSearchQueryChanged,
+                    searchText = state.mainState.bottomSheet.transactions.query,
+                    settledGroups = state.mainState.bottomSheet.transactions.settledGroups,
+                    pendingGroups = state.mainState.bottomSheet.transactions.pendingGroups,
+                )
             },
             sheetPeekHeight = 120.dp,
             sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
@@ -174,14 +169,14 @@ private fun MainPageContent(
                     tint = Colors.Primary,
                     modifier = Modifier
                         .wrapContentSize()
-                        .clickable {}
+                        .clickable {},
                 )
             }
         )
         AccountBalanceCard(
             balance = "$28,230.00",
             portfolioType = "Balanced Core Portfolio",
-            maskedAccountNumber = "***1234"
+            maskedAccountNumber = "***1234",
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -195,19 +190,40 @@ private fun MainPageContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        when (state) {
-            is AccountViewModel.State.Activities -> ActivityUI(state.data)
-            is AccountViewModel.State.Documents -> DocumentsUI(state.data, onOpenDocuments)
-            is AccountViewModel.State.Positions -> PositionsUI(state.data)
-            is AccountViewModel.State.Summary -> SummaryUI(state.data)
-            else -> {}
+        if (state is AccountViewModel.State.Loaded) {
+            when (state.mainState.selectedTab) {
+                AccountViewModel.TopTab.SUMMARY -> {
+                    SummaryUI(account = state.mainState.summary)
+                }
+
+                AccountViewModel.TopTab.POSITIONS -> {
+                    PositionsUI(positions = state.mainState.positions)
+                }
+
+                AccountViewModel.TopTab.ACTIVITIES -> {
+                    ActivityUI(data = state.mainState.activities)
+                }
+
+                AccountViewModel.TopTab.DOCUMENTS -> {
+                    DocumentsUI(
+                        documents = state.mainState.documents.all,
+                        onOpenDocuments = onOpenDocuments,
+                    )
+                }
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
+private fun BottomSheetTabsContent(
+    bottomSheetState: BottomSheetScaffoldState,
+    onSearchQueryChanged: (String) -> Unit,
+    searchText: String,
+    settledGroups: List<TransactionGroup>,
+    pendingGroups: List<TransactionGroup>,
+) {
     val scope = rememberCoroutineScope()
 
     TabsSelector(
@@ -218,7 +234,12 @@ private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
             TabItem(
                 title = stringResource(R.string.title_transactions),
                 content = {
-                    TransactionsUi()
+                    TransactionsUi(
+                        onSearchQueryChanged = onSearchQueryChanged,
+                        settledGroups = settledGroups,
+                        pendingGroups = pendingGroups,
+                        searchText = searchText,
+                    )
                 },
                 onTabSelected = {
                     scope.launch { bottomSheetState.bottomSheetState.expand() }

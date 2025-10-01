@@ -54,73 +54,11 @@ import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 @Composable
 internal fun TransactionsUi(
     modifier: Modifier = Modifier,
+    onSearchQueryChanged: (String) -> Unit,
+    settledGroups: List<TransactionGroup>,
+    pendingGroups: List<TransactionGroup>,
+    searchText: String,
 ) {
-    val settledGroups = listOf(
-        TransactionGroup(
-            date = "JAN 14, 2023",
-            transactions = listOf(
-                TransactionUi(
-                    id = "3",
-                    description = "Transfer In 1 - Tangerine data mock",
-                    fromAccount = "Savings Account Transac data mock",
-                    amount = 2600.00,
-                    date = "Jan 14, 2023",
-                    type = TransactionUiType.SETTLED,
-                    additionalAmount1 = "$19.5200",
-                    additionalAmount2 = "133.1967"
-                ),
-                TransactionUi(
-                    id = "4",
-                    description = "Transfer In 2- Tangerine data mock",
-                    fromAccount = "Savings Account Transac data mock",
-                    amount = 2600.00,
-                    date = "Jan 14, 2023",
-                    type = TransactionUiType.SETTLED,
-                    additionalAmount1 = "$19.5200",
-                )
-            )
-        ),
-        TransactionGroup(
-            date = "MAY 30, 2023",
-            transactions = listOf(
-                TransactionUi(
-                    id = "5",
-                    description = "Data point 1 (Title)",
-                    fromAccount = "Data point 2",
-                    amount = 0.0,
-                    date = "May 30, 2023",
-                    type = TransactionUiType.PENDING,
-                    rightColumnTitle = "Data point 4",
-                    rightColumnSubtitle = "Data point 6"
-                )
-            )
-        )
-    )
-
-    val pendingGroups = listOf(
-        TransactionGroup(
-            date = "OCT 14, 2023",
-            transactions = listOf(
-                TransactionUi(
-                    id = "1",
-                    description = "Purchase 1- Tangerine data mock",
-                    fromAccount = "From: CHQSingleAutoKeep",
-                    amount = 66.00,
-                    date = "Oct 14, 2023",
-                    type = TransactionUiType.PENDING
-                ),
-                TransactionUi(
-                    id = "2",
-                    description = "Purchase 2- Tangerine ...",
-                    fromAccount = "From: CHQSingleAutoKeep",
-                    amount = 50.00,
-                    date = "Oct 14, 2023",
-                    type = TransactionUiType.PENDING
-                )
-            )
-        )
-    )
-
     var isPendingExpanded by remember { mutableStateOf(true) }
     var isSettledExpanded by remember { mutableStateOf(true) }
 
@@ -133,32 +71,8 @@ internal fun TransactionsUi(
     var showStatusFilter by remember { mutableStateOf(false) }
     var selectedStatuses by remember { mutableStateOf(listOf(TransactionStatusFilter.ALL_STATUS)) }
 
-    var searchText by remember { mutableStateOf("") }
 
-    fun filterTransactionGroups(groups: List<TransactionGroup>, query: String): List<TransactionGroup> {
-        if (query.isBlank()) return groups
-
-        return groups.mapNotNull { group ->
-            val filteredTransactions = group.transactions.filter { transaction ->
-                transaction.description.contains(query, ignoreCase = true)
-            }
-            if (filteredTransactions.isNotEmpty()) {
-                group.copy(transactions = filteredTransactions)
-            } else {
-                null
-            }
-        }
-    }
-
-    val filteredPendingGroups = remember(searchText, pendingGroups) {
-        filterTransactionGroups(pendingGroups, searchText)
-    }
-
-    val filteredSettledGroups = remember(searchText, settledGroups) {
-        filterTransactionGroups(settledGroups, searchText)
-    }
-
-    val hasSearchResults = filteredPendingGroups.isNotEmpty() || filteredSettledGroups.isNotEmpty()
+    val hasSearchResults = pendingGroups.isNotEmpty() || settledGroups.isNotEmpty()
     val isSearching = searchText.isNotBlank()
 
     Column {
@@ -170,7 +84,7 @@ internal fun TransactionsUi(
             item {
                 TangerineSearchBar(
                     searchText = searchText,
-                    onSearchTextChange = { searchText = it },
+                    onSearchTextChange = { onSearchQueryChanged(it) },
                     isShowFilter = false,
                 )
             }
@@ -218,7 +132,7 @@ internal fun TransactionsUi(
                 }
 
                 if (isPendingExpanded) {
-                    filteredPendingGroups.forEach { group ->
+                    pendingGroups.forEach { group ->
                         item {
                             TransactionDateHeader(date = group.date)
                         }
@@ -230,7 +144,7 @@ internal fun TransactionsUi(
                             )
                         }
 
-                        if (group != filteredPendingGroups.last()) {
+                        if (group != pendingGroups.last()) {
                             item { Spacer(modifier = Modifier.height(16.dp)) }
                         }
                     }
@@ -245,7 +159,7 @@ internal fun TransactionsUi(
                 }
 
                 if (isSettledExpanded) {
-                    filteredSettledGroups.forEach { group ->
+                    settledGroups.forEach { group ->
                         item {
                             TransactionDateHeader(group.date)
                         }
