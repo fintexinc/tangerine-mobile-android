@@ -96,7 +96,7 @@ fun MyNetWorthUI(
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
-    val textAddAsset = stringResource(R.string.text_add_asset)
+    val textAddAsset = stringResource(R.string.text_add)
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
     val textAddLiability = stringResource(R.string.title_add_liability)
