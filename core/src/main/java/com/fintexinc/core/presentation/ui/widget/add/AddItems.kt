@@ -38,6 +38,7 @@ import com.fintexinc.core.ui.font.FontStyles
 fun AddItemSelection(
     title: String,
     text: String,
+    info: String = "",
     onAddItemSelectionClicked: () -> Unit,
 ) {
     Column(
@@ -56,8 +57,7 @@ fun AddItemSelection(
                 .clickable {
                     onAddItemSelectionClicked()
                 }
-                .padding(vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(vertical = 16.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -80,11 +80,24 @@ fun AddItemSelection(
                     style = FontStyles.BodyLarge,
                     color = Colors.TextSubdued
                 )
+                if(info.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .background(color = Colors.BackgroundSubdued)
+                            .padding(8.dp),
+                        text = info,
+                        style = FontStyles.BodySmall,
+                        color = Colors.Text
+                    )
+                }
             }
             Icon(
                 modifier = Modifier
                     .wrapContentSize()
-                    .padding(horizontal = 6.dp, vertical = 8.dp),
+                    .padding(horizontal = 6.dp),
                 painter = painterResource(id = R.drawable.ic_arrow_down),
                 contentDescription = stringResource(R.string.description_icon_add),
                 tint = Colors.BrandBlack
@@ -99,9 +112,10 @@ fun AddItemSelection(
 fun AddItemText(
     title: String,
     hint: String,
+    info: String = "",
     text: String = "",
     onTextChanged: (String) -> Unit,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
 ) {
     val text = remember {
         mutableStateOf(text)
@@ -131,15 +145,42 @@ fun AddItemText(
             textStyle = FontStyles.BodyLarge,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             decorationBox = { innerTextField ->
-                Box {
-                    if (text.value.isEmpty()) {
-                        Text(
-                            text = hint,
-                            style = FontStyles.BodyLarge,
-                            color = Colors.TextSubdued
-                        )
+                when {
+                    info.isNotEmpty() -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            innerTextField()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .background(color = Colors.BackgroundSubdued)
+                                    .padding(8.dp),
+                                text = info,
+                                style = FontStyles.BodySmall,
+                                color = Colors.Text
+                            )
+                        }
                     }
-                    innerTextField()
+
+                    text.value.isEmpty() -> {
+                        Box {
+                            Text(
+                                text = hint,
+                                style = FontStyles.BodyLarge,
+                                color = Colors.TextSubdued
+                            )
+                            innerTextField()
+                        }
+                    }
+
+                    else -> {
+                        innerTextField()
+                    }
                 }
             },
         )

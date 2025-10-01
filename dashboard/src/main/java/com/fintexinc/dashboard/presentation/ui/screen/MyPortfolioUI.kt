@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -46,14 +48,13 @@ import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.DateUtils.monthName
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.Performance
-import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
-import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.models.AccountUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineLineChart
@@ -66,8 +67,24 @@ fun MyPortfolioUI(
     performance: List<Performance>,
     onOpenAccount: (accountId: String) -> Unit
 ) {
+    // TODO: ask for mock item type
+    data class MockItemType(override val label: String) : ItemType
+
+    val mockItemTypes = listOf(
+        MockItemType(stringResource(R.string.text_none)),
+        MockItemType(stringResource(R.string.text_registered_non_registered)),
+        MockItemType(stringResource(R.string.text_account_type)),
+    )
+
     val showInvestmentAccountsSelection = remember {
         mutableStateOf(false)
+    }
+
+    val isShowNewsBanner = remember {
+        mutableStateOf(true)
+    }
+    val selectedFilterType = remember {
+        mutableStateOf(mockItemTypes[1])
     }
 
     Column(
@@ -75,36 +92,59 @@ fun MyPortfolioUI(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(18.dp))
-        RowWithShadow {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight()
+        if (isShowNewsBanner.value) {
+            Spacer(modifier = Modifier.height(18.dp))
+            RowWithShadow(
+                modifier = Modifier.clickable {
+                    // TODO() navigate to news
+                }
             ) {
-                Text(
+                Column(
+                    modifier = Modifier.wrapContentHeight(),
+                    verticalArrangement = Arrangement.Top,
+                ) {
+                    Icon(
+                        modifier = Modifier.wrapContentSize(),
+                        painter = painterResource(R.drawable.ic_pictogram),
+                        contentDescription = stringResource(R.string.description_icon_pictogram),
+                        tint = Color.Unspecified,
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    text = stringResource(R.string.text_new_market_insights),
-                    style = FontStyles.BodyLarge
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
+                        .weight(1f)
+                        .wrapContentHeight()
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        text = stringResource(R.string.text_new_market_insights),
+                        style = FontStyles.BodyMedium,
+                        color = Colors.Text,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        text = stringResource(R.string.text_check_in_update),
+                        style = FontStyles.BodyMediumBold,
+                        color = Colors.TextInteractive,
+                    )
+                }
+                Icon(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    text = stringResource(R.string.text_check_in_update),
-                    style = FontStyles.BodyMedium,
-                    color = Colors.TextSubdued
+                        .size(24.dp)
+                        .clickable { isShowNewsBanner.value = false },
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
+                    tint = Colors.IconSubtitled,
+                    contentDescription = stringResource(R.string.description_icon_close),
                 )
             }
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(com.fintexinc.core.R.drawable.ic_close),
-                tint = Colors.BrandBlack,
-                contentDescription = stringResource(R.string.description_icon_close)
-            )
         }
         Spacer(modifier = Modifier.height(18.dp))
         Charts(performance)
@@ -114,7 +154,10 @@ fun MyPortfolioUI(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 18.dp)
-                .clickable { showInvestmentAccountsSelection.value = true }
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { showInvestmentAccountsSelection.value = true }
         ) {
             Text(
                 modifier = Modifier.wrapContentHeight(),
@@ -161,26 +204,86 @@ fun MyPortfolioUI(
             ),
         )
 
-        AccountListUI(
-            title = stringResource(R.string.format_registered_accounts),
-            accounts = registeredAccounts,
-            onOpenAccount = onOpenAccount,
-            totalSum = accounts.sumOf { it.income }.formatCurrency(),
-            isRoundedTop = true,
-        )
+        when (selectedFilterType.value.label) {
+            stringResource(R.string.text_none) -> {
+                val allAccounts = registeredAccounts + nonRegisteredAccounts
+                AccountListUI(
+                    title = stringResource(R.string.text_all_accounts),
+                    accounts = allAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = (accounts.sumOf { it.income } * 2).formatCurrency(),
+                    isRoundedTop = true,
+                )
+            }
 
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 18.dp),
-            color = Colors.BorderSubdued
-        )
+            stringResource(R.string.text_registered_non_registered) -> {
+                AccountListUI(
+                    title = stringResource(R.string.format_registered_accounts),
+                    accounts = registeredAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                    isRoundedTop = true,
+                )
 
-        AccountListUI(
-            title = stringResource(R.string.format_non_registered_accounts),
-            accounts = nonRegisteredAccounts,
-            onOpenAccount = onOpenAccount,
-            totalSum = accounts.sumOf { it.income }.formatCurrency(),
-            isRoundedTop = false,
-        )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 18.dp),
+                    color = Colors.BorderSubdued
+                )
+
+                AccountListUI(
+                    title = stringResource(R.string.format_non_registered_accounts),
+                    accounts = nonRegisteredAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                    isRoundedTop = false,
+                )
+            }
+
+            stringResource(R.string.text_account_type) -> {
+                // TODO() Mock for ui
+                val tfsaAccounts =
+                    registeredAccounts.filter { it.name.contains("TFSA", ignoreCase = true) } +
+                            nonRegisteredAccounts.filter {
+                                it.name.contains(
+                                    "TFSA",
+                                    ignoreCase = true
+                                )
+                            }
+
+                if (tfsaAccounts.isNotEmpty()) {
+                    AccountListUI(
+                        title = "TFSA",
+                        accounts = tfsaAccounts,
+                        onOpenAccount = onOpenAccount,
+                        totalSum = "$650,000",
+                        isRoundedTop = true,
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 18.dp),
+                        color = Colors.BorderSubdued
+                    )
+                }
+
+                val nonRegAccounts =
+                    registeredAccounts.filter { !it.name.contains("TFSA", ignoreCase = true) } +
+                            nonRegisteredAccounts.filter {
+                                !it.name.contains(
+                                    "TFSA",
+                                    ignoreCase = true
+                                )
+                            }
+
+                if (nonRegAccounts.isNotEmpty()) {
+                    AccountListUI(
+                        title = stringResource(R.string.format_non_registered_accounts),
+                        accounts = nonRegAccounts,
+                        onOpenAccount = onOpenAccount,
+                        totalSum = "$25,000",
+                        isRoundedTop = true,
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -192,42 +295,16 @@ fun MyPortfolioUI(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp),
-            text = stringResource(R.string.text_top_holdings),
-            style = FontStyles.TitleMediumBold
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 18.dp),
-            text = stringResource(R.string.text_largest_positions),
-            style = FontStyles.BodySmall,
-            color = Colors.DarkGray,
-        )
-        Spacer(modifier = Modifier.height(10.dp))
         TopHoldingsUI()
         Spacer(modifier = Modifier.height(30.dp))
     }
-    // TODO: ask for mock item type
-    data class MockItemType(override val label: String) : ItemType
-
-    val mockItemTypes = listOf(
-        MockItemType("None"),
-        MockItemType("Registered/Non-Registered"),
-        MockItemType("AccountType"),
-    )
 
     if (showInvestmentAccountsSelection.value) {
         ItemTypeSelection(
             itemTypeTitle = stringResource(R.string.text_group_by),
             itemTypes = mockItemTypes,
-            onItemTypeSelected = {
+            onItemTypeSelected = { selectedType ->
+                selectedFilterType.value = selectedType as MockItemType
                 showInvestmentAccountsSelection.value = false
             },
             onCancel = {
@@ -361,7 +438,17 @@ private fun AccountListUI(
 private fun Charts(performance: List<Performance>) {
     val pagerState = rememberPagerState { 4 }
     HorizontalPager(pagerState) {
-        ColumnWithBorder {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 18.dp)
+                .background(
+                    color = Colors.Background,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(18.dp)
+        ) {
             when (it) {
                 0 -> PerformanceChartUI(performance)
                 1 -> SectionExposureChartUI()
@@ -470,7 +557,7 @@ private fun SectionExposureChartUI() {
         title = stringResource(R.string.text_sector_exposure),
         pieData = listOf(
             Pie("Technology", 50.0, color = Color(0xFF0D7C75)),
-            Pie("Finance", 30.0, color = Color(0xFFFEAC5B)),
+            Pie("Finance", 10.0, color = Color(0xFFFEAC5B)),
             Pie("Healthcare", 20.0, color = Color(0xFFEC407A))
         )
     )
@@ -501,31 +588,121 @@ private fun GeographicExposure() {
 
 @Composable
 private fun TopHoldingsUI() {
-    ColumnWithBorder {
-        val dataPoints = listOf(
-            DataPoint("1", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("2", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("3", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("4", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-            DataPoint("5", "Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)")
+    val dataPoints = listOf(
+        DataPoint("Bank of Nova Scotia", "BNS", "10,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "22,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "21,000 CAD", " (4.39%)"),
+        DataPoint("Bank of Nova Scotia", "BNS", "23,000 CAD", " (4.39%)")
+    ).sortedByDescending { dataPoint ->
+        dataPoint.value?.replace(",", "")?.replace(" CAD", "")?.toDoubleOrNull() ?: 0.0
+    }
+
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(
+                color = Colors.Background,
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp),
+            text = stringResource(R.string.text_top_holdings),
+            style = FontStyles.TitleMediumBold
         )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp),
+            text = stringResource(R.string.text_largest_positions),
+            style = FontStyles.BodySmall,
+            color = Colors.DarkGray,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
         dataPoints.forEachIndexed { index, dataPoint ->
-            DataPointUI(
-                dataPoint = dataPoint,
-                isLastItem = dataPoints.size - 1 == index
+            TopHoldingsItem(
+                holdingsName = dataPoint.id,
+                holdingsSubName = dataPoint.name,
+                sum = dataPoint.subName,
+                percent = dataPoint.value ?: ""
+            )
+
+            if (dataPoints.size - 1 != index) {
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun TopHoldingsItem(
+    holdingsName: String,
+    holdingsSubName: String,
+    sum: String,
+    percent: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Text(
+                text = holdingsName,
+                style = FontStyles.BodyLarge,
+                color = Colors.Text,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = holdingsSubName,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued,
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Column(
+            modifier = Modifier.wrapContentWidth(),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Text(
+                text = sum,
+                style = FontStyles.BodyLargeBold,
+                color = Colors.Text,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = percent,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextSubdued,
             )
         }
     }
 }
-
-data class AccountUI(
-    val accountId: String,
-    val name: String,
-    val subName: String,
-    val value: String,
-    val valueChange: Double,
-    val percentageChange: Double
-)
 
 @Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
 @Composable

@@ -41,6 +41,10 @@
     <string name="title_details">Details</string>
     <string name="title_transactions">Transactions</string>
     <string name="title_documents">Documents</string>
+    <string name="text_buy_funds">Buy\nFunds</string>
+    <string name="text_sell_funds">Sell\nFunds</string>
+    <string name="text_automatic_purchases">Automatic\nPurchases</string>
+    <string name="text_switch_portfolio">Switch\nPortfolio</string>
     <string name="text_all_dates">All Dates</string>
     <string name="filter_all_dates">All dates</string>
     <string name="filter_last_30_days">Last 30 Days</string>
@@ -76,6 +80,8 @@
     <string name="text_dates_selected">dates selected</string>
     <string name="title_settled_transactions">Settled Transactions</string>
     <string name="title_pending_transactions">Pending Transactions</string>
+    <string name="text_portfolio_info">Portfolio Info</string>
+    <string name="text_account_info">Account Info</string>
 
     <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>

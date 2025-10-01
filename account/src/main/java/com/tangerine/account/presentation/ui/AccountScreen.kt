@@ -2,6 +2,7 @@ package com.tangerine.account.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +22,7 @@ import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -29,24 +32,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.ToolBar
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
+import com.fintexinc.core.ui.utils.ScreenUtils.GetPercentageOfScreenHeight
 import com.tangerine.account.R
 import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
 import com.tangerine.account.presentation.ui.bottom_tab.DocumentsUi
 import com.tangerine.account.presentation.ui.bottom_tab.TransactionsUi
-import com.tangerine.account.presentation.ui.tab.ActivityUI
-import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
 import com.tangerine.account.presentation.ui.tab.SummaryUI
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
@@ -87,7 +88,7 @@ private fun Content(
     onTabSelected: (AccountTab) -> Unit
 ) {
     val selectedTab = remember {
-        mutableStateOf(AccountTab.SUMMARY)
+        mutableStateOf(AccountTab.BUY_FUNDS)
     }
 
     val showBottomSheet = state is AccountViewModel.State.Activities ||
@@ -103,10 +104,20 @@ private fun Content(
             sheetContent = {
                 BottomSheetTabsContent(bottomSheetState = bottomSheetState)
             },
-            sheetPeekHeight = 120.dp,
-            sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            sheetPeekHeight = 84.dp,
+            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             sheetContainerColor = Colors.Background,
             sheetShadowElevation = 16.dp,
+            sheetDragHandle = {
+                Surface(
+                    modifier =
+                        Modifier.padding(top = 8.dp, bottom = 14.dp),
+                    color = Colors.BorderSubdued,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Box(Modifier.size(width = 24.dp, height = 4.dp))
+                }
+            }
         ) {
             MainPageContent(
                 state = state,
@@ -172,17 +183,20 @@ private fun MainPageContent(
             maskedAccountNumber = "***1234"
         )
 
+        Spacer(modifier = Modifier.height(24.dp))
+
         AccountTabsUI(
             selectedTab,
             onTabSelected = { tab ->
                 onTabSelected(tab)
             }
         )
+
         Spacer(modifier = Modifier.height(24.dp))
 
         when (state) {
-            is AccountViewModel.State.Activities -> ActivityUI(state.data)
-            is AccountViewModel.State.Documents -> DocumentsUI(state.data, onOpenDocuments)
+            is AccountViewModel.State.Activities -> {} //ActivityUI(state.data)
+            is AccountViewModel.State.Documents -> {} //DocumentsUI(state.data, onOpenDocuments)
             is AccountViewModel.State.Positions -> PositionsUI(state.data)
             is AccountViewModel.State.Summary -> SummaryUI(state.data)
             else -> {}
@@ -194,7 +208,7 @@ private fun MainPageContent(
 @Composable
 private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
     val scope = rememberCoroutineScope()
-
+    val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
     TabsSelector(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -227,7 +241,8 @@ private fun BottomSheetTabsContent(bottomSheetState: BottomSheetScaffoldState) {
                     scope.launch { bottomSheetState.bottomSheetState.expand() }
                 }
             )
-        )
+        ),
+        contentMaxHeight = tabsContentMaxHeight
     )
 }
 
@@ -273,54 +288,98 @@ private fun AccountTabsUI(
     selectedTab: MutableState<AccountTab>,
     onTabSelected: @Composable (AccountTab) -> Unit = {}
 ) {
-    val tabs = listOf(
-        AccountTab.SUMMARY,
-        AccountTab.POSITIONS,
-        AccountTab.ACTIVITY,
-        AccountTab.DOCUMENTS
-    )
     onTabSelected(selectedTab.value)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        val offset = LocalDensity.current.run { 16.dp.toPx() }
-        tabs.forEach { tab ->
-            Text(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .then(
-                        if (selectedTab.value == tab) {
-                            Modifier.drawBehind {
-                                val strokeWidth = 3.dp.toPx()
-                                val y = size.height - strokeWidth / 2
-                                drawLine(
-                                    color = Colors.BackgroundPrimary,
-                                    start = Offset(offset / 2, y),
-                                    end = Offset(size.width - offset / 2, y),
-                                    strokeWidth = strokeWidth
-                                )
-                            }
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .clickable {
-                        selectedTab.value = tab
-                    }
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
-                text = tab.label,
-                style = FontStyles.BodySmallBold,
-                color = Colors.BrandBlack
+        AccountTab(
+            modifier = Modifier.weight(1f),
+            label = stringResource(R.string.text_buy_funds),
+            icon = R.drawable.ic_funds_down,
+            onClick = {
+                selectedTab.value = AccountTab.BUY_FUNDS
+            },
+        )
+
+        AccountTab(
+            modifier = Modifier.weight(1f),
+            label = stringResource(R.string.text_sell_funds),
+            icon = R.drawable.ic_funds_up,
+            onClick = {
+                selectedTab.value = AccountTab.SELL_FUNDS
+            },
+        )
+
+        AccountTab(
+            modifier = Modifier.weight(1f),
+            label = stringResource(R.string.text_automatic_purchases),
+            icon = R.drawable.ic_automatic_purchases,
+            onClick = {
+                selectedTab.value = AccountTab.AUTOMATIC_PURCHASES
+            },
+        )
+
+        AccountTab(
+            label = stringResource(R.string.text_switch_portfolio),
+            icon = R.drawable.ic_switch_portfolio,
+            onClick = {
+                selectedTab.value = AccountTab.SWITCH_PORTFOLIO
+            },
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun AccountTab(
+    modifier: Modifier = Modifier,
+    label: String,
+    icon: Int,
+    onClick: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    clip = false
+                )
+                .background(color = Colors.Background, shape = RoundedCornerShape(12.dp))
+                .clickableShape(shape = RoundedCornerShape(12.dp), onClick = { onClick() })
+                .padding(12.dp)
+        ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = label,
+                tint = Colors.Primary,
             )
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = label,
+            color = Colors.TextSubdued,
+            style = FontStyles.BodySmall,
+            maxLines = 2,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
 enum class AccountTab(val label: String) {
-    SUMMARY("Summary"),
-    POSITIONS("Positions"),
-    ACTIVITY("Activity"),
-    DOCUMENTS("Documents")
+    BUY_FUNDS("Buy_Funds"),
+    SELL_FUNDS("Sell_Funds"),
+    AUTOMATIC_PURCHASES("Automatic_Purchases"),
+    SWITCH_PORTFOLIO("Switch_Portfolio")
 }

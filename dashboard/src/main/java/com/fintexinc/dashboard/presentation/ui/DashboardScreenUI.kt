@@ -18,17 +18,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.domain.model.Custom
 import com.fintexinc.core.data.model.DataPoint
-import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
-import com.fintexinc.dashboard.presentation.ui.screen.AddEditAssetUI
-import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
 import com.fintexinc.dashboard.presentation.ui.screen.MyNetWorthUI
 import com.fintexinc.dashboard.presentation.ui.screen.MyPortfolioUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
@@ -39,13 +35,9 @@ fun DashboardScreenUI(
     onPlatformClicked: () -> Unit,
     onOpenAccountClicked: (accountId: String) -> Unit,
     onAddAssetClicked : (DataPoint?) -> Unit,
-    onAddAsset: (Custom) -> Unit,
-    onDeleteAsset: (Custom) -> Unit,
     onAddLiabilityClicked: (DataPoint?) -> Unit,
-    onAddLiability: (Liability) -> Unit,
     onOpenJuiceArticle: (url: String) -> Unit,
-    onDeleteLiability: (Liability) -> Unit,
-    onBackButtonFromExternalScreenClicked: () -> Unit,
+    onOpenJuiceSection: () -> Unit,
     onOpenDocumentsClicked: () -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
@@ -62,26 +54,10 @@ fun DashboardScreenUI(
             onAddAssetClicked = onAddAssetClicked,
             onAddLiabilityClicked = onAddLiabilityClicked,
             onOpenJuiceArticle = onOpenJuiceArticle,
+            onOpenJuiceSection = onOpenJuiceSection,
             onOpenDocumentsClicked = onOpenDocumentsClicked,
             updateCheckedStates = updateCheckedStates
         )
-
-        is DashboardViewModel.State.AddEditAsset -> {
-            AddEditAssetUI(
-                asset = state.asset,
-                onSaveAssetClick = onAddAsset,
-                onDeleteAsset = onDeleteAsset,
-                onBackButtonFromExternalScreenClicked = onBackButtonFromExternalScreenClicked
-            )
-        }
-        is DashboardViewModel.State.AddEditLiability -> {
-            AddEditLiabilityUI(
-                liability = state.liability,
-                onSaveLiabilityClick = onAddLiability,
-                onDeleteLiability = onDeleteLiability,
-                onBackButtonFromExternalScreenClicked = onBackButtonFromExternalScreenClicked
-            )
-        }
     }
 }
 
@@ -93,6 +69,7 @@ private fun Content(
     onAddAssetClicked : (dataPoint: DataPoint?) -> Unit,
     onAddLiabilityClicked: (dataPoint: DataPoint?) -> Unit,
     onOpenJuiceArticle: (url: String) -> Unit,
+    onOpenJuiceSection: () -> Unit,
     onOpenDocumentsClicked: () -> Unit = {},
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
@@ -137,6 +114,7 @@ private fun Content(
                             onAddAssetClicked = onAddAssetClicked,
                             onAddLiabilityClicked = onAddLiabilityClicked,
                             onOpenJuiceArticle = onOpenJuiceArticle,
+                            onOpenJuiceSection = onOpenJuiceSection,
                             onOpenDocumentsClicked = onOpenDocumentsClicked
                         )
                     }
