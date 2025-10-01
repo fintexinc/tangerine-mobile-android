@@ -80,6 +80,20 @@
     <string name="text_dates_selected">dates selected</string>
     <string name="title_settled_transactions">Settled Transactions</string>
     <string name="title_pending_transactions">Pending Transactions</string>
+    <string name="title_balanced_core_portfolio">Balanced Core Portfolio </string>
+    <string name="text_returns_over_time">Returns over time</string>
+    <string name="text_month_1">1 month</string>
+    <string name="text_months_3">3 months</string>
+    <string name="text_months_6">6 months</string>
+    <string name="text_year_to_date">Year to date</string>
+    <string name="text_year_1">1 Year</string>
+    <string name="text_current_portfolio_to_date">Current portfolio to date</string>
+    <string name="text_how_we_calculate_returns">How we calculate returns</string>
+    <string name="text_holding_summary">Holding summary</string>
+    <string name="text_market_value">Market value</string>
+    <string name="text_book_value">Book value</string>
+    <string name="text_portfolio_as_of">Portfolio as of %s</string>
+    <string name="text_how_calculate">How we calculate returns</string>
     <string name="text_portfolio_info">Portfolio Info</string>
     <string name="text_account_info">Account Info</string>
 

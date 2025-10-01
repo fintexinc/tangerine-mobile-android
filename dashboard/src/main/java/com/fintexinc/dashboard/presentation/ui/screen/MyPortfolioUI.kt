@@ -47,7 +47,7 @@ import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.DateUtils.monthName
 import com.fintexinc.core.domain.model.Account
-import com.fintexinc.core.domain.model.Performance
+import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
@@ -64,7 +64,7 @@ import com.tangerine.charts.compose_charts.models.Pie
 @Composable
 fun MyPortfolioUI(
     accounts: List<Account>,
-    performance: List<Performance>,
+    performance: List<PerformanceItem>,
     onOpenAccount: (accountId: String) -> Unit
 ) {
     // TODO: ask for mock item type
@@ -435,7 +435,7 @@ private fun AccountListUI(
 }
 
 @Composable
-private fun Charts(performance: List<Performance>) {
+private fun Charts(performance: List<PerformanceItem>) {
     val pagerState = rememberPagerState { 4 }
     HorizontalPager(pagerState) {
         Column(
@@ -487,7 +487,7 @@ private fun Charts(performance: List<Performance>) {
 }
 
 @Composable
-private fun PerformanceChartUI(performance: List<Performance>) {
+private fun PerformanceChartUI(performance: List<PerformanceItem>) {
     val period = remember {
         mutableStateOf(Period.SIX_MONTHS)
     }

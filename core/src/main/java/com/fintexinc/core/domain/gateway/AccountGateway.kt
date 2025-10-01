@@ -2,7 +2,7 @@ package com.fintexinc.core.domain.gateway
 
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.Document
-import com.fintexinc.core.domain.model.Performance
+import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.domain.model.Transaction
 
 interface AccountGateway {
@@ -14,5 +14,5 @@ interface AccountGateway {
     suspend fun getDocumentsByAccountId(accountId: String): List<Document> {
         return getDocuments().filter { it.accountId == accountId }
     }
-    suspend fun getPerformance(): List<Performance>
+    suspend fun getPerformanceData(): List<PerformanceItem>
 }
