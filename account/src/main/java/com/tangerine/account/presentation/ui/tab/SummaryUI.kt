@@ -366,7 +366,7 @@ private fun ReturnsRowSimple(
             if (item.hasInfoIcon) {
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_info),
+                    painter = painterResource(id = com.fintexinc.core.R.drawable.ic_info),
                     contentDescription = stringResource(R.string.description_info_icon),
                     modifier = Modifier.size(16.dp),
                     tint = Colors.TextInteractive
