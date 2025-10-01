@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -95,15 +96,16 @@ fun MyNetWorthUI(
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onAddAssetClicked: (asset: DataPoint?) -> Unit,
     onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
+    onOpenJuiceSection: () -> Unit,
     onOpenJuiceArticle: (articleUrl: String) -> Unit,
     onOpenDocumentsClicked: () -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
-    val textAddAsset = stringResource(R.string.text_add_asset)
+    val textAddAsset = stringResource(R.string.text_add, "asset")
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
-    val textAddLiability = stringResource(R.string.title_add_liability)
+    val textAddLiability = stringResource(R.string.text_add, "liability")
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
     val liabilitiesCheckedState = liabilities.map { it.checkedState }
@@ -193,15 +195,37 @@ fun MyNetWorthUI(
             Spacer(modifier = Modifier.height(18.dp))
         }
         item {
-            Text(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 22.dp),
-                text = stringResource(R.string.text_articles_you_might_like),
-                style = FontStyles.TitleMediumBold,
-                color = Colors.BrandBlack
-            )
+                    .clickable {
+                        onOpenJuiceSection()
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(start = 22.dp),
+                    text = stringResource(R.string.text_articles_you_might_like),
+                    style = FontStyles.TitleMediumBold,
+                    color = Colors.BrandBlack
+                )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(28.dp),
+                    painter = painterResource(id = com.fintexinc.core.R.drawable.ic_arrow_right),
+                    tint = Colors.IconSubtitled,
+                    contentDescription = stringResource(R.string.description_icon_open),
+                )
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
         }
         item {
             LazyRow(
@@ -223,7 +247,7 @@ fun MyNetWorthUI(
                                 shape = RoundedCornerShape(16.dp)
                             ) {
                                 // TODO: add actual info from mocks
-                                onOpenJuiceArticle("https://www.tangerine.ca/en/about-us/press-releases/pr-2024-10-18")
+                                onOpenJuiceArticle("https://www.tangerine.ca/en/thejuice/invest/what-should-you-do-with-your-cash")
                             },
                         horizontalArrangement = Arrangement.End
                     ) {
@@ -730,9 +754,10 @@ private fun ActivityUI(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        text = stringResource(R.string.text_what_is_going_on),
+        text = stringResource(R.string.text_recent_investment_activity_and_document),
         style = FontStyles.TitleSmall
     )
+    Spacer(modifier = Modifier.height(16.dp))
     TabsSelector(
         tabs = listOf(
             TabItem(
@@ -837,7 +862,7 @@ private fun DocumentsUI(
         Spacer(modifier = Modifier.height(18.dp))
 
         TextButton(
-            text = stringResource(R.string.text_view_more),
+            text = stringResource(R.string.text_see_investment_documents),
             onClick = {
 
             },
