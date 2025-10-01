@@ -80,6 +80,8 @@
     <string name="text_dates_selected">dates selected</string>
     <string name="title_settled_transactions">Settled Transactions</string>
     <string name="title_pending_transactions">Pending Transactions</string>
+    <string name="text_portfolio_info">Portfolio Info</string>
+    <string name="text_account_info">Account Info</string>
 
     <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>
