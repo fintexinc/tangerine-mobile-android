@@ -19,6 +19,7 @@ uiGeometry = "1.9.0"
 firebaseCrashlyticsBuildtools = "3.0.6"
 hiltNavigationCompose = "1.0.0"
 foundationLayout = "1.9.1"
+kotlinx-collections-immutable = "0.3.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,8 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 androidx-ui-geometry = { group = "androidx.compose.ui", name = "ui-geometry", version.ref = "uiGeometry" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
+threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version = "1.4.4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

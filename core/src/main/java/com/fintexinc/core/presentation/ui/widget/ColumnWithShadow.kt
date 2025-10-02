@@ -42,14 +42,14 @@ fun ColumnWithShadow(
 
 @Composable
 fun ColumnWithBorder(
-    contentPadding: PaddingValues = PaddingValues(18.dp),
+    contentPadding: PaddingValues = PaddingValues(16.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 18.dp)
+            .padding(horizontal = 16.dp)
             .background(
                 color = Colors.Background,
                 shape = RoundedCornerShape(16.dp)

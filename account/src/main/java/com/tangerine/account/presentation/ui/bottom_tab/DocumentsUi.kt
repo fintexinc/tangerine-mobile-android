@@ -37,6 +37,7 @@ import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
+import com.tangerine.account.presentation.models.DateFilterUi
 import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.ui.components.DateFilterModalBottomSheet
 import com.tangerine.account.presentation.ui.components.FilterButton
@@ -50,8 +51,8 @@ internal fun DocumentsUi(
 ) {
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
-    var selectedDates by remember { mutableStateOf(listOf("All dates")) }
-    var selectedDocumentTypes by remember { mutableStateOf(listOf("All documents")) }
+    var selectedDates by remember { mutableStateOf(listOf(DateFilterUi.ALL_DATES)) }
+    var selectedDocumentTypes by remember { mutableStateOf(listOf(DocumentTypeFilterUi.ALL_DOCUMENTS)) }
 
     // TODO() mock data
     val documents = listOf(
@@ -251,24 +252,25 @@ private fun DocumentItem(
 }
 
 @Composable
-private fun DocumentTypeFilterModalBottomSheet(
+internal fun DocumentTypeFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
-    selectedTypes: List<String>,
-    onTypesSelected: (List<String>) -> Unit,
-    onDismiss: () -> Unit,
+    selectedTypes: List<DocumentTypeFilterUi>,
+    onTypesSelected: (List<DocumentTypeFilterUi>) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    val documentTypeOptions = DocumentTypeFilterUi.entries.map { stringResource(it.stringResId) }
+    val typeEnums = DocumentTypeFilterUi.entries
+    val typeOptions = typeEnums.map { stringResource(it.stringResId) }
     val allOptionName = stringResource(DocumentTypeFilterUi.ALL_DOCUMENTS.stringResId)
 
-    val selectedStates = remember {
-        mutableStateListOf(*documentTypeOptions.map { it in selectedTypes }.toTypedArray())
+    val selectedStates = remember(selectedTypes) {
+        mutableStateListOf(*typeEnums.map { it in selectedTypes }.toTypedArray())
     }
 
     UniversalModalBottomSheet(
         isShowing = isShowing,
         title = stringResource(R.string.title_document_type),
         onDoneClick = {
-            val selected = documentTypeOptions.filterIndexed { index, _ -> selectedStates[index] }
+            val selected = typeEnums.filterIndexed { index, _ -> selectedStates[index] }
             onTypesSelected(selected)
         },
         onDismiss = onDismiss,
@@ -280,15 +282,15 @@ private fun DocumentTypeFilterModalBottomSheet(
                 .padding(horizontal = 16.dp)
         ) {
             MultiSelectChips(
-                options = documentTypeOptions,
+                options = typeOptions,
                 selectedStates = selectedStates,
                 onSelectionChanged = { index, isSelected ->
                     handleUniversalSelection(
-                        options = documentTypeOptions,
+                        options = typeOptions,
                         selectedStates = selectedStates,
                         clickedIndex = index,
                         isSelected = isSelected,
-                        allOptionName = allOptionName
+                        allOptionName = allOptionName,
                     )
                 }
             )

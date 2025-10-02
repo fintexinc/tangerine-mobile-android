@@ -35,11 +35,11 @@ import com.fintexinc.core.ui.models.DataSectionItemUi
 
 @Composable
 fun UniversalDataSection(
+    modifier: Modifier = Modifier,
     title: String?,
     items: List<DataSectionItemUi>,
     footerText: String? = null,
     showProgressBar: Boolean = false,
-    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -205,8 +205,8 @@ private fun AllocationProgressBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .height(12.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .background(Colors.BorderSubdued)
         ) {
             items.forEachIndexed { index, item ->

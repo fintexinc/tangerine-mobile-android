@@ -1,5 +1,8 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -23,8 +27,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -56,6 +62,7 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.components.Banner
 import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
@@ -89,18 +96,21 @@ fun MyNetWorthUI(
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onAddAssetClicked: (asset: DataPoint?) -> Unit,
     onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
+    onOpenJuiceSection: () -> Unit,
     onOpenJuiceArticle: (articleUrl: String) -> Unit,
     onOpenDocumentsClicked: () -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
-    val textAddAsset = stringResource(R.string.text_add_asset)
+    val textAddAsset = stringResource(R.string.text_add, "asset")
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
-    val textAddLiability = stringResource(R.string.title_add_liability)
+    val textAddLiability = stringResource(R.string.text_add, "liability")
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
     val liabilitiesCheckedState = liabilities.map { it.checkedState }
+    var isBannerVisible by remember { mutableStateOf(true) }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,55 +165,13 @@ fun MyNetWorthUI(
             }
         )
         item {
-            Spacer(modifier = Modifier.height(18.dp))
-            ColumnWithShadow {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(
-                            start = 16.dp,
-                            top = 16.dp,
-                            end = 40.dp
-                        ),
-                    text = stringResource(R.string.text_you_saved),
-                    style = FontStyles.BodyLarge,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(
-                            start = 16.dp,
-                            end = 40.dp,
-                            bottom = 16.dp
-                        ),
-                    text = stringResource(R.string.text_money_stays),
-                    style = FontStyles.BodyMedium,
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(end = 20.dp)
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        painter = painterResource(R.drawable.ic_saved_background),
-                        contentDescription = stringResource(R.string.description_image_background_),
-                    )
-                    Image(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .align(Alignment.TopCenter)
-                            .padding(top = 16.dp),
-                        painter = painterResource(R.drawable.ic_folder),
-                        contentDescription = stringResource(R.string.description_icon_folder)
-                    )
+            AnimatedVisibility(
+                visible = isBannerVisible,
+                exit = fadeOut() + shrinkVertically(),
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Banner(closeBannerClick = { isBannerVisible = false })
                 }
             }
         }
@@ -227,15 +195,37 @@ fun MyNetWorthUI(
             Spacer(modifier = Modifier.height(18.dp))
         }
         item {
-            Text(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 22.dp),
-                text = stringResource(R.string.text_articles_you_might_like),
-                style = FontStyles.TitleMediumBold,
-                color = Colors.BrandBlack
-            )
+                    .clickable {
+                        onOpenJuiceSection()
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(start = 22.dp),
+                    text = stringResource(R.string.text_articles_you_might_like),
+                    style = FontStyles.TitleMediumBold,
+                    color = Colors.BrandBlack
+                )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(28.dp),
+                    painter = painterResource(id = com.fintexinc.core.R.drawable.ic_arrow_right),
+                    tint = Colors.IconSubtitled,
+                    contentDescription = stringResource(R.string.description_icon_open),
+                )
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
         }
         item {
             LazyRow(
@@ -257,7 +247,7 @@ fun MyNetWorthUI(
                                 shape = RoundedCornerShape(16.dp)
                             ) {
                                 // TODO: add actual info from mocks
-                                onOpenJuiceArticle("https://www.tangerine.ca/en/about-us/press-releases/pr-2024-10-18")
+                                onOpenJuiceArticle("https://www.tangerine.ca/en/thejuice/invest/what-should-you-do-with-your-cash")
                             },
                         horizontalArrangement = Arrangement.End
                     ) {
@@ -764,9 +754,10 @@ private fun ActivityUI(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        text = stringResource(R.string.text_what_is_going_on),
+        text = stringResource(R.string.text_recent_investment_activity_and_document),
         style = FontStyles.TitleSmall
     )
+    Spacer(modifier = Modifier.height(16.dp))
     TabsSelector(
         tabs = listOf(
             TabItem(
@@ -804,7 +795,11 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
 
     Spacer(modifier = Modifier.height(18.dp))
 
-    Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
         groupedTransactions.forEachIndexed { groupIndex, group ->
 
             Text(
@@ -867,7 +862,7 @@ private fun DocumentsUI(
         Spacer(modifier = Modifier.height(18.dp))
 
         TextButton(
-            text = stringResource(R.string.text_view_more),
+            text = stringResource(R.string.text_see_investment_documents),
             onClick = {
 
             },

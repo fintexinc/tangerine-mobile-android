@@ -38,6 +38,8 @@ import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.presentation.ui.DashboardScreenUI
+import com.fintexinc.dashboard.presentation.ui.screen.AddEditAssetUI
+import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI
 import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
@@ -46,6 +48,7 @@ import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
 import com.tangerine.documents.presentation.ui.AccountDocumentsUI
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
@@ -62,6 +65,20 @@ class MainActivity : ComponentActivity() {
 
                 val shouldShowSplashScreen = remember {
                     mutableStateOf(true)
+                }
+
+                LaunchedEffect(true) {
+                    dashboardViewModel.action.collectLatest { action ->
+                        when (action) {
+                            is DashboardViewModel.Action.AddEditAsset -> {
+                                navController.navigate(Routes.AddEditAsset(action.assetId))
+                            }
+
+                            is DashboardViewModel.Action.AddEditLiability -> {
+                                navController.navigate(Routes.AddEditLiability(action.liabilityId))
+                            }
+                        }
+                    }
                 }
 
                 NavHost(navController, startDestination = Routes.Splash) {
@@ -121,6 +138,44 @@ class MainActivity : ComponentActivity() {
                             state = state.value,
                             onBackClick = { navController.popBackStack() },
                             onSaveNote = { note -> transactionDetailViewModel.onSaveNote(note) },
+                        )
+                    }
+                    composable<Routes.AddEditAsset> {
+                        val args = it.toRoute<Routes.AddEditAsset>()
+                        AddEditAssetUI(
+                            asset = if (args.assetId != null) {
+                                dashboardViewModel.getCustomAssetById(args.assetId)
+                            } else null,
+                            onSaveAssetClick = { asset ->
+                                dashboardViewModel.onAddAsset(asset)
+                                navController.popBackStack()
+                            },
+                            onDeleteAsset = { asset ->
+                                dashboardViewModel.onDeleteAsset(asset)
+                                navController.popBackStack()
+                            },
+                            onBackButtonFromExternalScreenClicked = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                    composable<Routes.AddEditLiability> {
+                        val args = it.toRoute<Routes.AddEditLiability>()
+                        AddEditLiabilityUI(
+                            liability = if (args.liabilityId != null) {
+                                dashboardViewModel.getLiabilityById(args.liabilityId)
+                            } else null,
+                            onSaveLiabilityClick = { liability ->
+                                dashboardViewModel.onAddLiability(liability)
+                                navController.popBackStack()
+                            },
+                            onDeleteLiability = { liability ->
+                                dashboardViewModel.onDeleteLiability(liability)
+                                navController.popBackStack()
+                            },
+                            onBackButtonFromExternalScreenClicked = {
+                                navController.popBackStack()
+                            }
                         )
                     }
                 }
@@ -278,9 +333,6 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.padding(paddingValues)
             ) {
                 composable<Routes.Dashboard> {
-                    LaunchedEffect(true) {
-                        dashboardViewModel.loadData()
-                    }
                     val state = dashboardViewModel.state.collectAsState()
                     DashboardScreenUI(
                         state.value,
@@ -293,26 +345,14 @@ class MainActivity : ComponentActivity() {
                         onAddAssetClicked = { dataPoint ->
                             dashboardViewModel.onAddAssetClicked(dataPoint)
                         },
-                        onAddAsset = { asset ->
-                            dashboardViewModel.onAddAsset(asset)
-                        },
-                        onDeleteAsset = { asset ->
-                            dashboardViewModel.onDeleteAsset(asset)
-                        },
                         onAddLiabilityClicked = { dataPoint ->
                             dashboardViewModel.onAddLiabilityClicked(dataPoint)
-                        },
-                        onAddLiability = { liability ->
-                            dashboardViewModel.onAddLiability(liability)
-                        },
-                        onDeleteLiability = { liability ->
-                            dashboardViewModel.onDeleteLiability(liability)
                         },
                         onOpenJuiceArticle = { url ->
                             goToJuiceArticle(url)
                         },
-                        onBackButtonFromExternalScreenClicked = {
-                            dashboardViewModel.loadData()
+                        onOpenJuiceSection = {
+                            goToJuiceSection()
                         },
                         onOpenDocumentsClicked = {
                             tabNavController.navigate(Routes.Documents)
@@ -341,6 +381,11 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         this.startActivity(intent)
     }
+
+    private fun goToJuiceSection() {
+        val intent = Intent(Intent.ACTION_VIEW, "https://www.tangerine.ca/en/thejuice".toUri())
+        this.startActivity(intent)
+    }
 }
 
 object Routes {
@@ -359,6 +404,12 @@ object Routes {
 
     @Serializable
     object MainRoute
+
+    @Serializable
+    data class AddEditAsset(val assetId: String?)
+
+    @Serializable
+    data class AddEditLiability(val liabilityId: String?)
 
     @Serializable
     data class TransactionDetail(val transactionId: String)

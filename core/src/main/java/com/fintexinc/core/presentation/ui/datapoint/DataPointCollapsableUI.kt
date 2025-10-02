@@ -98,6 +98,7 @@ fun DataPointCollapsableUI(
                         )
                     }
                     if (dataPoint.value != null) {
+                        Spacer(modifier = Modifier.width(4.dp))
                         Row {
                             Text(
                                 modifier = Modifier.wrapContentSize(),

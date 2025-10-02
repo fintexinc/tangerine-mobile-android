@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,42 +38,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
+import com.fintexinc.core.data.utils.date.DateUtils.monthName
 import com.fintexinc.core.domain.model.Account
-import com.fintexinc.core.data.model.DataPoint
-import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
-import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
+import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.models.AccountUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
+import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
+import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineLineChart
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
-import com.tangerine.charts.compose_charts.LineChart
-import com.tangerine.charts.compose_charts.extensions.format
-import com.tangerine.charts.compose_charts.models.DrawStyle
-import com.tangerine.charts.compose_charts.models.GridProperties
-import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
-import com.tangerine.charts.compose_charts.models.IndicatorCount
-import com.tangerine.charts.compose_charts.models.LabelHelperProperties
-import com.tangerine.charts.compose_charts.models.LabelProperties
-import com.tangerine.charts.compose_charts.models.Line
 import com.tangerine.charts.compose_charts.models.Pie
-import com.tangerine.charts.compose_charts.models.PopupProperties
 
 @Composable
 fun MyPortfolioUI(
     accounts: List<Account>,
+    performance: List<PerformanceItem>,
     onOpenAccount: (accountId: String) -> Unit
 ) {
+    // TODO: ask for mock item type
+    data class MockItemType(override val label: String) : ItemType
+
+    val mockItemTypes = listOf(
+        MockItemType(stringResource(R.string.text_none)),
+        MockItemType(stringResource(R.string.text_registered_non_registered)),
+        MockItemType(stringResource(R.string.text_account_type)),
+    )
+
     val showInvestmentAccountsSelection = remember {
         mutableStateOf(false)
     }
@@ -82,6 +86,9 @@ fun MyPortfolioUI(
 
     val isShowNewsBanner = remember {
         mutableStateOf(true)
+    }
+    val selectedFilterType = remember {
+        mutableStateOf(mockItemTypes[1])
     }
 
     Column(
@@ -144,14 +151,17 @@ fun MyPortfolioUI(
             }
         }
         Spacer(modifier = Modifier.height(18.dp))
-        Charts()
+        Charts(performance)
         Spacer(modifier = Modifier.height(18.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 18.dp)
-                .clickable { showInvestmentAccountsSelection.value = true }
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { showInvestmentAccountsSelection.value = true }
         ) {
             Text(
                 modifier = Modifier.wrapContentHeight(),
@@ -221,6 +231,19 @@ fun MyPortfolioUI(
                     ),
                 )
 
+        when (selectedFilterType.value.label) {
+            stringResource(R.string.text_none) -> {
+                val allAccounts = registeredAccounts + nonRegisteredAccounts
+                AccountListUI(
+                    title = stringResource(R.string.text_all_accounts),
+                    accounts = allAccounts,
+                    onOpenAccount = onOpenAccount,
+                    totalSum = (accounts.sumOf { it.income } * 2).formatCurrency(),
+                    isRoundedTop = true,
+                )
+            }
+
+            stringResource(R.string.text_registered_non_registered) -> {
                 AccountListUI(
                     title = stringResource(R.string.format_registered_accounts),
                     accounts = registeredAccounts,
@@ -231,50 +254,60 @@ fun MyPortfolioUI(
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 18.dp),
-                    color = Colors.BorderSubdued,
+                    color = Colors.BorderSubdued
                 )
 
                 AccountListUI(
                     title = stringResource(R.string.format_non_registered_accounts),
                     accounts = nonRegisteredAccounts,
                     onOpenAccount = onOpenAccount,
-                    totalSum = "40,000 CAD",
+                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
                     isRoundedTop = false,
                 )
             }
 
-            GroupingType.ACCOUNT_TYPE -> {
-                val groupedByUser = accounts.groupBy { it.userId }
-                var isFirst = true
+            stringResource(R.string.text_account_type) -> {
+                // TODO() Mock for ui
+                val tfsaAccounts =
+                    registeredAccounts.filter { it.name.contains("TFSA", ignoreCase = true) } +
+                            nonRegisteredAccounts.filter {
+                                it.name.contains(
+                                    "TFSA",
+                                    ignoreCase = true
+                                )
+                            }
 
-                groupedByUser.forEach { (userId, userAccounts) ->
-                    val accountsUI = userAccounts.map {
-                        AccountUI(
-                            accountId = it.accountId,
-                            name = it.userId,
-                            subName = it.accountId,
-                            value = it.income.formatCurrency(),
-                            valueChange = 832.01,
-                            percentageChange = 4.39,
-                        )
-                    }
-
-                    if (!isFirst) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 18.dp),
-                            color = Colors.BorderSubdued,
-                        )
-                    }
-
+                if (tfsaAccounts.isNotEmpty()) {
                     AccountListUI(
-                        title = userId,
-                        accounts = accountsUI,
+                        title = "TFSA",
+                        accounts = tfsaAccounts,
                         onOpenAccount = onOpenAccount,
-                        totalSum = userAccounts.sumOf { it.income }.formatCurrency(),
-                        isRoundedTop = isFirst,
+                        totalSum = "$650,000",
+                        isRoundedTop = true,
                     )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 18.dp),
+                        color = Colors.BorderSubdued
+                    )
+                }
 
-                    isFirst = false
+                val nonRegAccounts =
+                    registeredAccounts.filter { !it.name.contains("TFSA", ignoreCase = true) } +
+                            nonRegisteredAccounts.filter {
+                                !it.name.contains(
+                                    "TFSA",
+                                    ignoreCase = true
+                                )
+                            }
+
+                if (nonRegAccounts.isNotEmpty()) {
+                    AccountListUI(
+                        title = stringResource(R.string.format_non_registered_accounts),
+                        accounts = nonRegAccounts,
+                        onOpenAccount = onOpenAccount,
+                        totalSum = "$25,000",
+                        isRoundedTop = true,
+                    )
                 }
             }
         }
@@ -309,10 +342,8 @@ fun MyPortfolioUI(
         ItemTypeSelection(
             itemTypeTitle = stringResource(R.string.text_group_by),
             itemTypes = filterItemTypes,
-            onItemTypeSelected = { selectedItem ->
-                if (selectedItem is FilterItemType) {
-                    selectedGroupingType.value = selectedItem.type
-                }
+            onItemTypeSelected = { selectedType ->
+                selectedFilterType.value = selectedType as MockItemType
                 showInvestmentAccountsSelection.value = false
             },
             onCancel = {
@@ -449,7 +480,7 @@ private fun AccountListUI(
 }
 
 @Composable
-private fun Charts() {
+private fun Charts(performance: List<PerformanceItem>) {
     val pagerState = rememberPagerState { 4 }
     HorizontalPager(pagerState) {
         Column(
@@ -464,7 +495,7 @@ private fun Charts() {
                 .padding(18.dp)
         ) {
             when (it) {
-                0 -> PerformanceChartUI()
+                0 -> PerformanceChartUI(performance)
                 1 -> SectionExposureChartUI()
                 2 -> AssetMixChartUI()
                 3 -> GeographicExposure()
@@ -501,79 +532,66 @@ private fun Charts() {
 }
 
 @Composable
-private fun PerformanceChartUI() {
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        text = stringResource(R.string.text_performance),
-        style = FontStyles.BodyLarge
-    )
+private fun PerformanceChartUI(performance: List<PerformanceItem>) {
+    val period = remember {
+        mutableStateOf(Period.SIX_MONTHS)
+    }
+    val performanceValue = remember {
+        mutableDoubleStateOf(performance.last().value)
+    }
+    val asOfDateValue = remember {
+        mutableStateOf(performance.last().date)
+    }
     Spacer(modifier = Modifier.height(12.dp))
     Row(
-        modifier = Modifier
-            .wrapContentSize(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Text(
+            modifier = Modifier
+                .weight(1.0f)
+                .wrapContentHeight(),
+            text = stringResource(R.string.text_performance),
+            style = FontStyles.TitleMediumMedium
+        )
         Icon(
-            modifier = Modifier.wrapContentSize(),
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
-            tint = Color(0xFF43A047),
-            contentDescription = stringResource(R.string.description_icon_increase)
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = "$2,000.00",
-            style = FontStyles.TitleSmall
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = stringResource(R.string.text_earned_this_month),
-            style = FontStyles.BodyMedium,
-            color = Colors.TextSubdued
+            painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
+            contentDescription = stringResource(R.string.description_info_icon),
+            modifier = Modifier.size(24.dp),
+            tint = Colors.TextInteractive,
         )
     }
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+        text = stringResource(
+            R.string.format_performance_as_of_date,
+            asOfDateValue.value.month.monthName(),
+            asOfDateValue.value.year
+        ),
+        color = Colors.TextSubdued,
+        style = FontStyles.BodySmallBold,
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    Text(
+        modifier = Modifier.wrapContentSize(),
+        text = performanceValue.doubleValue.formatCurrency(),
+        style = FontStyles.DisplaySmall,
+        color = Colors.Primary,
+    )
     Spacer(modifier = Modifier.height(18.dp))
-    LineChart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
-        data = listOf(
-            Line(
-                label = "Performance",
-                values = listOf(1000.0, 15000.0),
-                color = SolidColor(Color(0xFFEA7024)),
-                firstGradientFillColor = Color(0xFFFEC388),
-                secondGradientFillColor = Color(0x00FFFFFF),
-                curvedEdges = false,
-                drawStyle = DrawStyle.Fill
-            )
-        ),
-        gridProperties = GridProperties(false),
-        indicatorProperties = HorizontalIndicatorProperties(
-            count = IndicatorCount.StepBased(
-                3000.0
-            ), contentBuilder = {
-                (it / 1000).format(0) + "K"
-            }, indicators = (listOf(1000.0, 6000.0, 15000.0))
-        ),
-        labelProperties = LabelProperties(enabled = true, labels = listOf("Jan", "Jun", "Dec")),
-        labelHelperProperties = LabelHelperProperties(false),
-        popupProperties = PopupProperties(
-            textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),
-            containerColor = Colors.Background,
-            mode = PopupProperties.Mode.PointMode(),
-            contentVerticalPadding = 10.dp,
-            contentHorizontalPadding = 12.dp
-        )
+
+    TangerineLineChart(
+        performance = performance,
+        period = period.value,
+        onIndexSelected = {
+            performanceValue.doubleValue = performance[it].value
+            asOfDateValue.value = performance[it].date
+        }
     )
     Spacer(modifier = Modifier.height(18.dp))
     ChartPeriodSelector(
         onPeriodSelected = {
-            // Handle period selection
+            period.value = it
         }
     )
 }
@@ -730,15 +748,6 @@ private fun TopHoldingsItem(
         }
     }
 }
-
-data class AccountUI(
-    val accountId: String,
-    val name: String,
-    val subName: String,
-    val value: String,
-    val valueChange: Double,
-    val percentageChange: Double
-)
 
 @Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
 @Composable

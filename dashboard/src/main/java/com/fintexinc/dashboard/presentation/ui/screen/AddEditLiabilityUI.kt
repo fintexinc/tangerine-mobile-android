@@ -70,12 +70,15 @@ fun AddEditLiabilityUI(
             mutableStateOf(liability?.liabilityType)
         }
         val liabilityName = remember {
-            mutableStateOf(liability?.liabilityType?.label ?: "" )
+            mutableStateOf(liability?.liabilityType?.label ?: "")
         }
         val currentBalance = remember {
             mutableStateOf(liability?.balance?.toString() ?: "")
         }
         val monthlyPayment = remember {
+            mutableStateOf(liability?.limit?.toString() ?: "")
+        }
+        val annualInterestRate = remember {
             mutableStateOf(liability?.interestRate?.toString() ?: "")
         }
         val effectiveDate = remember {
@@ -122,7 +125,11 @@ fun AddEditLiabilityUI(
                         .wrapContentHeight()
                         .padding(vertical = 18.dp)
                         .align(Alignment.Center),
-                    text = stringResource(R.string.title_add_liability),
+                    text = if (liability != null) {
+                        stringResource(R.string.title_edit_liability)
+                    } else {
+                        stringResource(R.string.title_add_liability)
+                    },
                     style = FontStyles.HeadingRegular,
                     textAlign = TextAlign.Center
                 )
@@ -161,7 +168,7 @@ fun AddEditLiabilityUI(
                         .padding(start = 12.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.text_liability_will_update_chart),
+                        text = stringResource(R.string.text_gain_complete_picture_liability),
                         style = FontStyles.BodyMediumBold,
                         color = Colors.Text
                     )
@@ -169,7 +176,7 @@ fun AddEditLiabilityUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_liability_later),
+                        text = stringResource(R.string.text_you_can_remove_later, "liability"),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
@@ -209,7 +216,18 @@ fun AddEditLiabilityUI(
                     hint = stringResource(R.string.text_currency),
                     text = monthlyPayment.value,
                     onTextChanged = { text ->
-                        currentBalance.value = text
+                        monthlyPayment.value = text
+                    },
+                    keyboardType = KeyboardType.Number
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+                AddItemText(
+                    title = stringResource(R.string.text_annual_interest_rate),
+                    hint = stringResource(R.string.text_percent),
+                    info = stringResource(R.string.text_annual_interest_rate_info),
+                    text = annualInterestRate.value,
+                    onTextChanged = { text ->
+                        annualInterestRate.value = text
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -217,6 +235,7 @@ fun AddEditLiabilityUI(
                 AddItemSelection(
                     title = stringResource(R.string.text_effective_date),
                     text = effectiveDate.value,
+                    info = stringResource(R.string.text_revisited_date_info, "liability"),
                     onAddItemSelectionClicked = {
                         showDialog.value = DateSelectionType.EffectiveDate
                     }
@@ -236,14 +255,15 @@ fun AddEditLiabilityUI(
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
-                            text = stringResource(R.string.format_delete_item),
+                            text = stringResource(R.string.format_delete_item, "Liability"),
                             onClick = {
                                 showDeletePopup.value = true
                             }
                         )
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    PrimaryButton(stringResource(R.string.text_add_asset)) {
+                    PrimaryButton(stringResource(R.string.text_add, "Liability")) {
                         onSaveLiabilityClick(
                             Liability(
                                 id = liability?.id ?: UUID.randomUUID().toString(),
@@ -252,8 +272,8 @@ fun AddEditLiabilityUI(
                                 accountNumber = UUID.randomUUID().toString(),
                                 balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
                                 linkedDate = effectiveDate.value,
-                                limit = 0.0,
-                                interestRate = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                                limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                                interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
                                 currency = "$",
                                 lastUpdated = effectiveDate.value,
                                 isCustomLiability = true
@@ -280,30 +300,30 @@ fun AddEditLiabilityUI(
             @OptIn(ExperimentalMaterial3Api::class) val datePickerState = rememberDatePickerState()
             @OptIn(ExperimentalMaterial3Api::class) DatePickerDialog(
                 onDismissRequest = {
-                showDialog.value = null
-            }, confirmButton = {
-                Button(onClick = {
-                    val dateFormatter = DateUtils.formatMillisToDateSimpleDateFormat(
-                        datePickerState.selectedDateMillis ?: 0L
-                    )
-                    when (showDialog.value) {
-                        is DateSelectionType.EffectiveDate -> {
-                            effectiveDate.value = dateFormatter
-                        }
-
-                        is DateSelectionType.RevisitDate -> {
-                            revisitDate.value = dateFormatter
-                        }
-
-                        else -> {}
-                    }
                     showDialog.value = null
-                }) {
-                    Text(
-                        stringResource(R.string.text_ok), style = FontStyles.BodyMedium
-                    )
-                }
-            },
+                }, confirmButton = {
+                    Button(onClick = {
+                        val dateFormatter = DateUtils.formatMillisToDateSimpleDateFormat(
+                            datePickerState.selectedDateMillis ?: 0L
+                        )
+                        when (showDialog.value) {
+                            is DateSelectionType.EffectiveDate -> {
+                                effectiveDate.value = dateFormatter
+                            }
+
+                            is DateSelectionType.RevisitDate -> {
+                                revisitDate.value = dateFormatter
+                            }
+
+                            else -> {}
+                        }
+                        showDialog.value = null
+                    }) {
+                        Text(
+                            stringResource(R.string.text_ok), style = FontStyles.BodyMedium
+                        )
+                    }
+                },
                 dismissButton = {
                     Button(onClick = { showDialog.value = null }) {
                         Text(
@@ -331,7 +351,7 @@ fun AddEditLiabilityUI(
                         balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
                         linkedDate = effectiveDate.value,
                         limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
-                        interestRate = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                        interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
                         currency = "$",
                         lastUpdated = effectiveDate.value,
                         isCustomLiability = true
