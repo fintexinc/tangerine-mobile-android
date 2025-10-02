@@ -213,7 +213,11 @@ private fun MainPageContent(
         if (state is AccountViewModel.State.Loaded) {
             when (state.mainState.selectedTab) {
                 AccountViewModel.TopTab.SUMMARY -> {
-                    SummaryUI(account = state.mainState.summary)
+                    SummaryUI(
+                        account = state.mainState.summary,
+                        returnsData = state.mainState.returnsItems,
+                        holdingsData = state.mainState.holdingsItems,
+                    )
                 }
 
                 AccountViewModel.TopTab.POSITIONS -> {

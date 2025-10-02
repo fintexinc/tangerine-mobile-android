@@ -33,10 +33,6 @@ class AccountProvider : AccountGateway {
         return getDocuments().filter { it.accountId == accountId }
     }
 
-    override suspend fun getPerformance(): List<PerformanceItem> {
-        return Json.decodeFromString(PERFORMANCE_MOCK)
-    }
-
     override suspend fun getPerformanceData(): List<PerformanceItem> {
         return Json.decodeFromString(PERFORMANCE_MOCK)
     }
