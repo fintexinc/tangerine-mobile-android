@@ -3,7 +3,7 @@ package com.fintexinc.core.domain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Performance(
+data class PerformanceItem(
     val id: String,
     val accountId: String,
     val accountType: String,

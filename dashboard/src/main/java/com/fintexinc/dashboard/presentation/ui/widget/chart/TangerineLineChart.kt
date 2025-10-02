@@ -1,6 +1,5 @@
 package com.fintexinc.dashboard.presentation.ui.widget.chart
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -8,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.domain.model.Performance
+import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.charts.compose_charts.LineChart
@@ -29,7 +28,7 @@ import java.util.Locale
 
 @Composable
 fun TangerineLineChart(
-    performance: List<Performance>,
+    performance: List<PerformanceItem>,
     period: Period,
     onIndexSelected: (Int) -> Unit
 ) {
@@ -80,7 +79,7 @@ fun TangerineLineChart(
 }
 
 private fun getPerformanceByMonth(
-    performances: List<Performance>,
+    performances: List<PerformanceItem>,
     period: Period
 ): Map<String, Double> {
     val today = LocalDate.now()
