@@ -62,7 +62,7 @@ class DashboardViewModel @Inject constructor(
         val documents = accountGateway.getDocuments().sortedWith(
             compareBy({ it.documentDate.year }, { it.documentDate.month }, { it.documentDate.day })
         ).take(ACTIVITIES_COUNT)
-        val performance = accountGateway.getPerformance().sortedWith(
+        val performance = accountGateway.getPerformanceData().sortedWith(
             compareBy({ it.date.year }, { it.date.month })
         )
 

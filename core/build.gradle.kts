@@ -57,7 +57,7 @@ dependencies {
     implementation(libs.compose.constraint.layout)
     implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
-
+    implementation(libs.kotlinx.collections.immutable)
 
     // test
     testImplementation(libs.junit)

@@ -17,6 +17,8 @@ import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.models.TransactionUi
 import com.tangerine.account.presentation.models.TransactionUiType
+import com.tangerine.account.R
+import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.ui.AccountTab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
