@@ -1,6 +1,5 @@
 package com.tangerine.account.presentation.viewmodel
 
-import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +18,6 @@ import com.tangerine.account.presentation.models.TransactionUi
 import com.tangerine.account.presentation.models.TransactionUiType
 import com.tangerine.account.presentation.ui.AccountTab
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -36,7 +34,6 @@ import kotlin.math.absoluteValue
 @HiltViewModel
 class AccountViewModel @Inject constructor(
     private val accountGateway: AccountGateway,
-    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<State> = MutableStateFlow<State>(State.Loading)
@@ -112,32 +109,32 @@ class AccountViewModel @Inject constructor(
 
         return listOf(
             createReturnItem(
-                context.getString(R.string.text_month_1),
-                currentValue,
-                oneMonthAgoValue
+                label = R.string.text_month_1,
+                currentValue = currentValue,
+                previousValue = oneMonthAgoValue
             ),
             createReturnItem(
-                context.getString(R.string.text_months_3),
-                currentValue,
-                threeMonthsAgoValue
+                label = R.string.text_months_3,
+                currentValue = currentValue,
+                previousValue = threeMonthsAgoValue
             ),
             createReturnItem(
-                context.getString(R.string.text_months_6),
-                currentValue,
-                sixMonthsAgoValue
+                label = R.string.text_months_6,
+                currentValue = currentValue,
+                previousValue = sixMonthsAgoValue
             ),
             createReturnItem(
-                context.getString(R.string.text_year_to_date),
-                currentValue,
-                yearStartValue
+                label = R.string.text_year_to_date,
+                currentValue = currentValue,
+                previousValue = yearStartValue
             ),
             createReturnItem(
-                context.getString(R.string.text_year_1),
-                currentValue,
-                oneYearAgoValue
+                label = R.string.text_year_1,
+                currentValue = currentValue,
+                previousValue = oneYearAgoValue
             ),
             createReturnItem(
-                label = context.getString(R.string.text_current_portfolio_to_date),
+                label = R.string.text_current_portfolio_to_date,
                 currentValue = currentValue,
                 previousValue = portfolioStartValue,
                 hasInfoIcon = true
@@ -146,7 +143,7 @@ class AccountViewModel @Inject constructor(
     }
 
     private fun createReturnItem(
-        label: String,
+        label: Int,
         currentValue: Double,
         previousValue: Double,
         hasInfoIcon: Boolean = false
@@ -190,14 +187,14 @@ class AccountViewModel @Inject constructor(
 
         return listOf(
             ReturnsItemUi(
-                label = context.getString(R.string.text_market_value),
+                label = R.string.text_market_value,
                 amount = formatCurrency(currentMarketValue),
                 hasInfoIcon = true,
                 showArrow = false,
                 isPositive = null
             ),
             ReturnsItemUi(
-                label = context.getString(R.string.text_distributions),
+                label = R.string.text_distributions,
                 amount = if (distributions >= 0) {
                     "+${formatCurrency(distributions)}"
                 } else {
@@ -208,20 +205,20 @@ class AccountViewModel @Inject constructor(
                 isPositive = distributions >= 0
             ),
             ReturnsItemUi(
-                label = context.getString(R.string.text_book_value),
+                label = R.string.text_book_value,
                 amount = formatCurrency(bookValue),
                 hasInfoIcon = true,
                 showArrow = false,
                 isPositive = null
             ),
             ReturnsItemUi(
-                label = context.getString(R.string.text_total_units),
+                label = R.string.text_total_units,
                 amount = totalUnits.toInt().toString(),
                 showArrow = false,
                 isPositive = null
             ),
             ReturnsItemUi(
-                label = context.getString(R.string.text_unit_price),
+                label = R.string.text_unit_price,
                 amount = formatCurrency(unitPrice),
                 showArrow = false,
                 isPositive = null
