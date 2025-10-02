@@ -76,14 +76,18 @@ internal fun DocumentsUi(
                 .padding(horizontal = 16.dp)
         ) {
             FilterButton(
-                text = stringResource(R.string.text_all_dates),
+                text = stringResource(
+                    selectedDates.firstOrNull()?.stringResId ?: R.string.filter_all_dates
+                ),
                 onClick = { showDateFilter = true }
             )
 
             Spacer(modifier = Modifier.width(20.dp))
 
             FilterButton(
-                text = stringResource(R.string.text_all_documents),
+                text = stringResource(
+                    selectedDocumentTypes.firstOrNull()?.stringResId ?: R.string.text_all_documents
+                ),
                 onClick = { showDocumentFilter = true },
             )
         }
