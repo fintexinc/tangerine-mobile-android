@@ -107,5 +107,5 @@
     <string name="description_view_details">View details</string>
     <string name="description_documents">Document</string>
     <string name="description_icon_open">Open</string>
-
+    <string name="description_info_icon">Information</string>
 </resources>

@@ -40,7 +40,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.ItemType
@@ -67,7 +66,6 @@ fun MyPortfolioUI(
     performance: List<PerformanceItem>,
     onOpenAccount: (accountId: String) -> Unit
 ) {
-    // TODO: ask for mock item type
     data class MockItemType(override val label: String) : ItemType
 
     val mockItemTypes = listOf(
@@ -231,83 +229,130 @@ fun MyPortfolioUI(
                     ),
                 )
 
-        when (selectedFilterType.value.label) {
-            stringResource(R.string.text_none) -> {
-                val allAccounts = registeredAccounts + nonRegisteredAccounts
-                AccountListUI(
-                    title = stringResource(R.string.text_all_accounts),
-                    accounts = allAccounts,
-                    onOpenAccount = onOpenAccount,
-                    totalSum = (accounts.sumOf { it.income } * 2).formatCurrency(),
-                    isRoundedTop = true,
-                )
-            }
+                when (selectedFilterType.value.label) {
+                    stringResource(R.string.text_none) -> {
+                        val allAccounts = registeredAccounts + nonRegisteredAccounts
+                        AccountListUI(
+                            title = stringResource(R.string.text_all_accounts),
+                            accounts = allAccounts,
+                            onOpenAccount = onOpenAccount,
+                            totalSum = (accounts.sumOf { it.income } * 2).formatCurrency(),
+                            isRoundedTop = true,
+                        )
+                    }
 
-            stringResource(R.string.text_registered_non_registered) -> {
-                AccountListUI(
-                    title = stringResource(R.string.format_registered_accounts),
-                    accounts = registeredAccounts,
-                    onOpenAccount = onOpenAccount,
-                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
-                    isRoundedTop = true,
-                )
+                    stringResource(R.string.text_registered_non_registered) -> {
+                        AccountListUI(
+                            title = stringResource(R.string.format_registered_accounts),
+                            accounts = registeredAccounts,
+                            onOpenAccount = onOpenAccount,
+                            totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                            isRoundedTop = true,
+                        )
 
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 18.dp),
-                    color = Colors.BorderSubdued
-                )
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 18.dp),
+                            color = Colors.BorderSubdued
+                        )
 
-                AccountListUI(
-                    title = stringResource(R.string.format_non_registered_accounts),
-                    accounts = nonRegisteredAccounts,
-                    onOpenAccount = onOpenAccount,
-                    totalSum = accounts.sumOf { it.income }.formatCurrency(),
-                    isRoundedTop = false,
-                )
-            }
+                        AccountListUI(
+                            title = stringResource(R.string.format_non_registered_accounts),
+                            accounts = nonRegisteredAccounts,
+                            onOpenAccount = onOpenAccount,
+                            totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                            isRoundedTop = false,
+                        )
+                    }
 
-            stringResource(R.string.text_account_type) -> {
-                // TODO() Mock for ui
-                val tfsaAccounts =
-                    registeredAccounts.filter { it.name.contains("TFSA", ignoreCase = true) } +
-                            nonRegisteredAccounts.filter {
+                    stringResource(R.string.text_account_type) -> {
+                        // TODO() Mock for ui
+                        val tfsaAccounts =
+                            registeredAccounts.filter {
                                 it.name.contains(
                                     "TFSA",
                                     ignoreCase = true
                                 )
-                            }
+                            } +
+                                    nonRegisteredAccounts.filter {
+                                        it.name.contains(
+                                            "TFSA",
+                                            ignoreCase = true
+                                        )
+                                    }
 
-                if (tfsaAccounts.isNotEmpty()) {
-                    AccountListUI(
-                        title = "TFSA",
-                        accounts = tfsaAccounts,
-                        onOpenAccount = onOpenAccount,
-                        totalSum = "$650,000",
-                        isRoundedTop = true,
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 18.dp),
-                        color = Colors.BorderSubdued
-                    )
-                }
+                        if (tfsaAccounts.isNotEmpty()) {
+                            AccountListUI(
+                                title = "TFSA",
+                                accounts = tfsaAccounts,
+                                onOpenAccount = onOpenAccount,
+                                totalSum = "$650,000",
+                                isRoundedTop = true,
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 18.dp),
+                                color = Colors.BorderSubdued
+                            )
+                        }
 
-                val nonRegAccounts =
-                    registeredAccounts.filter { !it.name.contains("TFSA", ignoreCase = true) } +
-                            nonRegisteredAccounts.filter {
+                        val nonRegAccounts =
+                            registeredAccounts.filter {
                                 !it.name.contains(
                                     "TFSA",
                                     ignoreCase = true
                                 )
-                            }
+                            } +
+                                    nonRegisteredAccounts.filter {
+                                        !it.name.contains(
+                                            "TFSA",
+                                            ignoreCase = true
+                                        )
+                                    }
 
-                if (nonRegAccounts.isNotEmpty()) {
+                        if (nonRegAccounts.isNotEmpty()) {
+                            AccountListUI(
+                                title = stringResource(R.string.format_non_registered_accounts),
+                                accounts = nonRegAccounts,
+                                onOpenAccount = onOpenAccount,
+                                totalSum = "$25,000",
+                                isRoundedTop = true,
+                            )
+                        }
+                    }
+                }
+            }
+
+            GroupingType.ACCOUNT_TYPE -> {
+                val groupedByUser = accounts.groupBy { it.userId }
+                var isFirst = true
+
+                groupedByUser.forEach { (userId, userAccounts) ->
+                    val accountsUI = userAccounts.map {
+                        AccountUI(
+                            accountId = it.accountId,
+                            name = it.userId,
+                            subName = it.accountId,
+                            value = it.income.formatCurrency(),
+                            valueChange = 832.01,
+                            percentageChange = 4.39,
+                        )
+                    }
+
+                    if (!isFirst) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 18.dp),
+                            color = Colors.BorderSubdued,
+                        )
+                    }
+
                     AccountListUI(
-                        title = stringResource(R.string.format_non_registered_accounts),
-                        accounts = nonRegAccounts,
+                        title = userId,
+                        accounts = accountsUI,
                         onOpenAccount = onOpenAccount,
-                        totalSum = "$25,000",
-                        isRoundedTop = true,
+                        totalSum = userAccounts.sumOf { it.income }.formatCurrency(),
+                        isRoundedTop = isFirst,
                     )
+
+                    isFirst = false
                 }
             }
         }
@@ -324,39 +369,35 @@ fun MyPortfolioUI(
         Spacer(modifier = Modifier.height(30.dp))
         TopHoldingsUI()
         Spacer(modifier = Modifier.height(30.dp))
-    }
 
-    data class FilterItemType(override val label: String, val type: GroupingType) : ItemType
+        data class FilterItemType(override val label: String, val type: GroupingType) : ItemType
 
-    val textNone = stringResource(R.string.text_none)
-    val textRegisterNonReg = stringResource(R.string.text_register_non_reg)
-    val textAccountTYpe = stringResource(R.string.text_account_type)
+        val textNone = stringResource(R.string.text_none)
+        val textRegisterNonReg = stringResource(R.string.text_register_non_reg)
+        val textAccountTYpe = stringResource(R.string.text_account_type)
 
-    val filterItemTypes = listOf(
-        FilterItemType(textNone, GroupingType.NONE),
-        FilterItemType(textRegisterNonReg, GroupingType.REGISTERED_STATUS),
-        FilterItemType(textAccountTYpe, GroupingType.ACCOUNT_TYPE),
-    )
-
-    if (showInvestmentAccountsSelection.value) {
-        ItemTypeSelection(
-            itemTypeTitle = stringResource(R.string.text_group_by),
-            itemTypes = filterItemTypes,
-            onItemTypeSelected = { selectedType ->
-                selectedFilterType.value = selectedType as MockItemType
-                showInvestmentAccountsSelection.value = false
-            },
-            onCancel = {
-                showInvestmentAccountsSelection.value = false
-            },
+        val filterItemTypes = listOf(
+            FilterItemType(textNone, GroupingType.NONE),
+            FilterItemType(textRegisterNonReg, GroupingType.REGISTERED_STATUS),
+            FilterItemType(textAccountTYpe, GroupingType.ACCOUNT_TYPE),
         )
-    }
-}
 
-enum class GroupingType(label: String) {
-    NONE("None"),
-    REGISTERED_STATUS("Registered/Non-Registered"),
-    ACCOUNT_TYPE("AccountType")
+        if (showInvestmentAccountsSelection.value) {
+            ItemTypeSelection(
+                itemTypeTitle = stringResource(R.string.text_group_by),
+                itemTypes = filterItemTypes,
+                onItemTypeSelected = { selectedItem ->
+                    if (selectedItem is FilterItemType) {
+                        selectedGroupingType.value = selectedItem.type
+                    }
+                    showInvestmentAccountsSelection.value = false
+                },
+                onCancel = {
+                    showInvestmentAccountsSelection.value = false
+                },
+            )
+        }
+    }
 }
 
 @Composable
@@ -749,55 +790,8 @@ private fun TopHoldingsItem(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
-@Composable
-fun AccountListUIPreview() {
-    val sampleAccounts = listOf(
-        AccountUI(
-            accountId = "1",
-            name = "Jack TFSA ***9019",
-            subName = "Effective on JAN 10, 2025",
-            value = "$28,230",
-            valueChange = 120.0,
-            percentageChange = 1.0
-        ),
-        AccountUI(
-            accountId = "2",
-            name = "Balanced Core Portfolio ***9019",
-            subName = "Effective on MAR 2, 2024",
-            value = "$50,000",
-            valueChange = 832.0,
-            percentageChange = 5.0
-        ),
-        AccountUI(
-            accountId = "3",
-            name = "Balanced ETF Portfolio ***9019",
-            subName = "Effective on MAR 2, 2024",
-            value = "$40,000",
-            valueChange = -250.0,
-            percentageChange = -4.0
-        )
-    )
-
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        AccountListUI(
-            title = "Registered",
-            totalSum = "$650,000",
-            accounts = sampleAccounts,
-            onOpenAccount = { },
-            isRoundedTop = true
-        )
-
-        Spacer(modifier = Modifier.height(1.dp))
-
-        AccountListUI(
-            title = "Non-Registered",
-            totalSum = "$25,000",
-            accounts = listOf(sampleAccounts.first()),
-            onOpenAccount = { },
-            isRoundedTop = false
-        )
-    }
+enum class GroupingType(label: String) {
+    NONE("None"),
+    REGISTERED_STATUS("Registered/Non-Registered"),
+    ACCOUNT_TYPE("AccountType")
 }

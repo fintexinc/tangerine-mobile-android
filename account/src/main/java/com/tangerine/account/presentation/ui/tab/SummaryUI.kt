@@ -36,9 +36,7 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.fintexinc.core.ui.models.DataSectionItemUi
 import com.fintexinc.core.ui.components.UniversalDataSection
-import com.tangerine.account.presentation.models.DataSectionItemUi
 import com.tangerine.account.presentation.models.ReturnsItemUi
-import com.tangerine.account.presentation.ui.components.UniversalDataSection
 import com.tangerine.charts.compose_charts.LineChart
 import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.models.DrawStyle
