@@ -18,4 +18,7 @@
     <string name="description_icon_check">Check</string>
     <string name="description_icon_checkmark">Checkmark</string>
     <string name="description_icon_add">Add</string>
+    <string name="description_documents">Document</string>
+    <string name="description_view_details">View details</string>
+
 </resources>

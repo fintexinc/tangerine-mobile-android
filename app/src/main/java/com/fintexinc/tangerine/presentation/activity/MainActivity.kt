@@ -44,7 +44,7 @@ import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
-import com.tangerine.documents.presentation.ui.AccountDocumentsUI
+import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable

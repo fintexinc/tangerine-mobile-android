@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
@@ -29,16 +30,18 @@ import com.fintexinc.core.ui.font.FontStyles
 
 @Composable
 fun TangerineSearchBar(
+    modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     isShowFilter: Boolean = true,
+    horizontalPadding: Dp = 16.dp,
 ) {
     val searchText = remember {
         mutableStateOf("")
     }
-    Row(modifier = Modifier
+    Row(modifier = modifier
         .fillMaxWidth()
         .wrapContentHeight()
-        .padding(horizontal = 16.dp),
+        .padding(horizontal = horizontalPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         BasicTextField(
