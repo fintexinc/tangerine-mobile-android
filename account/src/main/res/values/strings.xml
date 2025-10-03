@@ -96,6 +96,7 @@
     <string name="text_how_calculate">How we calculate returns</string>
     <string name="text_portfolio_info">Portfolio Info</string>
     <string name="text_account_info">Account Info</string>
+    <string name="text_account_performance">Account Performance</string>
 
     <string name="description_info_icon">Information</string>
     <string name="description_icon_close">Close</string>

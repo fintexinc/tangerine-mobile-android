@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -275,7 +277,35 @@ private fun AccountBalanceCard(
             style = FontStyles.DisplaySmall,
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier
+                .background(
+                    color = Colors.TextSuccess.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(4.dp),
+                )
+                .padding(horizontal = 4.dp, vertical = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // TODO() Mock data
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(16.dp)
+                    .rotate(180f),
+                tint = Colors.TextSuccess,
+            )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Text(
+                text = "$50.42 (+10.00%) All Time",
+                color = Colors.TextSuccess,
+                style = FontStyles.BodyLarge,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = "$portfolioType $maskedAccountNumber",

@@ -150,11 +150,11 @@ private fun AccountBalanceUI() {
         ) {
             Text(
                 modifier = Modifier.wrapContentSize(),
-                text = stringResource(R.string.text_account_balance),
-                style = FontStyles.BodyLarge,
-                color = Colors.BrandBlack
+                text = stringResource(R.string.text_account_performance),
+                style = FontStyles.TitleMediumMedium,
+                color = Colors.BrandBlack,
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.weight(1.0f))
             Icon(
                 modifier = Modifier
                     .wrapContentSize()
@@ -163,7 +163,7 @@ private fun AccountBalanceUI() {
                     },
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
                 contentDescription = stringResource(R.string.description_icon_navigate_info),
-                tint = Colors.BrandBlack
+                tint = Colors.TextInteractive,
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
