@@ -108,7 +108,8 @@ class MainActivity : ComponentActivity() {
                                     tab = tab,
                                     accountId = args.accountId
                                 )
-                            }
+                            },
+                            navigateToInvestorProfile = {},
                         )
                     }
                     composable<Routes.MainRoute> {
