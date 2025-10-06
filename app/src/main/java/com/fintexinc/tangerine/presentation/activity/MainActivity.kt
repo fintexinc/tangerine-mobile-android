@@ -46,7 +46,7 @@ import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
 import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
-import com.tangerine.documents.presentation.ui.AccountDocumentsUI
+import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
@@ -111,6 +111,9 @@ class MainActivity : ComponentActivity() {
                                     tab = tab,
                                     accountId = args.accountId
                                 )
+                            },
+                            navigateToInvestorProfile = {
+                                // TODO() add navigation to Investor Profile screen
                             },
                             onSearchQueryChanged = { searchTransactionText ->
                                 accountViewModel.onSearchTransactionsQueryChanged(
