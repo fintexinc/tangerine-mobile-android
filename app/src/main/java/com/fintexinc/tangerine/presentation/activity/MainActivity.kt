@@ -125,6 +125,9 @@ class MainActivity : ComponentActivity() {
                             navigateToTransactionDetailScreen = { transactionId ->
                                 navController.navigate(Routes.TransactionDetail(transactionId))
                             },
+                            navigateToInvestorProfile = {
+                                // TODO() add navigation to Investor Profile screen
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {

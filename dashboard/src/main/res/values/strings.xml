@@ -74,7 +74,7 @@
     <string name="text_projections">Projections</string>
     <string name="text_cache_flow">Cache Flow</string>
     <string name="text_percent">%</string>
-    <string name="text_effective_on">Effective on %s</string>
+    <string name="text_effective_on">Effective on</string>
     <string name="text_back">Back</string>
     <string name="title_add_account">Add Account</string>
     <string name="text_group_by">Group By</string>
