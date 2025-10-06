@@ -65,6 +65,7 @@ fun AccountScreen(
     onTabSelected: (AccountTab) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onSearchDocumentQueryChanged: (String) -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -82,6 +83,7 @@ fun AccountScreen(
                 onTabSelected = onTabSelected,
                 onSearchQueryChanged = onSearchQueryChanged,
                 onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
+                navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
             )
         }
     }
@@ -96,6 +98,7 @@ private fun Content(
     onTabSelected: (AccountTab) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onSearchDocumentQueryChanged: (String) -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -118,7 +121,8 @@ private fun Content(
                     onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
                     documentSearchQuery = state.mainState.bottomSheet.documents.query,
                     documents = state.mainState.bottomSheet.documents.filtered,
-                )
+                    navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
+                    )
             },
             sheetPeekHeight = 84.dp,
             sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -250,6 +254,7 @@ private fun BottomSheetTabsContent(
     onSearchDocumentQueryChanged: (String) -> Unit,
     documentSearchQuery: String,
     documents: List<DataPoint>,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
@@ -288,6 +293,7 @@ private fun BottomSheetTabsContent(
                         searchQuery = documentSearchQuery,
                         onSearchQueryChanged = onSearchDocumentQueryChanged,
                         documents = documents,
+                        navigateToTransactionDetailScreen = navigateToTransactionDetailScreen
                     )
                 },
                 onTabSelected = {

@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
@@ -51,6 +50,7 @@ internal fun DocumentsUi(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     documents: List<DataPoint>,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
@@ -102,7 +102,9 @@ internal fun DocumentsUi(
                     DocumentItem(
                         title = document.name,
                         date = document.subName,
-                        onClick = {},
+                        onClick = {
+                            navigateToTransactionDetailScreen("1")// TODO() - delete mock
+                        },
                         isLastItem = index == documents.lastIndex,
                     )
                 }
@@ -141,11 +143,11 @@ internal fun DocumentsUi(
 
 @Composable
 private fun DocumentItem(
+    modifier: Modifier = Modifier,
     title: String,
     date: String,
     onClick: () -> Unit,
     isLastItem: Boolean = false,
-    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier

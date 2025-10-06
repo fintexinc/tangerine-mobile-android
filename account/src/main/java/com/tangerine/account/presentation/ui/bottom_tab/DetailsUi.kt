@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
-import com.tangerine.account.presentation.ui.components.DataSectionRow
+import com.fintexinc.core.ui.components.DataSectionRow
 
 @Composable
 internal fun DetailsUi(
