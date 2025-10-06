@@ -470,42 +470,42 @@ class AccountViewModel @Inject constructor(
                 name = "CRM1 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId = R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "2",
                 name = "CRM2 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId = R.drawable.ic_file
+                iconResId =  com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "3",
                 name = "CRM3 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId = R.drawable.ic_file
+                iconResId =  com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "4",
                 name = "CRM4 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId = R.drawable.ic_file
+                iconResId =  com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "5",
                 name = "CRM5 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId = R.drawable.ic_file
+                iconResId =  com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "6",
                 name = "CRM6 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId = R.drawable.ic_file
+                iconResId =  com.fintexinc.core.R.drawable.ic_file
             ),
         )
     }
