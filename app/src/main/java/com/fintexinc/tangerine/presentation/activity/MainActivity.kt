@@ -112,12 +112,21 @@ class MainActivity : ComponentActivity() {
                                     accountId = args.accountId
                                 )
                             },
+                            onSearchQueryChanged = { searchTransactionText ->
+                                accountViewModel.onSearchTransactionsQueryChanged(
+                                    searchTransactionText
+                                )
+                            },
+                            onSearchDocumentQueryChanged = { searchDocumentText ->
+                                accountViewModel.onBottomSheetDocumentsSearchQueryChanged(
+                                    searchDocumentText
+                                )
+                            },
                             navigateToTransactionDetailScreen = { transactionId ->
                                 navController.navigate(Routes.TransactionDetail(transactionId))
                             },
                         )
                     }
-
                     composable<Routes.MainRoute> {
                         MainRoute(
                             parentNavController = navController,

@@ -360,7 +360,7 @@ private fun ReturnsRow(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = item.label,
+                text = stringResource(item.label),
                 style = FontStyles.BodyMedium,
                 color = Colors.TextSubdued,
             )

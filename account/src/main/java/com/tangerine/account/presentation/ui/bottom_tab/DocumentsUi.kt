@@ -47,6 +47,9 @@ import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 @Composable
 internal fun DocumentsUi(
     modifier: Modifier = Modifier,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    documents: List<DataPoint>,
     navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     var showDateFilter by remember { mutableStateOf(false) }
@@ -54,59 +57,15 @@ internal fun DocumentsUi(
     var selectedDates by remember { mutableStateOf(listOf(DateFilterUi.ALL_DATES)) }
     var selectedDocumentTypes by remember { mutableStateOf(listOf(DocumentTypeFilterUi.ALL_DOCUMENTS)) }
 
-    // TODO() mock data
-    val documents = listOf(
-        DataPoint(
-            id = "1",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "2",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "3",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "4",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "5",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "6",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = R.drawable.ic_file
-        ),
-    )
-
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Colors.Background)
     ) {
         TangerineSearchBar(
-            isShowFilter = false
+            searchText = searchQuery,
+            onSearchTextChange = onSearchQueryChanged,
+            isShowFilter = false,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -117,30 +76,38 @@ internal fun DocumentsUi(
                 .padding(horizontal = 16.dp)
         ) {
             FilterButton(
-                text = stringResource(R.string.text_all_dates),
+                text = stringResource(
+                    selectedDates.firstOrNull()?.stringResId ?: R.string.filter_all_dates
+                ),
                 onClick = { showDateFilter = true }
             )
 
             Spacer(modifier = Modifier.width(20.dp))
 
             FilterButton(
-                text = stringResource(R.string.text_all_documents),
+                text = stringResource(
+                    selectedDocumentTypes.firstOrNull()?.stringResId ?: R.string.text_all_documents
+                ),
                 onClick = { showDocumentFilter = true },
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            itemsIndexed(documents) { index, document ->
-                DocumentItem(
-                    title = document.name,
-                    date = document.subName,
-                    onClick = {
-                        navigateToTransactionDetailScreen("1")// TODO() - delete mock
-                    },
-                    isLastItem = index == documents.lastIndex,
-                )
+        if (documents.isEmpty() && searchQuery.isNotBlank()) {
+            // TODO() Empty state
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                itemsIndexed(documents) { index, document ->
+                    DocumentItem(
+                        title = document.name,
+                        date = document.subName,
+                        onClick = {
+                            navigateToTransactionDetailScreen("1")// TODO() - delete mock
+                        },
+                        isLastItem = index == documents.lastIndex,
+                    )
+                }
             }
         }
     }

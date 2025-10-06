@@ -16,7 +16,6 @@ class AccountProvider : AccountGateway {
     override suspend fun getActivities(): List<Transaction> {
         return Json.decodeFromString(ACTIVITIES_MOCK)
     }
-
     override suspend fun getAccounts(): List<Account> {
         return Json.decodeFromString(ACCOUNTS_MOCK)
     }
