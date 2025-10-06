@@ -64,10 +64,11 @@ fun formatDisplayDate(dateString: String): String {
 
 fun formatEffectiveDate(dateString: String): String {
     val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
-
     val date = inputFormat.parse(dateString)
-    val formatted = outputFormat.format(date!!).uppercase()
 
-    return formatted
+    val month = SimpleDateFormat("MMM", Locale.getDefault()).format(date!!).uppercase()
+    val day = SimpleDateFormat("d", Locale.getDefault()).format(date)
+    val year = SimpleDateFormat("yyyy", Locale.getDefault()).format(date)
+
+    return "$month $day, $year"
 }

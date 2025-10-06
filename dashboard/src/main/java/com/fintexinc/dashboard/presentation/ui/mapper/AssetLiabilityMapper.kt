@@ -10,11 +10,11 @@ import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.R
 
-fun Liability.toNameValue(effectiveOnText: String) = NameValueChecked(
+fun Liability.toNameValue() = NameValueChecked(
     id = id,
     name = liabilityType.label,
     value = balance,
-    subName = effectiveOnText.format(formatEffectiveDate(linkedDate)),
+    subName = linkedDate,
     date = linkedDate,
     isChecked = true,
     iconResId = if (isCustomLiability) R.drawable.ic_custom_liability else R.drawable.ic_liability
@@ -57,3 +57,19 @@ fun NameValueChecked.toDataPoint() = DataPoint(
     value = value.formatCurrency(),
     iconResId = iconResId
 )
+
+fun NameValueChecked.toLiabilityDataPoint(): DataPoint {
+    val formattedSubName = if (subName.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) {
+        formatEffectiveDate(subName)
+    } else {
+        formatEffectiveDate(date)
+    }
+
+    return DataPoint(
+        id = id,
+        name = name,
+        subName = formattedSubName,
+        value = value.formatCurrency(),
+        iconResId = iconResId
+    )
+}
