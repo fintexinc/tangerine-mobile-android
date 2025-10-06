@@ -108,7 +108,17 @@ class MainActivity : ComponentActivity() {
                                     tab = tab,
                                     accountId = args.accountId
                                 )
-                            }
+                            },
+                            onSearchQueryChanged = { searchTransactionText ->
+                                accountViewModel.onSearchTransactionsQueryChanged(
+                                    searchTransactionText
+                                )
+                            },
+                            onSearchDocumentQueryChanged = { searchDocumentText ->
+                                accountViewModel.onBottomSheetDocumentsSearchQueryChanged(
+                                    searchDocumentText
+                                )
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {
