@@ -66,6 +66,7 @@ import com.fintexinc.dashboard.presentation.ui.components.Banner
 import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
+import com.fintexinc.dashboard.presentation.ui.mapper.toLiabilityDataPoint
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
 import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
@@ -113,7 +114,7 @@ fun MyNetWorthUI(
     val effectiveOnText = stringResource(R.string.text_effective_on)
 
     val liabilitiesCheckedState = liabilities.map {
-        it.liability.toNameValue(effectiveOnText)
+        it.liability.toNameValue()
     }
     LazyColumn(
         modifier = Modifier
@@ -129,7 +130,11 @@ fun MyNetWorthUI(
             ) {
                 NetWorthNotificationUI()
                 Spacer(modifier = Modifier.height(18.dp))
-                NetWorthInfoUI(assetsCheckedState, liabilitiesCheckedState, updateCheckedStates)
+                NetWorthInfoUI(
+                    assets = assetsCheckedState,
+                    liabilities = liabilitiesCheckedState,
+                    updateCheckedStates = updateCheckedStates
+                )
                 Spacer(modifier = Modifier.height(18.dp))
                 ProjectionChartUI()
             }
@@ -155,7 +160,11 @@ fun MyNetWorthUI(
         )
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = liabilitiesCheckedState.map { it.toDataPoint() },
+            dataPoints = liabilitiesCheckedState.map { liability ->
+                liability.toLiabilityDataPoint().let { dataPoint ->
+                    dataPoint.copy(subName = "$effectiveOnText ${dataPoint.subName}")
+                }
+            },
             expanded = liabilitiesExpanded,
             title = textLiabilities,
             subtitle = liabilitiesCheckedState.sumOf { it.value }.formatCurrency(),

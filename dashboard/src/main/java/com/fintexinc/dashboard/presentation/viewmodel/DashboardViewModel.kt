@@ -81,16 +81,8 @@ class DashboardViewModel @Inject constructor(
             },
             liabilities = liabilities.map {
                 LiabilityUI(
-                    liability = it,
-                    checkedState = NameValueChecked(
-                        id = it.id,
-                        name = "",
-                        subName = "",
-                        date = "",
-                        value = 0.0,
-                        isChecked = true,
-                        iconResId = null
-                    )
+                    it,
+                    it.toNameValue()
                 )
             },
             accounts = accounts,
@@ -171,16 +163,8 @@ class DashboardViewModel @Inject constructor(
                         remove(get(index))
                         add(
                             index, LiabilityUI(
-                                liability = liability,
-                                checkedState = NameValueChecked(
-                                    id = liability.id,
-                                    name = "",
-                                    subName = "",
-                                    date = "",
-                                    value = 0.0,
-                                    isChecked = true,
-                                    iconResId = null
-                                )
+                                liability,
+                                liability.toNameValue()
                             )
                         )
                     }
@@ -188,16 +172,8 @@ class DashboardViewModel @Inject constructor(
                     currentState.liabilities.toMutableList().apply {
                         add(
                             LiabilityUI(
-                                liability = liability,
-                                checkedState = NameValueChecked(
-                                    id = liability.id,
-                                    name = "",
-                                    subName = "",
-                                    date = "",
-                                    value = 0.0,
-                                    isChecked = true,
-                                    iconResId = null
-                                )
+                                liability,
+                                liability.toNameValue()
                             )
                         )
                     }
