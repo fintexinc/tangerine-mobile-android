@@ -15,4 +15,5 @@ interface AccountGateway {
         return getDocuments().filter { it.accountId == accountId }
     }
     suspend fun getPerformanceData(): List<PerformanceItem>
+    suspend fun getDocumentsById(documentId: String): Document?
 }

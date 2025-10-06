@@ -1,4 +1,4 @@
-package com.tangerine.account.presentation.ui.components
+package com.fintexinc.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,15 +28,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
-import com.tangerine.account.R
-import com.tangerine.account.presentation.models.DataSectionItemUi
+import com.fintexinc.core.ui.models.DataSectionItemUi
 
 @Composable
-internal fun UniversalDataSection(
+fun UniversalDataSection(
     modifier: Modifier = Modifier,
-    title: String,
+    title: String?,
     items: List<DataSectionItemUi>,
     footerText: String? = null,
     showProgressBar: Boolean = false,
@@ -45,20 +45,22 @@ internal fun UniversalDataSection(
         modifier = modifier
             .padding(horizontal = 18.dp)
             .fillMaxWidth()
-            .background(color = Colors.Background, shape = RoundedCornerShape(16.dp))
+            .background(color = Colors.Background, shape = RoundedCornerShape(16.dp)),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = title,
-            style = FontStyles.TitleSmall,
-            modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
-        )
+        title?.let {
+            Text(
+                text = it,
+                style = FontStyles.TitleSmall,
+                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
+            )
+        }
 
         if (showProgressBar) {
             AllocationProgressBar(
                 items = items,
-                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
             )
         }
 
@@ -113,7 +115,7 @@ internal fun UniversalDataSection(
 }
 
 @Composable
-internal fun DataSectionRow(
+fun DataSectionRow(
     label: String,
     value: String,
     valueColor: Color,
@@ -150,7 +152,7 @@ internal fun DataSectionRow(
             if (hasInfoIcon) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
+                    painter = painterResource(R.drawable.ic_info),
                     contentDescription = stringResource(R.string.description_info_icon),
                     modifier = Modifier.size(16.dp),
                     tint = Colors.TextInteractive,

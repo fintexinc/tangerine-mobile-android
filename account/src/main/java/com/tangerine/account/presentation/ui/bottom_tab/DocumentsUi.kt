@@ -38,6 +38,10 @@ import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 @Composable
 internal fun DocumentsUi(
     modifier: Modifier = Modifier,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    documents: List<DataPoint>,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
@@ -96,7 +100,9 @@ internal fun DocumentsUi(
             .background(Colors.Background)
     ) {
         TangerineSearchBar(
-            isShowFilter = false
+            searchText = searchQuery,
+            onSearchTextChange = onSearchQueryChanged,
+            isShowFilter = false,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -107,28 +113,38 @@ internal fun DocumentsUi(
                 .padding(horizontal = 16.dp)
         ) {
             FilterButton(
-                text = stringResource(R.string.text_all_dates),
+                text = stringResource(
+                    selectedDates.firstOrNull()?.stringResId ?: R.string.filter_all_dates
+                ),
                 onClick = { showDateFilter = true }
             )
 
             Spacer(modifier = Modifier.width(20.dp))
 
             FilterButton(
-                text = stringResource(R.string.text_all_documents),
+                text = stringResource(
+                    selectedDocumentTypes.firstOrNull()?.stringResId ?: R.string.text_all_documents
+                ),
                 onClick = { showDocumentFilter = true },
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            itemsIndexed(documents) { index, document ->
-                DocumentItem(
-                    title = document.name,
-                    date = document.subName,
-                    onClick = {},
-                    isLastItem = index == documents.lastIndex,
-                )
+        if (documents.isEmpty() && searchQuery.isNotBlank()) {
+            // TODO() Empty state
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                itemsIndexed(documents) { index, document ->
+                    DocumentItem(
+                        title = document.name,
+                        date = document.subName,
+                        onClick = {
+                            navigateToTransactionDetailScreen("1")// TODO() - delete mock
+                        },
+                        isLastItem = index == documents.lastIndex,
+                    )
+                }
             }
         }
     }
@@ -159,6 +175,83 @@ internal fun DocumentsUi(
             },
             onDismiss = { showDocumentFilter = false },
         )
+    }
+}
+
+@Composable
+private fun DocumentItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    date: String,
+    onClick: () -> Unit,
+    isLastItem: Boolean = false,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Colors.Background)
+            .clickable { onClick() }
+            .padding(top = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(top = 2.dp),
+                painter = painterResource(R.drawable.ic_file),
+                tint = Colors.BrandBlack,
+                contentDescription = stringResource(R.string.description_documents),
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = title,
+                            style = FontStyles.BodyLarge,
+                            color = Colors.Text
+                        )
+                        Text(
+                            text = date,
+                            style = FontStyles.BodyMedium,
+                            color = Colors.TextSubdued,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
+                            tint = Colors.IconSupplementary,
+                            contentDescription = stringResource(R.string.description_view_details),
+                        )
+                    }
+                }
+                if (!isLastItem) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    HorizontalDivider(
+                        color = Colors.BorderSubdued,
+                        modifier = Modifier
+                    )
+                }
+            }
+        }
     }
 }
 
