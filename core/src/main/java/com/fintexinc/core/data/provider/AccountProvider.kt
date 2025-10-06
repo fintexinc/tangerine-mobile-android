@@ -16,7 +16,6 @@ class AccountProvider : AccountGateway {
     override suspend fun getActivities(): List<Transaction> {
         return Json.decodeFromString(ACTIVITIES_MOCK)
     }
-
     override suspend fun getAccounts(): List<Account> {
         return Json.decodeFromString(ACCOUNTS_MOCK)
     }
@@ -36,5 +35,9 @@ class AccountProvider : AccountGateway {
 
     override suspend fun getPerformanceData(): List<PerformanceItem> {
         return Json.decodeFromString(PERFORMANCE_MOCK)
+    }
+
+    override suspend fun getDocumentsById(documentId: String): Document? {
+        return getDocuments().find { it.id == documentId }
     }
 }
