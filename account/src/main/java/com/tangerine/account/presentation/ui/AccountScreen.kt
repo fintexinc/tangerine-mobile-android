@@ -5,13 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -23,7 +21,6 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -198,14 +195,13 @@ private fun MainPageContent(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false },
                         offset = DpOffset(x = (-16).dp, y = 0.dp),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(0.dp),
                         modifier = Modifier
                             .shadow(
-                                elevation = 8.dp,
-                                shape = RoundedCornerShape(16.dp),
-                                clip = false
+                                elevation = 16.dp,
+                                clip = false,
                             )
-                            .background(Colors.Background, RoundedCornerShape(16.dp)),
+                            .background(Colors.Background),
                     ) {
                         CustomMenuItem(
                             text = stringResource(R.string.text_investor_profile),
