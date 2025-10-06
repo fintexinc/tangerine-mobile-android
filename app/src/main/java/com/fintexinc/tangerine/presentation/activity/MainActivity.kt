@@ -109,7 +109,9 @@ class MainActivity : ComponentActivity() {
                                     accountId = args.accountId
                                 )
                             },
-                            navigateToInvestorProfile = {},
+                            navigateToInvestorProfile = {
+                                // TODO() add navigation to Investor Profile screen
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {
