@@ -74,7 +74,7 @@
     <string name="text_projections">Projections</string>
     <string name="text_cache_flow">Cache Flow</string>
     <string name="text_percent">%</string>
-    <string name="text_effective_on">Effective on %s</string>
+    <string name="text_effective_on">Effective on</string>
     <string name="text_back">Back</string>
     <string name="title_add_account">Add Account</string>
     <string name="text_group_by">Group By</string>
@@ -82,7 +82,7 @@
     <string name="text_none">None</string>
     <string name="text_registered_non_registered">Registered/Non-Registered</string>
     <string name="text_account_type">AccountType</string>
-
+    <string name="text_register_non_reg">Registered/Non-Registered</string>
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
     <string name="description_icon_all_accounts_expand">Expand all accounts</string>

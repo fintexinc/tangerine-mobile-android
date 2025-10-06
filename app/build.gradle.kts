@@ -78,4 +78,5 @@ dependencies {
     implementation(project(":account"))
     implementation(project(":documents"))
     implementation(project(":core"))
+    implementation(project(":transaction_details"))
 }

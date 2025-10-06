@@ -42,9 +42,11 @@ import com.fintexinc.dashboard.presentation.ui.screen.AddEditAssetUI
 import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI
+import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
+import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
-import com.tangerine.documents.presentation.ui.AccountDocumentsUI
+import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
@@ -53,6 +55,7 @@ import kotlinx.serialization.Serializable
 class MainActivity : ComponentActivity() {
     private val dashboardViewModel: DashboardViewModel by viewModels()
     private val accountViewModel: AccountViewModel by viewModels()
+    private val transactionDetailViewModel: TransactionDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +112,9 @@ class MainActivity : ComponentActivity() {
                                     accountId = args.accountId
                                 )
                             },
+                            navigateToInvestorProfile = {
+                                // TODO() add navigation to Investor Profile screen
+                            },
                             onSearchQueryChanged = { searchTransactionText ->
                                 accountViewModel.onSearchTransactionsQueryChanged(
                                     searchTransactionText
@@ -119,12 +125,31 @@ class MainActivity : ComponentActivity() {
                                     searchDocumentText
                                 )
                             },
+                            navigateToTransactionDetailScreen = { transactionId ->
+                                navController.navigate(Routes.TransactionDetail(transactionId))
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {
                         MainRoute(
                             parentNavController = navController,
                             dashboardViewModel = dashboardViewModel,
+                        )
+                    }
+
+                    composable<Routes.TransactionDetail> {
+                        val args = it.toRoute<Routes.TransactionDetail>()
+
+                        LaunchedEffect(args.transactionId) {
+                            transactionDetailViewModel.loadTransaction(args.transactionId)
+                        }
+
+                        val state = transactionDetailViewModel.state.collectAsState()
+
+                        TransactionDetailUi(
+                            state = state.value,
+                            onBackClick = { navController.popBackStack() },
+                            onSaveNote = { note -> transactionDetailViewModel.onSaveNote(note) },
                         )
                     }
                     composable<Routes.AddEditAsset> {
@@ -397,6 +422,9 @@ object Routes {
 
     @Serializable
     data class AddEditLiability(val liabilityId: String?)
+
+    @Serializable
+    data class TransactionDetail(val transactionId: String)
 
     sealed class MenuItem {
         object Accounts : MenuItem()

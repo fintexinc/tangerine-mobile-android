@@ -2,10 +2,6 @@ package com.fintexinc.core.domain.model
 
 import kotlinx.serialization.Serializable
 
-data class Documents(
-    val documents: List<Document>
-)
-
 @Serializable
 data class Document(
     val id: String,

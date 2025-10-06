@@ -66,10 +66,12 @@ import com.fintexinc.dashboard.presentation.ui.components.Banner
 import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
-import com.tangerine.charts.compose_charts.ChartPeriodSelector
+import com.fintexinc.dashboard.presentation.ui.mapper.toLiabilityDataPoint
+import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
 import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
-import com.tangerine.charts.compose_charts.Period
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineBarChart
+import com.tangerine.charts.compose_charts.ChartPeriodSelector
+import com.tangerine.charts.compose_charts.Period
 import com.tangerine.charts.compose_charts.TangerineProjectionsChart
 import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.models.AnimationMode
@@ -108,9 +110,12 @@ fun MyNetWorthUI(
     val textAddLiability = stringResource(R.string.text_add, "liability")
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
-    val liabilitiesCheckedState = liabilities.map { it.checkedState }
     var isBannerVisible by remember { mutableStateOf(true) }
+    val effectiveOnText = stringResource(R.string.text_effective_on)
 
+    val liabilitiesCheckedState = liabilities.map {
+        it.liability.toNameValue()
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -125,7 +130,11 @@ fun MyNetWorthUI(
             ) {
                 NetWorthNotificationUI()
                 Spacer(modifier = Modifier.height(18.dp))
-                NetWorthInfoUI(assetsCheckedState, liabilitiesCheckedState, updateCheckedStates)
+                NetWorthInfoUI(
+                    assets = assetsCheckedState,
+                    liabilities = liabilitiesCheckedState,
+                    updateCheckedStates = updateCheckedStates
+                )
                 Spacer(modifier = Modifier.height(18.dp))
                 ProjectionChartUI()
             }
@@ -151,7 +160,11 @@ fun MyNetWorthUI(
         )
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = liabilitiesCheckedState.map { it.toDataPoint() },
+            dataPoints = liabilitiesCheckedState.map { liability ->
+                liability.toLiabilityDataPoint().let { dataPoint ->
+                    dataPoint.copy(subName = "$effectiveOnText ${dataPoint.subName}")
+                }
+            },
             expanded = liabilitiesExpanded,
             title = textLiabilities,
             subtitle = liabilitiesCheckedState.sumOf { it.value }.formatCurrency(),
@@ -229,10 +242,9 @@ fun MyNetWorthUI(
         }
         item {
             LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 18.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(horizontal = 18.dp),
             ) {
                 items(3) {
                     Row(

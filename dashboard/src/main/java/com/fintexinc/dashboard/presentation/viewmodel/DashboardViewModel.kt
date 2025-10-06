@@ -1,6 +1,5 @@
 package com.fintexinc.dashboard.presentation.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fintexinc.core.data.model.BankingUI
@@ -19,7 +18,6 @@ import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +27,6 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val accountGateway: AccountGateway,
     private val netWorthGateway: NetWorthGateway,
 ) : ViewModel() {
@@ -71,18 +68,21 @@ class DashboardViewModel @Inject constructor(
                 BankingUI(
                     it, it.toNameValue()
                 )
-            }, investmentAssets = assets.investment.map {
+            },
+            investmentAssets = assets.investment.map {
                 InvestmentUI(
                     it, it.toNameValue()
                 )
-            }, customAssets = assets.custom.map {
+            },
+            customAssets = assets.custom.map {
                 CustomUI(
                     it, it.toNameValue()
                 )
-            }, liabilities = liabilities.map {
+            },
+            liabilities = liabilities.map {
                 LiabilityUI(
                     it,
-                    it.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
+                    it.toNameValue()
                 )
             },
             accounts = accounts,
@@ -164,7 +164,7 @@ class DashboardViewModel @Inject constructor(
                         add(
                             index, LiabilityUI(
                                 liability,
-                                liability.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
+                                liability.toNameValue()
                             )
                         )
                     }
@@ -173,7 +173,7 @@ class DashboardViewModel @Inject constructor(
                         add(
                             LiabilityUI(
                                 liability,
-                                liability.toNameValue(context.getString(com.fintexinc.dashboard.R.string.text_effective_on))
+                                liability.toNameValue()
                             )
                         )
                     }

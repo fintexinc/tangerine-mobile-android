@@ -1,4 +1,4 @@
-package com.tangerine.account.presentation.models
+package com.fintexinc.core.ui.models
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -16,6 +16,6 @@ data class DataSectionItemUi(
     val labelStyle: TextStyle = FontStyles.BodyMedium,
     val isHighlighted: Boolean = false,
     val showColorDot: Boolean = false,
-    val dotColor: Color = Color.Gray,
+    val dotColor: Color = Color.Companion.Gray,
     val isMultiline: Boolean = false
 )

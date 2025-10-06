@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -27,16 +28,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TabItem
@@ -63,8 +69,10 @@ fun AccountScreen(
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
+    navigateToInvestorProfile: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onSearchDocumentQueryChanged: (String) -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -80,8 +88,10 @@ fun AccountScreen(
                 onBackClicked = onBackClicked,
                 onOpenDocuments = onOpenDocuments,
                 onTabSelected = onTabSelected,
+                navigateToInvestorProfile = navigateToInvestorProfile,
                 onSearchQueryChanged = onSearchQueryChanged,
                 onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
+                navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
             )
         }
     }
@@ -96,6 +106,8 @@ private fun Content(
     onTabSelected: (AccountTab) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onSearchDocumentQueryChanged: (String) -> Unit,
+    navigateToTransactionDetailScreen: (String) -> Unit,
+    navigateToInvestorProfile: () -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -118,7 +130,8 @@ private fun Content(
                     onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
                     documentSearchQuery = state.mainState.bottomSheet.documents.query,
                     documents = state.mainState.bottomSheet.documents.filtered,
-                )
+                    navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
+                    )
             },
             sheetPeekHeight = 84.dp,
             sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -141,6 +154,7 @@ private fun Content(
                 onTabSelected = onTabSelected,
                 onBackClicked = onBackClicked,
                 onOpenDocuments = onOpenDocuments,
+                navigateToInvestorProfile = navigateToInvestorProfile,
             )
         }
     } else {
@@ -150,6 +164,7 @@ private fun Content(
             onTabSelected = onTabSelected,
             onBackClicked = onBackClicked,
             onOpenDocuments = onOpenDocuments,
+            navigateToInvestorProfile = navigateToInvestorProfile,
         )
     }
 }
@@ -161,7 +176,10 @@ private fun MainPageContent(
     onTabSelected: (AccountTab) -> Unit,
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
+    navigateToInvestorProfile: () -> Unit,
 ) {
+    var showMenu by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -183,14 +201,37 @@ private fun MainPageContent(
                 )
             },
             rightIcon = {
-                Icon(
-                    painter = painterResource(com.fintexinc.core.R.drawable.icon_dots),
-                    contentDescription = stringResource(R.string.description_icon_navigate_edit),
-                    tint = Colors.Primary,
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .clickable {},
-                )
+                Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
+                    Icon(
+                        painter = painterResource(com.fintexinc.core.R.drawable.icon_dots),
+                        contentDescription = stringResource(R.string.description_icon_navigate_edit),
+                        tint = Colors.Primary,
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .clickable { showMenu = true }
+                    )
+
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false },
+                        offset = DpOffset(x = (-16).dp, y = 0.dp),
+                        shape = RoundedCornerShape(0.dp),
+                        modifier = Modifier
+                            .shadow(
+                                elevation = 16.dp,
+                                clip = false,
+                            )
+                            .background(Colors.Background),
+                    ) {
+                        CustomMenuItem(
+                            text = stringResource(R.string.text_investor_profile),
+                            onClick = {
+                                showMenu = false
+                                navigateToInvestorProfile()
+                            },
+                        )
+                    }
+                }
             }
         )
         AccountBalanceCard(
@@ -251,6 +292,7 @@ private fun BottomSheetTabsContent(
     onSearchDocumentQueryChanged: (String) -> Unit,
     documentSearchQuery: String,
     documents: List<DataPoint>,
+    navigateToTransactionDetailScreen: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
@@ -289,6 +331,7 @@ private fun BottomSheetTabsContent(
                         searchQuery = documentSearchQuery,
                         onSearchQueryChanged = onSearchDocumentQueryChanged,
                         documents = documents,
+                        navigateToTransactionDetailScreen = navigateToTransactionDetailScreen
                     )
                 },
                 onTabSelected = {
@@ -427,6 +470,27 @@ private fun AccountTab(
             style = FontStyles.BodySmall,
             maxLines = 2,
             textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun CustomMenuItem(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = text,
+            style = TextStyle(
+                fontSize = 16.sp,
+                color = Colors.BrandBlack
+            )
         )
     }
 }
