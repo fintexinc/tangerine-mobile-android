@@ -55,6 +55,7 @@ class AccountViewModel @Inject constructor(
             MainState(
                 selectedTab = TopTab.SUMMARY,
                 summary = account,
+                performanceData = allPerformanceData,
                 returnsItems = returnsItems.toImmutableList(),
                 holdingsItems = holdingsItems.toImmutableList()
             )
@@ -515,6 +516,7 @@ class AccountViewModel @Inject constructor(
     data class MainState(
         val selectedTab: TopTab = TopTab.SUMMARY,
         val summary: Account,
+        val performanceData: List<PerformanceItem> = emptyList(),
         val positions: List<NameValue> = emptyList(),
         val activities: List<Transaction> = emptyList(),
         val documents: DocumentsState = DocumentsState(),

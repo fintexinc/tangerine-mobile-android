@@ -68,10 +68,10 @@ import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
 import com.fintexinc.dashboard.presentation.ui.mapper.toLiabilityDataPoint
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
-import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
-import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineBarChart
+import com.tangerine.charts.compose_charts.ChartPeriodSelector
+import com.tangerine.charts.compose_charts.Period
 import com.tangerine.charts.compose_charts.TangerineProjectionsChart
 import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.models.AnimationMode

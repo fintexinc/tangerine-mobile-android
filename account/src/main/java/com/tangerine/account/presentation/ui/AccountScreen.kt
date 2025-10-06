@@ -92,7 +92,6 @@ fun AccountScreen(
                 onSearchQueryChanged = onSearchQueryChanged,
                 onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
                 navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
-                navigateToInvestorProfile = navigateToInvestorProfile,
             )
         }
     }
@@ -105,7 +104,6 @@ private fun Content(
     onBackClicked: () -> Unit,
     onOpenDocuments: () -> Unit,
     onTabSelected: (AccountTab) -> Unit,
-    navigateToInvestorProfile: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onSearchDocumentQueryChanged: (String) -> Unit,
     navigateToTransactionDetailScreen: (String) -> Unit,
@@ -258,6 +256,7 @@ private fun MainPageContent(
                 AccountViewModel.TopTab.SUMMARY -> {
                     SummaryUI(
                         account = state.mainState.summary,
+                        performanceData = state.mainState.performanceData,
                         returnsData = state.mainState.returnsItems,
                         holdingsData = state.mainState.holdingsItems,
                     )
