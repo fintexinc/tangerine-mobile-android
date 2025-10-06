@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.DateValue
+import com.tangerine.charts.compose_charts.Period
 import com.tangerine.charts.compose_charts.TangerineNetWorthChart
 import com.tangerine.charts.compose_charts.models.Bars
 import com.tangerine.charts.compose_charts.models.Bars.Data

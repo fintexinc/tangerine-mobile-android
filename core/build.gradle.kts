@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.collections.immutable)
+    api(libs.threetenabp)
 
     // test
     testImplementation(libs.junit)

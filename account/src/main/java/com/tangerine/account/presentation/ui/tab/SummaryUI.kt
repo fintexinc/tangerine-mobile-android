@@ -3,7 +3,6 @@ package com.tangerine.account.presentation.ui.tab
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,32 +24,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.domain.model.Account
+import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
+import com.tangerine.charts.compose_charts.PerformanceChartUI
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DataSectionItemUi
 import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.ui.components.UniversalDataSection
-import com.tangerine.charts.compose_charts.LineChart
-import com.tangerine.charts.compose_charts.extensions.format
-import com.tangerine.charts.compose_charts.models.DrawStyle
-import com.tangerine.charts.compose_charts.models.GridProperties
-import com.tangerine.charts.compose_charts.models.HorizontalIndicatorProperties
-import com.tangerine.charts.compose_charts.models.IndicatorCount
-import com.tangerine.charts.compose_charts.models.LabelHelperProperties
-import com.tangerine.charts.compose_charts.models.LabelProperties
-import com.tangerine.charts.compose_charts.models.Line
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SummaryUI(
     account: Account,
+    performanceData: List<PerformanceItem>,
     returnsData: ImmutableList<ReturnsItemUi>,
     holdingsData: ImmutableList<ReturnsItemUi>,
 ) {
@@ -59,7 +51,7 @@ fun SummaryUI(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        AccountBalanceUI()
+        AccountBalanceUI(performanceData)
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -137,115 +129,13 @@ fun SummaryUI(
 }
 
 @Composable
-private fun AccountBalanceUI() {
+private fun AccountBalanceUI(performanceData: List<PerformanceItem>) {
     ColumnWithBorder {
-        val showNetworkContribution = remember {
-            mutableStateOf(false)
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier.wrapContentSize(),
-                text = stringResource(R.string.text_account_balance),
-                style = FontStyles.BodyLarge,
-                color = Colors.BrandBlack
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .clickable {
-                        showNetworkContribution.value = !showNetworkContribution.value
-                    },
-                painter = painterResource(com.fintexinc.core.R.drawable.ic_info),
-                contentDescription = stringResource(R.string.description_icon_navigate_info),
-                tint = Colors.BrandBlack
-            )
-        }
-        Spacer(modifier = Modifier.height(18.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            text = "$455,000",
-            style = FontStyles.DisplaySmall
+        PerformanceChartUI(
+            title = stringResource(R.string.text_account_performance),
+            performance = performanceData
         )
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier.wrapContentSize(),
-                painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_up),
-                tint = Color(0xFF43A047),
-                contentDescription = stringResource(R.string.description_icon_navigate_increased)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                modifier = Modifier.wrapContentSize(),
-                text = "$2,000.00 (4.39)",
-                style = FontStyles.TitleSmall
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                modifier = Modifier.wrapContentSize(),
-                text = stringResource(R.string.text_past_month),
-                style = FontStyles.BodyMedium,
-                color = Colors.TextSubdued
-            )
-        }
-        Spacer(modifier = Modifier.height(18.dp))
-        AccountBalanceChartUI(showNetworkContribution.value)
     }
-}
-
-@Composable
-private fun AccountBalanceChartUI(showNetworkContribution: Boolean) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-    ) {
-        LineChart(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            data = listOf(
-                Line(
-                    label = "Performance",
-                    values = listOf(1000.0, 15000.0),
-                    color = SolidColor(Color(0xFFEA7024)),
-                    firstGradientFillColor = Color(0xFFFEC388),
-                    secondGradientFillColor = Color(0x00FFFFFF),
-                    curvedEdges = false,
-                    drawStyle = DrawStyle.Fill
-                )
-            ),
-            gridProperties = GridProperties(false),
-            indicatorProperties = HorizontalIndicatorProperties(
-                count = IndicatorCount.StepBased(
-                    3000.0
-                ), contentBuilder = {
-                    (it / 1000).format(0) + "K"
-                }, indicators = (listOf(1000.0, 6000.0, 15000.0))
-            ),
-            labelProperties = LabelProperties(enabled = true, labels = listOf("Jan", "Jun", "Dec")),
-            labelHelperProperties = LabelHelperProperties(false)
-        )
-        if (showNetworkContribution) {
-
-        }
-    }
-    Spacer(modifier = Modifier.height(18.dp))
-    /*ChartPeriodSelector(
-        onPeriodSelected = { period ->
-
-        }
-    )*/
 }
 
 @Composable

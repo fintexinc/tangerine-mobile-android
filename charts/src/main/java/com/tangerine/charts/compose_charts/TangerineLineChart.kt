@@ -1,4 +1,4 @@
-package com.fintexinc.dashboard.presentation.ui.widget.chart
+package com.tangerine.charts.compose_charts
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
-import com.tangerine.charts.compose_charts.LineChart
 import com.tangerine.charts.compose_charts.extensions.format
 import com.tangerine.charts.compose_charts.models.DotProperties
 import com.tangerine.charts.compose_charts.models.DrawStyle

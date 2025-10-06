@@ -66,9 +66,9 @@ import com.fintexinc.dashboard.presentation.ui.components.Banner
 import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
-import com.fintexinc.dashboard.presentation.ui.widget.chart.ChartPeriodSelector
+import com.tangerine.charts.compose_charts.ChartPeriodSelector
 import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
-import com.fintexinc.dashboard.presentation.ui.widget.chart.Period
+import com.tangerine.charts.compose_charts.Period
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineBarChart
 import com.tangerine.charts.compose_charts.TangerineProjectionsChart
 import com.tangerine.charts.compose_charts.extensions.format

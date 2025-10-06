@@ -215,6 +215,7 @@ private fun MainPageContent(
                 AccountViewModel.TopTab.SUMMARY -> {
                     SummaryUI(
                         account = state.mainState.summary,
+                        performanceData = state.mainState.performanceData,
                         returnsData = state.mainState.returnsItems,
                         holdingsData = state.mainState.holdingsItems,
                     )

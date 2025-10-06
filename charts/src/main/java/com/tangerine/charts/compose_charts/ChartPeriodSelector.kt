@@ -1,4 +1,4 @@
-package com.fintexinc.dashboard.presentation.ui.widget.chart
+package com.tangerine.charts.compose_charts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
