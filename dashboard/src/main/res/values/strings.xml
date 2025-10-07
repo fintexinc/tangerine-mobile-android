@@ -85,6 +85,9 @@
     <string name="text_register_non_reg">Registered/Non-Registered</string>
     <string name="text_asset_lowercase">asset</string>
     <string name="text_liability_lowercase">liability</string>
+    <string name="text_add_liability">Add Liability</string>
+    <string name="text_add_asset">Add Asset</string>
+
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
     <string name="description_icon_all_accounts_expand">Expand all accounts</string>

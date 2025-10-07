@@ -105,10 +105,10 @@ fun MyNetWorthUI(
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
-    val textAddAsset = stringResource(R.string.text_add, "asset")
+    val textAddAsset = stringResource(R.string.text_add_asset)
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
-    val textAddLiability = stringResource(R.string.text_add, "liability")
+    val textAddLiability = stringResource(R.string.text_add_liability)
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
     var isBannerVisible by remember { mutableStateOf(true) }
