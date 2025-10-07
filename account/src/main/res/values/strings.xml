@@ -59,7 +59,6 @@
     <string name="title_timeframe">Timeframe</string>
     <string name="title_document_type">Document Type</string>
     <string name="title_all_type">All Type</string>
-    <string name="title_all_status">All Status</string>
     <string name="title_type">Type</string>
     <string name="type_all_types">All types</string>
     <string name="type_contributions_deposits">Contributions &amp; Deposits</string>
@@ -70,7 +69,7 @@
     <string name="type_dividends_interest_2">Dividends &amp; Interest</string>
     <string name="text_types_selected">types selected</string>
     <string name="title_status">Status</string>
-    <string name="status_all_status">All status</string>
+    <string name="status_all_status">All Statuses</string>
     <string name="status_completed">Completed</string>
     <string name="status_pending">Pending</string>
     <string name="status_cancelled">Cancelled</string>
