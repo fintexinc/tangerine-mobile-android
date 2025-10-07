@@ -1,5 +1,7 @@
 package com.fintexinc.core.presentation.ui.widget.add
 
+import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,6 +42,7 @@ fun AddItemSelection(
     title: String,
     text: String,
     info: String = "",
+    errorRes: Int? = null,
     onAddItemSelectionClicked: () -> Unit,
 ) {
     Column(
@@ -72,15 +76,42 @@ fun AddItemSelection(
                     style = FontStyles.BodyMedium,
                     color = Colors.Text
                 )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    text = text,
-                    style = FontStyles.BodyLarge,
-                    color = Colors.TextSubdued
-                )
-                if(info.isNotEmpty()) {
+                if(errorRes != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .align(Alignment.CenterVertically)
+                                .padding(end = 4.dp),
+                            painter = painterResource(id = R.drawable.ic_error),
+                            contentDescription = stringResource(R.string.description_icon_error),
+                            tint = Colors.TextCritical
+                        )
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            text = stringResource(errorRes),
+                            style = FontStyles.BodyMedium,
+                            color = Colors.TextCritical
+                        )
+                    }
+                } else {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        text = text,
+                        style = FontStyles.BodyLarge,
+                        color = Colors.TextSubdued
+                    )
+                }
+                if (info.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         modifier = Modifier
@@ -114,11 +145,15 @@ fun AddItemText(
     hint: String,
     info: String = "",
     text: String = "",
+    @StringRes errorRes: Int? = null,
     onTextChanged: (String) -> Unit,
-    keyboardType: KeyboardType = KeyboardType.Text,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
-    val text = remember {
+    val text = remember(text) {
         mutableStateOf(text)
+    }
+    val errorResState = remember(errorRes) {
+        mutableIntStateOf(errorRes ?: Int.MIN_VALUE)
     }
     Column(
         modifier = Modifier
@@ -134,18 +169,62 @@ fun AddItemText(
             color = Colors.Text
         )
         BasicTextField(
-            modifier = Modifier
+             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
             value = text.value,
             onValueChange = { newText ->
-                text.value = newText
-                onTextChanged(newText)
+                when {
+                    errorResState.intValue != Int.MIN_VALUE -> {
+                        errorResState.intValue = Int.MIN_VALUE
+                        text.value = newText
+                        onTextChanged(newText)
+                    }
+                    else -> {
+                        text.value = newText
+                        onTextChanged(newText)
+                    }
+                }
             },
             textStyle = FontStyles.BodyLarge,
+            singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             decorationBox = { innerTextField ->
                 when {
+                    errorResState.intValue != Int.MIN_VALUE -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            innerTextField()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .wrapContentSize()
+                                        .align(Alignment.CenterVertically)
+                                        .padding(end = 4.dp),
+                                    painter = painterResource(id = R.drawable.ic_error),
+                                    contentDescription = stringResource(R.string.description_icon_error),
+                                    tint = Colors.TextCritical
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(),
+                                    text = stringResource(errorResState.intValue),
+                                    style = FontStyles.BodyMedium,
+                                    color = Colors.TextCritical
+                                )
+                            }
+                        }
+                    }
+
                     info.isNotEmpty() -> {
                         Column(
                             modifier = Modifier

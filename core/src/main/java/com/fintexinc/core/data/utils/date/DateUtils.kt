@@ -12,6 +12,20 @@ object DateUtils {
         return cal.timeInMillis
     }
 
+    fun isDateInFuture(date: String): Boolean {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.UK)
+        val inputDate = sdf.parse(date)
+        val currentDate = Calendar.getInstance().time
+        return inputDate != null && inputDate.after(currentDate)
+    }
+
+    fun isDateInPast(date: String): Boolean {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.UK)
+        val inputDate = sdf.parse(date)
+        val currentDate = Calendar.getInstance().time
+        return inputDate != null && inputDate.before(currentDate)
+    }
+
     fun formatMillisToDateSimpleDateFormat(millis: Long): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.UK)
         val date = java.util.Date(millis)
