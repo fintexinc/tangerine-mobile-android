@@ -27,7 +27,6 @@ enum class TransactionTypeFilterUi(@StringRes val stringResId: Int) {
     BUYS(R.string.type_buys),
     SELLS(R.string.type_sells),
     DIVIDENDS_INTEREST_1(R.string.type_dividends_interest_1),
-    DIVIDENDS_INTEREST_2(R.string.type_dividends_interest_2)
 }
 
 enum class TransactionStatusFilter(@StringRes val stringResId: Int) {

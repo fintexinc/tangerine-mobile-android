@@ -179,6 +179,13 @@ fun DataPointUI(
                         style = FontStyles.BodyLarge,
                         color = Colors.BrandBlack
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Jack TFSA ***9019", //  TODO() mock data
+                        style = FontStyles.BodyMedium,
+                        color = Colors.TextSubdued
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = dataPoint.subName,
                         style = FontStyles.BodyMedium,

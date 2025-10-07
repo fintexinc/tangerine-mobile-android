@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.DataPoint
+import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
@@ -39,7 +40,8 @@ fun DashboardScreenUI(
     onOpenJuiceArticle: (url: String) -> Unit,
     onOpenJuiceSection: () -> Unit,
     onOpenDocumentsClicked: () -> Unit,
-    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
+    onActivitiesClicked: (Transaction) -> Unit,
 ) {
     when (state) {
         is DashboardViewModel.State.Loading -> {
@@ -56,7 +58,8 @@ fun DashboardScreenUI(
             onOpenJuiceArticle = onOpenJuiceArticle,
             onOpenJuiceSection = onOpenJuiceSection,
             onOpenDocumentsClicked = onOpenDocumentsClicked,
-            updateCheckedStates = updateCheckedStates
+            updateCheckedStates = updateCheckedStates,
+            onActivitiesClicked = onActivitiesClicked,
         )
     }
 }
@@ -71,7 +74,8 @@ private fun Content(
     onOpenJuiceArticle: (url: String) -> Unit,
     onOpenJuiceSection: () -> Unit,
     onOpenDocumentsClicked: () -> Unit = {},
-    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
+    updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
+    onActivitiesClicked: (Transaction) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -115,7 +119,8 @@ private fun Content(
                             onAddLiabilityClicked = onAddLiabilityClicked,
                             onOpenJuiceArticle = onOpenJuiceArticle,
                             onOpenJuiceSection = onOpenJuiceSection,
-                            onOpenDocumentsClicked = onOpenDocumentsClicked
+                            onOpenDocumentsClicked = onOpenDocumentsClicked,
+                            onActivitiesClicked = onActivitiesClicked,
                         )
                     }
                 ),

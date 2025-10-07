@@ -72,3 +72,12 @@ fun formatEffectiveDate(dateString: String): String {
 
     return "$month $day, $year"
 }
+
+fun DocumentDate.formatToDisplayDate(): String {
+    val months = arrayOf(
+        "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+    )
+    val monthName = if (month in 1..12) months[month] else "UNKNOWN"
+    return "$monthName $day, $year"
+}
