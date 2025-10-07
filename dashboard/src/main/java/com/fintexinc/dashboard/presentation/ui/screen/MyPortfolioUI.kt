@@ -52,8 +52,8 @@ import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.models.AccountUI
-import com.tangerine.charts.compose_charts.PerformanceChartUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
+import com.tangerine.charts.compose_charts.PerformanceChartUI
 import com.tangerine.charts.compose_charts.models.Pie
 
 @Composable
@@ -254,7 +254,7 @@ fun MyPortfolioUI(
                         AccountListUI(
                             title = stringResource(R.string.format_non_registered_accounts),
                             accounts = nonRegisteredAccounts,
-                            onOpenAccount = onOpenAccount,
+                            onOpenAccount = null,
                             totalSum = accounts.sumOf { it.income }.formatCurrency(),
                             isRoundedTop = false,
                         )
@@ -308,7 +308,7 @@ fun MyPortfolioUI(
                             AccountListUI(
                                 title = stringResource(R.string.format_non_registered_accounts),
                                 accounts = nonRegAccounts,
-                                onOpenAccount = onOpenAccount,
+                                onOpenAccount = null,
                                 totalSum = "$25,000",
                                 isRoundedTop = true,
                             )
@@ -402,7 +402,7 @@ private fun AccountListUI(
     title: String,
     totalSum: String,
     accounts: List<AccountUI>,
-    onOpenAccount: (accountId: String) -> Unit,
+    onOpenAccount: ((accountId: String) -> Unit)? = null,
     isRoundedTop: Boolean = true
 ) {
     val rowShape = if (isRoundedTop) {
@@ -462,7 +462,13 @@ private fun AccountListUI(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onOpenAccount(account.accountId) }
+                        .then(
+                            if (onOpenAccount != null) {
+                                Modifier.clickable {
+                                    onOpenAccount(account.accountId)
+                                }
+                            } else Modifier
+                        )
                         .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -496,12 +502,14 @@ private fun AccountListUI(
                         }
                     }
 
-                    Icon(
-                        modifier = Modifier.wrapContentSize(),
-                        painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
-                        tint = Colors.IconSupplementary,
-                        contentDescription = stringResource(R.string.description_view_details)
-                    )
+                    if( onOpenAccount != null) {
+                        Icon(
+                            modifier = Modifier.wrapContentSize(),
+                            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
+                            tint = Colors.IconSupplementary,
+                            contentDescription = stringResource(R.string.description_view_details)
+                        )
+                    }
                 }
 
                 if (index < accounts.size - 1) {
@@ -536,6 +544,7 @@ private fun Charts(performance: List<PerformanceItem>) {
                     title = stringResource(R.string.text_investor_performance),
                     performance = performance
                 )
+
                 1 -> SectionExposureChartUI()
                 2 -> AssetMixChartUI()
                 3 -> GeographicExposure()
@@ -570,6 +579,7 @@ private fun Charts(performance: List<PerformanceItem>) {
         }
     }
 }
+
 @Composable
 private fun SectionExposureChartUI() {
     TangerinePieChart(
