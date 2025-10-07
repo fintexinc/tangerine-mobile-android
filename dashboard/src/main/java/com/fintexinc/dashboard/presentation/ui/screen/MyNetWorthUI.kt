@@ -100,7 +100,8 @@ fun MyNetWorthUI(
     onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
     onOpenJuiceSection: () -> Unit,
     onOpenJuiceArticle: (articleUrl: String) -> Unit,
-    onOpenDocumentsClicked: () -> Unit
+    onOpenDocumentsClicked: () -> Unit,
+    onActivitiesClicked: (Transaction) -> Unit,
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
@@ -197,7 +198,8 @@ fun MyNetWorthUI(
                 ActivityUI(
                     activities = activities,
                     documents = documents,
-                    onOpenDocumentsClicked = onOpenDocumentsClicked
+                    onOpenDocumentsClicked = onOpenDocumentsClicked,
+                    onActivitiesClicked = onActivitiesClicked,
                 )
             }
         }
@@ -760,7 +762,8 @@ private fun NetWorthChangesChartUI(
 private fun ActivityUI(
     activities: List<Transaction>,
     documents: List<Document>,
-    onOpenDocumentsClicked: () -> Unit
+    onOpenDocumentsClicked: () -> Unit,
+    onActivitiesClicked: (Transaction) -> Unit,
 ) {
     Text(
         modifier = Modifier
@@ -775,7 +778,10 @@ private fun ActivityUI(
             TabItem(
                 title = stringResource(R.string.text_activity),
                 content = {
-                    ActivitiesUI(transactions = activities)
+                    ActivitiesUI(
+                        transactions = activities,
+                        onActivitiesClicked = onActivitiesClicked,
+                    )
                 }
             ),
             TabItem(
@@ -799,7 +805,10 @@ private fun ActivityUI(
 }
 
 @Composable
-private fun ActivitiesUI(transactions: List<Transaction>) {
+private fun ActivitiesUI(
+    transactions: List<Transaction>,
+    onActivitiesClicked: (Transaction) -> Unit,
+) {
     val groupedTransactions = remember(transactions) {
         val grouped = transactions.groupByDate()
         grouped
@@ -827,7 +836,7 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
                 TransactionItemUI(
                     transaction = transaction,
                     onClick = {
-                        // TODO() add navigation here
+                        onActivitiesClicked(transaction)
                     }
                 )
 
