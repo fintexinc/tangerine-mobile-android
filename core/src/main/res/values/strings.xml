@@ -22,4 +22,18 @@
     <string name="description_info_icon">Information</string>
     <string name="description_documents">Document</string>
     <string name="description_view_details">View details</string>
+    <string name="description_icon_error">Error</string>
+
+    <string name="error_percentage_format">Percentage can only be between 0 and 100.</string>
+    <string name="error_max_length_format">Maximum length exceeded.</string>
+    <string name="error_no_asset_type">Please choose an asset type.</string>
+    <string name="error_asset_name_required">Asset name is required.</string>
+    <string name="error_no_liability_type">Please choose an asset type.</string>
+    <string name="error_liability_name_required">Liability name is required.</string>
+    <string name="error_enter_a_value">Enter a value to continue.</string>
+    <string name="error_enter_a_balance">Please enter a current balance.</string>
+    <string name="error_value_cant_be_negative">Value can’t be negative.</string>
+    <string name="error_select_effective_date">Please select an effective date.</string>
+    <string name="error_effective_date_in_future">Effective date can’t be in the future.</string>
+    <string name="error_revisit_date_cant_be_in_past">Revisit date can’t be in the past.</string>
 </resources>

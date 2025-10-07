@@ -38,7 +38,7 @@ import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.presentation.ui.DashboardScreenUI
-import com.fintexinc.dashboard.presentation.ui.screen.AddEditAssetUI
+import com.fintexinc.dashboard.presentation.ui.screen.asset.AddEditAssetUI
 import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI

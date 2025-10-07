@@ -105,10 +105,10 @@ fun MyNetWorthUI(
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
-    val textAddAsset = stringResource(R.string.text_add_asset)
+    val textAddAsset = stringResource(R.string.text_add, "Asset")
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
-    val textAddLiability = stringResource(R.string.text_add_liability)
+    val textAddLiability = stringResource(R.string.text_add, "Liability")
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
     var isBannerVisible by remember { mutableStateOf(true) }
@@ -632,7 +632,7 @@ private fun NetWorthChartUI(
         ),
         enabledColors = Pair(
             Colors.TransactionIncome,
-            Colors.TransactionLiability
+            Colors.TextCritical
         ),
         disabledColors = Pair(
             Colors.BrandBlack,

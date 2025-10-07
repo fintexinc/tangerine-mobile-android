@@ -271,7 +271,7 @@ private fun ReturnsRow(
                     modifier = Modifier
                         .size(16.dp)
                         .rotate(if (item.isPositive) 180f else 0f),
-                    tint = if (item.isPositive) Colors.TextSuccess else Colors.TransactionLiability,
+                    tint = if (item.isPositive) Colors.TextSuccess else Colors.TextCritical,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
@@ -281,11 +281,11 @@ private fun ReturnsRow(
                 style = FontStyles.BodyLarge,
                 color = when {
                     item.showArrow && item.isPositive != null -> {
-                        if (item.isPositive) Colors.TextSuccess else Colors.TransactionLiability
+                        if (item.isPositive) Colors.TextSuccess else Colors.TextCritical
                     }
 
                     item.amount.startsWith("+") -> Colors.TextSuccess
-                    item.amount.startsWith("-") -> Colors.TransactionLiability
+                    item.amount.startsWith("-") -> Colors.TextCritical
                     else -> Colors.Text
                 }
             )
@@ -295,7 +295,7 @@ private fun ReturnsRow(
                 Text(
                     text = it,
                     style = FontStyles.BodyMedium,
-                    color = if (item.isPositive == true) Colors.TextSuccess else Colors.TransactionLiability
+                    color = if (item.isPositive == true) Colors.TextSuccess else Colors.TextCritical
                 )
             }
         }

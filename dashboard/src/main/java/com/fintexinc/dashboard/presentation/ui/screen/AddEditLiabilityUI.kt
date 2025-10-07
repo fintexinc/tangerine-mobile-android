@@ -49,6 +49,8 @@ import com.fintexinc.core.presentation.ui.widget.dialog.UpdatePopup
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.ui.screen.asset.error.AssetError
+import com.fintexinc.dashboard.presentation.ui.screen.asset.error.FieldValidation
 import java.util.UUID
 
 @Composable
@@ -95,6 +97,17 @@ fun AddEditLiabilityUI(
         }
         val showDeletePopup = remember {
             mutableStateOf(false)
+        }
+        val liabilityValidation = remember {
+            mutableStateOf(
+                hashMapOf(
+                    "liabilityType" to FieldValidation(true),
+                    "liabilityName" to FieldValidation(true),
+                    "balance" to FieldValidation(true),
+                    "effectiveDate" to FieldValidation(true),
+                    "revisitDate" to FieldValidation(true)
+                ).toMap()
+            )
         }
         Column(
             modifier = Modifier
@@ -187,6 +200,10 @@ fun AddEditLiabilityUI(
                     title = stringResource(R.string.text_liability_type),
                     text = liabilityType.value?.label?.takeIf { it.isNotEmpty() }
                         ?: stringResource(R.string.text_make_selection),
+                    errorRes = getErrorResIdOrNull(
+                        "liabilityType",
+                        liabilityValidation.value
+                    ),
                     onAddItemSelectionClicked = {
                         showLiabilityTypeSelection.value = true
                     }
@@ -196,6 +213,10 @@ fun AddEditLiabilityUI(
                     title = stringResource(R.string.text_liability_name),
                     hint = stringResource(R.string.text_enter_name),
                     text = liabilityName.value,
+                    errorRes = getErrorResIdOrNull(
+                        "liabilityName",
+                        liabilityValidation.value
+                    ),
                     onTextChanged = { text ->
                         liabilityName.value = text
                     }
@@ -205,6 +226,10 @@ fun AddEditLiabilityUI(
                     title = stringResource(R.string.text_current_balance),
                     hint = stringResource(R.string.text_currency),
                     text = currentBalance.value,
+                    errorRes = getErrorResIdOrNull(
+                        "balance",
+                        liabilityValidation.value
+                    ),
                     onTextChanged = { text ->
                         currentBalance.value = text
                     },
@@ -236,6 +261,10 @@ fun AddEditLiabilityUI(
                     title = stringResource(R.string.text_effective_date),
                     text = effectiveDate.value,
                     info = stringResource(R.string.text_revisited_date_info, "liability"),
+                    errorRes = getErrorResIdOrNull(
+                        "effectiveDate",
+                        liabilityValidation.value
+                    ),
                     onAddItemSelectionClicked = {
                         showDialog.value = DateSelectionType.EffectiveDate
                     }
@@ -244,6 +273,10 @@ fun AddEditLiabilityUI(
                 AddItemSelection(
                     title = stringResource(R.string.text_revisit_date),
                     text = revisitDate.value,
+                    errorRes = getErrorResIdOrNull(
+                        "revisitDate",
+                        liabilityValidation.value
+                    ),
                     onAddItemSelectionClicked = {
                         showDialog.value = DateSelectionType.RevisitDate
                     }
@@ -264,6 +297,17 @@ fun AddEditLiabilityUI(
                     }
                 } else {
                     PrimaryButton(stringResource(R.string.text_add, "Liability")) {
+                        val validationResult = validateLiability(
+                            liabilityType = liabilityType.value,
+                            liabilityName = liabilityName.value,
+                            balance = currentBalance.value,
+                            effectiveDate = effectiveDate.value,
+                            revisitDate = revisitDate.value
+                        )
+                        if(validationResult.values.any { !it.isValid }) {
+                            liabilityValidation.value = validationResult
+                            return@PrimaryButton
+                        }
                         onSaveLiabilityClick(
                             Liability(
                                 id = liability?.id ?: UUID.randomUUID().toString(),
@@ -342,6 +386,17 @@ fun AddEditLiabilityUI(
                 text = stringResource(R.string.text_change_may_affect)
             ) {
                 showUpdatePopup.value = false
+                val validationResult = validateLiability(
+                    liabilityType = liabilityType.value,
+                    liabilityName = liabilityName.value,
+                    balance = currentBalance.value,
+                    effectiveDate = effectiveDate.value,
+                    revisitDate = revisitDate.value
+                )
+                if(validationResult.values.any { !it.isValid }) {
+                    liabilityValidation.value = validationResult
+                    return@UpdatePopup
+                }
                 onSaveLiabilityClick(
                     Liability(
                         id = liability?.id ?: UUID.randomUUID().toString(),
@@ -379,4 +434,74 @@ fun AddEditLiabilityUI(
             )
         }
     }
+}
+
+private fun validateLiability(
+    liabilityType: LiabilityType?,
+    liabilityName: String,
+    balance: String,
+    effectiveDate: String,
+    revisitDate: String
+): Map<String, FieldValidation> {
+    val assetValidationResult = hashMapOf<String, FieldValidation>()
+    assetValidationResult["liabilityType"] = when {
+        liabilityType == null -> FieldValidation(
+            isValid = false,
+            assetError = AssetError.ASSET_TYPE_NOT_SELECTED
+        )
+
+        else -> FieldValidation(isValid = true)
+    }
+    assetValidationResult["liabilityName"] = when {
+        liabilityName.isEmpty() -> FieldValidation(
+            isValid = false,
+            assetError = AssetError.ASSET_NAME_MISSING
+        )
+
+        else -> FieldValidation(isValid = true)
+    }
+    val estimatedValueDouble = balance.toDoubleOrNull() ?: 0.0
+    assetValidationResult["balance"] = when {
+        balance.isEmpty() -> FieldValidation(
+            isValid = false,
+            assetError = AssetError.BALANCE_IS_MISSING
+        )
+
+        estimatedValueDouble < 0 -> FieldValidation(
+            isValid = false,
+            assetError = AssetError.BALANCE_NEGATIVE
+        )
+
+        else -> FieldValidation(isValid = true)
+    }
+    assetValidationResult["effectiveDate"] = when {
+        effectiveDate.isEmpty() -> FieldValidation(
+            isValid = false,
+            assetError = AssetError.EFFECTIVE_DATE_MISSING
+        )
+
+        DateUtils.isDateInFuture(effectiveDate) -> FieldValidation(
+            isValid = false,
+            assetError = AssetError.EFFECTIVE_DATE_IN_FUTURE
+        )
+
+        else -> FieldValidation(isValid = true)
+    }
+    assetValidationResult["revisitDate"] = when {
+        revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> FieldValidation(
+            isValid = false,
+            assetError = AssetError.REVISIT_DATE_IN_PAST
+        )
+
+        else -> FieldValidation(isValid = true)
+    }
+
+    return assetValidationResult.toMap()
+}
+
+private fun getErrorResIdOrNull(
+    fieldName: String,
+    assetValidation: Map<String, FieldValidation>
+): Int? {
+    return assetValidation[fieldName]?.assetError?.messageResId
 }
