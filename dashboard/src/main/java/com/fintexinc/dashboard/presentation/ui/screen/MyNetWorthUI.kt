@@ -46,7 +46,7 @@ import com.fintexinc.core.data.model.DateValue
 import com.fintexinc.core.data.model.InvestmentUI
 import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.data.utils.currency.formatCurrency
-import com.fintexinc.core.data.utils.date.formatToString
+import com.fintexinc.core.data.utils.date.formatToDisplayDate
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
@@ -100,14 +100,15 @@ fun MyNetWorthUI(
     onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
     onOpenJuiceSection: () -> Unit,
     onOpenJuiceArticle: (articleUrl: String) -> Unit,
-    onOpenDocumentsClicked: () -> Unit
+    onOpenDocumentsClicked: () -> Unit,
+    onActivitiesClicked: (Transaction) -> Unit,
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
-    val textAddAsset = stringResource(R.string.text_add, "asset")
+    val textAddAsset = stringResource(R.string.text_add_asset)
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
-    val textAddLiability = stringResource(R.string.text_add, "liability")
+    val textAddLiability = stringResource(R.string.text_add_liability)
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
     var isBannerVisible by remember { mutableStateOf(true) }
@@ -197,7 +198,8 @@ fun MyNetWorthUI(
                 ActivityUI(
                     activities = activities,
                     documents = documents,
-                    onOpenDocumentsClicked = onOpenDocumentsClicked
+                    onOpenDocumentsClicked = onOpenDocumentsClicked,
+                    onActivitiesClicked = onActivitiesClicked,
                 )
             }
         }
@@ -760,7 +762,8 @@ private fun NetWorthChangesChartUI(
 private fun ActivityUI(
     activities: List<Transaction>,
     documents: List<Document>,
-    onOpenDocumentsClicked: () -> Unit
+    onOpenDocumentsClicked: () -> Unit,
+    onActivitiesClicked: (Transaction) -> Unit,
 ) {
     Text(
         modifier = Modifier
@@ -775,7 +778,10 @@ private fun ActivityUI(
             TabItem(
                 title = stringResource(R.string.text_activity),
                 content = {
-                    ActivitiesUI(transactions = activities)
+                    ActivitiesUI(
+                        transactions = activities,
+                        onActivitiesClicked = onActivitiesClicked,
+                    )
                 }
             ),
             TabItem(
@@ -786,7 +792,7 @@ private fun ActivityUI(
                             DataPoint(
                                 id = it.id,
                                 name = it.documentName,
-                                subName = it.documentDate.formatToString(),
+                                subName = it.documentDate.formatToDisplayDate(),
                                 iconResId = com.fintexinc.core.R.drawable.ic_document
                             )
                         },
@@ -799,7 +805,10 @@ private fun ActivityUI(
 }
 
 @Composable
-private fun ActivitiesUI(transactions: List<Transaction>) {
+private fun ActivitiesUI(
+    transactions: List<Transaction>,
+    onActivitiesClicked: (Transaction) -> Unit,
+) {
     val groupedTransactions = remember(transactions) {
         val grouped = transactions.groupByDate()
         grouped
@@ -827,7 +836,7 @@ private fun ActivitiesUI(transactions: List<Transaction>) {
                 TransactionItemUI(
                     transaction = transaction,
                     onClick = {
-                        // TODO() add navigation here
+                        onActivitiesClicked(transaction)
                     }
                 )
 
@@ -865,9 +874,7 @@ private fun DocumentsUI(
             DataPointUI(
                 dataPoint = it,
                 isLastItem = dataPoints.last() == it,
-                onClick = {
-                    onOpenDocumentsClicked()
-                }
+                onClick = { onOpenDocumentsClicked() },
             )
         }
 

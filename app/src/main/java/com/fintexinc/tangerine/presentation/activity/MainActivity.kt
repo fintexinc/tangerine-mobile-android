@@ -374,7 +374,10 @@ class MainActivity : ComponentActivity() {
                                 assets,
                                 liabilities,
                             )
-                        }
+                        },
+                        onActivitiesClicked = { item ->
+                            parentNavController.navigate(Routes.TransactionDetail(item.id))
+                        },
                     )
                 }
 

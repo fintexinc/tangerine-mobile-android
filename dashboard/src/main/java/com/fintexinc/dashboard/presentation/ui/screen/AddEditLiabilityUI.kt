@@ -176,7 +176,7 @@ fun AddEditLiabilityUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_later, "liability"),
+                        text = stringResource(R.string.text_you_can_remove_later, stringResource(R.string.text_liability_lowercase)),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
