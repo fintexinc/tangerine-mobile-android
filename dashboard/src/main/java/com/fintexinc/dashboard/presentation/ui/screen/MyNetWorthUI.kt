@@ -46,7 +46,7 @@ import com.fintexinc.core.data.model.DateValue
 import com.fintexinc.core.data.model.InvestmentUI
 import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.data.utils.currency.formatCurrency
-import com.fintexinc.core.data.utils.date.formatToString
+import com.fintexinc.core.data.utils.date.formatToDisplayDate
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
@@ -792,7 +792,7 @@ private fun ActivityUI(
                             DataPoint(
                                 id = it.id,
                                 name = it.documentName,
-                                subName = it.documentDate.formatToString(),
+                                subName = it.documentDate.formatToDisplayDate(),
                                 iconResId = com.fintexinc.core.R.drawable.ic_document
                             )
                         },
@@ -874,9 +874,7 @@ private fun DocumentsUI(
             DataPointUI(
                 dataPoint = it,
                 isLastItem = dataPoints.last() == it,
-                onClick = {
-                    onOpenDocumentsClicked()
-                }
+                onClick = { onOpenDocumentsClicked() },
             )
         }
 
