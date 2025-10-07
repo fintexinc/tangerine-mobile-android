@@ -48,7 +48,7 @@
     <string name="text_net_contributions">Net Contributions</string>
     <string name="title_add_an_asset">Add an External Asset</string>
     <string name="title_edit_asset">Edit Asset</string>
-    <string name="text_gain_complete_picture_asset">Gain a more complete picture of your net worth by adding an asset here. This will show up under the External Asset section and update your total net worth balance. We will also include it in your net worth projections using the annual growth rate you provide.</string>
+    <string name="text_gain_complete_picture_asset">Gain a more complete picture of your net worth by adding an asset here. This will instantly show up under the External Asset section and update your total net worth balance. We will also include it in your net worth projections using the annual growth rate you provide.</string>
     <string name="text_you_can_remove_later">You can edit or delete this %s at any time, or set a reminder to keep its value current.</string>
     <string name="text_gain_complete_picture_liability">Gain a more complete picture of your net worth by adding a liability here. This will instantly show up under External Liabilities section and update your total net worth balance. We will also include it in your net worth projections, using the Monthly Payment and Annual Interest Rate you provide.</string>
     <string name="text_asset_type">Asset Type</string>

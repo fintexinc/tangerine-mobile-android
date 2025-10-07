@@ -186,7 +186,7 @@ fun AddEditAssetUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_later),
+                        text = stringResource(R.string.text_you_can_remove_later, "asset"),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
