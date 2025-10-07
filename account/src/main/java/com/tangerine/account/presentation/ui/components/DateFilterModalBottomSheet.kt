@@ -105,8 +105,12 @@ internal fun MultiSelectChips(
                     )
                     .clickableShape(RoundedCornerShape(16.dp)) {
                         val newSelected = !selectedStates[index]
-                        selectedStates[index] = newSelected
-                        onSelectionChanged(index, newSelected)
+                        val canDeselect = newSelected || selectedStates.count { it } > 1
+
+                        if (canDeselect) {
+                            selectedStates[index] = newSelected
+                            onSelectionChanged(index, newSelected)
+                        }
                     }
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 text = option,
