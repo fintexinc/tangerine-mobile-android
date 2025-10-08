@@ -284,7 +284,7 @@ fun AddEditLiabilityUI(
                 Spacer(modifier = Modifier.height(40.dp))
                 if (liability != null) {
                     Column {
-                        PrimaryButton(stringResource(R.string.text_edit_asset)) {
+                        PrimaryButton(stringResource(R.string.text_confirm_changes)) {
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(

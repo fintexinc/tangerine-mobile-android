@@ -1,10 +1,10 @@
 package com.fintexinc.dashboard.presentation.ui.mapper
 
+import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.formatEffectiveDate
 import com.fintexinc.core.domain.model.Banking
 import com.fintexinc.core.domain.model.Custom
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.domain.model.Investment
 import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
@@ -14,17 +14,17 @@ fun Liability.toNameValue() = NameValueChecked(
     id = id,
     name = liabilityType.label,
     value = balance,
-    subName = linkedDate,
+    subName = accountNumber,
     date = linkedDate,
     isChecked = true,
-    iconResId = if (isCustomLiability) R.drawable.ic_custom_liability else R.drawable.ic_liability
+    iconResId = R.drawable.ic_liability
 )
 
 fun Custom.toNameValue() = NameValueChecked(
     id = id,
     name = assetName,
     value = assetValue,
-    subName = id,
+    subName = linkedDate,
     date = linkedDate,
     isChecked = true,
     iconResId = R.drawable.ic_custom_asset

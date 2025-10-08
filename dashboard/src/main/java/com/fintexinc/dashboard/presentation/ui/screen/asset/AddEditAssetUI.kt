@@ -136,7 +136,7 @@ fun AddEditAssetUI(
                         .padding(vertical = 18.dp)
                         .align(Alignment.Center),
                     text = if (asset != null) {
-                        stringResource(R.string.text_edit_asset)
+                        stringResource(R.string.text_confirm_changes)
                     } else {
                         stringResource(R.string.title_add_an_asset)
                     },
@@ -252,7 +252,7 @@ fun AddEditAssetUI(
                 Spacer(modifier = Modifier.height(40.dp))
                 if (asset != null) {
                     Column {
-                        PrimaryButton(stringResource(R.string.text_edit_asset)) {
+                        PrimaryButton(stringResource(R.string.text_confirm_changes)) {
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(

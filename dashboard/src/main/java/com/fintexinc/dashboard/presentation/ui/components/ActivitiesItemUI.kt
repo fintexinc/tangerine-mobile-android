@@ -1,6 +1,5 @@
 package com.fintexinc.dashboard.presentation.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -72,14 +71,14 @@ internal fun TransactionItemUI(
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = transaction.transactionAmount.formatCurrency(),
+                text = "${if (transaction.transactionAmount > 0) "+" else "-"}${transaction.transactionAmount.formatCurrency()}",
                 style = FontStyles.BodyLargeBold,
                 color = Colors.BrandBlack,
             )
 
             Text(
-                text = transaction.grossAmount.formatCurrency(),
-                style = FontStyles.BodyMedium,
+                text = (transaction.investmentDetails.units * transaction.investmentDetails.navPerUnit).formatCurrency(),
+                style = FontStyles.BodySmallItalic,
                 color = Colors.TextSubdued,
             )
         }

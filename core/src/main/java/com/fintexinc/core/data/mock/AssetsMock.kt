@@ -5,7 +5,7 @@ const val ASSETS_MOCK = "{\n" +
         "        {\n" +
         "            \"id\": \"ACCT-INV-001\",\n" +
         "            \"userId\": \"INV-0001\",\n" +
-        "            \"accountNumber\": \"TFSA-9876-4321\",\n" +
+        "            \"accountNumber\": \"***9019\",\n" +
         "            \"registeredName\": \"TFSA of Alex Tremblay\",\n" +
         "            \"inceptionDate\": \"2023-02-10\",\n" +
         "            \"beneficiaries\": [\n" +
@@ -33,7 +33,7 @@ const val ASSETS_MOCK = "{\n" +
         "        {\n" +
         "            \"id\": \"ACCT-INV-002\",\n" +
         "            \"userId\": \"INV-0001\",\n" +
-        "            \"accountNumber\": \"RSP-1234-5678\",\n" +
+        "            \"accountNumber\": \"***7917\",\n" +
         "            \"registeredName\": \"RSP of Alex Tremblay\",\n" +
         "            \"inceptionDate\": \"2022-11-05\",\n" +
         "            \"beneficiaries\": [\n" +
@@ -61,7 +61,7 @@ const val ASSETS_MOCK = "{\n" +
         "        {\n" +
         "            \"id\": \"ACCT-INV-003\",\n" +
         "            \"userId\": \"INV-0002\",\n" +
-        "            \"accountNumber\": \"NR-2468-1357\",\n" +
+        "            \"accountNumber\": \"***7978\",\n" +
         "            \"registeredName\": \"Non-Registered of Sophie Dubois\",\n" +
         "            \"inceptionDate\": \"2024-05-12\",\n" +
         "            \"beneficiaries\": [],\n" +
@@ -89,7 +89,7 @@ const val ASSETS_MOCK = "{\n" +
         "        {\n" +
         "            \"id\": \"ACCT-BNK-001\",\n" +
         "            \"userId\": \"INV-0001\",\n" +
-        "            \"accountNumber\": \"011-1234567\",\n" +
+        "            \"accountNumber\": \"***6043\",\n" +
         "            \"accountName\": \"Everyday Chequing\",\n" +
         "            \"accountType\": \"CHEQUING\",\n" +
         "            \"accountBalance\": 345000.33,\n" +
@@ -100,7 +100,7 @@ const val ASSETS_MOCK = "{\n" +
         "        {\n" +
         "            \"id\": \"ACCT-BNK-002\",\n" +
         "            \"userId\": \"INV-0002\",\n" +
-        "            \"accountNumber\": \"011-7654321\",\n" +
+        "            \"accountNumber\": \"***6142\",\n" +
         "            \"accountName\": \"Savings Account\",\n" +
         "            \"currency\": \"CAD\",\n" +
         "            \"accountType\": \"SAVINGS\",\n" +
@@ -111,7 +111,7 @@ const val ASSETS_MOCK = "{\n" +
         "        { \n" +
         "            \"id\": \"ACCT-BNK-001\",\n" +
         "            \"userId\": \"INV-0001\",\n" +
-        "            \"accountNumber\": \"011-1234567\",\n" +
+        "            \"accountNumber\": \"***6045\",\n" +
         "            \"accountName\": \"Everyday Chequing\",\n" +
         "            \"accountType\": \"CHEQUING\",\n" +
         "            \"accountBalance\": 445000.33,\n" +
@@ -122,7 +122,7 @@ const val ASSETS_MOCK = "{\n" +
         "        { \n" +
         "            \"id\": \"ACCT-BNK-002\",\n" +
         "            \"userId\": \"INV-0002\",\n" +
-        "            \"accountNumber\": \"011-7654321\",\n" +
+        "            \"accountNumber\": \"***4932\",\n" +
         "            \"accountName\": \"Savings Account\",\n" +
         "            \"currency\": \"CAD\",\n" +
         "            \"accountType\": \"SAVINGS\",\n" +

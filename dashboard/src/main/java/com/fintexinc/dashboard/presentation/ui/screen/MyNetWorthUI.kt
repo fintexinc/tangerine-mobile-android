@@ -48,6 +48,7 @@ import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.formatToDisplayDate
 import com.fintexinc.core.domain.model.Document
+import com.fintexinc.core.domain.model.LiabilityType
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.datapoint.DataPointUI
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
@@ -66,7 +67,6 @@ import com.fintexinc.dashboard.presentation.ui.components.Banner
 import com.fintexinc.dashboard.presentation.ui.components.TransactionItemUI
 import com.fintexinc.dashboard.presentation.ui.mapper.groupByDate
 import com.fintexinc.dashboard.presentation.ui.mapper.toDataPoint
-import com.fintexinc.dashboard.presentation.ui.mapper.toLiabilityDataPoint
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
 import com.fintexinc.dashboard.presentation.ui.widget.chart.NegativeValuesPosition
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerineBarChart
@@ -109,6 +109,9 @@ fun MyNetWorthUI(
     val liabilitiesExpanded = remember { mutableStateOf(true) }
     val textLiabilities = stringResource(R.string.text_liabilities)
     val textAddLiability = stringResource(R.string.text_add, "Liability")
+    val textTangerineAssets = stringResource(R.string.text_tangerine_assets)
+    val textExternalAssets = stringResource(R.string.text_external_assets)
+    val textExternalLiabilities = stringResource(R.string.text_external_liabilities)
     val assetsCheckedState =
         banking.map { it.checkedState } + investment.map { it.checkedState } + custom.map { it.checkedState }
     var isBannerVisible by remember { mutableStateOf(true) }
@@ -136,8 +139,6 @@ fun MyNetWorthUI(
                     liabilities = liabilitiesCheckedState,
                     updateCheckedStates = updateCheckedStates
                 )
-                Spacer(modifier = Modifier.height(18.dp))
-                ProjectionChartUI()
             }
         }
 
@@ -145,9 +146,15 @@ fun MyNetWorthUI(
             Spacer(modifier = Modifier.height(24.dp))
         }
 
+        // TODO: refactor whole thing when there is a time
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = assetsCheckedState.map { it.toDataPoint() },
+            dataPoints = mapOf(
+                textTangerineAssets to banking.map { it.checkedState.toDataPoint() } + investment.map { it.checkedState.toDataPoint() },
+                textExternalAssets to custom.map { custom ->
+                    custom.checkedState.toDataPoint().copy(subName ="$effectiveOnText ${custom.asset.linkedDate}" )
+                },
+            ),
             expanded = assetsExpanded,
             title = textAssets,
             subtitle = assetsCheckedState.sumOf { it.value }.formatCurrency(),
@@ -161,11 +168,20 @@ fun MyNetWorthUI(
         )
         collapsableLazyColumn(
             scope = this@LazyColumn,
-            dataPoints = liabilitiesCheckedState.map { liability ->
-                liability.toLiabilityDataPoint().let { dataPoint ->
-                    dataPoint.copy(subName = "$effectiveOnText ${dataPoint.subName}")
+            dataPoints = mapOf(textExternalLiabilities to liabilitiesCheckedState.map { liability ->
+                val shouldShowEffectiveDate = liabilities.first {
+                    it.liability.id == liability.id
+                }.liability.liabilityType != LiabilityType.CREDIT_CARDS
+                with(liability) {
+                    DataPoint(
+                        id = id,
+                        name = name,
+                        subName = if (shouldShowEffectiveDate) "$effectiveOnText ${liability.date}" else liability.subName,
+                        value = value.formatCurrency(),
+                        iconResId = iconResId
+                    )
                 }
-            },
+            }),
             expanded = liabilitiesExpanded,
             title = textLiabilities,
             subtitle = liabilitiesCheckedState.sumOf { it.value }.formatCurrency(),
@@ -428,7 +444,7 @@ private fun NetWorthInfoUI(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
                     tint = Colors.TextInteractive,
                     contentDescription = stringResource(R.string.description_icon_all_accounts_expand),
                 )

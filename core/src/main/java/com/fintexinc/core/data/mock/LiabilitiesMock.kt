@@ -2,7 +2,7 @@ package com.fintexinc.core.data.mock
 
 const val LIABILITIES_MOCK = "[\n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0001-CC-001\",\n" +
+        "        \"id\": \"LIAB-INV-0001-CC-003\",\n" +
         "        \"userId\": \"INV-0001\",\n" +
         "        \"liabilityType\": \"Auto Loan\",\n" +
         "        \"accountNumber\": \"5241-****-****-1122\",\n" +
@@ -14,7 +14,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-20T12:30:00Z\"\n" +
         "    },\n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0001-LOAN-001\",\n" +
+        "        \"id\": \"LIAB-INV-0001-LOAN-002\",\n" +
         "        \"userId\": \"INV-0001\",\n" +
         "        \"liabilityType\": \"Auto Loan\",\n" +
         "        \"accountNumber\": \"LN-001-2021-7788\",\n" +
@@ -26,10 +26,10 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-18T09:15:00Z\"\n" +
         "    },\n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-MTG-001\",\n" +
+        "        \"id\": \"LIAB-INV-0002-MTG-004\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
-        "        \"liabilityType\": \"Credit Card Debt\",\n" +
-        "        \"accountNumber\": \"MTG-4455-8899\",\n" +
+        "        \"liabilityType\": \"Credit Cards\",\n" +
+        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
         "        \"balance\": 355000.0,\n" +
         "        \"limit\": 50000.0,\n" +
         "        \"interestRate\": 5.29,\n" +
@@ -51,9 +51,9 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"propertyAddress\": \"Cottage in Muskoka, ON\"\n" +
         "    },\n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-005\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
-        "        \"liabilityType\": \"Credit Card Debt\",\n" +
+        "        \"liabilityType\": \"Credit Cards\",\n" +
         "        \"accountNumber\": \"4539-****-****-6677\",\n" +
     "           \"linkedDate\": \"2025-04-10\",\n" +
         "        \"balance\": 120002.1,\n" +
@@ -63,7 +63,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
         "    }, \n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-006\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityType\": \"Auto Loan\",\n" +
         "        \"accountNumber\": \"4539-****-****-6677\",\n" +
@@ -75,7 +75,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
         "    }, \n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-007\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityType\": \"Auto Loan\",\n" +
         "        \"accountNumber\": \"4539-****-****-6677\",\n" +
@@ -87,7 +87,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
         "    }, \n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-008\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityType\": \"Auto Loan\",\n" +
         "        \"accountNumber\": \"4539-****-****-6677\",\n" +
@@ -99,7 +99,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
         "    }, \n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-011\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityType\": \"Student Loans\",\n" +
         "        \"accountNumber\": \"4539-****-****-6677\",\n" +
@@ -111,7 +111,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
         "    }, \n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-001\",\n" +
+        "        \"id\": \"LIAB-INV-0002-CC-012\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityType\": \"Student Loans\",\n" +
         "        \"accountNumber\": \"4539-****-****-6677\",\n" +

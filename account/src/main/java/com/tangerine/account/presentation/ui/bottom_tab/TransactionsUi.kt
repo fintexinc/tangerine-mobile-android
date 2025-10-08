@@ -266,7 +266,7 @@ private fun TransactionsSectionHeader(
         )
 
         Image(
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_down),
+            painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
             contentDescription = stringResource(com.fintexinc.core.R.string.description_icon_add),
             modifier = Modifier.rotate(if (isExpanded) 180f else 0f),
         )

@@ -25,7 +25,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-BAL\",\n" +
         "            \"fundName\": \"Tangerine Core Balanced Portfolio\",\n" +
         "            \"units\": 18.6279,\n" +
-        "            \"navPerUnit\": 26.85,\n" +
+        "            \"navPerUnit\": 16.85,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +
@@ -54,7 +54,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-BAL\",\n" +
         "            \"fundName\": \"Tangerine Core Balanced Portfolio\",\n" +
         "            \"units\": 18.6279,\n" +
-        "            \"navPerUnit\": 26.85,\n" +
+        "            \"navPerUnit\": 16.85,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +
@@ -83,7 +83,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-BAL\",\n" +
         "            \"fundName\": \"Tangerine Core Balanced Portfolio\",\n" +
         "            \"units\": 0.5746,\n" +
-        "            \"navPerUnit\": 26.85,\n" +
+        "            \"navPerUnit\": 16.85,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +
@@ -112,7 +112,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-EQG\",\n" +
         "            \"fundName\": \"Tangerine Equity Growth Portfolio\",\n" +
         "            \"units\": 33.1964,\n" +
-        "            \"navPerUnit\": 30.12,\n" +
+        "            \"navPerUnit\": 20.12,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +
@@ -141,7 +141,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-EQG\",\n" +
         "            \"fundName\": \"Tangerine Equity Growth Portfolio\",\n" +
         "            \"units\": 10.0,\n" +
-        "            \"navPerUnit\": 30.12,\n" +
+        "            \"navPerUnit\": 20.12,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +
@@ -170,7 +170,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "        \"fundCode\": \"TAN-DIV\",\n" +
         "        \"fundName\": \"Tangerine Dividend Portfolio\",\n" +
         "        \"units\": 10.0,\n" +
-        "        \"navPerUnit\": 15.75,\n" +
+        "        \"navPerUnit\": 18.75,\n" +
         "        \"distributionType\": \"DIVIDEND\",\n" +
         "        \"taxYear\": 2025\n" +
 "        }\n" +
@@ -199,7 +199,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-DIV\",\n" +
         "            \"fundName\": \"Tangerine Dividend Portfolio\",\n" +
         "            \"units\": 63.4921,\n" +
-        "            \"navPerUnit\": 15.75,\n" +
+        "            \"navPerUnit\": 18.75,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +
@@ -228,7 +228,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-DIV\",\n" +
         "            \"fundName\": \"Tangerine Dividend Portfolio\",\n" +
         "            \"units\": 0.8,\n" +
-        "            \"navPerUnit\": 15.75,\n" +
+        "            \"navPerUnit\": 18.75,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +
@@ -257,7 +257,7 @@ const val ACTIVITIES_MOCK = "[\n" +
         "            \"fundCode\": \"TAN-DIV\",\n" +
         "            \"fundName\": \"Tangerine Dividend Portfolio\",\n" +
         "            \"units\": 10.0,\n" +
-        "            \"navPerUnit\": 15.75,\n" +
+        "            \"navPerUnit\": 18.75,\n" +
         "            \"distributionType\": \"DIVIDEND\",\n" +
         "            \"taxYear\": 2025\n" +
         "        }\n" +

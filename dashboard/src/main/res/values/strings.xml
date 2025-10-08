@@ -11,7 +11,7 @@
     <string name="text_earned_this_month">earned this month</string>
     <string name="text_assets">Assets</string>
     <string name="text_add">Add %s</string>
-    <string name="text_edit_asset">Edit Asset</string>
+    <string name="text_confirm_changes">Confirm Changes</string>
     <string name="text_update_asset">Update Asset</string>
     <string name="format_delete_item">Delete %s</string>
     <string name="text_are_you_sure_you_want_to_delete_asset">Are you sure you want to delete this asset? This action will permanently remove it from your history.</string>
@@ -87,6 +87,9 @@
     <string name="text_liability_lowercase">liability</string>
     <string name="text_add_liability">Add Liability</string>
     <string name="text_add_asset">Add Asset</string>
+    <string name="text_external_liabilities">External Liabilities</string>
+    <string name="text_tangerine_assets">Tangerine Assets</string>
+    <string name="text_external_assets">External Assets</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
