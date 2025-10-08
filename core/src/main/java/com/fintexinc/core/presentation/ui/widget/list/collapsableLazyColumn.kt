@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -34,9 +33,10 @@ import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
+// TODO: fully refactor when there is time
 fun collapsableLazyColumn(
     scope: LazyListScope,
-    dataPoints: List<DataPoint>,
+    dataPoints: Map<String, List<DataPoint>>,
     expanded: MutableState<Boolean>,
     title: String,
     subtitle: String? = null,
@@ -55,16 +55,17 @@ fun collapsableLazyColumn(
                     expanded.value = !expanded.value
                 }
                 .then(
-                    if(expanded.value) {
+                    if (expanded.value) {
                         Modifier.background(color = Colors.Transparent)
                     } else {
-                        Modifier.background(
-                            color = Colors.Background,
-                            if (isLastList) RoundedCornerShape(
-                                bottomStart = 16.dp,
-                                bottomEnd = 16.dp
-                            ) else RectangleShape
-                        )
+                        Modifier
+                            .background(
+                                color = Colors.Background,
+                                if (isLastList) RoundedCornerShape(
+                                    bottomStart = 16.dp,
+                                    bottomEnd = 16.dp
+                                ) else RectangleShape
+                            )
                             .then(
                                 if (isLastList) {
                                     Modifier
@@ -86,7 +87,8 @@ fun collapsableLazyColumn(
                                                 topEnd = 16.dp
                                             )
                                         )
-                                })
+                                }
+                            )
                     }
                 )
                 .padding(vertical = 12.dp, horizontal = 16.dp)
@@ -98,7 +100,7 @@ fun collapsableLazyColumn(
                 style = FontStyles.BodyLargeBold,
                 color = Colors.BrandBlack
             )
-            if(subtitle != null) {
+            if (subtitle != null) {
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = subtitle,
@@ -108,18 +110,37 @@ fun collapsableLazyColumn(
             }
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
+                painter = if (expanded.value) painterResource(
+                    R.drawable.ic_chevron_up
+                ) else painterResource(
+                    R.drawable.ic_chevron_down
+                ),
                 tint = Colors.BrandBlack,
                 contentDescription = stringResource(R.string.description_icon_expand_collapse),
             )
         }
     }
     if (expanded.value) {
-        items(dataPoints) {
-            DataPointCollapsableUI(
-                dataPoint = it,
-                onClick = onItemClick
-            )
+        dataPoints.forEach { (entryTitle, entryList) ->
+            item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 34.dp, vertical = 8.dp),
+                    text = entryTitle,
+                    style = FontStyles.BodySmall,
+                    color = Colors.Text
+                )
+            }
+            entryList.forEach { dataPoint ->
+                item {
+                    DataPointCollapsableUI(
+                        dataPoint = dataPoint,
+                        onClick = onItemClick
+                    )
+                }
+            }
         }
         item {
             Spacer(

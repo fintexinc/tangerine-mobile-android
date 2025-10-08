@@ -7,11 +7,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -136,7 +142,6 @@ private fun Content(
 
     if (showBottomSheet) {
         val bottomSheetState = rememberBottomSheetScaffoldState()
-
         BottomSheetScaffold(
             scaffoldState = bottomSheetState,
             sheetContent = {
@@ -210,54 +215,49 @@ private fun MainPageContent(
             .background(color = Colors.BackgroundSubdued)
             .verticalScroll(rememberScrollState())
     ) {
-        ToolBar(
-            text = "Jack Dawson TFSA",
-            leftIcon = {
+        ToolBar(text = "Jack Dawson TFSA", leftIcon = {
+            Icon(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .clickable {
+                        onBackClicked()
+                    },
+                painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
+                contentDescription = stringResource(R.string.description_icon_navigate_back),
+                tint = Colors.Primary,
+            )
+        }, rightIcon = {
+            Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
                 Icon(
+                    painter = painterResource(com.fintexinc.core.R.drawable.icon_dots),
+                    contentDescription = stringResource(R.string.description_icon_navigate_edit),
+                    tint = Colors.Primary,
                     modifier = Modifier
                         .wrapContentSize()
-                        .clickable {
-                            onBackClicked()
-                        },
-                    painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
-                    contentDescription = stringResource(R.string.description_icon_navigate_back),
-                    tint = Colors.Primary,
-                )
-            },
-            rightIcon = {
-                Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-                    Icon(
-                        painter = painterResource(com.fintexinc.core.R.drawable.icon_dots),
-                        contentDescription = stringResource(R.string.description_icon_navigate_edit),
-                        tint = Colors.Primary,
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .clickable { showMenu = true }
-                    )
+                        .clickable { showMenu = true })
 
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false },
-                        offset = DpOffset(x = (-16).dp, y = 0.dp),
-                        shape = RoundedCornerShape(0.dp),
-                        modifier = Modifier
-                            .shadow(
-                                elevation = 16.dp,
-                                clip = false,
-                            )
-                            .background(Colors.Background),
-                    ) {
-                        CustomMenuItem(
-                            text = stringResource(R.string.text_investor_profile),
-                            onClick = {
-                                showMenu = false
-                                navigateToInvestorProfile()
-                            },
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                    offset = DpOffset(x = (-16).dp, y = 0.dp),
+                    shape = RoundedCornerShape(0.dp),
+                    modifier = Modifier
+                        .shadow(
+                            elevation = 16.dp,
+                            clip = false,
                         )
-                    }
+                        .background(Colors.Background),
+                ) {
+                    CustomMenuItem(
+                        text = stringResource(R.string.text_investor_profile),
+                        onClick = {
+                            showMenu = false
+                            navigateToInvestorProfile()
+                        },
+                    )
                 }
             }
-        )
+        })
         AccountBalanceCard(
             balance = "$28,230.00",
             portfolioType = "Balanced Core Portfolio",
@@ -267,11 +267,9 @@ private fun MainPageContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         AccountTabsUI(
-            selectedTab,
-            onTabSelected = { tab ->
+            selectedTab, onTabSelected = { tab ->
                 onTabSelected(tab)
-            }
-        )
+            })
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -386,7 +384,9 @@ private fun AccountBalanceCard(
 ) {
     Column(
         modifier = modifier
-            .background(Colors.Background, shape = RoundedCornerShape(bottomEnd = 16.dp))
+            .background(
+                Colors.Background, shape = RoundedCornerShape(bottomEnd = 16.dp)
+            )
             .fillMaxWidth()
             .padding(horizontal = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -416,8 +416,7 @@ private fun AccountBalanceCard(
 
 @Composable
 private fun AccountTabsUI(
-    selectedTab: MutableState<AccountTab>,
-    onTabSelected: @Composable (AccountTab) -> Unit = {}
+    selectedTab: MutableState<AccountTab>, onTabSelected: @Composable (AccountTab) -> Unit = {}
 ) {
     onTabSelected(selectedTab.value)
 
@@ -475,15 +474,12 @@ private fun AccountTab(
     onClick: () -> Unit,
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier
     ) {
         Box(
             modifier = Modifier
                 .shadow(
-                    elevation = 8.dp,
-                    shape = RoundedCornerShape(12.dp),
-                    clip = false
+                    elevation = 8.dp, shape = RoundedCornerShape(12.dp), clip = false
                 )
                 .background(color = Colors.Background, shape = RoundedCornerShape(12.dp))
                 .clickableShape(shape = RoundedCornerShape(12.dp), onClick = { onClick() })
@@ -517,21 +513,17 @@ private fun CustomMenuItem(
     Box(
         modifier = modifier
             .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 6.dp)
-    ) {
+            .padding(horizontal = 16.dp, vertical = 6.dp)) {
         Text(
-            text = text,
-            style = TextStyle(
-                fontSize = 16.sp,
-                color = Colors.BrandBlack
+            text = text, style = TextStyle(
+                fontSize = 16.sp, color = Colors.BrandBlack
             )
         )
     }
 }
 
 enum class AccountTab(val label: String) {
-    BUY_FUNDS("Buy_Funds"),
-    SELL_FUNDS("Sell_Funds"),
-    AUTOMATIC_PURCHASES("Automatic_Purchases"),
-    SWITCH_PORTFOLIO("Switch_Portfolio")
+    BUY_FUNDS("Buy_Funds"), SELL_FUNDS("Sell_Funds"), AUTOMATIC_PURCHASES("Automatic_Purchases"), SWITCH_PORTFOLIO(
+        "Switch_Portfolio"
+    )
 }

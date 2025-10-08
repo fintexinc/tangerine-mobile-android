@@ -1,6 +1,5 @@
 package com.fintexinc.core.presentation.ui.widget.add
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -129,7 +128,7 @@ fun AddItemSelection(
                 modifier = Modifier
                     .wrapContentSize()
                     .padding(horizontal = 6.dp),
-                painter = painterResource(id = R.drawable.ic_arrow_down),
+                painter = painterResource(id = R.drawable.ic_chevron_down),
                 contentDescription = stringResource(R.string.description_icon_add),
                 tint = Colors.BrandBlack
             )

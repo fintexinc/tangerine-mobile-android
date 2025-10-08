@@ -97,11 +97,6 @@ object FontStyles {
         fontSize = 14.sp,
         lineHeight = 20.sp
     )
-    val BodySmallItalic = TextStyle(
-        fontFamily = tangerineCircularBookItalic,
-        fontSize = 12.sp,
-        lineHeight = 14.sp
-    )
     val DisplaySmall = TextStyle(
         fontFamily = tangerineCircularBold,
         fontSize = 32.sp,
@@ -127,5 +122,12 @@ object FontStyles {
         fontFamily = tangerineCircularMedium,
         fontSize = 18.sp,
         lineHeight = 24.sp
+    )
+
+    val BodySmallItalic = TextStyle(
+        fontFamily = tangerineCircularMediumItalic,
+        fontSize = 12.sp,
+        lineHeight = 15.sp,
+        fontWeight = FontWeight.W400
     )
 }
