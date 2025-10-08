@@ -70,7 +70,7 @@ fun SummaryUI(
                 dotColor = Color(0xFFE57373),
             ),
             DataSectionItemUi(
-                label = "Scotia Emerging Markets\nEquityIndex EF",
+                label = "Scotia Emerging Markets\nEquity Index EF",
                 value = "15%",
                 hasInfoIcon = false,
                 isMultiline = true,
@@ -80,7 +80,7 @@ fun SummaryUI(
             DataSectionItemUi(
                 label = "Scotia Canadian Large Cap\nEquity Index Tracker ETF",
                 value = "6%",
-                isMultiline = false,
+                isMultiline = true,
                 showColorDot = true,
                 dotColor = Color(0xFFB2EBF2),
             )
@@ -107,7 +107,7 @@ fun SummaryUI(
             text = stringResource(R.string.text_info_allocations),
             style = FontStyles.BodySmallItalic,
             color = Colors.BorderInformation,
-            modifier = Modifier.padding(horizontal = 18.dp),
+            modifier = Modifier.padding(horizontal = 26.dp),
         )
 
         Spacer(modifier = Modifier.height(24.dp))

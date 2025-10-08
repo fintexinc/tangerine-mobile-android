@@ -63,7 +63,7 @@
     <string name="type_contributions_deposits">Contributions &amp; Deposits</string>
     <string name="type_withdrawals">Withdrawals</string>
     <string name="type_buys">Buy</string>
-    <string name="type_sells">Sells</string>
+    <string name="type_sells">Sell</string>
     <string name="type_automatic_purchase">Automatic Purchase</string>
     <string name="type_switch">Switch</string>
     <string name="type_transfer_in">Transfer In</string>
