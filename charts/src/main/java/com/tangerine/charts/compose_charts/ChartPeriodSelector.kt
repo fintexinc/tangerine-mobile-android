@@ -31,7 +31,7 @@ fun ChartPeriodSelector(
         Period.THREE_MONTHS,
         Period.SIX_MONTHS,
         Period.ONE_YEAR,
-        Period.ALL
+//        Period.ALL
     )
     val selectedPeriod = remember {
         mutableStateOf<Period>(Period.SIX_MONTHS)
