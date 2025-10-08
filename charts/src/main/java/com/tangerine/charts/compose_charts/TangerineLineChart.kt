@@ -83,7 +83,7 @@ private fun getPerformanceByMonth(
 ): Map<String, Double> {
     val today = LocalDate.now()
     val monthsToInclude = period.countOfMonths
-    val startDate = today.minusMonths((monthsToInclude + 1).toLong()).withDayOfMonth(1)
+    val startDate = today.minusMonths((monthsToInclude).toLong()).withDayOfMonth(1)
     val endDate = today.withDayOfMonth(today.lengthOfMonth()) // last day of current month
 
     return performances
