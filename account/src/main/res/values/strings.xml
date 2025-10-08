@@ -99,6 +99,7 @@
     <string name="text_account_performance">Account Performance</string>
     <string name="text_empty_transactions">Couldn’t find any transactions</string>
     <string name="text_try_again">Adjust your filters and try again!</string>
+    <string name="text_empty_documents">Can’t find any documents</string>
 
     <string name="description_icon_close">Close</string>
     <string name="description_icon_search">Search</string>

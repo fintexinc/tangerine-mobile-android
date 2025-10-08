@@ -19,6 +19,7 @@ import com.tangerine.account.R
 @Composable
 internal fun EmptyScreen(
     modifier: Modifier,
+    title: Int = R.string.text_empty_transactions,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -27,7 +28,7 @@ internal fun EmptyScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(R.string.text_empty_transactions),
+            text = stringResource(title),
             color = Colors.Text,
             style = FontStyles.TitleSmall,
         )

@@ -138,7 +138,17 @@ class MainActivity : ComponentActivity() {
                             },
                             onDateFilterChanged = { data, month, year ->
                                 accountViewModel.onTransactionDateFilterChanged(data, month, year)
-                            }
+                            },
+                            onDateFilterChangedDocument = { data, month, year ->
+                                accountViewModel.onBottomSheetDocumentsDateFilterChanged(
+                                    data,
+                                    month,
+                                    year
+                                )
+                            },
+                            onDocumentTypeFilterChanged = { type ->
+                                accountViewModel.onBottomSheetDocumentsTypeFilterChanged(type)
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {

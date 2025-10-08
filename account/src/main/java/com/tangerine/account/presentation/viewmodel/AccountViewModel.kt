@@ -1,9 +1,9 @@
 package com.tangerine.account.presentation.viewmodel
 
+import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.NameValue
 import com.fintexinc.core.domain.gateway.AccountGateway
 import com.fintexinc.core.domain.model.Account
@@ -14,6 +14,7 @@ import com.fintexinc.core.domain.model.Transaction
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
 import com.tangerine.account.presentation.models.DateFilterUi.*
+import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.models.TransactionStatusFilter
@@ -497,12 +498,6 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    private fun isToday(date: Calendar): Boolean {
-        val today = Calendar.getInstance()
-        return date.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
-                date.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)
-    }
-
     private fun isWithinDays(date: Calendar, days: Int): Boolean {
         val now = Calendar.getInstance()
         val startDate = Calendar.getInstance().apply {
@@ -514,6 +509,82 @@ class AccountViewModel @Inject constructor(
     private fun isThisYear(date: Calendar): Boolean {
         val now = Calendar.getInstance()
         return date.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+    }
+
+    fun onBottomSheetDocumentsDateFilterChanged(
+        dateFilters: List<DateFilterUi>,
+        selectedMonth: Int? = null,
+        selectedYear: Int? = null
+    ) = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+        val bottomSheet = current.bottomSheet
+
+        val filteredDocuments = if (dateFilters.contains(ALL_DATES)) {
+            bottomSheet.documents.all
+        } else {
+            bottomSheet.documents.all.filter { document ->
+                val documentDate = parseDocumentDate(document.subName)
+
+                dateFilters.any { filter ->
+                    when (filter) {
+                        ALL_DATES -> true
+                        LAST_30_DAYS -> isWithinDays(documentDate, 30)
+                        LAST_60_DAYS -> isWithinDays(documentDate, 60)
+                        LAST_90_DAYS -> isWithinDays(documentDate, 90)
+                        TWELVE_MONTH -> isThisYear(documentDate)
+                        CURRENT_MONTH -> isCurrentMonth(documentDate)
+                        BY_MONTH -> {
+                            if (selectedMonth != null && selectedYear != null) {
+                                isByMonth(documentDate, selectedMonth, selectedYear)
+                            } else {
+                                false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = bottomSheet.copy(
+                    documents = bottomSheet.documents.copy(
+                        filtered = filteredDocuments
+                    )
+                )
+            )
+        )
+    }
+
+    private fun parseDocumentDate(dateString: String): Calendar {
+        val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
+        val date = formatter.parse(dateString)
+        return Calendar.getInstance().apply {
+            time = date ?: Date()
+        }
+    }
+
+    fun onBottomSheetDocumentsTypeFilterChanged(types: List<DocumentTypeFilterUi>) = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+        val bottomSheet = current.bottomSheet
+
+        val filteredDocuments = if (types.contains(DocumentTypeFilterUi.ALL_DOCUMENTS)) {
+            bottomSheet.documents.all
+        } else {
+            bottomSheet.documents.all.filter { document ->
+                types.contains(document.type)
+            }
+        }
+
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = bottomSheet.copy(
+                    documents = bottomSheet.documents.copy(
+                        filtered = filteredDocuments
+                    )
+                )
+            )
+        )
     }
 
     // ===================== MOCK DATA =====================
@@ -619,49 +690,63 @@ class AccountViewModel @Inject constructor(
         )
     }
 
-    private fun getMockBottomSheetDocuments(): List<DataPoint> {
+    private fun getMockBottomSheetDocuments(): List<DocumentDataPoint> {
         return listOf(
-            DataPoint(
+            DocumentDataPoint(
                 id = "1",
-                name = "CRM1 Annual Charges and Compensation Report 2024",
-                subName = "MAR 14, 2023",
+                name = "CRM1 Annual Charges and Compensation Report",
+                subName = "Oct 08, 2025",
                 value = null,
-                iconResId = com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file,
+                type = DocumentTypeFilterUi.TAX_DOCUMENTS,
             ),
-            DataPoint(
+            DocumentDataPoint(
                 id = "2",
-                name = "CRM2 Annual Charges and Compensation Report 2024",
-                subName = "MAR 14, 2023",
+                name = "CRM2 Annual Charges and Compensation Report",
+                subName = "Oct 01, 2025",
                 value = null,
-                iconResId = com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file,
+                type = DocumentTypeFilterUi.TAX_DOCUMENTS,
             ),
-            DataPoint(
+            DocumentDataPoint(
                 id = "3",
-                name = "CRM3 Annual Charges and Compensation Report 2024",
-                subName = "MAR 14, 2023",
+                name = "CRM2 Annual Charges and Compensation Report",
+                subName = "Sep 23, 2025",
                 value = null,
-                iconResId = com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file,
+                type = DocumentTypeFilterUi.TAX_DOCUMENTS,
             ),
-            DataPoint(
+            DocumentDataPoint(
                 id = "4",
-                name = "CRM4 Annual Charges and Compensation Report 2024",
-                subName = "MAR 14, 2023",
+                name = "CRM2 Annual Charges and Compensation Report",
+                subName = "Aug 24, 2025",
                 value = null,
-                iconResId = com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file,
+                type = DocumentTypeFilterUi.TAX_DOCUMENTS,
             ),
-            DataPoint(
+            DocumentDataPoint(
                 id = "5",
-                name = "CRM5 Annual Charges and Compensation Report 2024",
-                subName = "MAR 14, 2023",
+                name = "CRM2 Annual Charges and Compensation Report",
+                subName = "Jul 30, 2025",
                 value = null,
-                iconResId = com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file,
+                type = DocumentTypeFilterUi.TAX_DOCUMENTS,
             ),
-            DataPoint(
+            DocumentDataPoint(
                 id = "6",
-                name = "CRM6 Annual Charges and Compensation Report 2024",
-                subName = "MAR 14, 2023",
+                name = "CRM2 Annual Charges and Compensation Report",
+                subName = "Jun 30, 2025",
                 value = null,
-                iconResId = com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file,
+                type = DocumentTypeFilterUi.STATEMENTS,
+            ),
+            DocumentDataPoint(
+                id = "7",
+                name = "CRM2 Annual Charges and Compensation Report",
+                subName = "Sep 15, 2025",
+                value = null,
+                iconResId = com.fintexinc.core.R.drawable.ic_file,
+                type = DocumentTypeFilterUi.TAX_DOCUMENTS,
             ),
         )
     }
@@ -695,9 +780,9 @@ class AccountViewModel @Inject constructor(
     )
 
     data class BottomSheetDocumentsState(
-        val all: List<DataPoint> = emptyList(),
+        val all: List<DocumentDataPoint> = emptyList(),
         val query: String = "",
-        val filtered: List<DataPoint> = emptyList()
+        val filtered: List<DocumentDataPoint> = emptyList()
     )
 
     data class TransactionsState(
@@ -716,3 +801,13 @@ class AccountViewModel @Inject constructor(
         data class Loaded(val mainState: MainState) : State()
     }
 }
+
+data class DocumentDataPoint(
+    val id: String,
+    val name: String,
+    val subName: String,
+    val value: String? = null,
+    val subValue: String? = null,
+    @param:DrawableRes val iconResId :Int? = null,
+    val type: DocumentTypeFilterUi? = null,
+)

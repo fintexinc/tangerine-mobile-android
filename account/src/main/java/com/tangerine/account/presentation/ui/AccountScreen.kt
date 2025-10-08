@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
@@ -53,6 +52,7 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.core.ui.utils.ScreenUtils.GetPercentageOfScreenHeight
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
+import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.models.TransactionStatusFilter
 import com.tangerine.account.presentation.models.TransactionTypeFilterUi
@@ -64,6 +64,7 @@ import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
 import com.tangerine.account.presentation.ui.tab.SummaryUI
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
+import com.tangerine.account.presentation.viewmodel.DocumentDataPoint
 import kotlinx.coroutines.launch
 
 @Composable
@@ -79,6 +80,8 @@ fun AccountScreen(
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
     onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -101,6 +104,8 @@ fun AccountScreen(
                 onTypeFilterChanged = onTypeFilterChanged,
                 onStatusFilterChanged = onStatusFilterChanged,
                 onDateFilterChanged = onDateFilterChanged,
+                onDateFilterChangedDocument = onDateFilterChangedDocument,
+                onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
             )
         }
     }
@@ -120,6 +125,8 @@ private fun Content(
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
     onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -146,6 +153,8 @@ private fun Content(
                     onTypeFilterChanged = onTypeFilterChanged,
                     onStatusFilterChanged = onStatusFilterChanged,
                     onDateFilterChanged = onDateFilterChanged,
+                    onDateFilterChangedDocument = onDateFilterChangedDocument,
+                    onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
                 )
             },
             sheetPeekHeight = 84.dp,
@@ -306,11 +315,13 @@ private fun BottomSheetTabsContent(
     pendingGroups: List<TransactionGroup>,
     onSearchDocumentQueryChanged: (String) -> Unit,
     documentSearchQuery: String,
-    documents: List<DataPoint>,
+    documents: List<DocumentDataPoint>,
     navigateToTransactionDetailScreen: (String) -> Unit,
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
     onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
@@ -353,8 +364,8 @@ private fun BottomSheetTabsContent(
                         onSearchQueryChanged = onSearchDocumentQueryChanged,
                         documents = documents,
                         navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
-                        onDateFilterChanged = onDateFilterChanged,
-
+                        onDateFilterChangedDocument = onDateFilterChangedDocument,
+                        onTypeFilterChanged = onDocumentTypeFilterChanged,
                     )
                 },
                 onTabSelected = {
