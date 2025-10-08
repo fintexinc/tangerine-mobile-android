@@ -1,5 +1,7 @@
 package com.tangerine.account.presentation.ui.bottom_tab
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
@@ -46,6 +49,8 @@ internal fun DocumentsUi(
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
+    val context = LocalContext.current
+
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
     var selectedDates by remember { mutableStateOf(listOf(DateFilterUi.ALL_DATES)) }
@@ -115,7 +120,11 @@ internal fun DocumentsUi(
                         title = document.name,
                         date = document.subName,
                         onClick = {
-                            navigateToTransactionDetailScreen(document.id)
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
+                            )
+                            context.startActivity(intent)
                         },
                         isLastItem = index == filteredDocuments.lastIndex,
                     )
