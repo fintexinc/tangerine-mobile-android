@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 data class Liability(
     val id: String,
     val userId: String,
+    val liabilityName: String,
     @Serializable(with = LiabilityTypeSerializer::class)
     val liabilityType: LiabilityType,
     val accountNumber: String,

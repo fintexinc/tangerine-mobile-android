@@ -135,8 +135,10 @@ fun MyNetWorthUI(
                 NetWorthNotificationUI()
                 Spacer(modifier = Modifier.height(18.dp))
                 NetWorthInfoUI(
-                    assets = assetsCheckedState,
-                    liabilities = liabilitiesCheckedState,
+                    banking = banking,
+                    investment = investment,
+                    custom = custom,
+                    liabilities = liabilities,
                     updateCheckedStates = updateCheckedStates
                 )
             }
@@ -152,7 +154,8 @@ fun MyNetWorthUI(
             dataPoints = mapOf(
                 textTangerineAssets to banking.map { it.checkedState.toDataPoint() } + investment.map { it.checkedState.toDataPoint() },
                 textExternalAssets to custom.map { custom ->
-                    custom.checkedState.toDataPoint().copy(subName ="$effectiveOnText ${custom.asset.linkedDate}" )
+                    custom.checkedState.toDataPoint()
+                        .copy(subName = "$effectiveOnText ${custom.asset.linkedDate}")
                 },
             ),
             expanded = assetsExpanded,
@@ -390,11 +393,39 @@ private fun NetWorthNotificationUI() {
 
 @Composable
 private fun NetWorthInfoUI(
-    assets: List<NameValueChecked>,
-    liabilities: List<NameValueChecked>,
+    banking: List<BankingUI>,
+    investment: List<InvestmentUI>,
+    custom: List<CustomUI>,
+    liabilities: List<LiabilityUI>,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit
 ) {
     val showAccountsBottomSheet = remember { mutableStateOf(false) }
+    val assets = banking.map {
+        it.checkedState.copy(
+            name = "${
+                it.asset.accountType.lowercase().replaceFirstChar { it.uppercase() }
+            } ${it.asset.accountNumber}"
+        )
+    } + investment.map {
+        it.checkedState.copy(
+            name = "${
+                it.asset.accountType.lowercase().replaceFirstChar { it.uppercase() }
+            } ${it.asset.accountNumber}"
+        )
+    } + custom.map {
+        it.checkedState.copy(
+            name = it.asset.assetName
+        )
+    }
+    val liabilities = liabilities.map {
+        if (it.liability.liabilityType == LiabilityType.CREDIT_CARDS) {
+            it.liability.toNameValue()
+                .copy(name = "${it.liability.liabilityName} ${it.liability.accountNumber}")
+        } else {
+            it.liability.toNameValue().copy(name = it.liability.liabilityName)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()

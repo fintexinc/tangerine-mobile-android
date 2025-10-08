@@ -193,6 +193,9 @@ fun LineChart(
 
     // make animators
     LaunchedEffect(data) {
+        persistentIndicatorX.floatValue = -1f
+        persistentIndicatorPosition.value = null
+        persistentIndicatorValue.value = null
         dotAnimators.clear()
         launch {
             data.forEach {

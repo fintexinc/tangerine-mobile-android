@@ -220,7 +220,7 @@ private fun ChipsWithTitle(
                         onItemCheckedChange(index, newChecked)
                     }
                     .padding(horizontal = 12.dp, vertical = 8.dp),
-                text =  item.subName,
+                text =  item.name,
                 style = FontStyles.BodyMedium,
                 color = Colors.TextInteractive
             )
