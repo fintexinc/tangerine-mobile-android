@@ -14,6 +14,8 @@ import com.fintexinc.core.domain.model.Transaction
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.models.TransactionGroup
+import com.tangerine.account.presentation.models.TransactionStatusFilter
+import com.tangerine.account.presentation.models.TransactionTypeFilterUi
 import com.tangerine.account.presentation.models.TransactionUi
 import com.tangerine.account.presentation.models.TransactionUiType
 import com.tangerine.account.presentation.ui.AccountTab
@@ -369,6 +371,58 @@ class AccountViewModel @Inject constructor(
         )
     }
 
+    fun onTransactionTypeFilterChanged(types: List<TransactionTypeFilterUi>) = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+        val bottomSheet = current.bottomSheet
+
+        val filteredTransactions = if (types.contains(TransactionTypeFilterUi.ALL_TYPES)) {
+            bottomSheet.transactions.all
+        } else {
+            bottomSheet.transactions.all.filter { transaction ->
+                types.contains(transaction.transactionTransactionTypeFilter)
+            }
+        }
+
+        val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
+
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = bottomSheet.copy(
+                    transactions = bottomSheet.transactions.copy(
+                        pendingGroups = pendingGroups,
+                        settledGroups = settledGroups
+                    )
+                )
+            )
+        )
+    }
+
+    fun onTransactionStatusFilterChanged(statuses: List<TransactionStatusFilter>) = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+        val bottomSheet = current.bottomSheet
+
+        val filteredTransactions = if (statuses.contains(TransactionStatusFilter.ALL_STATUS)) {
+            bottomSheet.transactions.all
+        } else {
+            bottomSheet.transactions.all.filter { transaction ->
+                statuses.contains(transaction.status)
+            }
+        }
+
+        val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
+
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = bottomSheet.copy(
+                    transactions = bottomSheet.transactions.copy(
+                        pendingGroups = pendingGroups,
+                        settledGroups = settledGroups
+                    )
+                )
+            )
+        )
+    }
+
     // ===================== MOCK DATA =====================
 
     private fun getMockTransactions(): List<TransactionUi> {
@@ -378,42 +432,50 @@ class AccountViewModel @Inject constructor(
                 description = "Purchase 1- Tangerine data mock",
                 fromAccount = "From: CHQSingleAutoKeep",
                 amount = 66.00,
-                date = "Oct 14, 2023",
-                type = TransactionUiType.PENDING
+                date = "Oct 2, 2025",
+                type = TransactionUiType.PENDING,
+                transactionTransactionTypeFilter = TransactionTypeFilterUi.BUYS,
+                status = TransactionStatusFilter.PENDING,
             ),
             TransactionUi(
                 id = "2",
                 description = "Purchase 2- Tangerine ...",
                 fromAccount = "From: CHQSingleAutoKeep",
                 amount = 50.00,
-                date = "Oct 14, 2023",
-                type = TransactionUiType.PENDING
+                date = "Oct 2, 2025",
+                type = TransactionUiType.PENDING,
+                transactionTransactionTypeFilter = TransactionTypeFilterUi.BUYS,
+                status = TransactionStatusFilter.PENDING,
             ),
             TransactionUi(
                 id = "3",
                 description = "Transfer In 1 - Tangerine data mock",
                 fromAccount = "Savings Account Transac data mock",
                 amount = 2600.00,
-                date = "Jan 14, 2023",
+                date = "Oct 2, 2025",
                 type = TransactionUiType.SETTLED,
                 additionalAmount1 = "$19.5200",
-                additionalAmount2 = "133.1967"
+                additionalAmount2 = "133.1967",
+                transactionTransactionTypeFilter = TransactionTypeFilterUi.SELLS,
+                status = TransactionStatusFilter.COMPLETED,
             ),
             TransactionUi(
                 id = "4",
                 description = "Transfer In 2- Tangerine data mock",
                 fromAccount = "Savings Account Transac data mock",
                 amount = 2600.00,
-                date = "Jan 14, 2023",
+                date = "Oct 2, 2025",
                 type = TransactionUiType.SETTLED,
-                additionalAmount1 = "$19.5200"
+                additionalAmount1 = "$19.5200",
+                transactionTransactionTypeFilter = TransactionTypeFilterUi.TRANSFER_OUT,
+                status = TransactionStatusFilter.COMPLETED,
             ),
             TransactionUi(
                 id = "5",
                 description = "Data point 1 (Title)",
                 fromAccount = "Data point 2",
                 amount = 0.0,
-                date = "May 30, 2023",
+                date = "Oct 1, 2025",
                 type = TransactionUiType.PENDING,
                 rightColumnTitle = "Data point 4",
                 rightColumnSubtitle = "Data point 6"

@@ -47,6 +47,7 @@ import com.tangerine.account.presentation.models.TransactionStatusFilter
 import com.tangerine.account.presentation.models.TransactionUiType
 import com.tangerine.account.presentation.models.TransactionTypeFilterUi
 import com.tangerine.account.presentation.ui.components.DateFilterModalBottomSheet
+import com.tangerine.account.presentation.ui.components.EmptyScreen
 import com.tangerine.account.presentation.ui.components.FilterButton
 import com.tangerine.account.presentation.ui.components.MultiSelectChips
 import com.tangerine.account.presentation.ui.components.handleUniversalSelection
@@ -58,6 +59,8 @@ internal fun TransactionsUi(
     settledGroups: List<TransactionGroup>,
     pendingGroups: List<TransactionGroup>,
     searchText: String,
+    onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
+    onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
 ) {
     var isPendingExpanded by remember { mutableStateOf(true) }
     var isSettledExpanded by remember { mutableStateOf(true) }
@@ -70,7 +73,6 @@ internal fun TransactionsUi(
 
     var showStatusFilter by remember { mutableStateOf(false) }
     var selectedStatuses by remember { mutableStateOf(listOf(TransactionStatusFilter.ALL_STATUS)) }
-
 
     val hasSearchResults = pendingGroups.isNotEmpty() || settledGroups.isNotEmpty()
     val isSearching = searchText.isNotBlank()
@@ -99,19 +101,27 @@ internal fun TransactionsUi(
                 ) {
                     item {
                         FilterButton(
-                            text = stringResource(selectedDates.firstOrNull()?.stringResId ?: R.string.filter_all_dates),
+                            text = stringResource(
+                                selectedDates.firstOrNull()?.stringResId
+                                    ?: R.string.filter_all_dates
+                            ),
                             onClick = { showDateFilter = true },
                         )
                     }
                     item {
                         FilterButton(
-                            text = stringResource(selectedTypes.firstOrNull()?.stringResId ?: R.string.type_all_types),
+                            text = stringResource(
+                                selectedTypes.firstOrNull()?.stringResId ?: R.string.type_all_types
+                            ),
                             onClick = { showTypeFilter = true },
                         )
                     }
                     item {
                         FilterButton(
-                            text = stringResource(selectedStatuses.firstOrNull()?.stringResId ?: R.string.status_all_status),
+                            text = stringResource(
+                                selectedStatuses.firstOrNull()?.stringResId
+                                    ?: R.string.status_all_status
+                            ),
                             onClick = { showStatusFilter = true },
                         )
                     }
@@ -120,62 +130,68 @@ internal fun TransactionsUi(
 
             item { Spacer(modifier = Modifier.height(24.dp)) }
 
-            if (isSearching && !hasSearchResults) {
-                //TODO() Empty screen here
-            } else {
+            if (isSearching && !hasSearchResults || settledGroups.isEmpty() && pendingGroups.isEmpty()) {
                 item {
-                    TransactionsSectionHeader(
-                        title = stringResource(R.string.title_pending_transactions).uppercase(),
-                        isExpanded = isPendingExpanded,
-                        onExpandToggle = { isPendingExpanded = !isPendingExpanded },
-                    )
+                    EmptyScreen(modifier = Modifier.fillParentMaxSize())
                 }
+            } else {
+                if (pendingGroups.isNotEmpty()) {
+                    item {
+                        TransactionsSectionHeader(
+                            title = stringResource(R.string.title_pending_transactions).uppercase(),
+                            isExpanded = isPendingExpanded,
+                            onExpandToggle = { isPendingExpanded = !isPendingExpanded },
+                        )
+                    }
 
-                if (isPendingExpanded) {
-                    pendingGroups.forEach { group ->
-                        item {
-                            TransactionDateHeader(date = group.date)
-                        }
+                    if (isPendingExpanded) {
+                        pendingGroups.forEach { group ->
+                            item {
+                                TransactionDateHeader(date = group.date)
+                            }
 
-                        items(group.transactions) { transaction ->
-                            TransactionItem(
-                                transaction = transaction,
-                                onClick = { },
-                            )
-                        }
+                            items(group.transactions) { transaction ->
+                                TransactionItem(
+                                    transaction = transaction,
+                                    onClick = { },
+                                )
+                            }
 
-                        if (group != pendingGroups.last()) {
-                            item { Spacer(modifier = Modifier.height(16.dp)) }
+                            if (group != pendingGroups.last()) {
+                                item { Spacer(modifier = Modifier.height(16.dp)) }
+                            }
                         }
                     }
                 }
 
-                item {
-                    TransactionsSectionHeader(
-                        title = stringResource(R.string.title_settled_transactions).uppercase(),
-                        isExpanded = isSettledExpanded,
-                        onExpandToggle = { isSettledExpanded = !isSettledExpanded }
-                    )
-                }
+                if (settledGroups.isNotEmpty()) {
+                    item {
+                        TransactionsSectionHeader(
+                            title = stringResource(R.string.title_settled_transactions).uppercase(),
+                            isExpanded = isSettledExpanded,
+                            onExpandToggle = { isSettledExpanded = !isSettledExpanded }
+                        )
+                    }
 
-                if (isSettledExpanded) {
-                    settledGroups.forEach { group ->
-                        item {
-                            TransactionDateHeader(group.date)
-                        }
+                    if (isSettledExpanded) {
+                        settledGroups.forEach { group ->
+                            item {
+                                TransactionDateHeader(group.date)
+                            }
 
-                        items(group.transactions) { transaction ->
-                            TransactionItem(
-                                transaction = transaction,
-                                onClick = { },
-                            )
-
-                            if (transaction != group.transactions.last()) {
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    thickness = 0.5.dp,
-                                    color = Color.Gray.copy(alpha = 0.2f),
+                            items(group.transactions) { transaction ->
+                                TransactionItem(
+                                    transaction = transaction,
+                                    onClick = { },
                                 )
+
+                                if (transaction != group.transactions.last()) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                        thickness = 0.5.dp,
+                                        color = Color.Gray.copy(alpha = 0.2f),
+                                    )
+                                }
                             }
                         }
                     }
@@ -205,6 +221,7 @@ internal fun TransactionsUi(
                 selectedTypes = selectedTypes,
                 onTypesSelected = { types ->
                     selectedTypes = types
+                    onTypeFilterChanged(types)
                     showTypeFilter = false
                 },
                 onDismiss = {
@@ -221,6 +238,7 @@ internal fun TransactionsUi(
                 selectedStatuses = selectedStatuses,
                 onStatusesSelected = { statuses ->
                     selectedStatuses = statuses
+                    onStatusFilterChanged(statuses)
                     showStatusFilter = false
                 },
                 onDismiss = {

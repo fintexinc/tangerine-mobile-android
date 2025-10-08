@@ -62,8 +62,12 @@
     <string name="type_all_types">All Transactions</string>
     <string name="type_contributions_deposits">Contributions &amp; Deposits</string>
     <string name="type_withdrawals">Withdrawals</string>
-    <string name="type_buys">Buys</string>
+    <string name="type_buys">Buy</string>
     <string name="type_sells">Sells</string>
+    <string name="type_automatic_purchase">Automatic Purchase</string>
+    <string name="type_switch">Switch</string>
+    <string name="type_transfer_in">Transfer In</string>
+    <string name="type_transfer_out">Transfer Out</string>
     <string name="type_dividends_interest_1">Dividends &amp; Interest</string>
     <string name="text_types_selected">types selected</string>
     <string name="title_status">Status</string>
@@ -93,6 +97,8 @@
     <string name="text_portfolio_info">Portfolio Info</string>
     <string name="text_account_info">Account Info</string>
     <string name="text_account_performance">Account Performance</string>
+    <string name="text_empty_transactions">Couldn’t find any transactions</string>
+    <string name="text_try_again">Adjust your filters and try again!</string>
 
     <string name="description_icon_close">Close</string>
     <string name="description_icon_search">Search</string>
@@ -106,4 +112,5 @@
     <string name="description_documents">Document</string>
     <string name="description_icon_open">Open</string>
     <string name="description_info_icon">Information</string>
+    <string name="description_empty_result">Empty result</string>
 </resources>

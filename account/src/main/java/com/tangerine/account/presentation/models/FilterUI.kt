@@ -26,10 +26,12 @@ enum class DocumentTypeFilterUi(@StringRes val stringResId: Int) {
 
 enum class TransactionTypeFilterUi(@StringRes val stringResId: Int) {
     ALL_TYPES(R.string.type_all_types),
-    CONTRIBUTIONS_DEPOSITS(R.string.type_contributions_deposits),
-    WITHDRAWALS(R.string.type_withdrawals),
     BUYS(R.string.type_buys),
     SELLS(R.string.type_sells),
+    AUTOMATIC_PURCHASE(R.string.type_automatic_purchase),
+    SWITCH(R.string.type_switch),
+    TRANSFER_IN(R.string.type_transfer_in),
+    TRANSFER_OUT(R.string.type_transfer_out),
     DIVIDENDS_INTEREST_1(R.string.type_dividends_interest_1),
 }
 

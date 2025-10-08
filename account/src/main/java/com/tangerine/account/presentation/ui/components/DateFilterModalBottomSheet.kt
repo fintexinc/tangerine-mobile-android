@@ -179,7 +179,7 @@ internal fun MultiSelectChips(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                icons[index]?.let { iconRes ->
+                icons.getOrNull(index)?.let { iconRes ->
                     Icon(
                         painter = painterResource(id = iconRes),
                         contentDescription = null,

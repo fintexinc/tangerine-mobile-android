@@ -128,6 +128,14 @@ class MainActivity : ComponentActivity() {
                             navigateToTransactionDetailScreen = { transactionId ->
                                 navController.navigate(Routes.TransactionDetail(transactionId))
                             },
+                            onTypeFilterChanged = {
+                                accountViewModel.onTransactionTypeFilterChanged(
+                                    it
+                                )
+                            },
+                            onStatusFilterChanged = {
+                                accountViewModel.onTransactionStatusFilterChanged(it)
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {
