@@ -294,6 +294,7 @@ fun MyNetWorthUI(
                                 style = FontStyles.BodySmall,
                                 color = Colors.TextSave
                             )
+                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()

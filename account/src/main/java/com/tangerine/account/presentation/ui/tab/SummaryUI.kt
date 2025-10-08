@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.PerformanceItem
@@ -115,7 +116,7 @@ fun SummaryUI(
             title = stringResource(R.string.text_returns_over_time),
             returnsItems = returnsData,
             holdingsItems = holdingsData,
-            footerText = "Portfolio as of January 1, 2024.",
+            footerText = "Portfolio as of May 7, 2025",
             modifier = Modifier.padding(16.dp)
         )
 
@@ -242,13 +243,15 @@ private fun ReturnsRow(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            modifier = Modifier.weight(1f, fill = false)
         ) {
             Text(
                 text = stringResource(item.label),
                 style = FontStyles.BodyMedium,
                 color = Colors.TextSubdued,
                 maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)
             )
 
             if (item.hasInfoIcon) {

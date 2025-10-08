@@ -693,7 +693,7 @@ class AccountViewModel @Inject constructor(
             ),
             DocumentDataPoint(
                 id = "3",
-                name = "CRM2 Annual Charges and Compensation Report",
+                name = "CRM3 Annual Charges and Compensation Report",
                 subName = "Sep 23, 2025",
                 value = null,
                 iconResId = com.fintexinc.core.R.drawable.ic_file,
@@ -701,7 +701,7 @@ class AccountViewModel @Inject constructor(
             ),
             DocumentDataPoint(
                 id = "4",
-                name = "CRM2 Annual Charges and Compensation Report",
+                name = "CRM4 Annual Charges and Compensation Report",
                 subName = "Aug 24, 2025",
                 value = null,
                 iconResId = com.fintexinc.core.R.drawable.ic_file,
@@ -709,7 +709,7 @@ class AccountViewModel @Inject constructor(
             ),
             DocumentDataPoint(
                 id = "5",
-                name = "CRM2 Annual Charges and Compensation Report",
+                name = "CRM5 Annual Charges and Compensation Report",
                 subName = "Jul 30, 2025",
                 value = null,
                 iconResId = com.fintexinc.core.R.drawable.ic_file,
@@ -717,7 +717,7 @@ class AccountViewModel @Inject constructor(
             ),
             DocumentDataPoint(
                 id = "6",
-                name = "CRM2 Annual Charges and Compensation Report",
+                name = "CRM6 Annual Charges and Compensation Report",
                 subName = "Jun 30, 2025",
                 value = null,
                 iconResId = com.fintexinc.core.R.drawable.ic_file,
@@ -725,7 +725,7 @@ class AccountViewModel @Inject constructor(
             ),
             DocumentDataPoint(
                 id = "7",
-                name = "CRM2 Annual Charges and Compensation Report",
+                name = "CRM7 Annual Charges and Compensation Report",
                 subName = "Sep 15, 2025",
                 value = null,
                 iconResId = com.fintexinc.core.R.drawable.ic_file,
