@@ -7,9 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
@@ -39,8 +42,8 @@ import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.presentation.ui.DashboardScreenUI
-import com.fintexinc.dashboard.presentation.ui.screen.asset.AddEditAssetUI
 import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
+import com.fintexinc.dashboard.presentation.ui.screen.asset.AddEditAssetUI
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI
 import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
@@ -99,58 +102,66 @@ class MainActivity : ComponentActivity() {
                             accountViewModel.getData(args.accountId)
                         }
                         val state = accountViewModel.state.collectAsState()
-                        AccountScreen(
-                            state = state.value,
-                            onBackClicked = {
-                                navController.popBackStack()
-                            },
-                            onOpenDocuments = {
-                                navController.navigate(Routes.Documents)
-                            },
-                            onTabSelected = { tab ->
-                                accountViewModel.onTabChanged(
-                                    tab = tab,
-                                    accountId = args.accountId
-                                )
-                            },
-                            navigateToInvestorProfile = {
-                                // TODO() add navigation to Investor Profile screen
-                            },
-                            onSearchQueryChanged = { searchTransactionText ->
-                                accountViewModel.onSearchTransactionsQueryChanged(
-                                    searchTransactionText
-                                )
-                            },
-                            onSearchDocumentQueryChanged = { searchDocumentText ->
-                                accountViewModel.onBottomSheetDocumentsSearchQueryChanged(
-                                    searchDocumentText
-                                )
-                            },
-                            navigateToTransactionDetailScreen = { transactionId ->
-                                navController.navigate(Routes.TransactionDetail(transactionId))
-                            },
-                            onTypeFilterChanged = {
-                                accountViewModel.onTransactionTypeFilterChanged(
-                                    it
-                                )
-                            },
-                            onStatusFilterChanged = {
-                                accountViewModel.onTransactionStatusFilterChanged(it)
-                            },
-                            onDateFilterChanged = { data, month, year ->
-                                accountViewModel.onTransactionDateFilterChanged(data, month, year)
-                            },
-                            onDateFilterChangedDocument = { data, month, year ->
-                                accountViewModel.onBottomSheetDocumentsDateFilterChanged(
-                                    data,
-                                    month,
-                                    year
-                                )
-                            },
-                            onDocumentTypeFilterChanged = { type ->
-                                accountViewModel.onBottomSheetDocumentsTypeFilterChanged(type)
-                            },
-                        )
+                        Box(
+                            modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues())
+                        ) {
+                            AccountScreen(
+                                state = state.value,
+                                onBackClicked = {
+                                    navController.popBackStack()
+                                },
+                                onOpenDocuments = {
+                                    navController.navigate(Routes.Documents)
+                                },
+                                onTabSelected = { tab ->
+                                    accountViewModel.onTabChanged(
+                                        tab = tab,
+                                        accountId = args.accountId
+                                    )
+                                },
+                                navigateToInvestorProfile = {
+                                    // TODO() add navigation to Investor Profile screen
+                                },
+                                onSearchQueryChanged = { searchTransactionText ->
+                                    accountViewModel.onSearchTransactionsQueryChanged(
+                                        searchTransactionText
+                                    )
+                                },
+                                onSearchDocumentQueryChanged = { searchDocumentText ->
+                                    accountViewModel.onBottomSheetDocumentsSearchQueryChanged(
+                                        searchDocumentText
+                                    )
+                                },
+                                navigateToTransactionDetailScreen = { transactionId ->
+                                    navController.navigate(Routes.TransactionDetail(transactionId))
+                                },
+                                onTypeFilterChanged = {
+                                    accountViewModel.onTransactionTypeFilterChanged(
+                                        it
+                                    )
+                                },
+                                onStatusFilterChanged = {
+                                    accountViewModel.onTransactionStatusFilterChanged(it)
+                                },
+                                onDateFilterChanged = { data, month, year ->
+                                    accountViewModel.onTransactionDateFilterChanged(
+                                        data,
+                                        month,
+                                        year
+                                    )
+                                },
+                                onDateFilterChangedDocument = { data, month, year ->
+                                    accountViewModel.onBottomSheetDocumentsDateFilterChanged(
+                                        data,
+                                        month,
+                                        year
+                                    )
+                                },
+                                onDocumentTypeFilterChanged = { type ->
+                                    accountViewModel.onBottomSheetDocumentsTypeFilterChanged(type)
+                                },
+                            )
+                        }
                     }
                     composable<Routes.MainRoute> {
                         MainRoute(

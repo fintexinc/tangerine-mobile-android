@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
@@ -59,70 +58,4 @@ fun ToolBar(
         Spacer(modifier = Modifier.width(30.dp))
 
     }
-}
-
-@Preview(name = "No Icons", showBackground = true)
-@Composable
-fun ToolBarPreview_NoIcons() {
-    ToolBar(text = "Home")
-}
-
-@Preview(name = "Left Icon Only", showBackground = true)
-@Composable
-fun ToolBarPreview_LeftIconOnly() {
-    ToolBar(
-        text = "Settings",
-        leftIcon = {
-            IconButton(onClick = { }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back_arrow),
-                    contentDescription = "Back",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    )
-}
-
-@Preview(name = "Right Icon Only", showBackground = true)
-@Composable
-fun ToolBarPreview_RightIconOnly() {
-    ToolBar(
-        text = "Profile",
-        rightIcon = {
-            IconButton(onClick = { }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back_arrow),
-                    contentDescription = "Menu",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    )
-}
-
-@Preview(name = "Both Icons", showBackground = true)
-@Composable
-fun ToolBarPreview_BothIcons() {
-    ToolBar(
-        text = "Account Summary",
-        leftIcon = {
-            IconButton(onClick = { }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back_arrow),
-                    contentDescription = "Back",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        },
-        rightIcon = {
-            IconButton(onClick = { }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_edit),
-                    contentDescription = "More",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    )
 }

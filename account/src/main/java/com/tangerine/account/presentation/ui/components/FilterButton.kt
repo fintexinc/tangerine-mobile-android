@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
@@ -53,23 +52,6 @@ internal fun FilterButton(
             contentDescription = null,
             tint = Colors.TextInteractive,
             modifier = Modifier.size(20.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun FilterButtonPreview() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp),
-        horizontalArrangement = Arrangement.Center,
-    ) {
-
-        FilterButton(
-            text = "All Dates",
-            onClick = {}
         )
     }
 }
