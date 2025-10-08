@@ -443,7 +443,7 @@ private fun AccountTabsUI(
             label = stringResource(R.string.text_sell_funds),
             icon = R.drawable.ic_funds_up,
             onClick = {
-                selectedTab.value = AccountTab.SELL_FUNDS
+
             },
         )
 
@@ -452,7 +452,7 @@ private fun AccountTabsUI(
             label = stringResource(R.string.text_automatic_purchases),
             icon = R.drawable.ic_automatic_purchases,
             onClick = {
-                selectedTab.value = AccountTab.AUTOMATIC_PURCHASES
+
             },
         )
 
@@ -460,7 +460,7 @@ private fun AccountTabsUI(
             label = stringResource(R.string.text_switch_portfolio),
             icon = R.drawable.ic_switch_portfolio,
             onClick = {
-                selectedTab.value = AccountTab.SWITCH_PORTFOLIO
+
             },
             modifier = Modifier.weight(1f)
         )
