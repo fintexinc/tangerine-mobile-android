@@ -242,12 +242,13 @@ private fun ReturnsRow(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
         ) {
             Text(
                 text = stringResource(item.label),
                 style = FontStyles.BodyMedium,
                 color = Colors.TextSubdued,
+                maxLines = 2,
             )
 
             if (item.hasInfoIcon) {
@@ -295,7 +296,8 @@ private fun ReturnsRow(
                 Text(
                     text = it,
                     style = FontStyles.BodyMedium,
-                    color = if (item.isPositive == true) Colors.TextSuccess else Colors.TextCritical
+                    color = if (item.isPositive == true) Colors.TextSuccess else Colors.TextCritical,
+                    maxLines = 1,
                 )
             }
         }
