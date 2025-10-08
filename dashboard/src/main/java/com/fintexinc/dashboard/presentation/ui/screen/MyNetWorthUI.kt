@@ -267,11 +267,16 @@ fun MyNetWorthUI(
                     ) {
                         Box(
                             modifier = Modifier
-                                .width(128.dp)
+                                .width(120.dp)
                                 .fillMaxHeight()
                                 .background(
                                     color = Colors.BorderSubdued,
-                                    shape = RoundedCornerShape(16.dp)
+                                    shape = RoundedCornerShape(
+                                        topStart = 16.dp,
+                                        topEnd = 0.dp,
+                                        bottomStart = 16.dp,
+                                        bottomEnd = 0.dp
+                                    )
                                 )
                         )
                         Spacer(modifier = Modifier.width(8.dp))
