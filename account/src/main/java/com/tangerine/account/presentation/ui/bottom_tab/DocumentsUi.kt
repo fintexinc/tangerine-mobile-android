@@ -42,6 +42,7 @@ internal fun DocumentsUi(
     onSearchQueryChanged: (String) -> Unit,
     documents: List<DataPoint>,
     navigateToTransactionDetailScreen: (String) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
 ) {
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
@@ -166,8 +167,9 @@ internal fun DocumentsUi(
                 value = showDateFilter
             },
             selectedDates = selectedDates,
-            onDatesSelected = { newDates ->
+            onDatesSelected = { newDates, month, year ->
                 selectedDates = newDates
+                onDateFilterChanged(newDates, month, year)
                 showDateFilter = false
             },
             onDismiss = { showDateFilter = false },

@@ -136,6 +136,9 @@ class MainActivity : ComponentActivity() {
                             onStatusFilterChanged = {
                                 accountViewModel.onTransactionStatusFilterChanged(it)
                             },
+                            onDateFilterChanged = { data, month, year ->
+                                accountViewModel.onTransactionDateFilterChanged(data, month, year)
+                            }
                         )
                     }
                     composable<Routes.MainRoute> {

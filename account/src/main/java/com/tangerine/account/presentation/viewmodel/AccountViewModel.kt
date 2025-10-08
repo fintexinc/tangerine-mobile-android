@@ -12,6 +12,8 @@ import com.fintexinc.core.domain.model.PerformanceDate
 import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.domain.model.Transaction
 import com.tangerine.account.R
+import com.tangerine.account.presentation.models.DateFilterUi
+import com.tangerine.account.presentation.models.DateFilterUi.*
 import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.models.TransactionStatusFilter
@@ -28,6 +30,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.abs
@@ -371,15 +376,91 @@ class AccountViewModel @Inject constructor(
         )
     }
 
-    fun onTransactionTypeFilterChanged(types: List<TransactionTypeFilterUi>) = viewModelScope.launch {
+    fun onTransactionTypeFilterChanged(types: List<TransactionTypeFilterUi>) =
+        viewModelScope.launch {
+            val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+            val bottomSheet = current.bottomSheet
+
+            val filteredTransactions = if (types.contains(TransactionTypeFilterUi.ALL_TYPES)) {
+                bottomSheet.transactions.all
+            } else {
+                bottomSheet.transactions.all.filter { transaction ->
+                    types.contains(transaction.transactionTransactionTypeFilter)
+                }
+            }
+
+            val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
+
+            _state.value = State.Loaded(
+                current.copy(
+                    bottomSheet = bottomSheet.copy(
+                        transactions = bottomSheet.transactions.copy(
+                            pendingGroups = pendingGroups,
+                            settledGroups = settledGroups
+                        )
+                    )
+                )
+            )
+        }
+
+    fun onTransactionStatusFilterChanged(statuses: List<TransactionStatusFilter>) =
+        viewModelScope.launch {
+            val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+            val bottomSheet = current.bottomSheet
+
+            val filteredTransactions = if (statuses.contains(TransactionStatusFilter.ALL_STATUS)) {
+                bottomSheet.transactions.all
+            } else {
+                bottomSheet.transactions.all.filter { transaction ->
+                    statuses.contains(transaction.status)
+                }
+            }
+
+            val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
+
+            _state.value = State.Loaded(
+                current.copy(
+                    bottomSheet = bottomSheet.copy(
+                        transactions = bottomSheet.transactions.copy(
+                            pendingGroups = pendingGroups,
+                            settledGroups = settledGroups
+                        )
+                    )
+                )
+            )
+        }
+
+    fun onTransactionDateFilterChanged(
+        dateFilters: List<DateFilterUi>,
+        selectedMonth: Int? = null,
+        selectedYear: Int? = null
+    ) = viewModelScope.launch {
         val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
         val bottomSheet = current.bottomSheet
 
-        val filteredTransactions = if (types.contains(TransactionTypeFilterUi.ALL_TYPES)) {
+        val filteredTransactions = if (dateFilters.contains(ALL_DATES)) {
             bottomSheet.transactions.all
         } else {
             bottomSheet.transactions.all.filter { transaction ->
-                types.contains(transaction.transactionTransactionTypeFilter)
+                val transactionDate = parseTransactionDate(transaction.date)
+
+                dateFilters.any { filter: DateFilterUi ->
+                    when (filter) {
+                        ALL_DATES -> true
+                        LAST_30_DAYS -> isWithinDays(transactionDate, 30)
+                        LAST_60_DAYS -> isWithinDays(transactionDate, 60)
+                        LAST_90_DAYS -> isWithinDays(transactionDate, 90)
+                        TWELVE_MONTH -> isThisYear(transactionDate)
+                        CURRENT_MONTH -> isCurrentMonth(transactionDate)
+                        BY_MONTH -> {
+                            if (selectedMonth != null && selectedYear != null) {
+                                isByMonth(transactionDate, selectedMonth, selectedYear)
+                            } else {
+                                false
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -397,30 +478,42 @@ class AccountViewModel @Inject constructor(
         )
     }
 
-    fun onTransactionStatusFilterChanged(statuses: List<TransactionStatusFilter>) = viewModelScope.launch {
-        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-        val bottomSheet = current.bottomSheet
+    private fun isCurrentMonth(date: Calendar): Boolean {
+        val now = Calendar.getInstance()
+        return date.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
+                date.get(Calendar.MONTH) == now.get(Calendar.MONTH)
+    }
 
-        val filteredTransactions = if (statuses.contains(TransactionStatusFilter.ALL_STATUS)) {
-            bottomSheet.transactions.all
-        } else {
-            bottomSheet.transactions.all.filter { transaction ->
-                statuses.contains(transaction.status)
-            }
+    private fun isByMonth(date: Calendar, month: Int, year: Int): Boolean {
+        return date.get(Calendar.YEAR) == year &&
+                date.get(Calendar.MONTH) == (month - 1)
+    }
+
+    private fun parseTransactionDate(dateString: String): Calendar {
+        val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
+        val date = formatter.parse(dateString)
+        return Calendar.getInstance().apply {
+            time = date ?: Date()
         }
+    }
 
-        val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
+    private fun isToday(date: Calendar): Boolean {
+        val today = Calendar.getInstance()
+        return date.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
+                date.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)
+    }
 
-        _state.value = State.Loaded(
-            current.copy(
-                bottomSheet = bottomSheet.copy(
-                    transactions = bottomSheet.transactions.copy(
-                        pendingGroups = pendingGroups,
-                        settledGroups = settledGroups
-                    )
-                )
-            )
-        )
+    private fun isWithinDays(date: Calendar, days: Int): Boolean {
+        val now = Calendar.getInstance()
+        val startDate = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, -days)
+        }
+        return date.after(startDate) && date.before(now) || date == now
+    }
+
+    private fun isThisYear(date: Calendar): Boolean {
+        val now = Calendar.getInstance()
+        return date.get(Calendar.YEAR) == now.get(Calendar.YEAR)
     }
 
     // ===================== MOCK DATA =====================
@@ -432,7 +525,7 @@ class AccountViewModel @Inject constructor(
                 description = "Purchase 1- Tangerine data mock",
                 fromAccount = "From: CHQSingleAutoKeep",
                 amount = 66.00,
-                date = "Oct 2, 2025",
+                date = "Oct 08, 2025",
                 type = TransactionUiType.PENDING,
                 transactionTransactionTypeFilter = TransactionTypeFilterUi.BUYS,
                 status = TransactionStatusFilter.PENDING,
@@ -442,7 +535,7 @@ class AccountViewModel @Inject constructor(
                 description = "Purchase 2- Tangerine ...",
                 fromAccount = "From: CHQSingleAutoKeep",
                 amount = 50.00,
-                date = "Oct 2, 2025",
+                date = "Oct 01, 2025",
                 type = TransactionUiType.PENDING,
                 transactionTransactionTypeFilter = TransactionTypeFilterUi.BUYS,
                 status = TransactionStatusFilter.PENDING,
@@ -452,7 +545,7 @@ class AccountViewModel @Inject constructor(
                 description = "Transfer In 1 - Tangerine data mock",
                 fromAccount = "Savings Account Transac data mock",
                 amount = 2600.00,
-                date = "Oct 2, 2025",
+                date = "Sep 23, 2025",
                 type = TransactionUiType.SETTLED,
                 additionalAmount1 = "$19.5200",
                 additionalAmount2 = "133.1967",
@@ -464,7 +557,7 @@ class AccountViewModel @Inject constructor(
                 description = "Transfer In 2- Tangerine data mock",
                 fromAccount = "Savings Account Transac data mock",
                 amount = 2600.00,
-                date = "Oct 2, 2025",
+                date = "Aug 24, 2025",
                 type = TransactionUiType.SETTLED,
                 additionalAmount1 = "$19.5200",
                 transactionTransactionTypeFilter = TransactionTypeFilterUi.TRANSFER_OUT,
@@ -475,7 +568,7 @@ class AccountViewModel @Inject constructor(
                 description = "Data point 1 (Title)",
                 fromAccount = "Data point 2",
                 amount = 0.0,
-                date = "Oct 1, 2025",
+                date = "Jul 30, 2025",
                 type = TransactionUiType.PENDING,
                 rightColumnTitle = "Data point 4",
                 rightColumnSubtitle = "Data point 6"
@@ -540,35 +633,35 @@ class AccountViewModel @Inject constructor(
                 name = "CRM2 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId =  com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "3",
                 name = "CRM3 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId =  com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "4",
                 name = "CRM4 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId =  com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "5",
                 name = "CRM5 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId =  com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file
             ),
             DataPoint(
                 id = "6",
                 name = "CRM6 Annual Charges and Compensation Report 2024",
                 subName = "MAR 14, 2023",
                 value = null,
-                iconResId =  com.fintexinc.core.R.drawable.ic_file
+                iconResId = com.fintexinc.core.R.drawable.ic_file
             ),
         )
     }

@@ -61,6 +61,7 @@ internal fun TransactionsUi(
     searchText: String,
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
 ) {
     var isPendingExpanded by remember { mutableStateOf(true) }
     var isSettledExpanded by remember { mutableStateOf(true) }
@@ -205,8 +206,9 @@ internal fun TransactionsUi(
                     value = showDateFilter
                 },
                 selectedDates = selectedDates,
-                onDatesSelected = { newDates ->
+                onDatesSelected = { newDates, month, selectedYear ->
                     selectedDates = newDates
+                    onDateFilterChanged(newDates, month, selectedYear)
                     showDateFilter = false
                 },
                 onDismiss = { showDateFilter = false },

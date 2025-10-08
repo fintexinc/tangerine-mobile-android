@@ -52,6 +52,7 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.core.ui.utils.ScreenUtils.GetPercentageOfScreenHeight
 import com.tangerine.account.R
+import com.tangerine.account.presentation.models.DateFilterUi
 import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.models.TransactionStatusFilter
 import com.tangerine.account.presentation.models.TransactionTypeFilterUi
@@ -77,6 +78,7 @@ fun AccountScreen(
     navigateToTransactionDetailScreen: (String) -> Unit,
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -98,6 +100,7 @@ fun AccountScreen(
                 navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
                 onTypeFilterChanged = onTypeFilterChanged,
                 onStatusFilterChanged = onStatusFilterChanged,
+                onDateFilterChanged = onDateFilterChanged,
             )
         }
     }
@@ -116,6 +119,7 @@ private fun Content(
     navigateToInvestorProfile: () -> Unit,
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -141,6 +145,7 @@ private fun Content(
                     navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
                     onTypeFilterChanged = onTypeFilterChanged,
                     onStatusFilterChanged = onStatusFilterChanged,
+                    onDateFilterChanged = onDateFilterChanged,
                 )
             },
             sheetPeekHeight = 84.dp,
@@ -305,6 +310,7 @@ private fun BottomSheetTabsContent(
     navigateToTransactionDetailScreen: (String) -> Unit,
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
@@ -323,6 +329,7 @@ private fun BottomSheetTabsContent(
                         searchText = searchText,
                         onTypeFilterChanged = onTypeFilterChanged,
                         onStatusFilterChanged = onStatusFilterChanged,
+                        onDateFilterChanged = onDateFilterChanged,
                     )
                 },
                 onTabSelected = {
@@ -345,7 +352,9 @@ private fun BottomSheetTabsContent(
                         searchQuery = documentSearchQuery,
                         onSearchQueryChanged = onSearchDocumentQueryChanged,
                         documents = documents,
-                        navigateToTransactionDetailScreen = navigateToTransactionDetailScreen
+                        navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
+                        onDateFilterChanged = onDateFilterChanged,
+
                     )
                 },
                 onTabSelected = {

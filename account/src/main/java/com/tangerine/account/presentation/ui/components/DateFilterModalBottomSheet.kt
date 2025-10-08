@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -36,12 +37,13 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
+import java.util.Calendar
 
 @Composable
 internal fun DateFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
     selectedDates: List<DateFilterUi>,
-    onDatesSelected: (List<DateFilterUi>) -> Unit,
+    onDatesSelected: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDismiss: () -> Unit
 ) {
     val dateEnums = DateFilterUi.entries
@@ -53,11 +55,16 @@ internal fun DateFilterModalBottomSheet(
         mutableStateListOf(*dateEnums.map { it in selectedDates }.toTypedArray())
     }
 
+    var selectedMonth by remember { mutableStateOf<Int?>(null) }
+    var selectedYear by remember { mutableStateOf<Int?>(null) }
+
     val isByMonthSelected = selectedStates.getOrNull(dateEnums.indexOf(DateFilterUi.BY_MONTH)) == true
     var showDatePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(isByMonthSelected) {
-        showDatePicker = isByMonthSelected
+        if (isByMonthSelected) {
+            showDatePicker = true
+        }
     }
 
     UniversalModalBottomSheet(
@@ -65,7 +72,7 @@ internal fun DateFilterModalBottomSheet(
         title = stringResource(R.string.title_timeframe),
         onDoneClick = {
             val selected = dateEnums.filterIndexed { index, _ -> selectedStates[index] }
-            onDatesSelected(selected)
+            onDatesSelected(selected, selectedMonth, selectedYear)
         },
         onDismiss = onDismiss,
     ) {
@@ -93,11 +100,17 @@ internal fun DateFilterModalBottomSheet(
 
             if (showDatePicker) {
                 PickerDialog(
-                    onDateSelected = {
+                    onDateSelected = { month, year ->
+                        selectedMonth = month
+                        selectedYear = year
                         showDatePicker = false
                     },
                     onDismiss = {
                         showDatePicker = false
+                        val byMonthIndex = dateEnums.indexOf(DateFilterUi.BY_MONTH)
+                        if (selectedMonth == null || selectedYear == null) {
+                            selectedStates[byMonthIndex] = false
+                        }
                     },
                 )
             }
@@ -108,16 +121,25 @@ internal fun DateFilterModalBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PickerDialog(
-    onDateSelected: (Long?) -> Unit,
+    onDateSelected: (month: Int, year: Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(
+        initialDisplayMode = DisplayMode.Picker
+    )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                datePickerState.selectedDateMillis?.let { millis ->
+                    val calendar = Calendar.getInstance().apply {
+                        timeInMillis = millis
+                    }
+                    val month = calendar.get(Calendar.MONTH) + 1
+                    val year = calendar.get(Calendar.YEAR)
+                    onDateSelected(month, year)
+                }
                 onDismiss()
             }) {
                 Text("OK")
@@ -129,7 +151,15 @@ internal fun PickerDialog(
             }
         }
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(
+            state = datePickerState,
+            title = {
+                Text(
+                    text = "Select Month and Year",
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        )
     }
 }
 
