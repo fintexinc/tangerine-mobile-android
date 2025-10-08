@@ -81,8 +81,10 @@ fun PerformanceChartUI(
         performance = performance,
         period = period.value,
         onIndexSelected = {
-            performanceValue.doubleValue = performance[it].value
-            asOfDateValue.value = performance[it].date
+            if (it in performance.indices) {
+                performanceValue.doubleValue = performance[it].value
+                asOfDateValue.value = performance[it].date
+            }
         }
     )
     Spacer(modifier = Modifier.height(18.dp))
