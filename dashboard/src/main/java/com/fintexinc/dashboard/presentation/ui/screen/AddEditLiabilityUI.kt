@@ -312,6 +312,7 @@ fun AddEditLiabilityUI(
                             Liability(
                                 id = liability?.id ?: UUID.randomUUID().toString(),
                                 userId = liability?.userId ?: "",
+                                liabilityName = liabilityName.value,
                                 liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                                 accountNumber = UUID.randomUUID().toString(),
                                 balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
@@ -401,6 +402,7 @@ fun AddEditLiabilityUI(
                     Liability(
                         id = liability?.id ?: UUID.randomUUID().toString(),
                         userId = liability?.userId ?: "",
+                        liabilityName = liabilityName.value,
                         liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                         accountNumber = UUID.randomUUID().toString(),
                         balance = currentBalance.value.toDoubleOrNull() ?: 0.0,

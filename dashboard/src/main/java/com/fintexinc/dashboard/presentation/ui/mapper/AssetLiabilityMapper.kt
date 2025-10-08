@@ -12,7 +12,7 @@ import com.fintexinc.dashboard.R
 
 fun Liability.toNameValue() = NameValueChecked(
     id = id,
-    name = liabilityType.label,
+    name = liabilityName,
     value = balance,
     subName = accountNumber,
     date = linkedDate,

@@ -4,8 +4,9 @@ const val LIABILITIES_MOCK = "[\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0001-CC-003\",\n" +
         "        \"userId\": \"INV-0001\",\n" +
-        "        \"liabilityType\": \"Auto Loan\",\n" +
-        "        \"accountNumber\": \"5241-****-****-1122\",\n" +
+        "        \"liabilityName\": \"Loan\",\n" +
+        "        \"liabilityType\": \"Personal Loans\",\n" +
+        "        \"accountNumber\": \"****1122\",\n" +
         "        \"balance\": 420043.55,\n" +
         "        \"limit\": 5000.0,\n" +
         "        \"interestRate\": 19.99,\n" +
@@ -16,7 +17,8 @@ const val LIABILITIES_MOCK = "[\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0001-LOAN-002\",\n" +
         "        \"userId\": \"INV-0001\",\n" +
-        "        \"liabilityType\": \"Auto Loan\",\n" +
+        "        \"liabilityName\": \"Rent\",\n" +
+        "        \"liabilityType\": \"Other\",\n" +
         "        \"accountNumber\": \"LN-001-2021-7788\",\n" +
         "        \"balance\": 500002.0,\n" +
         "         \"linkedDate\": \"2025-02-10\",\n" +
@@ -28,8 +30,9 @@ const val LIABILITIES_MOCK = "[\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-MTG-004\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityName\": \"Credit Card\",\n" +
         "        \"liabilityType\": \"Credit Cards\",\n" +
-        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "        \"accountNumber\": \"****6677\",\n" +
         "        \"balance\": 355000.0,\n" +
         "        \"limit\": 50000.0,\n" +
         "        \"interestRate\": 5.29,\n" +
@@ -53,8 +56,9 @@ const val LIABILITIES_MOCK = "[\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-CC-005\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityName\": \"Credit Card\",\n" +
         "        \"liabilityType\": \"Credit Cards\",\n" +
-        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "        \"accountNumber\": \"****6677\",\n" +
     "           \"linkedDate\": \"2025-04-10\",\n" +
         "        \"balance\": 120002.1,\n" +
         "        \"limit\": 8000.0,\n" +
@@ -65,8 +69,9 @@ const val LIABILITIES_MOCK = "[\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-CC-006\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
+        "        \"liabilityName\": \"Auto Loan\",\n" +
         "        \"liabilityType\": \"Auto Loan\",\n" +
-        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "        \"accountNumber\": \"****6677\",\n" +
         "         \"linkedDate\": \"2025-05-10\",\n" +
         "        \"balance\": 140002.1,\n" +
         "        \"limit\": 8000.0,\n" +
@@ -77,8 +82,9 @@ const val LIABILITIES_MOCK = "[\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-CC-007\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
-        "        \"liabilityType\": \"Auto Loan\",\n" +
-        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "        \"liabilityName\": \"Student Loan\",\n" +
+        "        \"liabilityType\": \"Student Loans\",\n" +
+        "        \"accountNumber\": \"****6677\",\n" +
         "         \"linkedDate\": \"2025-06-10\",\n" +
         "        \"balance\": 340002.1,\n" +
         "        \"limit\": 8000.0,\n" +
@@ -87,36 +93,13 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
         "    }, \n" +
         "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-008\",\n" +
-        "        \"userId\": \"INV-0002\",\n" +
-        "        \"liabilityType\": \"Auto Loan\",\n" +
-        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
-        "         \"linkedDate\": \"2025-07-10\",\n" +
-        "        \"balance\": 140002.1,\n" +
-        "        \"limit\": 8000.0,\n" +
-        "        \"interestRate\": 20.99,\n" +
-        "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
-        "    }, \n" +
-        "    {\n" +
         "        \"id\": \"LIAB-INV-0002-CC-011\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
-        "        \"liabilityType\": \"Student Loans\",\n" +
-        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
+        "        \"liabilityName\": \"Mortgage\",\n" +
+        "        \"liabilityType\": \"Mortgage\",\n" +
+        "        \"accountNumber\": \"6677\",\n" +
         "         \"linkedDate\": \"2025-08-10\",\n" +
         "        \"balance\": 50002.1,\n" +
-        "        \"limit\": 8000.0,\n" +
-        "        \"interestRate\": 20.99,\n" +
-        "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
-        "    }, \n" +
-        "    {\n" +
-        "        \"id\": \"LIAB-INV-0002-CC-012\",\n" +
-        "        \"userId\": \"INV-0002\",\n" +
-        "        \"liabilityType\": \"Student Loans\",\n" +
-        "        \"accountNumber\": \"4539-****-****-6677\",\n" +
-        "         \"linkedDate\": \"2025-09-10\",\n" +
-        "        \"balance\": 44002.1,\n" +
         "        \"limit\": 8000.0,\n" +
         "        \"interestRate\": 20.99,\n" +
         "        \"currency\": \"CAD\",\n" +
