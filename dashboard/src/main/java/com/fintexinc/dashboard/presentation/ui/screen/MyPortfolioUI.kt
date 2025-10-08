@@ -349,6 +349,41 @@ fun MyPortfolioUI(
 
                     isFirst = false
                 }
+
+                // TODO() mock data
+                val nonRegisteredAccounts = listOf(
+                    AccountUI(
+                        accountId = "TFSA-001",
+                        name = "Jack Dawson TFSA",
+                        subName = "39024242",
+                        value = "20,000 CAD",
+                        valueChange = 832.01,
+                        percentageChange = 4.39,
+                    ),
+                    AccountUI(
+                        accountId = "TFSA-002",
+                        name = "Jack Dawson TFSA",
+                        subName = "39024242",
+                        value = "20,000 CAD",
+                        valueChange = 832.01,
+                        percentageChange = 4.39,
+                    ),
+                )
+
+                if (nonRegisteredAccounts.isNotEmpty()) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 18.dp),
+                        color = Colors.BorderSubdued,
+                    )
+
+                    AccountListUI(
+                        title = stringResource(R.string.format_non_registered_accounts),
+                        accounts = nonRegisteredAccounts,
+                        onOpenAccount = null,
+                        totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                        isRoundedTop = false,
+                    )
+                }
             }
         }
 
@@ -498,7 +533,7 @@ private fun AccountListUI(
                         }
                     }
 
-                    if( onOpenAccount != null) {
+                    if (onOpenAccount != null) {
                         Icon(
                             modifier = Modifier.wrapContentSize(),
                             painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),

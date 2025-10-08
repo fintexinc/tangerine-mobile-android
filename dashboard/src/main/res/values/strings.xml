@@ -81,7 +81,7 @@
     <string name="format_performance_as_of_date">Balance as of %s %d</string>
     <string name="text_none">None</string>
     <string name="text_registered_non_registered">Registered/Non-Registered</string>
-    <string name="text_account_type">AccountType</string>
+    <string name="text_account_type">Account Type</string>
     <string name="text_register_non_reg">Registered/Non-Registered</string>
     <string name="text_asset_lowercase">asset</string>
     <string name="text_liability_lowercase">liability</string>
