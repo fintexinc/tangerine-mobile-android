@@ -63,7 +63,7 @@ fun AccountDocumentsUI(onBackClicked: () -> Unit = {}) {
         Spacer(modifier = Modifier.height(12.dp))
         val documents = listOf(
             DocumentItem(
-                name = "CRM2 Annual Charges and Compensation Report 2024",
+                name = "CRM1 Annual Charges and Compensation Report 2024",
                 subName = "August 8th, 2027"
             ),
             DocumentItem(
@@ -71,15 +71,15 @@ fun AccountDocumentsUI(onBackClicked: () -> Unit = {}) {
                 subName = "August 8th, 2027"
             ),
             DocumentItem(
-                name = "CRM2 Annual Charges and Compensation Report 2024",
+                name = "CRM3 Annual Charges and Compensation Report 2024",
                 subName = "August 8th, 2027"
             ),
             DocumentItem(
-                name = "CRM2 Annual Charges and Compensation Report 2024",
+                name = "CRM4 Annual Charges and Compensation Report 2024",
                 subName = "August 8th, 2027"
             ),
             DocumentItem(
-                name = "CRM2 Annual Charges and Compensation Report 2024",
+                name = "CRM5 Annual Charges and Compensation Report 2024",
                 subName = "August 8th, 2027"
             )
         )

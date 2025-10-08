@@ -129,6 +129,27 @@ class MainActivity : ComponentActivity() {
                             navigateToTransactionDetailScreen = { transactionId ->
                                 navController.navigate(Routes.TransactionDetail(transactionId))
                             },
+                            onTypeFilterChanged = {
+                                accountViewModel.onTransactionTypeFilterChanged(
+                                    it
+                                )
+                            },
+                            onStatusFilterChanged = {
+                                accountViewModel.onTransactionStatusFilterChanged(it)
+                            },
+                            onDateFilterChanged = { data, month, year ->
+                                accountViewModel.onTransactionDateFilterChanged(data, month, year)
+                            },
+                            onDateFilterChangedDocument = { data, month, year ->
+                                accountViewModel.onBottomSheetDocumentsDateFilterChanged(
+                                    data,
+                                    month,
+                                    year
+                                )
+                            },
+                            onDocumentTypeFilterChanged = { type ->
+                                accountViewModel.onBottomSheetDocumentsTypeFilterChanged(type)
+                            },
                         )
                     }
                     composable<Routes.MainRoute> {

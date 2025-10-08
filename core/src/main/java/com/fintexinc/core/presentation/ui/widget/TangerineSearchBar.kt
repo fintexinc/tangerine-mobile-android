@@ -49,6 +49,8 @@ fun TangerineSearchBar(
                 .background(color = Colors.LightGray, shape = RoundedCornerShape(12.dp))
                 .padding(8.dp),
             value = searchText,
+            maxLines = 1,
+            singleLine = true,
             onValueChange = onSearchTextChange,
             cursorBrush = SolidColor(Colors.BrandBlack),
             decorationBox = { innerTextField ->

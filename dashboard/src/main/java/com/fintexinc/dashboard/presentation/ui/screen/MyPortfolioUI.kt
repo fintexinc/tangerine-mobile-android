@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
@@ -350,6 +349,41 @@ fun MyPortfolioUI(
 
                     isFirst = false
                 }
+
+                // TODO() mock data
+                val nonRegisteredAccounts = listOf(
+                    AccountUI(
+                        accountId = "TFSA-001",
+                        name = "Jack Dawson TFSA",
+                        subName = "39024242",
+                        value = "20,000 CAD",
+                        valueChange = 832.01,
+                        percentageChange = 4.39,
+                    ),
+                    AccountUI(
+                        accountId = "TFSA-002",
+                        name = "Jack Dawson TFSA",
+                        subName = "39024242",
+                        value = "20,000 CAD",
+                        valueChange = 832.01,
+                        percentageChange = 4.39,
+                    ),
+                )
+
+                if (nonRegisteredAccounts.isNotEmpty()) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 18.dp),
+                        color = Colors.BorderSubdued,
+                    )
+
+                    AccountListUI(
+                        title = stringResource(R.string.format_non_registered_accounts),
+                        accounts = nonRegisteredAccounts,
+                        onOpenAccount = null,
+                        totalSum = accounts.sumOf { it.income }.formatCurrency(),
+                        isRoundedTop = false,
+                    )
+                }
             }
         }
 
@@ -363,9 +397,6 @@ fun MyPortfolioUI(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-        TopHoldingsUI()
-        Spacer(modifier = Modifier.height(30.dp))
-
         data class FilterItemType(override val label: String, val type: GroupingType) : ItemType
 
         val textNone = stringResource(R.string.text_none)
@@ -502,7 +533,7 @@ private fun AccountListUI(
                         }
                     }
 
-                    if( onOpenAccount != null) {
+                    if (onOpenAccount != null) {
                         Icon(
                             modifier = Modifier.wrapContentSize(),
                             painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
@@ -613,69 +644,6 @@ private fun GeographicExposure() {
             Pie("Europe", 35.0, color = Color(0xFFEC407A)),
         )
     )
-}
-
-@Composable
-private fun TopHoldingsUI() {
-    val dataPoints = listOf(
-        DataPoint("Bank of Nova Scotia", "BNS", "10,000 CAD", " (4.39%)"),
-        DataPoint("Bank of Nova Scotia", "BNS", "22,000 CAD", " (4.39%)"),
-        DataPoint("Bank of Nova Scotia", "BNS", "20,000 CAD", " (4.39%)"),
-        DataPoint("Bank of Nova Scotia", "BNS", "21,000 CAD", " (4.39%)"),
-        DataPoint("Bank of Nova Scotia", "BNS", "23,000 CAD", " (4.39%)")
-    ).sortedByDescending { dataPoint ->
-        dataPoint.value?.replace(",", "")?.replace(" CAD", "")?.toDoubleOrNull() ?: 0.0
-    }
-
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(
-                color = Colors.Background,
-                shape = RoundedCornerShape(16.dp)
-            )
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 16.dp),
-            text = stringResource(R.string.text_top_holdings),
-            style = FontStyles.TitleMediumBold
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 16.dp),
-            text = stringResource(R.string.text_largest_positions),
-            style = FontStyles.BodySmall,
-            color = Colors.DarkGray,
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-
-        dataPoints.forEachIndexed { index, dataPoint ->
-            TopHoldingsItem(
-                holdingsName = dataPoint.id,
-                holdingsSubName = dataPoint.name,
-                sum = dataPoint.subName,
-                percent = dataPoint.value ?: ""
-            )
-
-            if (dataPoints.size - 1 != index) {
-                HorizontalDivider(
-                    color = Colors.BorderSubdued,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-    }
 }
 
 @Composable

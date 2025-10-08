@@ -49,7 +49,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
@@ -58,7 +57,11 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.core.ui.utils.ScreenUtils.GetPercentageOfScreenHeight
 import com.tangerine.account.R
+import com.tangerine.account.presentation.models.DateFilterUi
+import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.models.TransactionGroup
+import com.tangerine.account.presentation.models.TransactionStatusFilter
+import com.tangerine.account.presentation.models.TransactionTypeFilterUi
 import com.tangerine.account.presentation.ui.bottom_tab.DetailsUi
 import com.tangerine.account.presentation.ui.bottom_tab.DocumentsUi
 import com.tangerine.account.presentation.ui.bottom_tab.TransactionsUi
@@ -67,6 +70,7 @@ import com.tangerine.account.presentation.ui.tab.DocumentsUI
 import com.tangerine.account.presentation.ui.tab.PositionsUI
 import com.tangerine.account.presentation.ui.tab.SummaryUI
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
+import com.tangerine.account.presentation.viewmodel.DocumentDataPoint
 import kotlinx.coroutines.launch
 
 @Composable
@@ -79,6 +83,11 @@ fun AccountScreen(
     onSearchQueryChanged: (String) -> Unit,
     onSearchDocumentQueryChanged: (String) -> Unit,
     navigateToTransactionDetailScreen: (String) -> Unit,
+    onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
+    onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -98,6 +107,11 @@ fun AccountScreen(
                 onSearchQueryChanged = onSearchQueryChanged,
                 onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
                 navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
+                onTypeFilterChanged = onTypeFilterChanged,
+                onStatusFilterChanged = onStatusFilterChanged,
+                onDateFilterChanged = onDateFilterChanged,
+                onDateFilterChangedDocument = onDateFilterChangedDocument,
+                onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
             )
         }
     }
@@ -114,6 +128,11 @@ private fun Content(
     onSearchDocumentQueryChanged: (String) -> Unit,
     navigateToTransactionDetailScreen: (String) -> Unit,
     navigateToInvestorProfile: () -> Unit,
+    onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
+    onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -123,63 +142,49 @@ private fun Content(
 
     if (showBottomSheet) {
         val bottomSheetState = rememberBottomSheetScaffoldState()
-
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            BottomSheetScaffold(
-                scaffoldState = bottomSheetState,
-                sheetContent = {
-                    val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-                    val screenHeight = androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp.dp
-                    Box(
-                        modifier = Modifier
-                            .heightIn(max = screenHeight - navBarHeight)
-                            .padding(WindowInsets.systemBars.asPaddingValues())
-                    ) {
-                        BottomSheetTabsContent(
-                            bottomSheetState = bottomSheetState,
-                            onSearchQueryChanged = onSearchQueryChanged,
-                            searchText = state.mainState.bottomSheet.transactions.query,
-                            settledGroups = state.mainState.bottomSheet.transactions.settledGroups,
-                            pendingGroups = state.mainState.bottomSheet.transactions.pendingGroups,
-                            onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
-                            documentSearchQuery = state.mainState.bottomSheet.documents.query,
-                            documents = state.mainState.bottomSheet.documents.filtered,
-                            navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
-                        )
-                    }
-                },
-                sheetPeekHeight = 84.dp,
-                sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                sheetContainerColor = Colors.Background,
-                sheetShadowElevation = 16.dp,
-                sheetDragHandle = {
-                    Surface(
-                        modifier = Modifier.padding(top = 8.dp, bottom = 14.dp),
-                        color = Colors.BorderSubdued,
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Box(Modifier.size(width = 24.dp, height = 4.dp))
-                    }
-                }
-            ) {
-                val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-                Box(
-                    modifier = Modifier
-                        .offset(y = -navBarHeight)
-                        .padding(WindowInsets.systemBars.asPaddingValues())
+        BottomSheetScaffold(
+            scaffoldState = bottomSheetState,
+            sheetContent = {
+                BottomSheetTabsContent(
+                    bottomSheetState = bottomSheetState,
+                    onSearchQueryChanged = onSearchQueryChanged,
+                    searchText = state.mainState.bottomSheet.transactions.query,
+                    settledGroups = state.mainState.bottomSheet.transactions.settledGroups,
+                    pendingGroups = state.mainState.bottomSheet.transactions.pendingGroups,
+                    onSearchDocumentQueryChanged = onSearchDocumentQueryChanged,
+                    documentSearchQuery = state.mainState.bottomSheet.documents.query,
+                    documents = state.mainState.bottomSheet.documents.filtered,
+                    navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
+                    onTypeFilterChanged = onTypeFilterChanged,
+                    onStatusFilterChanged = onStatusFilterChanged,
+                    onDateFilterChanged = onDateFilterChanged,
+                    onDateFilterChangedDocument = onDateFilterChangedDocument,
+                    onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
+                )
+            },
+            sheetPeekHeight = 84.dp,
+            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            sheetContainerColor = Colors.Background,
+            sheetShadowElevation = 16.dp,
+            sheetDragHandle = {
+                Surface(
+                    modifier =
+                        Modifier.padding(top = 8.dp, bottom = 14.dp),
+                    color = Colors.BorderSubdued,
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    MainPageContent(
-                        state = state,
-                        selectedTab = selectedTab,
-                        onTabSelected = onTabSelected,
-                        onBackClicked = onBackClicked,
-                        onOpenDocuments = onOpenDocuments,
-                        navigateToInvestorProfile = navigateToInvestorProfile,
-                    )
+                    Box(Modifier.size(width = 24.dp, height = 4.dp))
                 }
             }
+        ) {
+            MainPageContent(
+                state = state,
+                selectedTab = selectedTab,
+                onTabSelected = onTabSelected,
+                onBackClicked = onBackClicked,
+                onOpenDocuments = onOpenDocuments,
+                navigateToInvestorProfile = navigateToInvestorProfile,
+            )
         }
     } else {
         MainPageContent(
@@ -308,8 +313,13 @@ private fun BottomSheetTabsContent(
     pendingGroups: List<TransactionGroup>,
     onSearchDocumentQueryChanged: (String) -> Unit,
     documentSearchQuery: String,
-    documents: List<DataPoint>,
+    documents: List<DocumentDataPoint>,
     navigateToTransactionDetailScreen: (String) -> Unit,
+    onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
+    onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
+    onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
@@ -318,29 +328,48 @@ private fun BottomSheetTabsContent(
             .padding(horizontal = 16.dp)
             .padding(bottom = 28.dp),
         tabs = listOf(
-            TabItem(title = stringResource(R.string.title_transactions), content = {
-                TransactionsUi(
-                    onSearchQueryChanged = onSearchQueryChanged,
-                    settledGroups = settledGroups,
-                    pendingGroups = pendingGroups,
-                    searchText = searchText,
-                )
-            }, onTabSelected = {
-                scope.launch { bottomSheetState.bottomSheetState.expand() }
-            }), TabItem(title = stringResource(R.string.title_details), content = {
-                DetailsUi()
-            }, onTabSelected = {
-                scope.launch { bottomSheetState.bottomSheetState.expand() }
-            }), TabItem(title = stringResource(R.string.title_documents), content = {
-                DocumentsUi(
-                    searchQuery = documentSearchQuery,
-                    onSearchQueryChanged = onSearchDocumentQueryChanged,
-                    documents = documents,
-                    navigateToTransactionDetailScreen = navigateToTransactionDetailScreen
-                )
-            }, onTabSelected = {
-                scope.launch { bottomSheetState.bottomSheetState.expand() }
-            })
+            TabItem(
+                title = stringResource(R.string.title_transactions),
+                content = {
+                    TransactionsUi(
+                        onSearchQueryChanged = onSearchQueryChanged,
+                        settledGroups = settledGroups,
+                        pendingGroups = pendingGroups,
+                        searchText = searchText,
+                        onTypeFilterChanged = onTypeFilterChanged,
+                        onStatusFilterChanged = onStatusFilterChanged,
+                        onDateFilterChanged = onDateFilterChanged,
+                    )
+                },
+                onTabSelected = {
+                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                }
+            ),
+            TabItem(
+                title = stringResource(R.string.title_details),
+                content = {
+                    DetailsUi()
+                },
+                onTabSelected = {
+                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                }
+            ),
+            TabItem(
+                title = stringResource(R.string.title_documents),
+                content = {
+                    DocumentsUi(
+                        searchQuery = documentSearchQuery,
+                        onSearchQueryChanged = onSearchDocumentQueryChanged,
+                        documents = documents,
+                        navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
+                        onDateFilterChangedDocument = onDateFilterChangedDocument,
+                        onTypeFilterChanged = onDocumentTypeFilterChanged,
+                    )
+                },
+                onTabSelected = {
+                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                }
+            )
         ),
         contentMaxHeight = tabsContentMaxHeight
     )
@@ -413,7 +442,7 @@ private fun AccountTabsUI(
             label = stringResource(R.string.text_sell_funds),
             icon = R.drawable.ic_funds_up,
             onClick = {
-                selectedTab.value = AccountTab.SELL_FUNDS
+
             },
         )
 
@@ -422,7 +451,7 @@ private fun AccountTabsUI(
             label = stringResource(R.string.text_automatic_purchases),
             icon = R.drawable.ic_automatic_purchases,
             onClick = {
-                selectedTab.value = AccountTab.AUTOMATIC_PURCHASES
+
             },
         )
 
@@ -430,7 +459,7 @@ private fun AccountTabsUI(
             label = stringResource(R.string.text_switch_portfolio),
             icon = R.drawable.ic_switch_portfolio,
             onClick = {
-                selectedTab.value = AccountTab.SWITCH_PORTFOLIO
+
             },
             modifier = Modifier.weight(1f)
         )

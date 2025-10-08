@@ -15,7 +15,9 @@ data class TransactionUi(
     val additionalAmount1: String? = null,
     val additionalAmount2: String? = null,
     val rightColumnTitle: String? = null,
-    val rightColumnSubtitle: String? = null
+    val rightColumnSubtitle: String? = null,
+    val transactionTransactionTypeFilter: TransactionTypeFilterUi? = null,
+    val status: TransactionStatusFilter? = null,
 ) {
     val formattedAmount: String
         get() = if (amount > 0) "+$${String.format("%.2f", amount)}"

@@ -19,7 +19,7 @@ const val ACCOUNTS_MOCK = "[\n" +
         "    },\n" +
         "    {\n" +
         "        \"id\": \"KYC-INV-002\",\n" +
-        "        \"userId\": \"INV-0001\",\n" +
+        "        \"userId\": \"INV-0001 ***9019\",\n" +
         "        \"accountId\": \"ACCT-INV-002\",\n" +
         "        \"income\": 95000,\n" +
         "        \"householdNetWorth\": 350000,\n" +
@@ -35,7 +35,7 @@ const val ACCOUNTS_MOCK = "[\n" +
         "    },\n" +
         "    {\n" +
         "        \"id\": \"KYC-INV-003\",\n" +
-        "        \"userId\": \"INV-0002\",\n" +
+        "        \"userId\": \"INV-0002 ***9019\",\n" +
         "        \"accountId\": \"ACCT-INV-003\",\n" +
         "        \"income\": 120000,\n" +
         "        \"householdNetWorth\": 650000,\n" +
