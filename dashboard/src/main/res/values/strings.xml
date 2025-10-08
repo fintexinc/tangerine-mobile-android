@@ -26,7 +26,7 @@
     <string name="text_recent_investment_activity_and_document">Recent Investment\nActivity &amp; Documents</string>
     <string name="text_activity">Activity</string>
     <string name="text_documents">Documents</string>
-    <string name="text_articles_you_might_like">Articles you might like</string>
+    <string name="text_articles_you_might_like">Articles You Might Like</string>
     <string name="text_invest">Invest</string>
     <string name="text_invest_instructions">Q2 Investment update 📈 Chaos to comeback</string>
     <string name="text_show_more">Show More</string>
@@ -81,7 +81,7 @@
     <string name="format_performance_as_of_date">Balance as of %s %d</string>
     <string name="text_none">None</string>
     <string name="text_registered_non_registered">Registered/Non-Registered</string>
-    <string name="text_account_type">AccountType</string>
+    <string name="text_account_type">Account Type</string>
     <string name="text_register_non_reg">Registered/Non-Registered</string>
     <string name="text_asset_lowercase">asset</string>
     <string name="text_liability_lowercase">liability</string>

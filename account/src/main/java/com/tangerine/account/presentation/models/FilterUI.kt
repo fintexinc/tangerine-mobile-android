@@ -1,16 +1,20 @@
 package com.tangerine.account.presentation.models
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.tangerine.account.R
 
-enum class DateFilterUi(@StringRes val stringResId: Int) {
+enum class DateFilterUi(
+    @StringRes val stringResId: Int,
+    @DrawableRes val iconResId: Int? = null
+) {
     ALL_DATES(R.string.filter_all_dates),
     LAST_30_DAYS(R.string.filter_last_30_days),
     LAST_60_DAYS(R.string.filter_last_60_days),
     LAST_90_DAYS(R.string.filter_last_90_days),
     TWELVE_MONTH(R.string.filter_12_month),
     CURRENT_MONTH(R.string.filter_current_month),
-    BY_MONTH(R.string.filter_by_month)
+    BY_MONTH(R.string.filter_by_month, R.drawable.ic_calendar)
 }
 
 enum class DocumentTypeFilterUi(@StringRes val stringResId: Int) {
@@ -22,10 +26,12 @@ enum class DocumentTypeFilterUi(@StringRes val stringResId: Int) {
 
 enum class TransactionTypeFilterUi(@StringRes val stringResId: Int) {
     ALL_TYPES(R.string.type_all_types),
-    CONTRIBUTIONS_DEPOSITS(R.string.type_contributions_deposits),
-    WITHDRAWALS(R.string.type_withdrawals),
     BUYS(R.string.type_buys),
     SELLS(R.string.type_sells),
+    AUTOMATIC_PURCHASE(R.string.type_automatic_purchase),
+    SWITCH(R.string.type_switch),
+    TRANSFER_IN(R.string.type_transfer_in),
+    TRANSFER_OUT(R.string.type_transfer_out),
     DIVIDENDS_INTEREST_1(R.string.type_dividends_interest_1),
 }
 

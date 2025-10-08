@@ -1,5 +1,7 @@
 package com.tangerine.account.presentation.ui.bottom_tab
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,9 +22,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.color.Colors
@@ -31,68 +33,43 @@ import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
 import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.ui.components.DateFilterModalBottomSheet
+import com.tangerine.account.presentation.ui.components.EmptyScreen
 import com.tangerine.account.presentation.ui.components.FilterButton
 import com.tangerine.account.presentation.ui.components.MultiSelectChips
 import com.tangerine.account.presentation.ui.components.handleUniversalSelection
+import com.tangerine.account.presentation.viewmodel.DocumentDataPoint
 
 @Composable
 internal fun DocumentsUi(
     modifier: Modifier = Modifier,
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
-    documents: List<DataPoint>,
+    documents: List<DocumentDataPoint>,
     navigateToTransactionDetailScreen: (String) -> Unit,
+    onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
 ) {
+    val context = LocalContext.current
+
     var showDateFilter by remember { mutableStateOf(false) }
     var showDocumentFilter by remember { mutableStateOf(false) }
     var selectedDates by remember { mutableStateOf(listOf(DateFilterUi.ALL_DATES)) }
     var selectedDocumentTypes by remember { mutableStateOf(listOf(DocumentTypeFilterUi.ALL_DOCUMENTS)) }
 
-    // TODO() mock data
-    val documents = listOf(
-        DataPoint(
-            id = "1",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = com.fintexinc.core.R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "2",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = com.fintexinc.core.R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "3",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = com.fintexinc.core.R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "4",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = com.fintexinc.core.R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "5",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = com.fintexinc.core.R.drawable.ic_file
-        ),
-        DataPoint(
-            id = "6",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
-            subName = "MAR 14, 2023",
-            value = null,
-            iconResId = com.fintexinc.core.R.drawable.ic_file
-        ),
-    )
+    val filteredDocuments = remember(documents, searchQuery) {
+        if (searchQuery.isBlank()) {
+            documents
+        } else {
+            documents.filter { document ->
+                document.name.contains(searchQuery, ignoreCase = true) ||
+                        document.subName.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
+
+    val hasActiveFilters = searchQuery.isNotBlank() ||
+            !selectedDates.contains(DateFilterUi.ALL_DATES) ||
+            !selectedDocumentTypes.contains(DocumentTypeFilterUi.ALL_DOCUMENTS)
 
     Column(
         modifier = modifier
@@ -131,18 +108,25 @@ internal fun DocumentsUi(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (documents.isEmpty() && searchQuery.isNotBlank()) {
-            // TODO() Empty state
+        if (filteredDocuments.isEmpty() && hasActiveFilters) {
+            EmptyScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = R.string.text_empty_documents,
+            )
         } else {
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                itemsIndexed(documents) { index, document ->
+                itemsIndexed(filteredDocuments) { index, document ->
                     DocumentItem(
                         title = document.name,
                         date = document.subName,
                         onClick = {
-                            navigateToTransactionDetailScreen("1")// TODO() - delete mock
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
+                            )
+                            context.startActivity(intent)
                         },
-                        isLastItem = index == documents.lastIndex,
+                        isLastItem = index == filteredDocuments.lastIndex,
                     )
                 }
             }
@@ -155,8 +139,9 @@ internal fun DocumentsUi(
                 value = showDateFilter
             },
             selectedDates = selectedDates,
-            onDatesSelected = { newDates ->
+            onDatesSelected = { newDates, month, year ->
                 selectedDates = newDates
+                onDateFilterChangedDocument(newDates, month, year)
                 showDateFilter = false
             },
             onDismiss = { showDateFilter = false },
@@ -171,6 +156,7 @@ internal fun DocumentsUi(
             selectedTypes = selectedDocumentTypes,
             onTypesSelected = { newTypes ->
                 selectedDocumentTypes = newTypes
+                onTypeFilterChanged(newTypes)
                 showDocumentFilter = false
             },
             onDismiss = { showDocumentFilter = false },
