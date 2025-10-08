@@ -353,22 +353,68 @@ class AccountViewModel @Inject constructor(
         val current = (_state.value as? State.Loaded)?.mainState ?: return
         val bottomSheet = current.bottomSheet
 
-        val filteredTransactions = if (query.isBlank()) {
-            bottomSheet.transactions.all
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = bottomSheet.copy(
+                    transactions = bottomSheet.transactions.copy(query = query)
+                )
+            )
+        )
+        applyAllTransactionFilters()
+    }
+
+    //  Transaction filters
+
+    private fun applyAllTransactionFilters() {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return
+        val bottomSheet = current.bottomSheet
+        val transactionsState = bottomSheet.transactions
+
+        val searchFiltered = if (transactionsState.query.isBlank()) {
+            transactionsState.all
         } else {
-            bottomSheet.transactions.all.filter { transaction ->
-                transaction.description.contains(query, ignoreCase = true) ||
-                        transaction.fromAccount.contains(query, ignoreCase = true)
+            transactionsState.all.filter { transaction ->
+                transaction.description.contains(transactionsState.query, ignoreCase = true) ||
+                        transaction.fromAccount.contains(transactionsState.query, ignoreCase = true)
             }
         }
 
-        val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
+        val filtered = searchFiltered.filter { transaction ->
+            // Тип
+            val typeOk = transactionsState.selectedTypes.contains(TransactionTypeFilterUi.ALL_TYPES) ||
+                    transactionsState.selectedTypes.contains(transaction.transactionTransactionTypeFilter)
+
+            val statusOk = transactionsState.selectedStatuses.contains(TransactionStatusFilter.ALL_STATUS) ||
+                    transactionsState.selectedStatuses.contains(transaction.status)
+
+            val dateOk = if (transactionsState.selectedDates.contains(DateFilterUi.ALL_DATES)) {
+                true
+            } else {
+                val date = parseTransactionDate(transaction.date)
+                transactionsState.selectedDates.any { filter ->
+                    when (filter) {
+                        LAST_30_DAYS -> isWithinDays(date, 30)
+                        LAST_60_DAYS -> isWithinDays(date, 60)
+                        LAST_90_DAYS -> isWithinDays(date, 90)
+                        TWELVE_MONTH -> isThisYear(date)
+                        CURRENT_MONTH -> isCurrentMonth(date)
+                        BY_MONTH -> transactionsState.selectedMonth != null &&
+                                transactionsState.selectedYear != null &&
+                                isByMonth(date, transactionsState.selectedMonth, transactionsState.selectedYear)
+                        else -> true
+                    }
+                }
+            }
+
+            typeOk && statusOk && dateOk
+        }
+
+        val (pendingGroups, settledGroups) = groupTransactions(filtered)
 
         _state.value = State.Loaded(
             current.copy(
                 bottomSheet = bottomSheet.copy(
-                    transactions = bottomSheet.transactions.copy(
-                        query = query,
+                    transactions = transactionsState.copy(
                         pendingGroups = pendingGroups,
                         settledGroups = settledGroups
                     )
@@ -377,59 +423,29 @@ class AccountViewModel @Inject constructor(
         )
     }
 
-    fun onTransactionTypeFilterChanged(types: List<TransactionTypeFilterUi>) =
-        viewModelScope.launch {
-            val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-            val bottomSheet = current.bottomSheet
-
-            val filteredTransactions = if (types.contains(TransactionTypeFilterUi.ALL_TYPES)) {
-                bottomSheet.transactions.all
-            } else {
-                bottomSheet.transactions.all.filter { transaction ->
-                    types.contains(transaction.transactionTransactionTypeFilter)
-                }
-            }
-
-            val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
-
-            _state.value = State.Loaded(
-                current.copy(
-                    bottomSheet = bottomSheet.copy(
-                        transactions = bottomSheet.transactions.copy(
-                            pendingGroups = pendingGroups,
-                            settledGroups = settledGroups
-                        )
-                    )
+    fun onTransactionTypeFilterChanged(types: List<TransactionTypeFilterUi>) = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = current.bottomSheet.copy(
+                    transactions = current.bottomSheet.transactions.copy(selectedTypes = types)
                 )
             )
-        }
+        )
+        applyAllTransactionFilters()
+    }
 
-    fun onTransactionStatusFilterChanged(statuses: List<TransactionStatusFilter>) =
-        viewModelScope.launch {
-            val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-            val bottomSheet = current.bottomSheet
-
-            val filteredTransactions = if (statuses.contains(TransactionStatusFilter.ALL_STATUS)) {
-                bottomSheet.transactions.all
-            } else {
-                bottomSheet.transactions.all.filter { transaction ->
-                    statuses.contains(transaction.status)
-                }
-            }
-
-            val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
-
-            _state.value = State.Loaded(
-                current.copy(
-                    bottomSheet = bottomSheet.copy(
-                        transactions = bottomSheet.transactions.copy(
-                            pendingGroups = pendingGroups,
-                            settledGroups = settledGroups
-                        )
-                    )
+    fun onTransactionStatusFilterChanged(statuses: List<TransactionStatusFilter>) = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = current.bottomSheet.copy(
+                    transactions = current.bottomSheet.transactions.copy(selectedStatuses = statuses)
                 )
             )
-        }
+        )
+        applyAllTransactionFilters()
+    }
 
     fun onTransactionDateFilterChanged(
         dateFilters: List<DateFilterUi>,
@@ -437,46 +453,18 @@ class AccountViewModel @Inject constructor(
         selectedYear: Int? = null
     ) = viewModelScope.launch {
         val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-        val bottomSheet = current.bottomSheet
-
-        val filteredTransactions = if (dateFilters.contains(ALL_DATES)) {
-            bottomSheet.transactions.all
-        } else {
-            bottomSheet.transactions.all.filter { transaction ->
-                val transactionDate = parseTransactionDate(transaction.date)
-
-                dateFilters.any { filter: DateFilterUi ->
-                    when (filter) {
-                        ALL_DATES -> true
-                        LAST_30_DAYS -> isWithinDays(transactionDate, 30)
-                        LAST_60_DAYS -> isWithinDays(transactionDate, 60)
-                        LAST_90_DAYS -> isWithinDays(transactionDate, 90)
-                        TWELVE_MONTH -> isThisYear(transactionDate)
-                        CURRENT_MONTH -> isCurrentMonth(transactionDate)
-                        BY_MONTH -> {
-                            if (selectedMonth != null && selectedYear != null) {
-                                isByMonth(transactionDate, selectedMonth, selectedYear)
-                            } else {
-                                false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        val (pendingGroups, settledGroups) = groupTransactions(filteredTransactions)
-
         _state.value = State.Loaded(
             current.copy(
-                bottomSheet = bottomSheet.copy(
-                    transactions = bottomSheet.transactions.copy(
-                        pendingGroups = pendingGroups,
-                        settledGroups = settledGroups
+                bottomSheet = current.bottomSheet.copy(
+                    transactions = current.bottomSheet.transactions.copy(
+                        selectedDates = dateFilters,
+                        selectedMonth = selectedMonth,
+                        selectedYear = selectedYear
                     )
                 )
             )
         )
+        applyAllTransactionFilters()
     }
 
     private fun isCurrentMonth(date: Calendar): Boolean {
@@ -511,49 +499,78 @@ class AccountViewModel @Inject constructor(
         return date.get(Calendar.YEAR) == now.get(Calendar.YEAR)
     }
 
+    //  Document filters
+
+    private fun applyAllDocumentFilters() {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return
+        val bottomSheet = current.bottomSheet
+        val documentsState = bottomSheet.documents
+
+        val filtered = documentsState.all.filter { document ->
+            val typeOk = documentsState.selectedTypes.contains(DocumentTypeFilterUi.ALL_DOCUMENTS) ||
+                    documentsState.selectedTypes.contains(document.type)
+
+            val dateOk = if (documentsState.selectedDates.contains(ALL_DATES)) {
+                true
+            } else {
+                val date = parseDocumentDate(document.subName)
+                documentsState.selectedDates.any { filter ->
+                    when (filter) {
+                        LAST_30_DAYS -> isWithinDays(date, 30)
+                        LAST_60_DAYS -> isWithinDays(date, 60)
+                        LAST_90_DAYS -> isWithinDays(date, 90)
+                        TWELVE_MONTH -> isThisYear(date)
+                        CURRENT_MONTH -> isCurrentMonth(date)
+                        BY_MONTH -> documentsState.selectedMonth != null &&
+                                documentsState.selectedYear != null &&
+                                isByMonth(date, documentsState.selectedMonth, documentsState.selectedYear)
+                        else -> true
+                    }
+                }
+            }
+
+            typeOk && dateOk
+        }
+
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = bottomSheet.copy(
+                    documents = documentsState.copy(filtered = filtered)
+                )
+            )
+        )
+    }
+
     fun onBottomSheetDocumentsDateFilterChanged(
         dateFilters: List<DateFilterUi>,
         selectedMonth: Int? = null,
         selectedYear: Int? = null
     ) = viewModelScope.launch {
         val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-        val bottomSheet = current.bottomSheet
-
-        val filteredDocuments = if (dateFilters.contains(ALL_DATES)) {
-            bottomSheet.documents.all
-        } else {
-            bottomSheet.documents.all.filter { document ->
-                val documentDate = parseDocumentDate(document.subName)
-
-                dateFilters.any { filter ->
-                    when (filter) {
-                        ALL_DATES -> true
-                        LAST_30_DAYS -> isWithinDays(documentDate, 30)
-                        LAST_60_DAYS -> isWithinDays(documentDate, 60)
-                        LAST_90_DAYS -> isWithinDays(documentDate, 90)
-                        TWELVE_MONTH -> isThisYear(documentDate)
-                        CURRENT_MONTH -> isCurrentMonth(documentDate)
-                        BY_MONTH -> {
-                            if (selectedMonth != null && selectedYear != null) {
-                                isByMonth(documentDate, selectedMonth, selectedYear)
-                            } else {
-                                false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         _state.value = State.Loaded(
             current.copy(
-                bottomSheet = bottomSheet.copy(
-                    documents = bottomSheet.documents.copy(
-                        filtered = filteredDocuments
+                bottomSheet = current.bottomSheet.copy(
+                    documents = current.bottomSheet.documents.copy(
+                        selectedDates = dateFilters,
+                        selectedMonth = selectedMonth,
+                        selectedYear = selectedYear
                     )
                 )
             )
         )
+        applyAllDocumentFilters()
+    }
+
+    fun onBottomSheetDocumentsTypeFilterChanged(types: List<DocumentTypeFilterUi>) = viewModelScope.launch {
+        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+        _state.value = State.Loaded(
+            current.copy(
+                bottomSheet = current.bottomSheet.copy(
+                    documents = current.bottomSheet.documents.copy(selectedTypes = types)
+                )
+            )
+        )
+        applyAllDocumentFilters()
     }
 
     private fun parseDocumentDate(dateString: String): Calendar {
@@ -562,29 +579,6 @@ class AccountViewModel @Inject constructor(
         return Calendar.getInstance().apply {
             time = date ?: Date()
         }
-    }
-
-    fun onBottomSheetDocumentsTypeFilterChanged(types: List<DocumentTypeFilterUi>) = viewModelScope.launch {
-        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-        val bottomSheet = current.bottomSheet
-
-        val filteredDocuments = if (types.contains(DocumentTypeFilterUi.ALL_DOCUMENTS)) {
-            bottomSheet.documents.all
-        } else {
-            bottomSheet.documents.all.filter { document ->
-                types.contains(document.type)
-            }
-        }
-
-        _state.value = State.Loaded(
-            current.copy(
-                bottomSheet = bottomSheet.copy(
-                    documents = bottomSheet.documents.copy(
-                        filtered = filteredDocuments
-                    )
-                )
-            )
-        )
     }
 
     // ===================== MOCK DATA =====================
@@ -669,25 +663,14 @@ class AccountViewModel @Inject constructor(
         val current = (_state.value as? State.Loaded)?.mainState ?: return
         val bottomSheet = current.bottomSheet
 
-        val filteredDocuments = if (query.isBlank()) {
-            bottomSheet.documents.all
-        } else {
-            bottomSheet.documents.all.filter { document ->
-                document.name.contains(query, ignoreCase = true) ||
-                        document.subName.contains(query, ignoreCase = true)
-            }
-        }
-
         _state.value = State.Loaded(
             current.copy(
                 bottomSheet = bottomSheet.copy(
-                    documents = bottomSheet.documents.copy(
-                        query = query,
-                        filtered = filteredDocuments
-                    )
+                    documents = bottomSheet.documents.copy(query = query)
                 )
             )
         )
+        applyAllDocumentFilters()
     }
 
     private fun getMockBottomSheetDocuments(): List<DocumentDataPoint> {
@@ -782,7 +765,11 @@ class AccountViewModel @Inject constructor(
     data class BottomSheetDocumentsState(
         val all: List<DocumentDataPoint> = emptyList(),
         val query: String = "",
-        val filtered: List<DocumentDataPoint> = emptyList()
+        val filtered: List<DocumentDataPoint> = emptyList(),
+        val selectedTypes: List<DocumentTypeFilterUi> = listOf(DocumentTypeFilterUi.ALL_DOCUMENTS),
+        val selectedDates: List<DateFilterUi> = listOf(DateFilterUi.ALL_DATES),
+        val selectedMonth: Int? = null,
+        val selectedYear: Int? = null,
     )
 
     data class TransactionsState(
@@ -790,6 +777,11 @@ class AccountViewModel @Inject constructor(
         val query: String = "",
         val pendingGroups: List<TransactionGroup> = emptyList(),
         val settledGroups: List<TransactionGroup> = emptyList(),
+        val selectedTypes: List<TransactionTypeFilterUi> = listOf(TransactionTypeFilterUi.ALL_TYPES),
+        val selectedStatuses: List<TransactionStatusFilter> = listOf(TransactionStatusFilter.ALL_STATUS),
+        val selectedDates: List<DateFilterUi> = listOf(DateFilterUi.ALL_DATES),
+        val selectedMonth: Int? = null,
+        val selectedYear: Int? = null,
     )
 
     data class DetailsState(
