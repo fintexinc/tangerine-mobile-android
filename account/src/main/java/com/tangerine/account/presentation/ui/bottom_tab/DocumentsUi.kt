@@ -52,7 +52,7 @@ internal fun DocumentsUi(
     val documents = listOf(
         DataPoint(
             id = "1",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
+            name = "CRM1 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = com.fintexinc.core.R.drawable.ic_file
@@ -66,33 +66,44 @@ internal fun DocumentsUi(
         ),
         DataPoint(
             id = "3",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
+            name = "CRM3 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = com.fintexinc.core.R.drawable.ic_file
         ),
         DataPoint(
             id = "4",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
+            name = "CRM4 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = com.fintexinc.core.R.drawable.ic_file
         ),
         DataPoint(
             id = "5",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
+            name = "CRM5 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = com.fintexinc.core.R.drawable.ic_file
         ),
         DataPoint(
             id = "6",
-            name = "CRM2 Annual Charges and Compensation Report 2024",
+            name = "CRM6 Annual Charges and Compensation Report 2024",
             subName = "MAR 14, 2023",
             value = null,
             iconResId = com.fintexinc.core.R.drawable.ic_file
         ),
     )
+
+    val filteredDocuments = remember(documents, searchQuery) {
+        if (searchQuery.isBlank()) {
+            documents
+        } else {
+            documents.filter { document ->
+                document.name.contains(searchQuery, ignoreCase = true) ||
+                        document.subName.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -131,18 +142,18 @@ internal fun DocumentsUi(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (documents.isEmpty() && searchQuery.isNotBlank()) {
+        if (filteredDocuments.isEmpty() && searchQuery.isNotBlank()) {
             // TODO() Empty state
         } else {
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                itemsIndexed(documents) { index, document ->
+                itemsIndexed(filteredDocuments) { index, document ->
                     DocumentItem(
                         title = document.name,
                         date = document.subName,
                         onClick = {
-                            navigateToTransactionDetailScreen("1")// TODO() - delete mock
+                            navigateToTransactionDetailScreen(document.id)
                         },
-                        isLastItem = index == documents.lastIndex,
+                        isLastItem = index == filteredDocuments.lastIndex,
                     )
                 }
             }
