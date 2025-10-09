@@ -50,7 +50,8 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.screen.asset.error.AssetError
-import com.fintexinc.dashboard.presentation.ui.screen.asset.error.FieldValidation
+import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityError
+import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityFieldValidation
 import java.util.UUID
 
 @Composable
@@ -101,11 +102,11 @@ fun AddEditLiabilityUI(
         val liabilityValidation = remember {
             mutableStateOf(
                 hashMapOf(
-                    "liabilityType" to FieldValidation(true),
-                    "liabilityName" to FieldValidation(true),
-                    "balance" to FieldValidation(true),
-                    "effectiveDate" to FieldValidation(true),
-                    "revisitDate" to FieldValidation(true)
+                    "liabilityType" to LiabilityFieldValidation(true),
+                    "liabilityName" to LiabilityFieldValidation(true),
+                    "balance" to LiabilityFieldValidation(true),
+                    "effectiveDate" to LiabilityFieldValidation(true),
+                    "revisitDate" to LiabilityFieldValidation(true)
                 ).toMap()
             )
         }
@@ -444,58 +445,58 @@ private fun validateLiability(
     balance: String,
     effectiveDate: String,
     revisitDate: String
-): Map<String, FieldValidation> {
-    val assetValidationResult = hashMapOf<String, FieldValidation>()
+): Map<String, LiabilityFieldValidation> {
+    val assetValidationResult = hashMapOf<String, LiabilityFieldValidation>()
     assetValidationResult["liabilityType"] = when {
-        liabilityType == null -> FieldValidation(
+        liabilityType == null -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.ASSET_TYPE_NOT_SELECTED
+            liabilityError = LiabilityError.LIABILITY_TYPE_NOT_SELECTED
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     assetValidationResult["liabilityName"] = when {
-        liabilityName.isEmpty() -> FieldValidation(
+        liabilityName.isEmpty() -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.ASSET_NAME_MISSING
+            liabilityError = LiabilityError.LIABILITY_NAME_MISSING
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     val estimatedValueDouble = balance.toDoubleOrNull() ?: 0.0
     assetValidationResult["balance"] = when {
-        balance.isEmpty() -> FieldValidation(
+        balance.isEmpty() -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.BALANCE_IS_MISSING
+            liabilityError = LiabilityError.BALANCE_MISSING
         )
 
-        estimatedValueDouble < 0 -> FieldValidation(
+        estimatedValueDouble < 0 -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.BALANCE_NEGATIVE
+            liabilityError = LiabilityError.BALANCE_NEGATIVE
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     assetValidationResult["effectiveDate"] = when {
-        effectiveDate.isEmpty() -> FieldValidation(
+        effectiveDate.isEmpty() -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.EFFECTIVE_DATE_MISSING
+            liabilityError = AssetError.EFFECTIVE_DATE_MISSING
         )
 
-        DateUtils.isDateInFuture(effectiveDate) -> FieldValidation(
+        DateUtils.isDateInFuture(effectiveDate) -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.EFFECTIVE_DATE_IN_FUTURE
+            liabilityError = AssetError.EFFECTIVE_DATE_IN_FUTURE
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     assetValidationResult["revisitDate"] = when {
-        revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> FieldValidation(
+        revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.REVISIT_DATE_IN_PAST
+            liabilityError = AssetError.REVISIT_DATE_IN_PAST
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
 
     return assetValidationResult.toMap()
@@ -503,7 +504,7 @@ private fun validateLiability(
 
 private fun getErrorResIdOrNull(
     fieldName: String,
-    assetValidation: Map<String, FieldValidation>
+    assetValidation: Map<String, LiabilityFieldValidation>
 ): Int? {
-    return assetValidation[fieldName]?.assetError?.messageResId
+    return assetValidation[fieldName]?.liabilityError?.messageResId
 }

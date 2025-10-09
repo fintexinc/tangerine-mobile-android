@@ -1,6 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen.asset.error
 
-data class FieldValidation(
+data class LiabilityFieldValidation(
     val isValid: Boolean,
-    val assetError: AssetError? = null
+    val liabilityError: LiabilityError? = null
 )
