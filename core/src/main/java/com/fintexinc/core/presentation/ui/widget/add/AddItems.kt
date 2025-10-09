@@ -146,6 +146,7 @@ fun AddItemText(
     title: String,
     hint: String,
     prefix: String? = null,
+    suffix: String? = null,
     info: String = "",
     text: String = "",
     @StringRes errorRes: Int? = null,
@@ -180,6 +181,9 @@ fun AddItemText(
                 val newText = when {
                     prefix != null && newText.isNotEmpty() && !newText.startsWith(prefix) -> {
                         "$prefix$newText"
+                    }
+                    suffix != null && newText.isNotEmpty() && !newText.endsWith(suffix) -> {
+                        "$newText$suffix"
                     }
                     else -> {
                         newText

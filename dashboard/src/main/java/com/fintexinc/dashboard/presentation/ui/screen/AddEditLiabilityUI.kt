@@ -1,5 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -53,6 +54,7 @@ import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityError
 import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityFieldValidation
 import java.util.UUID
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun AddEditLiabilityUI(
     liability: Liability?,
@@ -76,13 +78,34 @@ fun AddEditLiabilityUI(
             mutableStateOf(liability?.liabilityType?.label ?: "")
         }
         val currentBalance = remember {
-            mutableStateOf("$currency${if(liability?.balance == null) "" else String.format("%.2f", liability.balance)}")
+            mutableStateOf(
+                "$currency${
+                    if (liability?.balance == null) "" else String.format(
+                        "%.2f",
+                        liability.balance
+                    )
+                }"
+            )
         }
         val monthlyPayment = remember {
-            mutableStateOf("$currency${if(liability?.limit == null) "" else String.format("%.2f", liability?.limit)}")
+            mutableStateOf(
+                "$currency${
+                    if (liability?.limit == null) "" else String.format(
+                        "%.2f",
+                        liability?.limit
+                    )
+                }"
+            )
         }
         val annualInterestRate = remember {
-            mutableStateOf(liability?.interestRate?.toString() ?: "")
+            mutableStateOf(
+                if (liability?.interestRate == null) "" else {
+                    String.format(
+                        "%.2f",
+                        liability.interestRate
+                    ) + "%"
+                }
+            )
         }
         val effectiveDate = remember {
             mutableStateOf(liability?.linkedDate ?: "")
@@ -190,7 +213,10 @@ fun AddEditLiabilityUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_later, stringResource(R.string.text_liability_lowercase)),
+                        text = stringResource(
+                            R.string.text_you_can_remove_later,
+                            stringResource(R.string.text_liability_lowercase)
+                        ),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
@@ -253,6 +279,7 @@ fun AddEditLiabilityUI(
                     title = stringResource(R.string.text_annual_interest_rate),
                     hint = stringResource(R.string.text_percent),
                     info = stringResource(R.string.text_annual_interest_rate_info),
+                    suffix = "%",
                     text = annualInterestRate.value,
                     onTextChanged = { text ->
                         annualInterestRate.value = text
@@ -295,7 +322,7 @@ fun AddEditLiabilityUI(
                                 effectiveDate = effectiveDate.value,
                                 revisitDate = revisitDate.value
                             )
-                            if(validationResult.values.any { !it.isValid }) {
+                            if (validationResult.values.any { !it.isValid }) {
                                 liabilityValidation.value = validationResult
                                 return@PrimaryButton
                             }
@@ -318,7 +345,7 @@ fun AddEditLiabilityUI(
                             effectiveDate = effectiveDate.value,
                             revisitDate = revisitDate.value
                         )
-                        if(validationResult.values.any { !it.isValid }) {
+                        if (validationResult.values.any { !it.isValid }) {
                             liabilityValidation.value = validationResult
                             return@PrimaryButton
                         }
@@ -332,7 +359,10 @@ fun AddEditLiabilityUI(
                                 balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
                                 linkedDate = effectiveDate.value,
                                 limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
-                                interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
+                                interestRate = annualInterestRate.value.substring(
+                                    0,
+                                    endIndex = annualInterestRate.value.length - 1
+                                ).toDoubleOrNull() ?: 0.0,
                                 currency = "$",
                                 lastUpdated = revisitDate.value,
                                 isCustomLiability = true
@@ -408,7 +438,7 @@ fun AddEditLiabilityUI(
                     effectiveDate = effectiveDate.value,
                     revisitDate = revisitDate.value
                 )
-                if(validationResult.values.any { !it.isValid }) {
+                if (validationResult.values.any { !it.isValid }) {
                     liabilityValidation.value = validationResult
                     return@UpdatePopup
                 }
@@ -422,7 +452,10 @@ fun AddEditLiabilityUI(
                         balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
                         linkedDate = effectiveDate.value,
                         limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
-                        interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
+                        interestRate = annualInterestRate.value.substring(
+                            0,
+                            endIndex = annualInterestRate.value.length - 1
+                        ).toDoubleOrNull() ?: 0.0,
                         currency = "$",
                         lastUpdated = revisitDate.value,
                         isCustomLiability = true

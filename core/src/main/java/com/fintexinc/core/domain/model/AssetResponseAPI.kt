@@ -52,6 +52,7 @@ data class Custom(
     val assetName: String,
     @Serializable(with = AssetTypeSerializer::class)
     val assetType: AssetType,
+    val annualizedRateOfReturn: Double,
     val assetValue: Double,
     val linkedDate: String,
     val lastUpdated: String

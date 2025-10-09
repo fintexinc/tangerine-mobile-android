@@ -138,6 +138,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"assetName\": \"Toyota Corolla 2018\",\n" +
         "            \"assetType\": \"Vehicles\",\n" +
         "            \"assetValue\": 220000.0,\n" +
+        "            \"annualizedRateOfReturn\": 15.0,\n" +
         "            \"linkedDate\": \"2025-08-15\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        },\n" +
@@ -146,6 +147,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"userId\": \"INV-0002\",\n" +
         "            \"assetName\": \"Cottage in Muskoka\",\n" +
         "            \"assetType\": \"Real Estate\",\n" +
+        "            \"annualizedRateOfReturn\": 52.0,\n" +
         "            \"assetValue\": 225000.0,\n" +
         "            \"linkedDate\": \"2025-09-12\",\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +

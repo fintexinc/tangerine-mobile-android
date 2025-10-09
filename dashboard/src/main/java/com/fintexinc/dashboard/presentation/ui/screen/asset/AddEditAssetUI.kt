@@ -82,19 +82,33 @@ fun AddEditAssetUI(
             mutableStateOf(asset?.assetName ?: "")
         }
         val estimatedValue = remember {
-            mutableStateOf("$currency${if (asset?.assetValue == null) "" else String.format("%.2f", asset.assetValue)}")
+            mutableStateOf(
+                "$currency${
+                    if (asset?.assetValue == null) "" else String.format(
+                        "%.2f",
+                        asset.assetValue
+                    )
+                }"
+            )
         }
-        val annAnnualizedRateOfReturn = remember {
-            mutableStateOf("")
+        val annualizedRateOfReturn = remember {
+            mutableStateOf(
+                if (asset?.annualizedRateOfReturn == null) "" else {
+                    String.format(
+                        "%.2f",
+                        asset.annualizedRateOfReturn
+                    ) + "%"
+                }
+            )
         }
         val showDialog = remember {
             mutableStateOf<DateSelectionType?>(null)
         }
         val effectiveDate = remember {
-            mutableStateOf(asset?.lastUpdated ?: "")
+            mutableStateOf(asset?.linkedDate ?: "")
         }
         val revisitDate = remember {
-            mutableStateOf(asset?.linkedDate ?: "")
+            mutableStateOf(asset?.lastUpdated ?: "")
         }
         val assetValidation = remember {
             mutableStateOf(
@@ -187,7 +201,10 @@ fun AddEditAssetUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_later, stringResource(R.string.text_asset_lowercase)),
+                        text = stringResource(
+                            R.string.text_you_can_remove_later,
+                            stringResource(R.string.text_asset_lowercase)
+                        ),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
@@ -226,9 +243,11 @@ fun AddEditAssetUI(
                 AddItemText(
                     title = stringResource(R.string.text_annualized_rate_of_return),
                     hint = stringResource(R.string.text_percent),
+                    text = annualizedRateOfReturn.value,
+                    suffix = "%",
                     info = stringResource(R.string.text_ann_rate_of_return_info),
                     onTextChanged = { text ->
-                        annAnnualizedRateOfReturn.value = text
+                        annualizedRateOfReturn.value = text
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -291,6 +310,10 @@ fun AddEditAssetUI(
                                 assetType = assetType.value ?: AssetType.OTHER,
                                 assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
                                     ?: 0.0,
+                                annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
+                                    0,
+                                    endIndex = annualizedRateOfReturn.value.length - 1
+                                ).toDoubleOrNull() ?: 0.0,
                                 linkedDate = effectiveDate.value,
                                 lastUpdated = revisitDate.value
                             )
@@ -375,6 +398,10 @@ fun AddEditAssetUI(
                         assetType = assetType.value ?: AssetType.OTHER,
                         assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
                             ?: 0.0,
+                        annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
+                            0,
+                            endIndex = annualizedRateOfReturn.value.length - 1
+                        ).toDoubleOrNull() ?: 0.0,
                         linkedDate = effectiveDate.value,
                         lastUpdated = revisitDate.value
                     )
