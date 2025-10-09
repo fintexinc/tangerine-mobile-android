@@ -56,9 +56,13 @@ class DashboardViewModel @Inject constructor(
         val liabilities = netWorthGateway.getLiabilities()
         val activities = accountGateway.getActivities().sortedByDescending { it.transactionDate }
             .take(ACTIVITIES_COUNT)
-        val documents = accountGateway.getDocuments().sortedWith(
-            compareBy({ it.documentDate.year }, { it.documentDate.month }, { it.documentDate.day })
+
+        val documents: List<Document> = accountGateway.getDocuments().sortedWith(
+            compareByDescending<Document> { it.documentDate.year }
+                .thenByDescending { it.documentDate.month }
+                .thenByDescending { it.documentDate.day }
         ).take(ACTIVITIES_COUNT)
+
         val performance = accountGateway.getPerformanceData().sortedWith(
             compareBy({ it.date.year }, { it.date.month })
         )
