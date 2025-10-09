@@ -89,6 +89,7 @@
     <string name="text_external_liabilities">External Liabilities</string>
     <string name="text_tangerine_assets">Tangerine Assets</string>
     <string name="text_external_assets">External Assets</string>
+    <string name="text_investor_performance">Investment Performance</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>

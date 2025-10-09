@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -41,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -258,6 +260,7 @@ private fun MainPageContent(
                 }
             }
         })
+
         AccountBalanceCard(
             balance = "$28,230.00",
             portfolioType = "Balanced Core Portfolio",
@@ -401,7 +404,28 @@ private fun AccountBalanceCard(
             style = FontStyles.DisplaySmall,
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Row( // TODO() refactor
+            modifier = Modifier
+                .background(Colors.TextSuccess.copy(alpha = 0.1f), RoundedCornerShape(4.dp)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow),
+                tint = Colors.TextSuccess,
+                contentDescription = "",
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp, bottom = 4.dp).rotate(180f)
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = "50.42 (+10.00%) All Time",
+                color = Colors.TextSuccess,
+                style = FontStyles.BodySmall,
+                modifier = Modifier.padding(end = 8.dp,top = 4.dp, bottom = 4.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "$portfolioType $maskedAccountNumber",

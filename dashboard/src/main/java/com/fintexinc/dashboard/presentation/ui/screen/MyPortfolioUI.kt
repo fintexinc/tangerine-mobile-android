@@ -1,5 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -9,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,10 +28,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,8 +49,11 @@ import com.fintexinc.core.data.model.ItemType
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.PerformanceItem
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
+import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
+import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
@@ -144,7 +152,9 @@ fun MyPortfolioUI(
             }
         }
         Spacer(modifier = Modifier.height(18.dp))
-        Charts(performance)
+        Charts(
+            performance = performance,
+        )
         Spacer(modifier = Modifier.height(18.dp))
         Row(
             modifier = Modifier
@@ -556,7 +566,66 @@ private fun AccountListUI(
 }
 
 @Composable
-private fun Charts(performance: List<PerformanceItem>) {
+private fun Charts(
+    performance: List<PerformanceItem>,
+) {
+    performance.forEach {
+        Log.e("xcxxc", "$it")
+    }
+
+    val showAccountsBottomSheet = remember { mutableStateOf(false) }
+    val selectedAccountIds = remember { mutableStateOf(setOf("all")) }
+
+    val uniqueAccounts = remember(performance) {
+        performance.groupBy { it.accountId }
+            .map { (accountId, items) ->
+                val latestItem = items.maxByOrNull { it.date.year * 12 + it.date.month }!!
+                Triple(accountId, latestItem.accountType, items.sumOf { it.value })
+            }
+    }
+
+    val nameValueCheckedList = uniqueAccounts.map { (accountId, accountType, totalValue) ->
+        NameValueChecked(
+            name = accountId,
+            value = totalValue,
+            isChecked = selectedAccountIds.value.contains(accountId),
+            date = "",
+            id = accountId,
+            subName = accountType
+        )
+    }
+
+    val dataWithAll = listOf(
+        NameValueChecked(
+            name = "All",
+            value = performance.sumOf { it.value },
+            isChecked = selectedAccountIds.value.contains("all"),
+            id = "all",
+            subName = "",
+            date = ""
+        )
+    ) + nameValueCheckedList
+
+    val filteredPerformance = remember(performance, selectedAccountIds.value) {
+        if (selectedAccountIds.value.contains("all")) {
+            performance
+        } else {
+            performance.filter { it.accountId in selectedAccountIds.value }
+        }
+    }
+
+    val totalSum = remember(filteredPerformance) {
+        String.format("%.2f", filteredPerformance.sumOf { it.value })
+    }
+
+    val chipText = remember(selectedAccountIds.value) {
+        when {
+            selectedAccountIds.value.contains("all") -> "All Accounts"
+            selectedAccountIds.value.size == 1 -> selectedAccountIds.value.first()
+            else -> "${selectedAccountIds.value.size} Accounts"
+        }
+    }
+
     val pageCount = 4
     val pagerState = rememberPagerState(
         initialPage = (Int.MAX_VALUE / 2 / pageCount) * pageCount,
@@ -579,9 +648,16 @@ private fun Charts(performance: List<PerformanceItem>) {
         ) {
             when (actualPage) {
                 0 -> PerformanceChartUI(
-                    title = stringResource(R.string.text_investment_performance),
-                    performance = performance
+                    title = stringResource(R.string.text_investor_performance),
+                    performance = filteredPerformance,
+                    onFilterClick = {
+                        showAccountsBottomSheet.value = true
+                    },
+                    isShowFilter = true,
+                    sum = totalSum,
+                    chipText = chipText
                 )
+
                 1 -> AssetMixChartUI()
                 2 -> SectionExposureChartUI()
                 3 -> GeographicExposure()
@@ -613,6 +689,123 @@ private fun Charts(performance: List<PerformanceItem>) {
                     Spacer(modifier = Modifier.width(8.dp))
                 }
             }
+
+            if (showAccountsBottomSheet.value) {
+                AccountsModalBottomSheet(
+                    title = stringResource(R.string.text_accounts),
+                    isShowing = showAccountsBottomSheet,
+                    data = dataWithAll,
+                    updateCheckedStates = { updatedList ->
+                        val checkedIds = updatedList
+                            .filter { it.isChecked }
+                            .map { it.id }
+                            .toSet()
+
+                        selectedAccountIds.value = when {
+                            checkedIds.contains("all") -> setOf("all")
+                            checkedIds.isEmpty() -> setOf("all")
+                            else -> checkedIds
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AccountsModalBottomSheet(
+    isShowing: MutableState<Boolean>,
+    title: String,
+    data: List<NameValueChecked>,
+    updateCheckedStates: (List<NameValueChecked>) -> Unit
+) {
+    val checkStates = remember(data) {
+        mutableStateListOf<Boolean>().apply {
+            addAll(data.map { it.isChecked })
+        }
+    }
+
+    UniversalModalBottomSheet(
+        isShowing = isShowing,
+        title = title,
+        onDoneClick = {
+            val updatedData = data.mapIndexed { index, item ->
+                item.copy(isChecked = checkStates[index])
+            }
+            updateCheckedStates(updatedData)
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+        ) {
+            ChipsRow(
+                items = data,
+                checkStates = checkStates,
+                onItemCheckedChange = { index, isChecked ->
+                    if (data[index].id == "all" && isChecked) {
+                        checkStates.indices.forEach { i ->
+                            checkStates[i] = i == index
+                        }
+                    } else if (isChecked) {
+                        checkStates[0] = false
+                    }
+
+                    if (checkStates.none { it }) {
+                        checkStates[0] = true
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ChipsRow(
+    items: List<NameValueChecked>,
+    checkStates: MutableList<Boolean>,
+    onItemCheckedChange: (Int, Boolean) -> Unit
+) {
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items.forEachIndexed { index, item ->
+            val checked = checkStates[index]
+            Text(
+                modifier = Modifier
+                    .background(
+                        color = Colors.BackgroundInteractive,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .then(
+                        if (checked) {
+                            Modifier.border(
+                                width = 1.dp,
+                                color = Colors.TextInteractive,
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .clickableShape(RoundedCornerShape(16.dp)) {
+                        val newChecked = !checkStates[index]
+                        checkStates[index] = newChecked
+                        onItemCheckedChange(index, newChecked)
+                    }
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                text = item.name,
+                style = FontStyles.BodyMedium,
+                color = Colors.TextInteractive
+            )
         }
     }
 }
