@@ -10,7 +10,7 @@
     <string name="text_assets_count">Assets (%d)</string>
     <string name="text_zero_out_today">Zero Out Today</string>
     <string name="text_delete_with_history">Delete with History</string>
-    <string name="format_performance_as_of_date">Balance as of %s %d</string>
+    <string name="format_performance_as_of_date">Balance as of %d %s %d</string>
 
     <string name="description_icon_expand_collapse">Expand or collapse</string>
     <string name="description_icon_search">Search</string>
@@ -28,7 +28,7 @@
     <string name="error_max_length_format">Maximum length exceeded.</string>
     <string name="error_no_asset_type">Please choose an asset type.</string>
     <string name="error_asset_name_required">Asset name is required.</string>
-    <string name="error_no_liability_type">Please choose an asset type.</string>
+    <string name="error_no_liability_type">Please choose a liability type.</string>
     <string name="error_liability_name_required">Liability name is required.</string>
     <string name="error_enter_a_value">Enter a value to continue.</string>
     <string name="error_enter_a_balance">Please enter a current balance.</string>

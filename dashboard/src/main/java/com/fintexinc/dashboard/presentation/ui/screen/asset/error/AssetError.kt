@@ -5,7 +5,7 @@ import com.fintexinc.core.R
 enum class AssetError(val messageResId: Int) {
     ASSET_TYPE_NOT_SELECTED(R.string.error_no_asset_type),
     ASSET_NAME_MISSING(R.string.error_asset_name_required),
-    BALANCE_IS_MISSING(R.string.error_enter_a_balance),
+    BALANCE_IS_MISSING(R.string.error_enter_a_value),
     BALANCE_NEGATIVE(R.string.error_value_cant_be_negative),
     EFFECTIVE_DATE_MISSING(R.string.error_select_effective_date),
     EFFECTIVE_DATE_IN_FUTURE(R.string.error_effective_date_in_future),

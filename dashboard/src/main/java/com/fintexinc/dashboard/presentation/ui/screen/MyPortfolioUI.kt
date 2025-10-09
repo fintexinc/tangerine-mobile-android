@@ -579,7 +579,7 @@ private fun Charts(performance: List<PerformanceItem>) {
         ) {
             when (actualPage) {
                 0 -> PerformanceChartUI(
-                    title = stringResource(R.string.text_investor_performance),
+                    title = stringResource(R.string.text_investment_performance),
                     performance = performance
                 )
                 1 -> AssetMixChartUI()

@@ -62,6 +62,7 @@ fun PerformanceChartUI(
     Text(
         text = stringResource(
             R.string.format_performance_as_of_date,
+            asOfDateValue.value.day,
             asOfDateValue.value.month.monthName(),
             asOfDateValue.value.year
         ),

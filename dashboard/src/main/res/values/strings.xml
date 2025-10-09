@@ -32,7 +32,7 @@
     <string name="text_show_more">Show More</string>
     <string name="text_new_market_insights">New market insights are available — stay informed with the latest trends and perspectives</string>
     <string name="text_check_in_update">See insights</string>
-    <string name="text_investor_performance">Investor Performance</string>
+    <string name="text_investment_performance">Investment Performance</string>
     <string name="text_my_accounts">My Investment Accounts</string>
     <string name="format_registered_accounts">Registered</string>
     <string name="format_non_registered_accounts">Non-Registered</string>
