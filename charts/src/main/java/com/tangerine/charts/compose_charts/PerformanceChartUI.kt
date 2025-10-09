@@ -81,8 +81,27 @@ fun PerformanceChartUI(
         period = period.value,
         onIndexSelected = {
             if (it in performance.indices) {
-                performanceValue.doubleValue = performance[it].value
-                asOfDateValue.value = performance[it].date
+                val performanceRanged = when (period.value) {
+                    Period.ONE_MONTH -> {
+                        performance.subList(performance.size - 3, performance.size)
+                    }
+
+                    Period.THREE_MONTHS -> {
+                        performance.subList(performance.size - 5, performance.size)
+                    }
+
+                    Period.SIX_MONTHS -> {
+                        performance.subList(performance.size - 8, performance.size)
+                    }
+
+                    Period.ONE_YEAR -> {
+                        performance
+                    }
+
+                    else -> performance
+                }
+                performanceValue.doubleValue = performanceRanged[it].value
+                asOfDateValue.value = performanceRanged[it].date
             }
         }
     )
