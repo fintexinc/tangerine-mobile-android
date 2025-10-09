@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -19,9 +20,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,11 +38,14 @@ import com.fintexinc.core.ui.components.DocumentItem
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.documents.R
 import com.tangerine.documents.presentation.ui.models.DocumentCategory
+import com.tangerine.documents.presentation.ui.models.DocumentCategoryType
 
 @Composable
 fun InvestmentDocumentsUi(
     onBackClicked: () -> Unit = {},
 ) {
+    val searchQuery = remember { mutableStateOf("") }
+
     // TODO() mock data
     val documents = listOf(
         DataPoint(
@@ -85,34 +92,24 @@ fun InvestmentDocumentsUi(
         ),
     )
 
-    val categories = listOf(
-        DocumentCategory(
-            id = "account_documents",
-            title = "Account Documents",
-            description = "Investment account setup, agreements, and preference",
-            icon = com.fintexinc.core.R.drawable.ic_file,
-            hasNewBadge = true,
-        ),
-        DocumentCategory(
-            id = "statements",
-            title = "Statements",
-            description = "Regular monthly and annual account summaries",
-            icon = com.fintexinc.core.R.drawable.ic_file,
-            hasNewBadge = true,
-        ),
-        DocumentCategory(
-            id = "tax_documents",
-            title = "Tax Documents",
-            description = "T3, T5, T5008 and other tax forms",
-            icon = R.drawable.ic_tax,
-            hasNewBadge = false,
-        )
-    )
+    val filteredDocuments = remember(searchQuery.value, documents) {
+        if (searchQuery.value.isBlank()) {
+            documents
+        } else {
+            documents.filter { document ->
+                document.name.contains(searchQuery.value, ignoreCase = true) ||
+                        document.subName.contains(searchQuery.value, ignoreCase = true)
+            }
+        }
+    }
+
+    val categories = rememberDocumentCategories()
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Colors.BackgroundSubdued),
+            .background(color = Colors.BackgroundSubdued)
+            .statusBarsPadding(),
     ) {
         item {
             ToolBar(
@@ -168,7 +165,7 @@ fun InvestmentDocumentsUi(
 
             item {
                 Text(
-                    text = stringResource(R.string.text_recent_documents),
+                    text = stringResource(R.string.text_all_documents),
                     color = Colors.Text,
                     style = FontStyles.TitleSmall,
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -180,25 +177,15 @@ fun InvestmentDocumentsUi(
             }
 
             item {
-                Row(
+                TangerineSearchBar(
+                    horizontalPadding = 0.dp,
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    TangerineSearchBar(
-                        horizontalPadding = 0.dp,
-                        modifier = Modifier.weight(1.0f),
-                        isShowFilter = false,
-                    )
-
-                    Spacer(modifier = Modifier.width(18.dp))
-
-                    Icon(
-                        modifier = Modifier.wrapContentSize(),
-                        painter = painterResource(com.fintexinc.core.R.drawable.icon_sliders_light),
-                        tint = Colors.Primary,
-                        contentDescription = stringResource(com.fintexinc.core.R.string.description_icon_filter),
-                    )
-                }
+                    isShowFilter = false,
+                    searchText = searchQuery.value,
+                    onSearchTextChange = { newQuery ->
+                        searchQuery.value = newQuery
+                    }
+                )
             }
 
             item {
@@ -206,7 +193,7 @@ fun InvestmentDocumentsUi(
             }
 
             itemsWithBackground(
-                items = documents,
+                items = filteredDocuments,
                 key = { it.id },
                 bottomPadding = 16.dp,
             ) { document, isLastItem ->
@@ -313,6 +300,16 @@ private fun DocumentCategoryItem(
                 tint = Colors.IconSupplementary,
                 contentDescription = stringResource(R.string.description_icon_open),
             )
+        }
+    }
+}
+
+@Composable
+fun rememberDocumentCategories(): List<DocumentCategory> {
+    val context = LocalContext.current
+    return remember {
+        DocumentCategoryType.entries.map {
+            it.toDocumentCategory(context)
         }
     }
 }

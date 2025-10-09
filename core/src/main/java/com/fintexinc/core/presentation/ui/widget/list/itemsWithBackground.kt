@@ -45,12 +45,13 @@ fun <T> LazyListScope.itemsWithBackground(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 16.dp)
+                .padding(top = topPadding)
                 .clip(shape)
                 .background(
                     color = Colors.Background,
                     shape = shape
                 )
-                .padding(top = topPadding, bottom = innerBottomPadding),
+                .padding(bottom = innerBottomPadding),
         ) {
             itemContent(item, index == items.lastIndex)
         }

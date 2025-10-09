@@ -39,7 +39,7 @@ fun DashboardScreenUI(
     onAddLiabilityClicked: (DataPoint?) -> Unit,
     onOpenJuiceArticle: (url: String) -> Unit,
     onOpenJuiceSection: () -> Unit,
-    onOpenDocumentsClicked: () -> Unit,
+    onSeeInvestmentDocumentClicked: () -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
 ) {
@@ -57,7 +57,7 @@ fun DashboardScreenUI(
             onAddLiabilityClicked = onAddLiabilityClicked,
             onOpenJuiceArticle = onOpenJuiceArticle,
             onOpenJuiceSection = onOpenJuiceSection,
-            onOpenDocumentsClicked = onOpenDocumentsClicked,
+            onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
             updateCheckedStates = updateCheckedStates,
             onActivitiesClicked = onActivitiesClicked,
         )
@@ -73,7 +73,7 @@ private fun Content(
     onAddLiabilityClicked: (dataPoint: DataPoint?) -> Unit,
     onOpenJuiceArticle: (url: String) -> Unit,
     onOpenJuiceSection: () -> Unit,
-    onOpenDocumentsClicked: () -> Unit = {},
+    onSeeInvestmentDocumentClicked: () -> Unit = {},
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
 ) {
@@ -119,7 +119,7 @@ private fun Content(
                             onAddLiabilityClicked = onAddLiabilityClicked,
                             onOpenJuiceArticle = onOpenJuiceArticle,
                             onOpenJuiceSection = onOpenJuiceSection,
-                            onOpenDocumentsClicked = onOpenDocumentsClicked,
+                            onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
                             onActivitiesClicked = onActivitiesClicked,
                         )
                     }

@@ -3,10 +3,16 @@
     <string name="text_account_documents">Account Documents</string>
     <string name="title_investment_documents">Investment Documents</string>
     <string name="text_search">Search</string>
-    <string name="text_recent_documents">Recent Documents</string>
+    <string name="text_all_documents">All Documents</string>
     <string name="text_documents">Documents</string>
     <string name="text_new">New</string>
-    <!--    <string name="description_icon_expand_collapse">Expand or collapse</string>-->
+    <string name="text_category_statements_title">Statements</string>
+    <string name="text_category_statements_description">Regular monthly and annual account summaries</string>
+    <string name="text_category_tax_documents_title">Tax Documents</string>
+    <string name="text_category_tax_documents_description">T3, T5, T5008 and other tax forms</string>
+    <string name="text_category_account_documents_title">Account Documents</string>
+    <string name="text_category_account_documents_description">Investment account setup, agreements, and preference</string>
+
     <string name="description_icon_back">Back</string>
     <string name="description_icon_right">Right</string>
     <string name="description_icon_navigate_back">Back</string>
