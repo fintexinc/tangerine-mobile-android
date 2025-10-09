@@ -28,6 +28,7 @@ import java.util.Locale
 @Composable
 fun TangerineLineChart(
     performance: List<PerformanceItem>,
+    step: Double = 10000.0,
     period: Period,
     onIndexSelected: (Int) -> Unit
 ) {
@@ -57,7 +58,7 @@ fun TangerineLineChart(
         gridProperties = GridProperties(false),
         indicatorProperties = HorizontalIndicatorProperties(
             count = IndicatorCount.StepBased(
-                10000.0
+                step
             ), contentBuilder = {
                 (it / 1000).format(0) + "K"
             }

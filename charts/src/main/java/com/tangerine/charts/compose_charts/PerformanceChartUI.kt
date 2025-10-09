@@ -34,7 +34,8 @@ import com.fintexinc.core.ui.font.FontStyles
 @Composable
 fun PerformanceChartUI(
     title: String,
-    performance: List<PerformanceItem>,
+    step: Double = 10000.0,
+    chartPerformance: List<PerformanceItem>,
     isShowFilter: Boolean = false,
     onFilterClick: () -> Unit = {},
     sum: String? = null,
@@ -43,11 +44,11 @@ fun PerformanceChartUI(
     val period = remember {
         mutableStateOf(Period.SIX_MONTHS)
     }
-    val performanceValue = remember {
-        mutableDoubleStateOf(performance.last().value)
+    val performanceValue = remember(chartPerformance) {
+        mutableDoubleStateOf(chartPerformance.last().value)
     }
-    val asOfDateValue = remember {
-        mutableStateOf(performance.last().date)
+    val asOfDateValue = remember(chartPerformance) {
+        mutableStateOf(chartPerformance.last().date)
     }
     Spacer(modifier = Modifier.height(12.dp))
     Row(
@@ -117,29 +118,27 @@ fun PerformanceChartUI(
     )
     Spacer(modifier = Modifier.height(18.dp))
 
+    // Combine every two consecutive items, summing their values, step 2
     TangerineLineChart(
-        performance = performance,
+        performance = chartPerformance,
+        step = step,
         period = period.value,
         onIndexSelected = {
-            if (it in performance.indices) {
+            if (it in chartPerformance.indices) {
                 val performanceRanged = when (period.value) {
                     Period.ONE_MONTH -> {
-                        performance.subList(performance.size - 3, performance.size)
+                        chartPerformance.subList(chartPerformance.size - 3, chartPerformance.size)
                     }
-
                     Period.THREE_MONTHS -> {
-                        performance.subList(performance.size - 5, performance.size)
+                        chartPerformance.subList(chartPerformance.size - 5, chartPerformance.size)
                     }
-
                     Period.SIX_MONTHS -> {
-                        performance.subList(performance.size - 8, performance.size)
+                        chartPerformance.subList(chartPerformance.size - 8, chartPerformance.size)
                     }
-
                     Period.ONE_YEAR -> {
-                        performance
+                        chartPerformance
                     }
-
-                    else -> performance
+                    else -> chartPerformance
                 }
                 performanceValue.doubleValue = performanceRanged[it].value
                 asOfDateValue.value = performanceRanged[it].date

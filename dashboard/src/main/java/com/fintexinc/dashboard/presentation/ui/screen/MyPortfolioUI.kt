@@ -646,15 +646,39 @@ private fun Charts(
                 )
                 .padding(18.dp)
         ) {
+            val chartPerformance = if (filteredPerformance.size > 10) {
+                val combined = mutableListOf<PerformanceItem>()
+                var i = 0
+                while (i < filteredPerformance.size) {
+                    val first = filteredPerformance[i]
+                    val second = if (i + 1 < filteredPerformance.size) filteredPerformance[i + 1] else null
+                    val combinedValue = if (second != null) first.value + second.value else first.value
+                    combined.add(
+                        PerformanceItem(
+                            id = first.id,
+                            accountId = first.accountId,
+                            accountType = first.accountType,
+                            value = combinedValue,
+                            currency = first.currency,
+                            date = first.date
+                        )
+                    )
+                    i += 2
+                }
+                combined
+            } else {
+                filteredPerformance
+            }
             when (actualPage) {
                 0 -> PerformanceChartUI(
                     title = stringResource(R.string.text_investor_performance),
-                    performance = filteredPerformance,
+                    chartPerformance = chartPerformance,
+                    step = if(filteredPerformance.size > 10) 20000.0 else 10000.0,
                     onFilterClick = {
                         showAccountsBottomSheet.value = true
                     },
                     isShowFilter = true,
-                    sum = totalSum,
+                    sum = null,
                     chipText = chipText
                 )
 

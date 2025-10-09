@@ -128,9 +128,32 @@ fun SummaryUI(
 @Composable
 private fun AccountBalanceUI(performanceData: List<PerformanceItem>) {
     ColumnWithBorder {
+        val chartPerformance = if (performanceData.size > 10) {
+            val combined = mutableListOf<PerformanceItem>()
+            var i = 0
+            while (i < performanceData.size) {
+                val first = performanceData[i]
+                val second = if (i + 1 < performanceData.size) performanceData[i + 1] else null
+                val combinedValue = if (second != null) first.value + second.value else first.value
+                combined.add(
+                    PerformanceItem(
+                        id = first.id,
+                        accountId = first.accountId,
+                        accountType = first.accountType,
+                        value = combinedValue,
+                        currency = first.currency,
+                        date = first.date
+                    )
+                )
+                i += 2
+            }
+            combined
+        } else {
+            performanceData
+        }
         PerformanceChartUI(
             title = stringResource(R.string.text_account_performance),
-            performance = performanceData
+            chartPerformance = chartPerformance
         )
     }
 }
