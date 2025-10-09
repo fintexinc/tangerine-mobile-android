@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,12 +49,13 @@ internal fun DateFilterModalBottomSheet(
 ) {
     val dateEnums = DateFilterUi.entries
     val dateOptions = dateEnums.map { stringResource(it.stringResId) }
-    val allOptionName = stringResource(DateFilterUi.ALL_DATES.stringResId)
     val dateIcons = dateEnums.map { it.iconResId }
 
     val selectedStates = remember(selectedDates) {
         mutableStateListOf(*dateEnums.map { it in selectedDates }.toTypedArray())
     }
+
+    var previousSelectedIndex by remember { mutableIntStateOf(-1) }
 
     var selectedMonth by remember { mutableStateOf<Int?>(null) }
     var selectedYear by remember { mutableStateOf<Int?>(null) }
@@ -87,14 +89,13 @@ internal fun DateFilterModalBottomSheet(
                 options = dateOptions,
                 selectedStates = selectedStates,
                 icons = dateIcons,
-                onSelectionChanged = { index, isSelected ->
-                    handleUniversalSelection(
-                        options = dateOptions,
-                        selectedStates = selectedStates,
-                        clickedIndex = index,
-                        isSelected = isSelected,
-                        allOptionName = allOptionName,
-                    )
+                onSelectionChanged = { index, _ ->
+                    previousSelectedIndex = selectedStates.indexOfFirst { it }
+
+                    selectedStates.forEachIndexed { i, _ ->
+                        selectedStates[i] = false
+                    }
+                    selectedStates[index] = true
                 }
             )
 
@@ -108,8 +109,15 @@ internal fun DateFilterModalBottomSheet(
                     onDismiss = {
                         showDatePicker = false
                         val byMonthIndex = dateEnums.indexOf(DateFilterUi.BY_MONTH)
+
                         if (selectedMonth == null || selectedYear == null) {
                             selectedStates[byMonthIndex] = false
+
+                            if (previousSelectedIndex != -1 && previousSelectedIndex != byMonthIndex) {
+                                selectedStates[previousSelectedIndex] = true
+                            } else {
+                                selectedStates[0] = true
+                            }
                         }
                     },
                 )
