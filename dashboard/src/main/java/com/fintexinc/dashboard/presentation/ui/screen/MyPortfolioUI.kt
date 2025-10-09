@@ -37,6 +37,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +63,7 @@ import com.fintexinc.dashboard.presentation.ui.models.AccountUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
 import com.tangerine.charts.compose_charts.PerformanceChartUI
 import com.tangerine.charts.compose_charts.models.Pie
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyPortfolioUI(
@@ -632,7 +634,12 @@ private fun Charts(
         pageCount = { Int.MAX_VALUE }
     )
 
-    HorizontalPager(state = pagerState) { page ->
+    val coroutineScope = rememberCoroutineScope()
+
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.fillMaxWidth()
+    ) { page ->
         val actualPage = page % pageCount
 
         Column(
@@ -674,6 +681,12 @@ private fun Charts(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
+                            .clickable {
+                                coroutineScope.launch {
+                                    val targetPage = pagerState.currentPage - (pagerState.currentPage % pageCount) + iteration
+                                    pagerState.animateScrollToPage(targetPage)
+                                }
+                            }
                             .then(
                                 if (actualPage == iteration) {
                                     Modifier.background(Colors.BackgroundPrimary)
