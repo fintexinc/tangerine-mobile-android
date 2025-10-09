@@ -153,12 +153,8 @@ fun AddItemText(
     onTextChanged: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
-    val text = remember(text) {
-        mutableStateOf(text)
-    }
-    val errorResState = remember(errorRes) {
-        mutableIntStateOf(errorRes ?: Int.MIN_VALUE)
-    }
+    val inputText = remember(text) { mutableStateOf(text) }
+    val errorResState = remember(errorRes) { mutableIntStateOf(errorRes ?: Int.MIN_VALUE) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,112 +169,55 @@ fun AddItemText(
             color = Colors.Text
         )
         BasicTextField(
-             modifier = Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            value = text.value,
-            onValueChange = { newText ->
-                val newText = when {
-                    prefix != null && newText.isNotEmpty() && !newText.startsWith(prefix) -> {
-                        "$prefix$newText"
-                    }
-                    suffix != null && newText.isNotEmpty() && !newText.endsWith(suffix) -> {
-                        "$newText$suffix"
-                    }
-                    else -> {
-                        newText
-                    }
+            value = if (suffix != null && inputText.value.isNotEmpty() && !inputText.value.endsWith(suffix)) inputText.value + suffix else inputText.value,
+            onValueChange = { newValue ->
+                // Remove suffix if present, so user only edits the input part
+                val cleanValue = if (suffix != null && newValue.endsWith(suffix)) {
+                    newValue.removeSuffix(suffix)
+                } else {
+                    newValue
                 }
-                when {
-                    errorResState.intValue != Int.MIN_VALUE -> {
-                        errorResState.intValue = Int.MIN_VALUE
-                        text.value = newText
-                        onTextChanged(newText)
-                    }
-                    else -> {
-                        text.value = newText
-                        onTextChanged(newText)
-                    }
-                }
+                inputText.value = cleanValue
+                onTextChanged(if (suffix != null) cleanValue + suffix else cleanValue)
             },
             textStyle = FontStyles.BodyLarge,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             decorationBox = { innerTextField ->
-                when {
-                    errorResState.intValue != Int.MIN_VALUE -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                        ) {
-                            innerTextField()
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .wrapContentSize()
-                                        .align(Alignment.CenterVertically)
-                                        .padding(end = 4.dp),
-                                    painter = painterResource(id = R.drawable.ic_error),
-                                    contentDescription = stringResource(R.string.description_icon_error),
-                                    tint = Colors.TextCritical
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight(),
-                                    text = stringResource(errorResState.intValue),
-                                    style = FontStyles.BodyMedium,
-                                    color = Colors.TextCritical
-                                )
-                            }
-                        }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color.Transparent)
+                ) {
+                    if (prefix != null) {
+                        Text(
+                            text = prefix,
+                            style = FontStyles.BodyLarge,
+                            color = Colors.Text
+                        )
                     }
-
-                    info.isNotEmpty() -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                        ) {
-                            innerTextField()
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .background(color = Colors.BackgroundSubdued)
-                                    .padding(8.dp),
-                                text = info,
-                                style = FontStyles.BodySmall,
-                                color = Colors.Text
-                            )
-                        }
-                    }
-
-                    text.value.isEmpty() -> {
-                        Box {
-                            Text(
-                                text = hint,
-                                style = FontStyles.BodyLarge,
-                                color = Colors.TextSubdued
-                            )
-                            innerTextField()
-                        }
-                    }
-
-                    else -> {
+                    Box(Modifier.weight(1f)) {
                         innerTextField()
                     }
                 }
             },
         )
-
+        if (info.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(color = Colors.BackgroundSubdued)
+                    .padding(8.dp),
+                text = info,
+                style = FontStyles.BodySmall,
+                color = Colors.Text
+            )
+        }
         Spacer(
             modifier = Modifier.height(16.dp)
         )

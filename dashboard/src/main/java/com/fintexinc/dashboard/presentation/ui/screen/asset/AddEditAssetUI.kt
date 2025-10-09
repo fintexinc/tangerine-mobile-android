@@ -83,12 +83,10 @@ fun AddEditAssetUI(
         }
         val estimatedValue = remember {
             mutableStateOf(
-                "$currency${
-                    if (asset?.assetValue == null) "" else String.format(
-                        "%.2f",
-                        asset.assetValue
-                    )
-                }"
+                if (asset?.assetValue == null) "" else String.format(
+                    "%.2f",
+                    asset.assetValue
+                )
             )
         }
         val annualizedRateOfReturn = remember {
@@ -308,7 +306,7 @@ fun AddEditAssetUI(
                                 userId = asset?.userId ?: "",
                                 assetName = assetName.value,
                                 assetType = assetType.value ?: AssetType.OTHER,
-                                assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
+                                assetValue = estimatedValue.value.toDoubleOrNull()
                                     ?: 0.0,
                                 annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
                                     0,
@@ -396,7 +394,7 @@ fun AddEditAssetUI(
                         userId = asset?.userId ?: "",
                         assetName = assetName.value,
                         assetType = assetType.value ?: AssetType.OTHER,
-                        assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
+                        assetValue = estimatedValue.value.toDoubleOrNull()
                             ?: 0.0,
                         annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
                             0,

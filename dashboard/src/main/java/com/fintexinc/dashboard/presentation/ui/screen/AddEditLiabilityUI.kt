@@ -79,22 +79,18 @@ fun AddEditLiabilityUI(
         }
         val currentBalance = remember {
             mutableStateOf(
-                "$currency${
-                    if (liability?.balance == null) "" else String.format(
-                        "%.2f",
-                        liability.balance
-                    )
-                }"
+                if (liability?.balance == null) "" else String.format(
+                    "%.2f",
+                    liability.balance
+                )
             )
         }
         val monthlyPayment = remember {
             mutableStateOf(
-                "$currency${
-                    if (liability?.limit == null) "" else String.format(
-                        "%.2f",
-                        liability?.limit
-                    )
-                }"
+                if (liability?.limit == null) "" else String.format(
+                    "%.2f",
+                    liability?.limit
+                )
             )
         }
         val annualInterestRate = remember {
@@ -356,9 +352,9 @@ fun AddEditLiabilityUI(
                                 liabilityName = liabilityName.value,
                                 liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                                 accountNumber = UUID.randomUUID().toString(),
-                                balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
+                                balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
                                 linkedDate = effectiveDate.value,
-                                limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
+                                limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
                                 interestRate = annualInterestRate.value.substring(
                                     0,
                                     endIndex = annualInterestRate.value.length - 1
@@ -449,9 +445,9 @@ fun AddEditLiabilityUI(
                         liabilityName = liabilityName.value,
                         liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                         accountNumber = UUID.randomUUID().toString(),
-                        balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
+                        balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
                         linkedDate = effectiveDate.value,
-                        limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
+                        limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
                         interestRate = annualInterestRate.value.substring(
                             0,
                             endIndex = annualInterestRate.value.length - 1
