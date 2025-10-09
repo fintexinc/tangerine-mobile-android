@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,14 +39,16 @@ import com.fintexinc.core.ui.font.FontStyles
 
 @Composable
 fun AddItemSelection(
+    modifier: Modifier = Modifier,
     title: String,
     text: String,
     info: String = "",
     errorRes: Int? = null,
     onAddItemSelectionClicked: () -> Unit,
+    backgroundColor: Color = Colors.Background,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
@@ -54,7 +57,7 @@ fun AddItemSelection(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .background(
-                    color = Colors.Background,
+                    color = backgroundColor,
                     shape = RoundedCornerShape(4.dp)
                 )
                 .clickable {

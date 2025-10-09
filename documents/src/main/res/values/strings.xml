@@ -12,6 +12,26 @@
     <string name="text_category_tax_documents_description">T3, T5, T5008 and other tax forms</string>
     <string name="text_category_account_documents_title">Account Documents</string>
     <string name="text_category_account_documents_description">Investment account setup, agreements, and preference</string>
+    <string name="text_select_account">Select Account</string>
+    <string name="text_choose_year">Choose Year</string>
+    <string name="text_choose_month">Choose Month</string>
+    <string name="text_account">Account</string>
+    <string name="text_year">Year</string>
+    <string name="text_month">Month</string>
+    <string name="text_january">January</string>
+    <string name="text_february">February</string>
+    <string name="text_march">March</string>
+    <string name="text_april">April</string>
+    <string name="text_may">May</string>
+    <string name="text_june">June</string>
+    <string name="text_july">July</string>
+    <string name="text_august">August</string>
+    <string name="text_september">September</string>
+    <string name="text_october">October</string>
+    <string name="text_november">November</string>
+    <string name="text_december">December</string>
+    <string name="text_confirm">Confirm</string>
+    <string name="text_error">Statement not available for the selected period.</string>
 
     <string name="description_icon_back">Back</string>
     <string name="description_icon_right">Right</string>

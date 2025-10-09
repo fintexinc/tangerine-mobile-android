@@ -51,6 +51,7 @@ import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailVi
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
 import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
+import com.tangerine.documents.presentation.ui.ui.StatementsScreen
 import com.tangerine.documents.presentation.ui.ui.InvestmentDocumentsUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -227,7 +228,18 @@ class MainActivity : ComponentActivity() {
 
                     composable<Routes.InvestmentDocument> {
                         InvestmentDocumentsUi(
-                            onBackClicked = { navController.popBackStack() }
+                            onBackClicked = { navController.popBackStack() },
+                            onStatementsClick = {
+                                navController.navigate(Routes.Statements)
+                            },
+                        )
+                    }
+
+                    composable<Routes.Statements> {
+                        StatementsScreen(
+                            onBackClicked = {
+                                navController.popBackStack()
+                            },
                         )
                     }
                 }
@@ -425,7 +437,7 @@ class MainActivity : ComponentActivity() {
                     AccountDocumentsUI(
                         onBackClicked = {
                             parentNavController.popBackStack()
-                        }
+                        },
                     )
                 }
             }
@@ -453,6 +465,9 @@ object Routes {
 
     @Serializable
     object Documents
+
+    @Serializable
+    object Statements
 
     @Serializable
     object InvestmentDocument

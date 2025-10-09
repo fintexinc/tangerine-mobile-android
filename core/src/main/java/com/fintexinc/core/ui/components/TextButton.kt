@@ -12,10 +12,10 @@ import com.fintexinc.core.ui.font.FontStyles
 
 @Composable
 fun TextButton(
+    modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
     color: Color = Colors.BrandBlack,
-    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,

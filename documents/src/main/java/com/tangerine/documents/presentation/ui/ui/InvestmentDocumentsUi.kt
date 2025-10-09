@@ -43,9 +43,11 @@ import com.tangerine.documents.presentation.ui.models.DocumentCategoryType
 @Composable
 fun InvestmentDocumentsUi(
     onBackClicked: () -> Unit = {},
+    onStatementsClick: () -> Unit,
 ) {
     val searchQuery = remember { mutableStateOf("") }
 
+    val statementsText = stringResource(R.string.text_category_statements_title)
     // TODO() mock data
     val documents = listOf(
         DataPoint(
@@ -154,7 +156,11 @@ fun InvestmentDocumentsUi(
         ) { category, isLastItem ->
             DocumentCategoryItem(
                 category = category,
-                onClick = {},
+                onClick = { it ->
+                    when (it.title) {
+                        statementsText -> onStatementsClick()
+                    }
+                },
             )
         }
 
@@ -217,7 +223,7 @@ fun InvestmentDocumentsUi(
 private fun DocumentCategoryItem(
     modifier: Modifier = Modifier,
     category: DocumentCategory,
-    onClick: () -> Unit,
+    onClick: (DocumentCategory) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -226,7 +232,7 @@ private fun DocumentCategoryItem(
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(color = Colors.Background)
-            .clickable { onClick() }
+            .clickable { onClick(category) }
             .padding(16.dp),
     ) {
         Row(
