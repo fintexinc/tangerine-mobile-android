@@ -5,7 +5,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"id\": \"LIAB-INV-0001-CC-003\",\n" +
         "        \"userId\": \"INV-0001\",\n" +
         "        \"liabilityName\": \"Loan\",\n" +
-        "        \"liabilityType\": \"Personal Loans\",\n" +
+        "        \"liabilityType\": \"Personal Loan\",\n" +
         "        \"accountNumber\": \"****1122\",\n" +
         "        \"balance\": 420043.55,\n" +
         "        \"limit\": 5000.0,\n" +
@@ -31,7 +31,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"id\": \"LIAB-INV-0002-MTG-004\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityName\": \"Credit Card\",\n" +
-        "        \"liabilityType\": \"Credit Cards\",\n" +
+        "        \"liabilityType\": \"Credit Card\",\n" +
         "        \"accountNumber\": \"****6677\",\n" +
         "        \"balance\": 355000.0,\n" +
         "        \"limit\": 50000.0,\n" +
@@ -57,7 +57,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"id\": \"LIAB-INV-0002-CC-005\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityName\": \"Credit Card\",\n" +
-        "        \"liabilityType\": \"Credit Cards\",\n" +
+        "        \"liabilityType\": \"Credit Card\",\n" +
         "        \"accountNumber\": \"****6677\",\n" +
     "           \"linkedDate\": \"2025-04-10\",\n" +
         "        \"balance\": 120002.1,\n" +
@@ -70,7 +70,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"id\": \"LIAB-INV-0002-CC-006\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityName\": \"Auto Loan\",\n" +
-        "        \"liabilityType\": \"Auto Loan\",\n" +
+        "        \"liabilityType\": \"Personal Loan\",\n" +
         "        \"accountNumber\": \"****6677\",\n" +
         "         \"linkedDate\": \"2025-05-10\",\n" +
         "        \"balance\": 140002.1,\n" +
@@ -83,7 +83,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"id\": \"LIAB-INV-0002-CC-007\",\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityName\": \"Student Loan\",\n" +
-        "        \"liabilityType\": \"Student Loans\",\n" +
+        "        \"liabilityType\": \"Personal Loan\",\n" +
         "        \"accountNumber\": \"****6677\",\n" +
         "         \"linkedDate\": \"2025-06-10\",\n" +
         "        \"balance\": 340002.1,\n" +

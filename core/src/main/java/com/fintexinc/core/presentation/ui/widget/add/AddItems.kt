@@ -316,7 +316,7 @@ fun ItemTypeSelection(
                 )
                 Text(
                     modifier = Modifier
-                        .weight(0.33f)
+                        .weight(0.39f)
                         .wrapContentHeight(),
                     text = itemTypeTitle,
                     style = FontStyles.BodyLargeBold,

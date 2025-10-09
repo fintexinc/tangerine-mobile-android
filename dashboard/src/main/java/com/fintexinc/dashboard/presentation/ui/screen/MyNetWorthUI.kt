@@ -177,7 +177,7 @@ fun MyNetWorthUI(
             dataPoints = mapOf(textExternalLiabilities to liabilitiesCheckedState.map { liability ->
                 val shouldShowEffectiveDate = liabilities.first {
                     it.liability.id == liability.id
-                }.liability.liabilityType != LiabilityType.CREDIT_CARDS
+                }.liability.liabilityType != LiabilityType.CREDIT_CARD
                 with(liability) {
                     DataPoint(
                         id = id,
@@ -421,7 +421,7 @@ private fun NetWorthInfoUI(
         )
     }
     val liabilities = liabilities.map {
-        if (it.liability.liabilityType == LiabilityType.CREDIT_CARDS) {
+        if (it.liability.liabilityType == LiabilityType.CREDIT_CARD) {
             it.liability.toNameValue()
                 .copy(name = "${it.liability.liabilityName} ${it.liability.accountNumber}")
         } else {
