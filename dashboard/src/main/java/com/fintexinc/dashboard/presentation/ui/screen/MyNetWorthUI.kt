@@ -1,5 +1,7 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -100,7 +103,7 @@ fun MyNetWorthUI(
     onAddLiabilityClicked: (liability: DataPoint?) -> Unit,
     onOpenJuiceSection: () -> Unit,
     onOpenJuiceArticle: (articleUrl: String) -> Unit,
-    onOpenDocumentsClicked: () -> Unit,
+    onSeeInvestmentDocumentClicked: () -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
@@ -217,7 +220,7 @@ fun MyNetWorthUI(
                 ActivityUI(
                     activities = activities,
                     documents = documents,
-                    onOpenDocumentsClicked = onOpenDocumentsClicked,
+                    onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
                     onActivitiesClicked = onActivitiesClicked,
                 )
             }
@@ -815,7 +818,7 @@ private fun NetWorthChangesChartUI(
 private fun ActivityUI(
     activities: List<Transaction>,
     documents: List<Document>,
-    onOpenDocumentsClicked: () -> Unit,
+    onSeeInvestmentDocumentClicked: () -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
 ) {
     Text(
@@ -849,7 +852,7 @@ private fun ActivityUI(
                                 iconResId = com.fintexinc.core.R.drawable.ic_document
                             )
                         },
-                        onOpenDocumentsClicked = onOpenDocumentsClicked
+                        onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked
                     )
                 }
             )
@@ -914,8 +917,9 @@ private fun ActivitiesUI(
 @Composable
 private fun DocumentsUI(
     dataPoints: List<DataPoint>,
-    onOpenDocumentsClicked: () -> Unit
+    onSeeInvestmentDocumentClicked: () -> Unit
 ) {
+    val context = LocalContext.current
     Spacer(modifier = Modifier.height(18.dp))
 
     Column(
@@ -927,7 +931,13 @@ private fun DocumentsUI(
             DataPointUI(
                 dataPoint = it,
                 isLastItem = dataPoints.last() == it,
-                onClick = { onOpenDocumentsClicked() },
+                onClick = {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
+                    )
+                    context.startActivity(intent)
+                },
             )
         }
 
@@ -935,9 +945,7 @@ private fun DocumentsUI(
 
         TextButton(
             text = stringResource(R.string.text_see_investment_documents),
-            onClick = {
-
-            },
+            onClick = { onSeeInvestmentDocumentClicked() },
         )
     }
 }

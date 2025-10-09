@@ -51,6 +51,7 @@ import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailVi
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
 import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
+import com.tangerine.documents.presentation.ui.ui.InvestmentDocumentsUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
@@ -221,6 +222,12 @@ class MainActivity : ComponentActivity() {
                             onBackButtonFromExternalScreenClicked = {
                                 navController.popBackStack()
                             }
+                        )
+                    }
+
+                    composable<Routes.InvestmentDocument> {
+                        InvestmentDocumentsUi(
+                            onBackClicked = { navController.popBackStack() }
                         )
                     }
                 }
@@ -399,8 +406,8 @@ class MainActivity : ComponentActivity() {
                         onOpenJuiceSection = {
                             goToJuiceSection()
                         },
-                        onOpenDocumentsClicked = {
-                            tabNavController.navigate(Routes.Documents)
+                        onSeeInvestmentDocumentClicked = {
+                            parentNavController.navigate(Routes.InvestmentDocument)
                         },
                         updateCheckedStates = { assets, liabilities ->
                             dashboardViewModel.updateCheckedStates(
@@ -446,6 +453,9 @@ object Routes {
 
     @Serializable
     object Documents
+
+    @Serializable
+    object InvestmentDocument
 
     @Serializable
     object Splash

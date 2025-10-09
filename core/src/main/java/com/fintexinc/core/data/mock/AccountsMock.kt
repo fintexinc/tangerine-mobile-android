@@ -3,7 +3,7 @@ package com.fintexinc.core.data.mock
 const val ACCOUNTS_MOCK = "[\n" +
         "    {\n" +
         "        \"id\": \"KYC-INV-001\",\n" +
-        "        \"userId\": \"INV-0001\",\n" +
+        "        \"userId\": \"INV-0001 ***9019\",\n" +
         "        \"accountId\": \"ACCT-INV-001\",\n" +
         "        \"income\": 95000,\n" +
         "        \"householdNetWorth\": 350000,\n" +
