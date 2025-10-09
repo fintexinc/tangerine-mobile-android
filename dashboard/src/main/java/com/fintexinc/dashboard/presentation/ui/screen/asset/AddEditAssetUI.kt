@@ -50,7 +50,7 @@ import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
 import com.fintexinc.dashboard.presentation.ui.screen.asset.error.AssetError
-import com.fintexinc.dashboard.presentation.ui.screen.asset.error.FieldValidation
+import com.fintexinc.dashboard.presentation.ui.screen.asset.error.AssetFieldValidation
 import java.util.UUID
 
 @Composable
@@ -65,6 +65,7 @@ fun AddEditAssetUI(
             .fillMaxSize()
             .background(color = Colors.Background)
     ) {
+        val currency = stringResource(R.string.text_currency)
         val showAssetTypeSelection = remember {
             mutableStateOf(false)
         }
@@ -81,28 +82,42 @@ fun AddEditAssetUI(
             mutableStateOf(asset?.assetName ?: "")
         }
         val estimatedValue = remember {
-            mutableStateOf(if (asset?.assetValue == null) "" else asset.assetValue.toString())
+            mutableStateOf(
+                "$currency${
+                    if (asset?.assetValue == null) "" else String.format(
+                        "%.2f",
+                        asset.assetValue
+                    )
+                }"
+            )
         }
-        val annAnnualizedRateOfReturn = remember {
-            mutableStateOf("")
+        val annualizedRateOfReturn = remember {
+            mutableStateOf(
+                if (asset?.annualizedRateOfReturn == null) "" else {
+                    String.format(
+                        "%.2f",
+                        asset.annualizedRateOfReturn
+                    ) + "%"
+                }
+            )
         }
         val showDialog = remember {
             mutableStateOf<DateSelectionType?>(null)
         }
         val effectiveDate = remember {
-            mutableStateOf(asset?.lastUpdated ?: "")
+            mutableStateOf(asset?.linkedDate ?: "")
         }
         val revisitDate = remember {
-            mutableStateOf(asset?.linkedDate ?: "")
+            mutableStateOf(asset?.lastUpdated ?: "")
         }
         val assetValidation = remember {
             mutableStateOf(
                 hashMapOf(
-                    "assetType" to FieldValidation(true),
-                    "assetName" to FieldValidation(true),
-                    "estimatedValue" to FieldValidation(true),
-                    "effectiveDate" to FieldValidation(true),
-                    "revisitDate" to FieldValidation(true)
+                    "assetType" to AssetFieldValidation(true),
+                    "assetName" to AssetFieldValidation(true),
+                    "estimatedValue" to AssetFieldValidation(true),
+                    "effectiveDate" to AssetFieldValidation(true),
+                    "revisitDate" to AssetFieldValidation(true)
                 ).toMap()
             )
         }
@@ -186,7 +201,10 @@ fun AddEditAssetUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_later, stringResource(R.string.text_asset_lowercase)),
+                        text = stringResource(
+                            R.string.text_you_can_remove_later,
+                            stringResource(R.string.text_asset_lowercase)
+                        ),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
@@ -211,9 +229,10 @@ fun AddEditAssetUI(
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
-                    title = stringResource(R.string.text_estimated_value),
+                    title = stringResource(R.string.text_current_value),
                     text = estimatedValue.value,
-                    hint = stringResource(R.string.text_currency),
+                    hint = currency,
+                    prefix = currency,
                     errorRes = getErrorResIdOrNull("estimatedValue", assetValidation.value),
                     onTextChanged = { text ->
                         estimatedValue.value = text
@@ -224,9 +243,11 @@ fun AddEditAssetUI(
                 AddItemText(
                     title = stringResource(R.string.text_annualized_rate_of_return),
                     hint = stringResource(R.string.text_percent),
+                    text = annualizedRateOfReturn.value,
+                    suffix = "%",
                     info = stringResource(R.string.text_ann_rate_of_return_info),
                     onTextChanged = { text ->
-                        annAnnualizedRateOfReturn.value = text
+                        annualizedRateOfReturn.value = text
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -253,6 +274,14 @@ fun AddEditAssetUI(
                 if (asset != null) {
                     Column {
                         PrimaryButton(stringResource(R.string.text_confirm_changes)) {
+                            val validationResult = validateAsset(
+                                assetType.value, assetName.value, estimatedValue.value,
+                                effectiveDate.value, revisitDate.value
+                            )
+                            if (validationResult.any { pair -> !pair.value.isValid }) {
+                                assetValidation.value = validationResult
+                                return@PrimaryButton
+                            }
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
@@ -279,10 +308,14 @@ fun AddEditAssetUI(
                                 userId = asset?.userId ?: "",
                                 assetName = assetName.value,
                                 assetType = assetType.value ?: AssetType.OTHER,
-                                assetValue = estimatedValue.value.toDoubleOrNull()
+                                assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
                                     ?: 0.0,
-                                linkedDate = revisitDate.value,
-                                lastUpdated = effectiveDate.value
+                                annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
+                                    0,
+                                    endIndex = annualizedRateOfReturn.value.length - 1
+                                ).toDoubleOrNull() ?: 0.0,
+                                linkedDate = effectiveDate.value,
+                                lastUpdated = revisitDate.value
                             )
                         )
                     }
@@ -296,7 +329,7 @@ fun AddEditAssetUI(
                 onItemTypeSelected = {
                     assetType.value = it as AssetType
                     assetValidation.value = assetValidation.value.toMutableMap().also { map ->
-                        map["assetType"] = FieldValidation(true)
+                        map["assetType"] = AssetFieldValidation(true)
                     }.toMap()
                     showAssetTypeSelection.value = false
                 },
@@ -318,7 +351,7 @@ fun AddEditAssetUI(
                         is DateSelectionType.EffectiveDate -> {
                             assetValidation.value =
                                 assetValidation.value.toMutableMap().also { map ->
-                                    map["effectiveDate"] = FieldValidation(true)
+                                    map["effectiveDate"] = AssetFieldValidation(true)
                                 }.toMap()
                             effectiveDate.value = dateFormatter
                         }
@@ -326,7 +359,7 @@ fun AddEditAssetUI(
                         is DateSelectionType.RevisitDate -> {
                             assetValidation.value =
                                 assetValidation.value.toMutableMap().also { map ->
-                                    map["effectiveDate"] = FieldValidation(true)
+                                    map["effectiveDate"] = AssetFieldValidation(true)
                                 }.toMap()
                             revisitDate.value = dateFormatter
                         }
@@ -357,24 +390,20 @@ fun AddEditAssetUI(
                 text = stringResource(R.string.text_change_may_affect)
             ) {
                 showUpdatePopup.value = false
-                val validationResult = validateAsset(
-                    assetType.value, assetName.value, estimatedValue.value,
-                    effectiveDate.value, revisitDate.value
-                )
-                if (validationResult.any { pair -> !pair.value.isValid }) {
-                    assetValidation.value = validationResult
-                    return@UpdatePopup
-                }
                 onSaveAssetClick(
                     Custom(
                         id = asset?.id ?: UUID.randomUUID().toString(),
                         userId = asset?.userId ?: "",
                         assetName = assetName.value,
                         assetType = assetType.value ?: AssetType.OTHER,
-                        assetValue = estimatedValue.value.toDoubleOrNull()
+                        assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
                             ?: 0.0,
-                        linkedDate = revisitDate.value,
-                        lastUpdated = effectiveDate.value
+                        annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
+                            0,
+                            endIndex = annualizedRateOfReturn.value.length - 1
+                        ).toDoubleOrNull() ?: 0.0,
+                        linkedDate = effectiveDate.value,
+                        lastUpdated = revisitDate.value
                     )
                 )
             }
@@ -407,58 +436,58 @@ private fun validateAsset(
     estimatedValue: String,
     effectiveDate: String,
     revisitDate: String
-): Map<String, FieldValidation> {
-    val assetValidationResult = hashMapOf<String, FieldValidation>()
+): Map<String, AssetFieldValidation> {
+    val assetValidationResult = hashMapOf<String, AssetFieldValidation>()
     assetValidationResult["assetType"] = when {
-        assetType == null -> FieldValidation(
+        assetType == null -> AssetFieldValidation(
             isValid = false,
             assetError = AssetError.ASSET_TYPE_NOT_SELECTED
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> AssetFieldValidation(isValid = true)
     }
     assetValidationResult["assetName"] = when {
-        assetName.isEmpty() -> FieldValidation(
+        assetName.isEmpty() -> AssetFieldValidation(
             isValid = false,
             assetError = AssetError.ASSET_NAME_MISSING
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> AssetFieldValidation(isValid = true)
     }
     val estimatedValueDouble = estimatedValue.toDoubleOrNull() ?: 0.0
     assetValidationResult["estimatedValue"] = when {
-        estimatedValue.isEmpty() -> FieldValidation(
+        estimatedValue.isEmpty() -> AssetFieldValidation(
             isValid = false,
-            assetError = AssetError.BALANCE_IS_MISSING
+            assetError = AssetError.CURRENT_VALUE_MISSING
         )
 
-        estimatedValueDouble < 0 -> FieldValidation(
+        estimatedValueDouble < 0 -> AssetFieldValidation(
             isValid = false,
-            assetError = AssetError.BALANCE_NEGATIVE
+            assetError = AssetError.CURRENT_VALUE_IS_NEGATIVE
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> AssetFieldValidation(isValid = true)
     }
     assetValidationResult["effectiveDate"] = when {
-        effectiveDate.isEmpty() -> FieldValidation(
+        effectiveDate.isEmpty() -> AssetFieldValidation(
             isValid = false,
             assetError = AssetError.EFFECTIVE_DATE_MISSING
         )
 
-        DateUtils.isDateInFuture(effectiveDate) -> FieldValidation(
+        DateUtils.isDateInFuture(effectiveDate) -> AssetFieldValidation(
             isValid = false,
             assetError = AssetError.EFFECTIVE_DATE_IN_FUTURE
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> AssetFieldValidation(isValid = true)
     }
     assetValidationResult["revisitDate"] = when {
-        revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> FieldValidation(
+        revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> AssetFieldValidation(
             isValid = false,
             assetError = AssetError.REVISIT_DATE_IN_PAST
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> AssetFieldValidation(isValid = true)
     }
 
     return assetValidationResult.toMap()
@@ -466,7 +495,7 @@ private fun validateAsset(
 
 private fun getErrorResIdOrNull(
     fieldName: String,
-    assetValidation: Map<String, FieldValidation>
+    assetValidation: Map<String, AssetFieldValidation>
 ): Int? {
     return assetValidation[fieldName]?.assetError?.messageResId
 }

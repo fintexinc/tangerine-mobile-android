@@ -21,6 +21,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -178,6 +179,7 @@ private fun ChipsWithTitle(
     checkStates: MutableList<Boolean>,
     onItemCheckedChange: (Int, Boolean) -> Unit
 ) {
+    val allChecked = remember(items) { mutableStateOf(checkStates.all { checked -> checked }) }
     Text(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,6 +197,43 @@ private fun ChipsWithTitle(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        Text(
+            modifier = Modifier
+                .background(
+                    color = Colors.BackgroundInteractive,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .then(
+                    if (allChecked.value) {
+                        Modifier.border(
+                            width = 1.dp,
+                            color = Colors.TextInteractive,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                    } else {
+                        Modifier
+                    }
+                )
+                .clickableShape(RoundedCornerShape(16.dp)) {
+                    val newChecked = !allChecked.value
+                    if (newChecked) {
+                        for (i in checkStates.indices) {
+                            checkStates[i] = true
+                            onItemCheckedChange(i, true)
+                        }
+                    } else {
+                        for (i in checkStates.indices) {
+                            checkStates[i] = false
+                            onItemCheckedChange(i, false)
+                        }
+                    }
+                    allChecked.value = newChecked
+                }
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            text = stringResource(R.string.text_all),
+            style = FontStyles.BodyMedium,
+            color = Colors.TextInteractive
+        )
         items.forEachIndexed { index, item ->
             val checked = checkStates[index]
             Text(
@@ -217,10 +256,16 @@ private fun ChipsWithTitle(
                     .clickableShape(RoundedCornerShape(16.dp)) {
                         val newChecked = !checkStates[index]
                         checkStates[index] = newChecked
+                        if(checkStates.all { checked -> checked }) {
+                            allChecked.value = true
+                        }
+                        if(!newChecked && allChecked.value) {
+                            allChecked.value = false
+                        }
                         onItemCheckedChange(index, newChecked)
                     }
                     .padding(horizontal = 12.dp, vertical = 8.dp),
-                text =  item.name,
+                text = item.name,
                 style = FontStyles.BodyMedium,
                 color = Colors.TextInteractive
             )

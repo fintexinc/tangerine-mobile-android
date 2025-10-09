@@ -145,6 +145,8 @@ fun AddItemSelection(
 fun AddItemText(
     title: String,
     hint: String,
+    prefix: String? = null,
+    suffix: String? = null,
     info: String = "",
     text: String = "",
     @StringRes errorRes: Int? = null,
@@ -176,6 +178,17 @@ fun AddItemText(
                 .wrapContentHeight(),
             value = text.value,
             onValueChange = { newText ->
+                val newText = when {
+                    prefix != null && newText.isNotEmpty() && !newText.startsWith(prefix) -> {
+                        "$prefix$newText"
+                    }
+                    suffix != null && newText.isNotEmpty() && !newText.endsWith(suffix) -> {
+                        "$newText$suffix"
+                    }
+                    else -> {
+                        newText
+                    }
+                }
                 when {
                     errorResState.intValue != Int.MIN_VALUE -> {
                         errorResState.intValue = Int.MIN_VALUE
@@ -316,7 +329,7 @@ fun ItemTypeSelection(
                 )
                 Text(
                     modifier = Modifier
-                        .weight(0.33f)
+                        .weight(0.39f)
                         .wrapContentHeight(),
                     text = itemTypeTitle,
                     style = FontStyles.BodyLargeBold,

@@ -13,7 +13,13 @@ import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.domain.model.Transaction
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
-import com.tangerine.account.presentation.models.DateFilterUi.*
+import com.tangerine.account.presentation.models.DateFilterUi.ALL_DATES
+import com.tangerine.account.presentation.models.DateFilterUi.BY_MONTH
+import com.tangerine.account.presentation.models.DateFilterUi.CURRENT_MONTH
+import com.tangerine.account.presentation.models.DateFilterUi.LAST_30_DAYS
+import com.tangerine.account.presentation.models.DateFilterUi.LAST_60_DAYS
+import com.tangerine.account.presentation.models.DateFilterUi.LAST_90_DAYS
+import com.tangerine.account.presentation.models.DateFilterUi.TWELVE_MONTH
 import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.models.ReturnsItemUi
 import com.tangerine.account.presentation.models.TransactionGroup
@@ -100,15 +106,16 @@ class AccountViewModel @Inject constructor(
                 year -= 1
             }
 
-            return PerformanceDate(month, year)
+            return PerformanceDate(0, month, year)
         }
 
-        val currentValue = monthlyTotals[PerformanceDate(currentMonth, currentYear)] ?: 0.0
+        val currentValue = monthlyTotals[PerformanceDate(0, currentMonth, currentYear)] ?: 0.0
         val oneMonthAgoValue = monthlyTotals[getDateMonthsAgo(1)] ?: 0.0
         val threeMonthsAgoValue = monthlyTotals[getDateMonthsAgo(3)] ?: 0.0
         val sixMonthsAgoValue = monthlyTotals[getDateMonthsAgo(6)] ?: 0.0
-        val yearStartValue = monthlyTotals[PerformanceDate(1, currentYear)] ?: 0.0
-        val oneYearAgoValue = monthlyTotals[PerformanceDate(currentMonth, currentYear - 1)] ?: 0.0
+        val yearStartValue = monthlyTotals[PerformanceDate(0, currentMonth, currentYear)] ?: 0.0
+        val oneYearAgoValue =
+            monthlyTotals[PerformanceDate(0, currentMonth, currentYear - 1)] ?: 0.0
 
         val portfolioStartValue = performanceItems
             .minByOrNull { it.date.year * 12 + it.date.month }
@@ -381,11 +388,13 @@ class AccountViewModel @Inject constructor(
 
         val filtered = searchFiltered.filter { transaction ->
             // Тип
-            val typeOk = transactionsState.selectedTypes.contains(TransactionTypeFilterUi.ALL_TYPES) ||
-                    transactionsState.selectedTypes.contains(transaction.transactionTransactionTypeFilter)
+            val typeOk =
+                transactionsState.selectedTypes.contains(TransactionTypeFilterUi.ALL_TYPES) ||
+                        transactionsState.selectedTypes.contains(transaction.transactionTransactionTypeFilter)
 
-            val statusOk = transactionsState.selectedStatuses.contains(TransactionStatusFilter.ALL_STATUS) ||
-                    transactionsState.selectedStatuses.contains(transaction.status)
+            val statusOk =
+                transactionsState.selectedStatuses.contains(TransactionStatusFilter.ALL_STATUS) ||
+                        transactionsState.selectedStatuses.contains(transaction.status)
 
             val dateOk = if (transactionsState.selectedDates.contains(DateFilterUi.ALL_DATES)) {
                 true
@@ -400,7 +409,12 @@ class AccountViewModel @Inject constructor(
                         CURRENT_MONTH -> isCurrentMonth(date)
                         BY_MONTH -> transactionsState.selectedMonth != null &&
                                 transactionsState.selectedYear != null &&
-                                isByMonth(date, transactionsState.selectedMonth, transactionsState.selectedYear)
+                                isByMonth(
+                                    date,
+                                    transactionsState.selectedMonth,
+                                    transactionsState.selectedYear
+                                )
+
                         else -> true
                     }
                 }
@@ -423,29 +437,31 @@ class AccountViewModel @Inject constructor(
         )
     }
 
-    fun onTransactionTypeFilterChanged(types: List<TransactionTypeFilterUi>) = viewModelScope.launch {
-        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-        _state.value = State.Loaded(
-            current.copy(
-                bottomSheet = current.bottomSheet.copy(
-                    transactions = current.bottomSheet.transactions.copy(selectedTypes = types)
+    fun onTransactionTypeFilterChanged(types: List<TransactionTypeFilterUi>) =
+        viewModelScope.launch {
+            val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+            _state.value = State.Loaded(
+                current.copy(
+                    bottomSheet = current.bottomSheet.copy(
+                        transactions = current.bottomSheet.transactions.copy(selectedTypes = types)
+                    )
                 )
             )
-        )
-        applyAllTransactionFilters()
-    }
+            applyAllTransactionFilters()
+        }
 
-    fun onTransactionStatusFilterChanged(statuses: List<TransactionStatusFilter>) = viewModelScope.launch {
-        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-        _state.value = State.Loaded(
-            current.copy(
-                bottomSheet = current.bottomSheet.copy(
-                    transactions = current.bottomSheet.transactions.copy(selectedStatuses = statuses)
+    fun onTransactionStatusFilterChanged(statuses: List<TransactionStatusFilter>) =
+        viewModelScope.launch {
+            val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+            _state.value = State.Loaded(
+                current.copy(
+                    bottomSheet = current.bottomSheet.copy(
+                        transactions = current.bottomSheet.transactions.copy(selectedStatuses = statuses)
+                    )
                 )
             )
-        )
-        applyAllTransactionFilters()
-    }
+            applyAllTransactionFilters()
+        }
 
     fun onTransactionDateFilterChanged(
         dateFilters: List<DateFilterUi>,
@@ -507,8 +523,9 @@ class AccountViewModel @Inject constructor(
         val documentsState = bottomSheet.documents
 
         val filtered = documentsState.all.filter { document ->
-            val typeOk = documentsState.selectedTypes.contains(DocumentTypeFilterUi.ALL_DOCUMENTS) ||
-                    documentsState.selectedTypes.contains(document.type)
+            val typeOk =
+                documentsState.selectedTypes.contains(DocumentTypeFilterUi.ALL_DOCUMENTS) ||
+                        documentsState.selectedTypes.contains(document.type)
 
             val dateOk = if (documentsState.selectedDates.contains(ALL_DATES)) {
                 true
@@ -523,7 +540,12 @@ class AccountViewModel @Inject constructor(
                         CURRENT_MONTH -> isCurrentMonth(date)
                         BY_MONTH -> documentsState.selectedMonth != null &&
                                 documentsState.selectedYear != null &&
-                                isByMonth(date, documentsState.selectedMonth, documentsState.selectedYear)
+                                isByMonth(
+                                    date,
+                                    documentsState.selectedMonth,
+                                    documentsState.selectedYear
+                                )
+
                         else -> true
                     }
                 }
@@ -561,17 +583,18 @@ class AccountViewModel @Inject constructor(
         applyAllDocumentFilters()
     }
 
-    fun onBottomSheetDocumentsTypeFilterChanged(types: List<DocumentTypeFilterUi>) = viewModelScope.launch {
-        val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
-        _state.value = State.Loaded(
-            current.copy(
-                bottomSheet = current.bottomSheet.copy(
-                    documents = current.bottomSheet.documents.copy(selectedTypes = types)
+    fun onBottomSheetDocumentsTypeFilterChanged(types: List<DocumentTypeFilterUi>) =
+        viewModelScope.launch {
+            val current = (_state.value as? State.Loaded)?.mainState ?: return@launch
+            _state.value = State.Loaded(
+                current.copy(
+                    bottomSheet = current.bottomSheet.copy(
+                        documents = current.bottomSheet.documents.copy(selectedTypes = types)
+                    )
                 )
             )
-        )
-        applyAllDocumentFilters()
-    }
+            applyAllDocumentFilters()
+        }
 
     private fun parseDocumentDate(dateString: String): Calendar {
         val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
@@ -800,6 +823,6 @@ data class DocumentDataPoint(
     val subName: String,
     val value: String? = null,
     val subValue: String? = null,
-    @param:DrawableRes val iconResId :Int? = null,
+    @param:DrawableRes val iconResId: Int? = null,
     val type: DocumentTypeFilterUi? = null,
 )

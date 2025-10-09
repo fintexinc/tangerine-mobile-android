@@ -24,10 +24,9 @@ data class Liability(
 
 enum class LiabilityType(override val label: String): ItemType {
     MORTGAGE("Mortgage"),
-    HOME_EQUITY_LINE_OF_CREDIT("Home Equity Line of Credit"),
-    AUTO_LOAN("Auto Loan"),
-    CREDIT_CARDS("Credit Cards"),
-    STUDENT_LOANS("Student Loans"),
-    PERSONAL_LOANS("Personal Loans"),
+    CREDIT_CARD("Credit Card"),
+    LINE_OF_CREDIT("Line of Credit"),
+    PERSONAL_LOAN("Personal Loan"),
+    BUSINESS_LOAN("Business Loan"),
     OTHER("Other")
 }

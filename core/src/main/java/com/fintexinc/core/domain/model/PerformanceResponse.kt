@@ -14,6 +14,7 @@ data class PerformanceItem(
 
 @Serializable
 data class PerformanceDate(
+    val day: Int,
     val month: Int,
     val year: Int,
 )

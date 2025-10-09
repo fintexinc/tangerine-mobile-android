@@ -32,7 +32,7 @@
     <string name="text_show_more">Show More</string>
     <string name="text_new_market_insights">New market insights are available — stay informed with the latest trends and perspectives</string>
     <string name="text_check_in_update">See insights</string>
-    <string name="text_investor_performance">Investor Performance</string>
+    <string name="text_investment_performance">Investment Performance</string>
     <string name="text_my_accounts">My Investment Accounts</string>
     <string name="format_registered_accounts">Registered</string>
     <string name="format_non_registered_accounts">Non-Registered</string>
@@ -55,10 +55,10 @@
     <string name="text_make_selection">Make a selection</string>
     <string name="text_asset_name">Asset Name</string>
     <string name="text_enter_name">Enter a name</string>
-    <string name="text_estimated_value">Estimated Value</string>
+    <string name="text_current_value">Current Value</string>
     <string name="text_current_balance">Current Balance</string>
     <string name="text_monthly_payment">Monthly Payment (optional)</string>
-    <string name="text_annual_interest_rate">Annual Interest Rate (optional)</string>
+    <string name="text_annual_interest_rate">Annual Interest Rate % (optional)</string>
     <string name="text_annual_interest_rate_info">We use your annual Interest rate for net worth projections only to help you stay informed of your finances and build a holistic net worth picture.</string>
     <string name="text_currency">$</string>
     <string name="text_annualized_rate_of_return">Annualized rate of return % (Optional)</string>
@@ -78,7 +78,6 @@
     <string name="text_back">Back</string>
     <string name="title_add_account">Add Account</string>
     <string name="text_group_by">Group By</string>
-    <string name="format_performance_as_of_date">Balance as of %s %d</string>
     <string name="text_none">None</string>
     <string name="text_registered_non_registered">Registered/Non-Registered</string>
     <string name="text_account_type">Account Type</string>

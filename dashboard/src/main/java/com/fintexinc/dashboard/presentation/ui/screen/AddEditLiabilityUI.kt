@@ -1,5 +1,6 @@
 package com.fintexinc.dashboard.presentation.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -49,10 +50,11 @@ import com.fintexinc.core.presentation.ui.widget.dialog.UpdatePopup
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
-import com.fintexinc.dashboard.presentation.ui.screen.asset.error.AssetError
-import com.fintexinc.dashboard.presentation.ui.screen.asset.error.FieldValidation
+import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityError
+import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityFieldValidation
 import java.util.UUID
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun AddEditLiabilityUI(
     liability: Liability?,
@@ -65,6 +67,7 @@ fun AddEditLiabilityUI(
             .fillMaxSize()
             .background(color = Colors.Background)
     ) {
+        val currency = stringResource(R.string.text_currency)
         val showLiabilityTypeSelection = remember {
             mutableStateOf(false)
         }
@@ -75,19 +78,40 @@ fun AddEditLiabilityUI(
             mutableStateOf(liability?.liabilityType?.label ?: "")
         }
         val currentBalance = remember {
-            mutableStateOf(liability?.balance?.toString() ?: "")
+            mutableStateOf(
+                "$currency${
+                    if (liability?.balance == null) "" else String.format(
+                        "%.2f",
+                        liability.balance
+                    )
+                }"
+            )
         }
         val monthlyPayment = remember {
-            mutableStateOf(liability?.limit?.toString() ?: "")
+            mutableStateOf(
+                "$currency${
+                    if (liability?.limit == null) "" else String.format(
+                        "%.2f",
+                        liability?.limit
+                    )
+                }"
+            )
         }
         val annualInterestRate = remember {
-            mutableStateOf(liability?.interestRate?.toString() ?: "")
+            mutableStateOf(
+                if (liability?.interestRate == null) "" else {
+                    String.format(
+                        "%.2f",
+                        liability.interestRate
+                    ) + "%"
+                }
+            )
         }
         val effectiveDate = remember {
-            mutableStateOf(liability?.lastUpdated ?: "")
+            mutableStateOf(liability?.linkedDate ?: "")
         }
         val revisitDate = remember {
-            mutableStateOf(liability?.linkedDate ?: "")
+            mutableStateOf(liability?.lastUpdated ?: "")
         }
         val showDialog = remember {
             mutableStateOf<DateSelectionType?>(null)
@@ -101,11 +125,11 @@ fun AddEditLiabilityUI(
         val liabilityValidation = remember {
             mutableStateOf(
                 hashMapOf(
-                    "liabilityType" to FieldValidation(true),
-                    "liabilityName" to FieldValidation(true),
-                    "balance" to FieldValidation(true),
-                    "effectiveDate" to FieldValidation(true),
-                    "revisitDate" to FieldValidation(true)
+                    "liabilityType" to LiabilityFieldValidation(true),
+                    "liabilityName" to LiabilityFieldValidation(true),
+                    "balance" to LiabilityFieldValidation(true),
+                    "effectiveDate" to LiabilityFieldValidation(true),
+                    "revisitDate" to LiabilityFieldValidation(true)
                 ).toMap()
             )
         }
@@ -189,7 +213,10 @@ fun AddEditLiabilityUI(
                         modifier = Modifier.height(8.dp)
                     )
                     Text(
-                        text = stringResource(R.string.text_you_can_remove_later, stringResource(R.string.text_liability_lowercase)),
+                        text = stringResource(
+                            R.string.text_you_can_remove_later,
+                            stringResource(R.string.text_liability_lowercase)
+                        ),
                         style = FontStyles.BodyMedium,
                         color = Colors.BrandBlack,
                     )
@@ -224,7 +251,8 @@ fun AddEditLiabilityUI(
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_current_balance),
-                    hint = stringResource(R.string.text_currency),
+                    hint = currency,
+                    prefix = currency,
                     text = currentBalance.value,
                     errorRes = getErrorResIdOrNull(
                         "balance",
@@ -238,7 +266,8 @@ fun AddEditLiabilityUI(
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_monthly_payment),
-                    hint = stringResource(R.string.text_currency),
+                    hint = currency,
+                    prefix = currency,
                     text = monthlyPayment.value,
                     onTextChanged = { text ->
                         monthlyPayment.value = text
@@ -250,6 +279,7 @@ fun AddEditLiabilityUI(
                     title = stringResource(R.string.text_annual_interest_rate),
                     hint = stringResource(R.string.text_percent),
                     info = stringResource(R.string.text_annual_interest_rate_info),
+                    suffix = "%",
                     text = annualInterestRate.value,
                     onTextChanged = { text ->
                         annualInterestRate.value = text
@@ -285,6 +315,17 @@ fun AddEditLiabilityUI(
                 if (liability != null) {
                     Column {
                         PrimaryButton(stringResource(R.string.text_confirm_changes)) {
+                            val validationResult = validateLiability(
+                                liabilityType = liabilityType.value,
+                                liabilityName = liabilityName.value,
+                                balance = currentBalance.value,
+                                effectiveDate = effectiveDate.value,
+                                revisitDate = revisitDate.value
+                            )
+                            if (validationResult.values.any { !it.isValid }) {
+                                liabilityValidation.value = validationResult
+                                return@PrimaryButton
+                            }
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
@@ -304,7 +345,7 @@ fun AddEditLiabilityUI(
                             effectiveDate = effectiveDate.value,
                             revisitDate = revisitDate.value
                         )
-                        if(validationResult.values.any { !it.isValid }) {
+                        if (validationResult.values.any { !it.isValid }) {
                             liabilityValidation.value = validationResult
                             return@PrimaryButton
                         }
@@ -315,12 +356,15 @@ fun AddEditLiabilityUI(
                                 liabilityName = liabilityName.value,
                                 liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                                 accountNumber = UUID.randomUUID().toString(),
-                                balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                                balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
                                 linkedDate = effectiveDate.value,
-                                limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
-                                interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
+                                limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
+                                interestRate = annualInterestRate.value.substring(
+                                    0,
+                                    endIndex = annualInterestRate.value.length - 1
+                                ).toDoubleOrNull() ?: 0.0,
                                 currency = "$",
-                                lastUpdated = effectiveDate.value,
+                                lastUpdated = revisitDate.value,
                                 isCustomLiability = true
                             )
                         )
@@ -394,7 +438,7 @@ fun AddEditLiabilityUI(
                     effectiveDate = effectiveDate.value,
                     revisitDate = revisitDate.value
                 )
-                if(validationResult.values.any { !it.isValid }) {
+                if (validationResult.values.any { !it.isValid }) {
                     liabilityValidation.value = validationResult
                     return@UpdatePopup
                 }
@@ -405,12 +449,15 @@ fun AddEditLiabilityUI(
                         liabilityName = liabilityName.value,
                         liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                         accountNumber = UUID.randomUUID().toString(),
-                        balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                        balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
                         linkedDate = effectiveDate.value,
-                        limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
-                        interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
+                        limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
+                        interestRate = annualInterestRate.value.substring(
+                            0,
+                            endIndex = annualInterestRate.value.length - 1
+                        ).toDoubleOrNull() ?: 0.0,
                         currency = "$",
-                        lastUpdated = effectiveDate.value,
+                        lastUpdated = revisitDate.value,
                         isCustomLiability = true
                     )
                 )
@@ -444,58 +491,58 @@ private fun validateLiability(
     balance: String,
     effectiveDate: String,
     revisitDate: String
-): Map<String, FieldValidation> {
-    val assetValidationResult = hashMapOf<String, FieldValidation>()
+): Map<String, LiabilityFieldValidation> {
+    val assetValidationResult = hashMapOf<String, LiabilityFieldValidation>()
     assetValidationResult["liabilityType"] = when {
-        liabilityType == null -> FieldValidation(
+        liabilityType == null -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.ASSET_TYPE_NOT_SELECTED
+            liabilityError = LiabilityError.LIABILITY_TYPE_NOT_SELECTED
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     assetValidationResult["liabilityName"] = when {
-        liabilityName.isEmpty() -> FieldValidation(
+        liabilityName.isEmpty() -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.ASSET_NAME_MISSING
+            liabilityError = LiabilityError.LIABILITY_NAME_MISSING
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     val estimatedValueDouble = balance.toDoubleOrNull() ?: 0.0
     assetValidationResult["balance"] = when {
-        balance.isEmpty() -> FieldValidation(
+        balance.isEmpty() -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.BALANCE_IS_MISSING
+            liabilityError = LiabilityError.BALANCE_MISSING
         )
 
-        estimatedValueDouble < 0 -> FieldValidation(
+        estimatedValueDouble < 0 -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.BALANCE_NEGATIVE
+            liabilityError = LiabilityError.BALANCE_NEGATIVE
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     assetValidationResult["effectiveDate"] = when {
-        effectiveDate.isEmpty() -> FieldValidation(
+        effectiveDate.isEmpty() -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.EFFECTIVE_DATE_MISSING
+            liabilityError = LiabilityError.EFFECTIVE_DATE_MISSING
         )
 
-        DateUtils.isDateInFuture(effectiveDate) -> FieldValidation(
+        DateUtils.isDateInFuture(effectiveDate) -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.EFFECTIVE_DATE_IN_FUTURE
+            liabilityError = LiabilityError.EFFECTIVE_DATE_IN_FUTURE
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
     assetValidationResult["revisitDate"] = when {
-        revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> FieldValidation(
+        revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> LiabilityFieldValidation(
             isValid = false,
-            assetError = AssetError.REVISIT_DATE_IN_PAST
+            liabilityError = LiabilityError.REVISIT_DATE_IN_PAST
         )
 
-        else -> FieldValidation(isValid = true)
+        else -> LiabilityFieldValidation(isValid = true)
     }
 
     return assetValidationResult.toMap()
@@ -503,7 +550,7 @@ private fun validateLiability(
 
 private fun getErrorResIdOrNull(
     fieldName: String,
-    assetValidation: Map<String, FieldValidation>
+    assetValidation: Map<String, LiabilityFieldValidation>
 ): Int? {
-    return assetValidation[fieldName]?.assetError?.messageResId
+    return assetValidation[fieldName]?.liabilityError?.messageResId
 }

@@ -52,6 +52,7 @@ data class Custom(
     val assetName: String,
     @Serializable(with = AssetTypeSerializer::class)
     val assetType: AssetType,
+    val annualizedRateOfReturn: Double,
     val assetValue: Double,
     val linkedDate: String,
     val lastUpdated: String
@@ -77,14 +78,11 @@ data class Fund(
 
 enum class AssetType(override val label: String) : ItemType {
     CASH_AND_CASH_EQUIVALENTS("Cash & Cash Equivalents"),
-    REGISTERED_ACCOUNT("Registered Account"),
-    INVESTMENT_ACCOUNT("Investment Account"),
+    PERSONAL_INVESTMENT_ACCOUNTS("Personal Investment Accounts"),
+    BUSINESS_INTEREST_AND_INVESTMENTS("Business Interest & Investments"),
+    REAL_ESTATE("Real Estate"),
+    VEHICLES("Vehicles"),
+    LUXURY_ASSETS("Luxury Assets"),
     CRYPTOCURRENCY("Cryptocurrency"),
-    PRIMARY_RESIDENCE("Primary Residence"),
-    RENTAL_PROPERTY("Rental Property"),
-    VACATION_HOME("Vacation Home"),
-    LAND("Land"),
-    VEHICLE("Vehicle"),
-    PERSONAL_PROPERTY("Personal Property"),
     OTHER("Other")
 }
