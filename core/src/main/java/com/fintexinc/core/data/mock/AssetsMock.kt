@@ -109,7 +109,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        }, \n" +
         "        { \n" +
-        "            \"id\": \"ACCT-BNK-001\",\n" +
+        "            \"id\": \"ACCT-BNK-003\",\n" +
         "            \"userId\": \"INV-0001\",\n" +
         "            \"accountNumber\": \"***6045\",\n" +
         "            \"accountName\": \"Everyday Chequing\",\n" +
@@ -120,7 +120,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
         "        }, \n" +
         "        { \n" +
-        "            \"id\": \"ACCT-BNK-002\",\n" +
+        "            \"id\": \"ACCT-BNK-004\",\n" +
         "            \"userId\": \"INV-0002\",\n" +
         "            \"accountNumber\": \"***4932\",\n" +
         "            \"accountName\": \"Savings Account\",\n" +

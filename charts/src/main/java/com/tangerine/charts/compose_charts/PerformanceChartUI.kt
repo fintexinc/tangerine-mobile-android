@@ -102,19 +102,19 @@ fun PerformanceChartUI(
     }
     Spacer(modifier = Modifier.height(16.dp))
     Text(
+        modifier = Modifier.wrapContentSize(),
+        text = if (sum.isNullOrEmpty()) performanceValue.doubleValue.formatCurrency() else sum,
+        style = FontStyles.DisplaySmall,
+        color = Colors.Primary,
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    Text(
         text = stringResource(
             id = R.string.format_performance_as_of_date,
             asOfDateValue.value.day, asOfDateValue.value.month.monthName(), asOfDateValue.value.year
         ),
         color = Colors.TextSubdued,
         style = FontStyles.BodySmallBold,
-    )
-    Spacer(modifier = Modifier.height(4.dp))
-    Text(
-        modifier = Modifier.wrapContentSize(),
-        text = if (sum.isNullOrEmpty()) performanceValue.doubleValue.formatCurrency() else sum,
-        style = FontStyles.DisplaySmall,
-        color = Colors.Primary,
     )
     Spacer(modifier = Modifier.height(18.dp))
 

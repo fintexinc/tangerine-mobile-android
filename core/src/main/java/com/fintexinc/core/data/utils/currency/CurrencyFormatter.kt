@@ -3,10 +3,13 @@ package com.fintexinc.core.data.utils.currency
 import java.text.NumberFormat
 import java.util.Locale
 
-fun Double.formatCurrency(): String {
+fun Double.formatCurrency(
+    maximumFractionDigits: Int = 2,
+    minimumFractionDigits: Int = 2
+): String {
     val formatter = NumberFormat.getCurrencyInstance(Locale.US)
-    formatter.maximumFractionDigits = 2
-    formatter.minimumFractionDigits = 2
+    formatter.maximumFractionDigits = maximumFractionDigits
+    formatter.minimumFractionDigits = minimumFractionDigits
     return formatter.format(this)
 }
 

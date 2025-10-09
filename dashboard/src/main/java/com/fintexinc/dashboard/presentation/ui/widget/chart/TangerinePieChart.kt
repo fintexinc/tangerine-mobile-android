@@ -26,7 +26,7 @@ import com.tangerine.charts.compose_charts.models.Pie
 
 @Composable
 fun TangerinePieChart(title: String, pieData: List<Pie>) {
-    Column(modifier = Modifier.fillMaxWidth().height(380.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().height(410.dp)) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
