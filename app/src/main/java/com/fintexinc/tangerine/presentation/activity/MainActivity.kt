@@ -226,7 +226,9 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable<Routes.InvestmentDocument> {
-                        InvestmentDocumentsUi()
+                        InvestmentDocumentsUi(
+                            onBackClicked = { navController.popBackStack() }
+                        )
                     }
                 }
             }
