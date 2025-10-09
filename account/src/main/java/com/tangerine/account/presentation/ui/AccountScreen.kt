@@ -41,6 +41,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -413,7 +414,7 @@ private fun AccountBalanceCard(
                 painter = painterResource(R.drawable.ic_arrow),
                 tint = Colors.TextSuccess,
                 contentDescription = "",
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp, bottom = 4.dp).rotate(180f)
             )
             Text(
                 text = "50.42 (+10.00%) All Time",
