@@ -58,7 +58,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityName\": \"Credit Card\",\n" +
         "        \"liabilityType\": \"Credit Card\",\n" +
-        "        \"accountNumber\": \"****6677\",\n" +
+        "        \"accountNumber\": \"****3443\",\n" +
     "           \"linkedDate\": \"2025-04-10\",\n" +
         "        \"balance\": 120002.1,\n" +
         "        \"limit\": 8000.0,\n" +
@@ -71,7 +71,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"userId\": \"INV-0002\",\n" +
         "        \"liabilityName\": \"Auto Loan\",\n" +
         "        \"liabilityType\": \"Personal Loan\",\n" +
-        "        \"accountNumber\": \"****6677\",\n" +
+        "        \"accountNumber\": \"****4343\",\n" +
         "         \"linkedDate\": \"2025-05-10\",\n" +
         "        \"balance\": 140002.1,\n" +
         "        \"limit\": 8000.0,\n" +

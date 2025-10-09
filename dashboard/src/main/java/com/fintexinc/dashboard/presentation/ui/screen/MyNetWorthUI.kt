@@ -454,7 +454,9 @@ private fun NetWorthInfoUI(
                 modifier = Modifier
                     .weight(1f)
                     .wrapContentHeight(),
-                text = (assets.sumOf { it.value } - liabilities.sumOf { it.value }).formatCurrency(),
+                text = (assets.filter { it.isChecked }
+                    .sumOf { it.value } - liabilities.filter { it.isChecked }
+                    .sumOf { it.value }).formatCurrency(),
                 style = FontStyles.DisplaySmall,
                 color = Colors.TextPrimary,
                 maxLines = 1
