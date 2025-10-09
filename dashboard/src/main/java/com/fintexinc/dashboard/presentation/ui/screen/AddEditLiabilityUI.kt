@@ -480,12 +480,12 @@ private fun validateLiability(
     assetValidationResult["effectiveDate"] = when {
         effectiveDate.isEmpty() -> LiabilityFieldValidation(
             isValid = false,
-            liabilityError = AssetError.EFFECTIVE_DATE_MISSING
+            liabilityError = LiabilityError.EFFECTIVE_DATE_MISSING
         )
 
         DateUtils.isDateInFuture(effectiveDate) -> LiabilityFieldValidation(
             isValid = false,
-            liabilityError = AssetError.EFFECTIVE_DATE_IN_FUTURE
+            liabilityError = LiabilityError.EFFECTIVE_DATE_IN_FUTURE
         )
 
         else -> LiabilityFieldValidation(isValid = true)
@@ -493,7 +493,7 @@ private fun validateLiability(
     assetValidationResult["revisitDate"] = when {
         revisitDate.isNotEmpty() && DateUtils.isDateInPast(revisitDate) -> LiabilityFieldValidation(
             isValid = false,
-            liabilityError = AssetError.REVISIT_DATE_IN_PAST
+            liabilityError = LiabilityError.REVISIT_DATE_IN_PAST
         )
 
         else -> LiabilityFieldValidation(isValid = true)

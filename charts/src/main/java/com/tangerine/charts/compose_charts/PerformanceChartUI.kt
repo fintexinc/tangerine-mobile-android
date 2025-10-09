@@ -61,10 +61,8 @@ fun PerformanceChartUI(
     Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = stringResource(
-            R.string.format_performance_as_of_date,
-            asOfDateValue.value.day,
-            asOfDateValue.value.month.monthName(),
-            asOfDateValue.value.year
+            id = R.string.format_performance_as_of_date,
+            asOfDateValue.value.day, asOfDateValue.value.month.monthName(), asOfDateValue.value.year
         ),
         color = Colors.TextSubdued,
         style = FontStyles.BodySmallBold,
