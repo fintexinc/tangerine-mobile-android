@@ -331,7 +331,7 @@ fun AddEditLiabilityUI(
         if (showLiabilityTypeSelection.value) {
             ItemTypeSelection(
                 itemTypes = LiabilityType.entries,
-                itemTypeTitle = stringResource(R.string.text_asset_type),
+                itemTypeTitle = stringResource(R.string.text_liability_type),
                 onItemTypeSelected = {
                     liabilityType.value = it as LiabilityType
                     showLiabilityTypeSelection.value = false
