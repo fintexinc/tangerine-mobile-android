@@ -82,7 +82,7 @@ fun AddEditAssetUI(
             mutableStateOf(asset?.assetName ?: "")
         }
         val estimatedValue = remember {
-            mutableStateOf("$currency${if (asset?.assetValue == null) "" else asset.assetValue.toString()}")
+            mutableStateOf("$currency${if (asset?.assetValue == null) "" else String.format("%.2f", asset.assetValue)}")
         }
         val annAnnualizedRateOfReturn = remember {
             mutableStateOf("")
@@ -212,7 +212,7 @@ fun AddEditAssetUI(
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
-                    title = stringResource(R.string.text_estimated_value),
+                    title = stringResource(R.string.text_current_value),
                     text = estimatedValue.value,
                     hint = currency,
                     prefix = currency,
@@ -255,6 +255,14 @@ fun AddEditAssetUI(
                 if (asset != null) {
                     Column {
                         PrimaryButton(stringResource(R.string.text_confirm_changes)) {
+                            val validationResult = validateAsset(
+                                assetType.value, assetName.value, estimatedValue.value,
+                                effectiveDate.value, revisitDate.value
+                            )
+                            if (validationResult.any { pair -> !pair.value.isValid }) {
+                                assetValidation.value = validationResult
+                                return@PrimaryButton
+                            }
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
@@ -281,10 +289,10 @@ fun AddEditAssetUI(
                                 userId = asset?.userId ?: "",
                                 assetName = assetName.value,
                                 assetType = assetType.value ?: AssetType.OTHER,
-                                assetValue = estimatedValue.value.toDoubleOrNull()
+                                assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
                                     ?: 0.0,
-                                linkedDate = revisitDate.value,
-                                lastUpdated = effectiveDate.value
+                                linkedDate = effectiveDate.value,
+                                lastUpdated = revisitDate.value
                             )
                         )
                     }
@@ -359,24 +367,16 @@ fun AddEditAssetUI(
                 text = stringResource(R.string.text_change_may_affect)
             ) {
                 showUpdatePopup.value = false
-                val validationResult = validateAsset(
-                    assetType.value, assetName.value, estimatedValue.value,
-                    effectiveDate.value, revisitDate.value
-                )
-                if (validationResult.any { pair -> !pair.value.isValid }) {
-                    assetValidation.value = validationResult
-                    return@UpdatePopup
-                }
                 onSaveAssetClick(
                     Custom(
                         id = asset?.id ?: UUID.randomUUID().toString(),
                         userId = asset?.userId ?: "",
                         assetName = assetName.value,
                         assetType = assetType.value ?: AssetType.OTHER,
-                        assetValue = estimatedValue.value.toDoubleOrNull()
+                        assetValue = estimatedValue.value.substring(1).toDoubleOrNull()
                             ?: 0.0,
-                        linkedDate = revisitDate.value,
-                        lastUpdated = effectiveDate.value
+                        linkedDate = effectiveDate.value,
+                        lastUpdated = revisitDate.value
                     )
                 )
             }

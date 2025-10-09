@@ -49,7 +49,6 @@ import com.fintexinc.core.presentation.ui.widget.dialog.UpdatePopup
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
-import com.fintexinc.dashboard.presentation.ui.screen.asset.error.AssetError
 import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityError
 import com.fintexinc.dashboard.presentation.ui.screen.asset.error.LiabilityFieldValidation
 import java.util.UUID
@@ -77,19 +76,19 @@ fun AddEditLiabilityUI(
             mutableStateOf(liability?.liabilityType?.label ?: "")
         }
         val currentBalance = remember {
-            mutableStateOf("$currency${liability?.balance?.toString() ?: ""}")
+            mutableStateOf("$currency${if(liability?.balance == null) "" else String.format("%.2f", liability.balance)}")
         }
         val monthlyPayment = remember {
-            mutableStateOf("$currency${liability?.limit?.toString() ?: ""}")
+            mutableStateOf("$currency${if(liability?.limit == null) "" else String.format("%.2f", liability?.limit)}")
         }
         val annualInterestRate = remember {
             mutableStateOf(liability?.interestRate?.toString() ?: "")
         }
         val effectiveDate = remember {
-            mutableStateOf(liability?.lastUpdated ?: "")
+            mutableStateOf(liability?.linkedDate ?: "")
         }
         val revisitDate = remember {
-            mutableStateOf(liability?.linkedDate ?: "")
+            mutableStateOf(liability?.lastUpdated ?: "")
         }
         val showDialog = remember {
             mutableStateOf<DateSelectionType?>(null)
@@ -289,6 +288,17 @@ fun AddEditLiabilityUI(
                 if (liability != null) {
                     Column {
                         PrimaryButton(stringResource(R.string.text_confirm_changes)) {
+                            val validationResult = validateLiability(
+                                liabilityType = liabilityType.value,
+                                liabilityName = liabilityName.value,
+                                balance = currentBalance.value,
+                                effectiveDate = effectiveDate.value,
+                                revisitDate = revisitDate.value
+                            )
+                            if(validationResult.values.any { !it.isValid }) {
+                                liabilityValidation.value = validationResult
+                                return@PrimaryButton
+                            }
                             showUpdatePopup.value = true
                         }
                         SecondaryButton(
@@ -319,12 +329,12 @@ fun AddEditLiabilityUI(
                                 liabilityName = liabilityName.value,
                                 liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                                 accountNumber = UUID.randomUUID().toString(),
-                                balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                                balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
                                 linkedDate = effectiveDate.value,
-                                limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                                limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
                                 interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
                                 currency = "$",
-                                lastUpdated = effectiveDate.value,
+                                lastUpdated = revisitDate.value,
                                 isCustomLiability = true
                             )
                         )
@@ -409,12 +419,12 @@ fun AddEditLiabilityUI(
                         liabilityName = liabilityName.value,
                         liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                         accountNumber = UUID.randomUUID().toString(),
-                        balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                        balance = currentBalance.value.substring(1).toDoubleOrNull() ?: 0.0,
                         linkedDate = effectiveDate.value,
-                        limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                        limit = monthlyPayment.value.substring(1).toDoubleOrNull() ?: 0.0,
                         interestRate = annualInterestRate.value.toDoubleOrNull() ?: 0.0,
                         currency = "$",
-                        lastUpdated = effectiveDate.value,
+                        lastUpdated = revisitDate.value,
                         isCustomLiability = true
                     )
                 )

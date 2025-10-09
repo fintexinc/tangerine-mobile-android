@@ -55,10 +55,10 @@
     <string name="text_make_selection">Make a selection</string>
     <string name="text_asset_name">Asset Name</string>
     <string name="text_enter_name">Enter a name</string>
-    <string name="text_estimated_value">Estimated Value</string>
+    <string name="text_current_value">Current Value</string>
     <string name="text_current_balance">Current Balance</string>
     <string name="text_monthly_payment">Monthly Payment (optional)</string>
-    <string name="text_annual_interest_rate">Annual Interest Rate (optional)</string>
+    <string name="text_annual_interest_rate">Annual Interest Rate % (optional)</string>
     <string name="text_annual_interest_rate_info">We use your annual Interest rate for net worth projections only to help you stay informed of your finances and build a holistic net worth picture.</string>
     <string name="text_currency">$</string>
     <string name="text_annualized_rate_of_return">Annualized rate of return % (Optional)</string>
