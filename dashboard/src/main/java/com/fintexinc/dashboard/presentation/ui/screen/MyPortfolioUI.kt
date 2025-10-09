@@ -557,8 +557,15 @@ private fun AccountListUI(
 
 @Composable
 private fun Charts(performance: List<PerformanceItem>) {
-    val pagerState = rememberPagerState { 4 }
-    HorizontalPager(pagerState) {
+    val pageCount = 4
+    val pagerState = rememberPagerState(
+        initialPage = (Int.MAX_VALUE / 2 / pageCount) * pageCount,
+        pageCount = { Int.MAX_VALUE }
+    )
+
+    HorizontalPager(state = pagerState) { page ->
+        val actualPage = page % pageCount
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -570,14 +577,13 @@ private fun Charts(performance: List<PerformanceItem>) {
                 )
                 .padding(18.dp)
         ) {
-            when (it) {
+            when (actualPage) {
                 0 -> PerformanceChartUI(
                     title = stringResource(R.string.text_investor_performance),
                     performance = performance
                 )
-
-                1 -> SectionExposureChartUI()
-                2 -> AssetMixChartUI()
+                1 -> AssetMixChartUI()
+                2 -> SectionExposureChartUI()
                 3 -> GeographicExposure()
             }
             Spacer(modifier = Modifier.height(18.dp))
@@ -587,13 +593,13 @@ private fun Charts(performance: List<PerformanceItem>) {
                     .wrapContentHeight(),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                repeat(pagerState.pageCount) { iteration ->
+                repeat(pageCount) { iteration ->
                     Box(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
                             .then(
-                                if (pagerState.currentPage == iteration) {
+                                if (actualPage == iteration) {
                                     Modifier.background(Colors.BackgroundPrimary)
                                 } else {
                                     Modifier
