@@ -66,6 +66,7 @@ fun AddEditLiabilityUI(
             .fillMaxSize()
             .background(color = Colors.Background)
     ) {
+        val currency = stringResource(R.string.text_currency)
         val showLiabilityTypeSelection = remember {
             mutableStateOf(false)
         }
@@ -76,10 +77,10 @@ fun AddEditLiabilityUI(
             mutableStateOf(liability?.liabilityType?.label ?: "")
         }
         val currentBalance = remember {
-            mutableStateOf(liability?.balance?.toString() ?: "")
+            mutableStateOf("$currency${liability?.balance?.toString() ?: ""}")
         }
         val monthlyPayment = remember {
-            mutableStateOf(liability?.limit?.toString() ?: "")
+            mutableStateOf("$currency${liability?.limit?.toString() ?: ""}")
         }
         val annualInterestRate = remember {
             mutableStateOf(liability?.interestRate?.toString() ?: "")
@@ -225,7 +226,8 @@ fun AddEditLiabilityUI(
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_current_balance),
-                    hint = stringResource(R.string.text_currency),
+                    hint = currency,
+                    prefix = currency,
                     text = currentBalance.value,
                     errorRes = getErrorResIdOrNull(
                         "balance",
@@ -239,7 +241,8 @@ fun AddEditLiabilityUI(
                 Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_monthly_payment),
-                    hint = stringResource(R.string.text_currency),
+                    hint = currency,
+                    prefix = currency,
                     text = monthlyPayment.value,
                     onTextChanged = { text ->
                         monthlyPayment.value = text

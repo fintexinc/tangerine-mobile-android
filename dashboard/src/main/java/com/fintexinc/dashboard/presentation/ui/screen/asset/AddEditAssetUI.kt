@@ -65,6 +65,7 @@ fun AddEditAssetUI(
             .fillMaxSize()
             .background(color = Colors.Background)
     ) {
+        val currency = stringResource(R.string.text_currency)
         val showAssetTypeSelection = remember {
             mutableStateOf(false)
         }
@@ -81,7 +82,7 @@ fun AddEditAssetUI(
             mutableStateOf(asset?.assetName ?: "")
         }
         val estimatedValue = remember {
-            mutableStateOf(if (asset?.assetValue == null) "" else asset.assetValue.toString())
+            mutableStateOf("$currency${if (asset?.assetValue == null) "" else asset.assetValue.toString()}")
         }
         val annAnnualizedRateOfReturn = remember {
             mutableStateOf("")
@@ -213,7 +214,8 @@ fun AddEditAssetUI(
                 AddItemText(
                     title = stringResource(R.string.text_estimated_value),
                     text = estimatedValue.value,
-                    hint = stringResource(R.string.text_currency),
+                    hint = currency,
+                    prefix = currency,
                     errorRes = getErrorResIdOrNull("estimatedValue", assetValidation.value),
                     onTextChanged = { text ->
                         estimatedValue.value = text
