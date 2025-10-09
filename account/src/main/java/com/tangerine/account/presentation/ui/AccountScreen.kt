@@ -258,6 +258,7 @@ private fun MainPageContent(
                 }
             }
         })
+
         AccountBalanceCard(
             balance = "$28,230.00",
             portfolioType = "Balanced Core Portfolio",
@@ -401,7 +402,27 @@ private fun AccountBalanceCard(
             style = FontStyles.DisplaySmall,
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Row( // TODO() refactor
+            modifier = Modifier
+                .background(Colors.TextSuccess.copy(alpha = 0.2f), RoundedCornerShape(4.dp)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow),
+                tint = Colors.TextSuccess,
+                contentDescription = "",
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
+            )
+            Text(
+                text = "50.42 (+10.00%) All Time",
+                color = Colors.TextSuccess,
+                style = FontStyles.BodySmall,
+                modifier = Modifier.padding(end = 8.dp,top = 4.dp, bottom = 4.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "$portfolioType $maskedAccountNumber",
