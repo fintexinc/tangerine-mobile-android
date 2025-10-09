@@ -406,7 +406,7 @@ private fun AccountBalanceCard(
 
         Row( // TODO() refactor
             modifier = Modifier
-                .background(Colors.TextSuccess.copy(alpha = 0.2f), RoundedCornerShape(4.dp)),
+                .background(Colors.TextSuccess.copy(alpha = 0.1f), RoundedCornerShape(4.dp)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
