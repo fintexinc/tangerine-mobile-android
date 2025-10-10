@@ -11,29 +11,74 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.charts.compose_charts.PieChart
 import com.tangerine.charts.compose_charts.models.Pie
 
 @Composable
-fun TangerinePieChart(title: String, pieData: List<Pie>) {
+fun TangerinePieChart(
+    title: String,
+    pieData: List<Pie>,
+    chipText: String = "All Accounts",
+    onFilterClick: () -> Unit = {}
+) {
     Column(modifier = Modifier.fillMaxWidth().height(410.dp)) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            text = title,
-            style = FontStyles.TitleMediumMedium
-        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier
+                    .weight(1.0f)
+                    .wrapContentHeight(),
+                text = title,
+                style = FontStyles.TitleMediumMedium,
+                maxLines = 2,
+            )
+            Row(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                    .background(
+                        color = Colors.BackgroundInteractive,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .clickableShape(RoundedCornerShape(16.dp)) {
+                        onFilterClick()
+                    }
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.wrapContentSize(),
+                    text = chipText,
+                    style = FontStyles.BodySmall,
+                    color = Colors.TextInteractive
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
+                    tint = Colors.TextInteractive,
+                    contentDescription = "",
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(18.dp))
         PieChart(
             modifier = Modifier
@@ -85,7 +130,6 @@ fun TangerinePieChart(title: String, pieData: List<Pie>) {
                 HorizontalDivider(color = Colors.BorderSubdued)
 
                 Spacer(modifier = Modifier.height(10.dp))
-
             }
         }
     }
