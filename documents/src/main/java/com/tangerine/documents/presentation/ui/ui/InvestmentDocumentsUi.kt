@@ -1,5 +1,7 @@
 package com.tangerine.documents.presentation.ui.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.DataPoint
+import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
 import com.fintexinc.core.presentation.ui.widget.ToolBar
 import com.fintexinc.core.presentation.ui.widget.list.itemsWithBackground
@@ -46,8 +49,9 @@ fun InvestmentDocumentsUi(
     onStatementsClick: () -> Unit,
 ) {
     val searchQuery = remember { mutableStateOf("") }
-
     val statementsText = stringResource(R.string.text_category_statements_title)
+    val context = LocalContext.current
+
     // TODO() mock data
     val documents = listOf(
         DataPoint(
@@ -206,7 +210,13 @@ fun InvestmentDocumentsUi(
                 DocumentItem(
                     title = document.name,
                     date = document.subName,
-                    onClick = {},
+                    onClick = {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
+                        )
+                        context.startActivity(intent)
+                    },
                     isLastItem = isLastItem,
                     modifier = Modifier.wrapContentHeight(),
                 )
@@ -229,10 +239,11 @@ private fun DocumentCategoryItem(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(color = Colors.Background)
-            .clickable { onClick(category) }
+            .clickableShape(
+                shape = RoundedCornerShape(16.dp),
+                onClick = { onClick(category) })
             .padding(16.dp),
     ) {
         Row(
