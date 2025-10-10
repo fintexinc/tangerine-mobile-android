@@ -26,13 +26,13 @@ import com.tangerine.charts.compose_charts.models.Pie
 
 @Composable
 fun TangerinePieChart(title: String, pieData: List<Pie>) {
-    Column(modifier = Modifier.fillMaxWidth().height(410.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().height(404.dp)) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
             text = title,
-            style = FontStyles.TitleMediumMedium
+            style = FontStyles.TitleMedium
         )
         Spacer(modifier = Modifier.height(18.dp))
         PieChart(

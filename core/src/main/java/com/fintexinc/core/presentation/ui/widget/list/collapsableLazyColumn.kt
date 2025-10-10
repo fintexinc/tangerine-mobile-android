@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +39,7 @@ fun collapsableLazyColumn(
     scope: LazyListScope,
     dataPoints: Map<String, List<DataPoint>>,
     expanded: MutableState<Boolean>,
+    headerShape: Shape = RectangleShape,
     title: String,
     subtitle: String? = null,
     addItemText: String,
@@ -56,7 +58,10 @@ fun collapsableLazyColumn(
                 }
                 .then(
                     if (expanded.value) {
-                        Modifier.background(color = Colors.Transparent)
+                        Modifier.background(
+                            color = Colors.Background,
+                            shape = headerShape
+                        )
                     } else {
                         Modifier
                             .background(
@@ -97,7 +102,7 @@ fun collapsableLazyColumn(
             Text(
                 modifier = Modifier.weight(1f),
                 text = title,
-                style = FontStyles.BodyLargeBold,
+                style = FontStyles.TitleSmall,
                 color = Colors.BrandBlack
             )
             if (subtitle != null) {
@@ -137,19 +142,11 @@ fun collapsableLazyColumn(
                 item {
                     DataPointCollapsableUI(
                         dataPoint = dataPoint,
-                        onClick = onItemClick
+                        onClick = onItemClick,
+                        isLastItem = entryList.last() == dataPoint
                     )
                 }
             }
-        }
-        item {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(18.dp)
-                    .background(Colors.BorderSubdued)
-            )
         }
         item {
             Box(
@@ -158,28 +155,6 @@ fun collapsableLazyColumn(
                     .wrapContentHeight()
                     .padding(horizontal = 18.dp)
                     .background(color = Colors.Background)
-                    .drawBehind {
-                        val strokeWidth = 1.dp.toPx()
-                        val color = Colors.BorderSubdued
-                        drawLine(
-                            color = color,
-                            start = Offset(0f, 0f),
-                            end = Offset(0f, size.height),
-                            strokeWidth = strokeWidth
-                        )
-                        drawLine(
-                            color = color,
-                            start = Offset(size.width, 0f),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = strokeWidth
-                        )
-                        drawLine(
-                            color = color,
-                            start = Offset(0f, size.height),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = strokeWidth
-                        )
-                    }
                     .padding(vertical = 12.dp, horizontal = 16.dp)
             ) {
                 Text(
@@ -197,7 +172,7 @@ fun collapsableLazyColumn(
                         .align(Alignment.Center),
                     text = addItemText,
                     textAlign = TextAlign.Center,
-                    style = FontStyles.HeadingLarge,
+                    style = FontStyles.BodyLargeBold,
                     color = Colors.TextInverse
                 )
             }

@@ -88,7 +88,7 @@ private fun Content(
                 .wrapContentHeight()
                 .padding(vertical = 18.dp),
             text = stringResource(R.string.app_title),
-            style = FontStyles.HeadingRegular,
+            style = FontStyles.TitleSmallRegular,
             textAlign = TextAlign.Center
         )
         Box(

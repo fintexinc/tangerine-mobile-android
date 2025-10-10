@@ -12,7 +12,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"interestRate\": 19.99,\n" +
         "        \"currency\": \"CAD\",\n" +
         "         \"linkedDate\": \"2025-01-10\",\n" +
-        "        \"lastUpdated\": \"2025-08-20T12:30:00Z\"\n" +
+        "        \"lastUpdated\": \"2025-11-20\"\n" +
         "    },\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0001-LOAN-002\",\n" +
@@ -25,7 +25,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"limit\": 10000.0,\n" +
         "        \"interestRate\": 8.5,\n" +
         "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-18T09:15:00Z\"\n" +
+        "        \"lastUpdated\": \"2025-11-20\"\n" +
         "    },\n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-MTG-004\",\n" +
@@ -37,7 +37,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"limit\": 50000.0,\n" +
         "        \"interestRate\": 5.29,\n" +
         "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-19T16:00:00Z\",\n" +
+        "        \"lastUpdated\": \"2025-11-20\",\n" +
         "        \"originalLoanAmount\": 500000.0,\n" +
         "        \"principalOutstanding\": 355000.0,\n" +
         "        \"interestRateAnnualPercentage\": 5.29,\n" +
@@ -64,7 +64,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"limit\": 8000.0,\n" +
         "        \"interestRate\": 20.99,\n" +
         "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "        \"lastUpdated\": \"2025-11-20\"\n" +
         "    }, \n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-CC-006\",\n" +
@@ -77,7 +77,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"limit\": 8000.0,\n" +
         "        \"interestRate\": 20.99,\n" +
         "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "        \"lastUpdated\": \"2025-11-20\"\n" +
         "    }, \n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-CC-007\",\n" +
@@ -90,7 +90,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"limit\": 8000.0,\n" +
         "        \"interestRate\": 20.99,\n" +
         "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "        \"lastUpdated\": \"2025-11-20\"\n" +
         "    }, \n" +
         "    {\n" +
         "        \"id\": \"LIAB-INV-0002-CC-011\",\n" +
@@ -103,7 +103,7 @@ const val LIABILITIES_MOCK = "[\n" +
         "        \"limit\": 8000.0,\n" +
         "        \"interestRate\": 20.99,\n" +
         "        \"currency\": \"CAD\",\n" +
-        "        \"lastUpdated\": \"2025-08-20T11:00:00Z\"\n" +
+        "        \"lastUpdated\": \"2025-11-20\"\n" +
         "    } \n" +
         "]\n" +
         "\n" +

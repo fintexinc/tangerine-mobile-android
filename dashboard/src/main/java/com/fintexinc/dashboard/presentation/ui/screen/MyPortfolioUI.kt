@@ -169,7 +169,7 @@ fun MyPortfolioUI(
             Text(
                 modifier = Modifier.wrapContentHeight(),
                 text = stringResource(R.string.text_my_accounts),
-                style = FontStyles.TitleMediumBold
+                style = FontStyles.TitleSmall
             )
             Spacer(modifier = Modifier.weight(1.0f))
             Icon(
@@ -476,7 +476,7 @@ private fun AccountListUI(
             Text(
                 modifier = Modifier.weight(1f),
                 text = title,
-                style = FontStyles.BodyLargeBold,
+                style = FontStyles.TitleSmall,
                 color = Colors.BrandBlack
             )
 
@@ -614,10 +614,6 @@ private fun Charts(
         }
     }
 
-    val totalSum = remember(filteredPerformance) {
-        String.format("%.2f", filteredPerformance.sumOf { it.value })
-    }
-
     val chipText = remember(selectedAccountIds.value) {
         when {
             selectedAccountIds.value.contains("all") -> "All Accounts"
@@ -700,15 +696,12 @@ private fun Charts(
                             .clip(CircleShape)
                             .then(
                                 if (actualPage == iteration) {
-                                    Modifier.background(Colors.BackgroundPrimary)
+                                    Modifier.background(Colors.BackgroundSecondary)
                                 } else {
-                                    Modifier
-                                        .border(
-                                            1.dp, Colors.BackgroundPrimary, CircleShape
-                                        )
-                                        .animateContentSize(tween(1000))
+                                    Modifier.background(Colors.BackgroundSecondaryDisabled)
                                 }
                             )
+                            .animateContentSize(tween(1000))
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }

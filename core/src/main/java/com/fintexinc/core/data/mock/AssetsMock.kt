@@ -140,7 +140,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"assetValue\": 220000.0,\n" +
         "            \"annualizedRateOfReturn\": 15.0,\n" +
         "            \"linkedDate\": \"2025-08-15\",\n" +
-        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "            \"lastUpdated\": \"2025-11-20\"\n" +
         "        },\n" +
         "        {\n" +
         "            \"id\": \"ASSET-CUS-002\",\n" +
@@ -150,7 +150,7 @@ const val ASSETS_MOCK = "{\n" +
         "            \"annualizedRateOfReturn\": 52.0,\n" +
         "            \"assetValue\": 225000.0,\n" +
         "            \"linkedDate\": \"2025-09-12\",\n" +
-        "            \"lastUpdated\": \"2025-08-20T12:40:00Z\"\n" +
+        "            \"lastUpdated\": \"2025-11-20\"\n" +
         "        }\n" +
         "    ]\n" +
         "}\n" +
