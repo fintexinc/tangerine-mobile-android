@@ -44,7 +44,9 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.presentation.ui.DashboardScreenUI
 import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
 import com.fintexinc.dashboard.presentation.ui.screen.asset.AddEditAssetUI
+import com.fintexinc.dashboard.presentation.ui.screen.history.HistoryUi
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
+import com.fintexinc.dashboard.presentation.viewmodel.HistoryViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI
 import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
 import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
@@ -54,6 +56,7 @@ import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
 import com.tangerine.documents.presentation.ui.ui.StatementsScreen
 import com.tangerine.documents.presentation.ui.ui.InvestmentDocumentsUi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 
@@ -62,6 +65,8 @@ class MainActivity : ComponentActivity() {
     private val dashboardViewModel: DashboardViewModel by viewModels()
     private val accountViewModel: AccountViewModel by viewModels()
     private val transactionDetailViewModel: TransactionDetailViewModel by viewModels()
+    private val historyViewModel: HistoryViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -203,6 +208,9 @@ class MainActivity : ComponentActivity() {
                             },
                             onBackButtonFromExternalScreenClicked = {
                                 navController.popBackStack()
+                            },
+                            onHistoryScreenClicked = {
+                                navController.navigate(Routes.History)
                             }
                         )
                     }
@@ -240,6 +248,19 @@ class MainActivity : ComponentActivity() {
                             onBackClicked = {
                                 navController.popBackStack()
                             },
+                        )
+                    }
+
+                    composable<Routes.History> {
+                        val historyState = historyViewModel.state.collectAsState().value
+                        HistoryUi(
+                            state = historyState,
+                            onBackClicked = { navController.popBackStack() },
+                            onDetailsNavigate = {},
+                            onEditModeToggle = { historyViewModel.toggleEditMode() },
+                            onItemSelectionToggle = { historyViewModel.toggleItemSelection(it) },
+                            onDeleteSelected = { historyViewModel.deleteSelectedItems() },
+                            onCancelEdit = { historyViewModel.cancelEdit() },
                         )
                     }
                 }
@@ -468,6 +489,9 @@ object Routes {
 
     @Serializable
     object Statements
+
+    @Serializable
+    object History
 
     @Serializable
     object InvestmentDocument

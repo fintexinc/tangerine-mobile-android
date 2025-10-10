@@ -16,6 +16,7 @@ fun TextButton(
     text: String,
     onClick: () -> Unit,
     color: Color = Colors.BrandBlack,
+    textColor: Color = Colors.Background
 ) {
     Button(
         onClick = onClick,
@@ -26,7 +27,7 @@ fun TextButton(
     ) {
         Text(
             text = text,
-            color = Colors.Background,
+            color = textColor,
             style = FontStyles.BodyLargeBold,
         )
     }

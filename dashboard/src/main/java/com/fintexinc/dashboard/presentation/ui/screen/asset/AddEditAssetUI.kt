@@ -58,7 +58,8 @@ fun AddEditAssetUI(
     asset: Custom?,
     onSaveAssetClick: (asset: Custom) -> Unit,
     onDeleteAsset: (asset: Custom) -> Unit,
-    onBackButtonFromExternalScreenClicked: () -> Unit
+    onBackButtonFromExternalScreenClicked: () -> Unit,
+    onHistoryScreenClicked: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -155,6 +156,18 @@ fun AddEditAssetUI(
                     },
                     style = FontStyles.HeadingRegular,
                     textAlign = TextAlign.Center
+                )
+
+                Icon(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.CenterEnd)
+                        .clickable {
+                            onHistoryScreenClicked()
+                        },
+                    painter = painterResource(id = R.drawable.ic_history),
+                    contentDescription = stringResource(R.string.description_icon_back),
+                    tint = Colors.BackgroundPrimary
                 )
             }
             Box(

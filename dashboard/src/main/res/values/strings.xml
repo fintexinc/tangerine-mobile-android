@@ -90,6 +90,9 @@
     <string name="text_tangerine_assets">Tangerine Assets</string>
     <string name="text_external_assets">External Assets</string>
     <string name="text_investor_performance">Investment Performance</string>
+    <string name="text_entry_history_title">Entry History (%d)</string>
+    <string name="text_delete_selected_items">Delete selected Items (%d)</string>
+    <string name="text_description_icon_edit">Edit</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
