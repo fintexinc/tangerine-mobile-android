@@ -692,10 +692,8 @@ private fun Charts(
             performance.filter { it.accountId in selectedAccountIds.value }
         }
     }
-
-    val totalSum = remember(filteredPerformance) {
-        String.format("%.2f", filteredPerformance.sumOf { it.value })
-    }
+    val allAccountsText = stringResource(R.string.text_all_accounts)
+    val accountsText = stringResource(R.string.text_account)
 
     val chipText = remember(selectedAccountIds.value) {
         when {
@@ -785,6 +783,7 @@ private fun Charts(
                     data = filteredSectorData,
                     chipText = chipText,
                 )
+
                 3 -> GeographicExposure(
                     onFilterClick = {
                         showAccountsBottomSheet.value = true
@@ -994,10 +993,12 @@ private fun filterPieData(
         selectedAccountIds.contains("all") -> {
             allData["all"] ?: emptyList()
         }
+
         selectedAccountIds.size == 1 -> {
             val accountId = selectedAccountIds.first()
             allData[accountId] ?: allData["all"] ?: emptyList()
         }
+
         else -> {
             val selectedAccounts = selectedAccountIds.mapNotNull { allData[it] }
             if (selectedAccounts.isNotEmpty()) {

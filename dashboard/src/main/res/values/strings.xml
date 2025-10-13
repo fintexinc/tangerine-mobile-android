@@ -91,7 +91,7 @@
     <string name="text_external_assets">External Assets</string>
     <string name="text_investor_performance">Investment Performance</string>
     <string name="text_accounts_count">Accounts</string>
-
+<string name="text_account">accounts</string>
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
     <string name="description_icon_all_accounts_expand">Expand all accounts</string>
