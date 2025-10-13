@@ -31,7 +31,8 @@ import com.fintexinc.core.ui.font.FontStyles
 @Composable
 fun DataPointCollapsableUI(
     dataPoint: DataPoint,
-    onClick: (DataPoint) -> Unit
+    onClick: (DataPoint) -> Unit,
+    isLastItem: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -40,22 +41,6 @@ fun DataPointCollapsableUI(
             .background(Colors.Background)
             .clickable {
                 onClick(dataPoint)
-            }
-            .drawBehind {
-                val strokeWidth = 1.dp.toPx()
-                val color = Colors.BorderSubdued
-                drawLine(
-                    color = color,
-                    start = Offset(0f, 0f),
-                    end = Offset(0f, size.height),
-                    strokeWidth = strokeWidth
-                )
-                drawLine(
-                    color = color,
-                    start = Offset(size.width, 0f),
-                    end = Offset(size.width, size.height),
-                    strokeWidth = strokeWidth
-                )
             }
     ) {
         Row(
@@ -126,19 +111,21 @@ fun DataPointCollapsableUI(
                 Spacer(
                     modifier = Modifier.height(16.dp)
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Colors.BorderSubdued)
-                )
+                if(!isLastItem) {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(Colors.BorderSubdued)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun DataPointUI(
+fun DocumentUI(
     dataPoint: DataPoint,
     onClick: (DataPoint) -> Unit = {},
     isLastItem: Boolean = false
@@ -188,44 +175,16 @@ fun DataPointUI(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = dataPoint.subName,
-                        style = FontStyles.BodyMedium,
+                        style = FontStyles.BodySmall,
                         color = Colors.TextSubdued
                     )
                 }
-                if (dataPoint.value != null) {
-                    if (dataPoint.subValue != null) {
-                        Column {
-                            Text(
-                                modifier = Modifier.wrapContentSize(),
-                                text = dataPoint.value,
-                                style = FontStyles.BodyLargeBold,
-                                color = Colors.BrandBlack
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                modifier = Modifier.wrapContentSize(),
-                                text = dataPoint.subValue,
-                                style = FontStyles.BodyMedium,
-                                color = Colors.TextSubdued
-                            )
-                        }
-                    } else {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            modifier = Modifier.wrapContentSize(),
-                            text = dataPoint.value,
-                            style = FontStyles.BodyMedium,
-                            color = Colors.TextSubdued
-                        )
-                    }
-                } else {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_arrow_right),
-                        tint = Colors.BrandGray,
-                        contentDescription = "Open Item"
-                    )
-                }
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(R.drawable.ic_arrow_right),
+                    tint = Colors.BrandGray,
+                    contentDescription = "Open Item"
+                )
             }
             if (!isLastItem) {
                 Spacer(modifier = Modifier.height(16.dp))

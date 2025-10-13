@@ -69,7 +69,7 @@ private fun ChartPeriodItem(
         modifier = Modifier
             .wrapContentSize()
             .background(
-                color = if (selectedPeriod == period) Colors.Background else Colors.BackgroundSubdued,
+                color = Colors.BackgroundInteractive,
                 shape = CircleShape
             )
             .clickableShape(
@@ -80,7 +80,7 @@ private fun ChartPeriodItem(
             .then(
                 if (selectedPeriod == period) {
                     Modifier
-                        .border(1.dp, Colors.BackgroundPrimary, CircleShape)
+                        .border(1.dp, Colors.TextInteractive, CircleShape)
                 } else {
                     Modifier
                 }
@@ -88,6 +88,7 @@ private fun ChartPeriodItem(
             .padding(horizontal = 8.dp, vertical = 4.dp),
         text = period.label,
         style = FontStyles.BodySmall,
+        color = Colors.TextInteractive,
         textAlign = TextAlign.Center,
     )
 }

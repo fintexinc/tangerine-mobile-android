@@ -171,7 +171,7 @@ fun MyPortfolioUI(
             Text(
                 modifier = Modifier.wrapContentHeight(),
                 text = stringResource(R.string.text_my_accounts),
-                style = FontStyles.TitleMediumBold
+                style = FontStyles.TitleSmall
             )
             Spacer(modifier = Modifier.weight(1.0f))
             Icon(
@@ -478,7 +478,7 @@ private fun AccountListUI(
             Text(
                 modifier = Modifier.weight(1f),
                 text = title,
-                style = FontStyles.BodyLargeBold,
+                style = FontStyles.TitleSmall,
                 color = Colors.BrandBlack
             )
 
@@ -571,6 +571,10 @@ private fun AccountListUI(
 private fun Charts(
     performance: List<PerformanceItem>,
 ) {
+    performance.forEach {
+        Log.e("xcxxc", "$it")
+    }
+
     val showAccountsBottomSheet = remember { mutableStateOf(false) }
     val selectedAccountIds = remember { mutableStateOf(setOf("all")) }
 
@@ -689,8 +693,9 @@ private fun Charts(
         }
     }
 
-    val allAccountsText = stringResource(R.string.text_all_accounts)
-    val accountsText = stringResource(R.string.text_accounts_count)
+    val totalSum = remember(filteredPerformance) {
+        String.format("%.2f", filteredPerformance.sumOf { it.value })
+    }
 
     val chipText = remember(selectedAccountIds.value) {
         when {
@@ -802,15 +807,12 @@ private fun Charts(
                             .clip(CircleShape)
                             .then(
                                 if (actualPage == iteration) {
-                                    Modifier.background(Colors.BackgroundPrimary)
+                                    Modifier.background(Colors.BackgroundSecondary)
                                 } else {
-                                    Modifier
-                                        .border(
-                                            1.dp, Colors.BackgroundPrimary, CircleShape
-                                        )
-                                        .animateContentSize(tween(1000))
+                                    Modifier.background(Colors.BackgroundSecondaryDisabled)
                                 }
                             )
+                            .animateContentSize(tween(1000))
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }

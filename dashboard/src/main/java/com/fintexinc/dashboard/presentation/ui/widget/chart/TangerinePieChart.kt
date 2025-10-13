@@ -48,7 +48,7 @@ fun TangerinePieChart(
                     .weight(1.0f)
                     .wrapContentHeight(),
                 text = title,
-                style = FontStyles.TitleMediumMedium,
+                style = FontStyles.TitleMedium,
                 maxLines = 2,
             )
             Row(
@@ -130,6 +130,7 @@ fun TangerinePieChart(
                 HorizontalDivider(color = Colors.BorderSubdued)
 
                 Spacer(modifier = Modifier.height(10.dp))
+
             }
         }
     }

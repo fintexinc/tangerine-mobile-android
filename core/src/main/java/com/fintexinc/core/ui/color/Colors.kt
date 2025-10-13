@@ -13,6 +13,7 @@ object Colors {
     val Background = Color(0xFFFFFFFF)
     val BackgroundPrimary = Color(0xFFEA7024)
     val BackgroundSecondary = Color(0xFF333333)
+    val BackgroundSecondaryDisabled = Color(0xFFBDBDBD)
     val BackgroundSubdued = Color(0xFFFAFAFA)
     val BackgroundHighlightSubdued = Color(0xFFF3E5F5)
     val BorderSubdued = Color(0xFFE0E0E0)
