@@ -50,8 +50,9 @@ import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
 import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
+import com.tangerine.documents.presentation.ui.statment.StatementViewModel
 import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
-import com.tangerine.documents.presentation.ui.ui.StatementsScreen
+import com.tangerine.documents.presentation.ui.statment.StatementsScreen
 import com.tangerine.documents.presentation.ui.ui.InvestmentDocumentsUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -62,6 +63,7 @@ class MainActivity : ComponentActivity() {
     private val dashboardViewModel: DashboardViewModel by viewModels()
     private val accountViewModel: AccountViewModel by viewModels()
     private val transactionDetailViewModel: TransactionDetailViewModel by viewModels()
+    private val statementViewModel: StatementViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -236,9 +238,21 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable<Routes.Statements> {
+                        val state = statementViewModel.state.collectAsState()
                         StatementsScreen(
+                            state = state.value,
                             onBackClicked = {
                                 navController.popBackStack()
+                            },
+                            onSearchQueryChanged = {
+                                statementViewModel.onSearchQueryChanged(it)
+                            },
+                            onYearToggle = { statementViewModel.toggleYearExpansion(it) },
+                            onYearFilterApplied = {
+                                statementViewModel.onYearFilterApplied(it)
+                            },
+                            onMonthFilterApplied = {
+                                statementViewModel.onMonthFilterApplied(it)
                             },
                         )
                     }

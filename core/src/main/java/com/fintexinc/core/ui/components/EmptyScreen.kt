@@ -1,4 +1,4 @@
-package com.tangerine.account.presentation.ui.components
+package com.fintexinc.core.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.fintexinc.core.R
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
-import com.tangerine.account.R
 
 @Composable
-internal fun EmptyScreen(
+fun EmptyScreen(
     modifier: Modifier,
     title: Int = R.string.text_empty_transactions,
 ) {
