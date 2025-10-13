@@ -61,19 +61,48 @@ class HistoryViewModel @Inject constructor(
         )
     }
 
-    fun deleteSelectedItems() {
+    private var deletedItemsBackup: List<Pair<Int, HistoryItemUi>> = emptyList()
+
+    fun onDeleteSelected() {
         val currentState = (_state.value as? State.Loaded)?.mainState ?: return
-        val newList = currentState.historyItem.filterIndexed { index, _ ->
+
+        deletedItemsBackup = currentState.selectedItems.map { index ->
+            index to currentState.historyItem[index]
+        }
+
+        val updatedList = currentState.historyItem.filterIndexed { index, _ ->
             !currentState.selectedItems.contains(index)
-        }.toImmutableList()
+        }
 
         _state.value = State.Loaded(
-            MainState(
-                historyItem = newList,
-                isEditMode = false,
-                selectedItems = emptySet()
+            mainState = currentState.copy(
+                historyItem = updatedList.toImmutableList(),
+                selectedItems = emptySet(),
+                isEditMode = false
             )
         )
+    }
+
+    fun onUndoDelete() {
+        val currentState = (_state.value as? State.Loaded)?.mainState ?: return
+
+        if (deletedItemsBackup.isEmpty()) return
+
+        val mutableList = currentState.historyItem.toMutableList()
+        deletedItemsBackup.sortedBy { it.first }.forEach { (originalIndex, item) ->
+            val adjustedIndex = originalIndex.coerceAtMost(mutableList.size)
+            mutableList.add(adjustedIndex, item)
+        }
+
+        _state.value = State.Loaded(
+            mainState = currentState.copy(
+                historyItem = mutableList.toImmutableList(),
+                selectedItems = emptySet(),
+                isEditMode = false
+            )
+        )
+
+        deletedItemsBackup = emptyList()
     }
 
     fun cancelEdit() {

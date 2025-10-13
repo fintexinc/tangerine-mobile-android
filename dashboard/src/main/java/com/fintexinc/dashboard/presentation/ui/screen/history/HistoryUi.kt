@@ -1,8 +1,14 @@
 package com.fintexinc.dashboard.presentation.ui.screen.history
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,15 +33,21 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.ToolBar
+import com.fintexinc.core.presentation.ui.widget.dialog.DeletePopup
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.components.CustomToast
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
@@ -51,6 +63,7 @@ fun HistoryUi(
     onItemSelectionToggle: (Int) -> Unit,
     onDeleteSelected: () -> Unit,
     onCancelEdit: () -> Unit,
+    onUndoDelete: () -> Unit,
 ) {
 
     when (state) {
@@ -67,7 +80,8 @@ fun HistoryUi(
             onEditModeToggle = onEditModeToggle,
             onItemSelectionToggle = onItemSelectionToggle,
             onDeleteSelected = onDeleteSelected,
-            onCancelEdit = onCancelEdit
+            onCancelEdit = onCancelEdit,
+            onUndoDelete = onUndoDelete,
         )
     }
 
@@ -81,20 +95,29 @@ private fun Content(
     onEditModeToggle: () -> Unit,
     onItemSelectionToggle: (Int) -> Unit,
     onDeleteSelected: () -> Unit,
+    onUndoDelete: () -> Unit,
     onCancelEdit: () -> Unit,
 ) {
+    val showDeleteDialog = remember { mutableStateOf(false) }
+    val showToast = remember { mutableStateOf(false) }
+    val deletedCount = remember { mutableIntStateOf(0) }
+
     Box(
         modifier = Modifier
-            .statusBarsPadding()
             .fillMaxSize()
             .background(color = Colors.BackgroundSubdued)
+            .statusBarsPadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             ToolBar(
-                text = stringResource(R.string.text_entry_history_title, mainState.historyItem.size),
+                text = if (mainState.isEditMode) {
+                    stringResource(R.string.text_delete_edit_history)
+                } else {
+                    stringResource(R.string.text_entry_history_title, mainState.historyItem.size)
+                },
                 leftIcon = {
                     Icon(
                         modifier = Modifier
@@ -106,14 +129,16 @@ private fun Content(
                     )
                 },
                 rightIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .clickable { onEditModeToggle() },
-                        painter = painterResource(id = R.drawable.ic_edit),
-                        contentDescription = stringResource(R.string.description_icon_back),
-                        tint = Colors.BackgroundPrimary
-                    )
+                    if (!mainState.isEditMode) {
+                        Icon(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clickable { onEditModeToggle() },
+                            painter = painterResource(id = R.drawable.ic_edit),
+                            contentDescription = stringResource(R.string.description_icon_back),
+                            tint = Colors.BackgroundPrimary
+                        )
+                    }
                 }
             )
 
@@ -157,8 +182,13 @@ private fun Content(
                         .background(Colors.Background)
                 ) {
                     TextButton(
-                        text = stringResource(R.string.text_delete_selected_items, mainState.selectedItems.size),
-                        onClick = { onDeleteSelected() },
+                        text = stringResource(
+                            R.string.text_delete_selected_items,
+                            mainState.selectedItems.size
+                        ),
+                        onClick = {
+                            showDeleteDialog.value = true
+                        },
                         color = Colors.Primary,
                     )
 
@@ -169,13 +199,86 @@ private fun Content(
                         onClick = { onCancelEdit() },
                         color = Color.Transparent,
                         textColor = Colors.TextInteractive,
+                        textStyle = FontStyles.TitleSmall,
                     )
-                }
 
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showToast.value,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 32.dp)
+        ) {
+            CustomToast(
+                message = pluralStringResource(
+                    R.plurals.text_entries_deleted_message,
+                    deletedCount.intValue,
+                    deletedCount.intValue
+                ),
+                onActionClick = {
+                    showToast.value = false
+                    onUndoDelete()
+                },
+                onDismiss = {
+                    showToast.value = false
+                },
+                actionText = stringResource(R.string.text_undo),
+            )
+        }
+
+        if (showDeleteDialog.value) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        showDeleteDialog.value = false
+                    }
+            ) {
+                DeleteConfirmationDialog(
+                    itemCount = mainState.selectedItems.size,
+                    onConfirm = {
+                        showDeleteDialog.value = false
+                        deletedCount.intValue = mainState.selectedItems.size
+                        onDeleteSelected()
+                        showToast.value = true
+                    },
+                    onDismiss = {
+                        showDeleteDialog.value = false
+                    }
+                )
             }
         }
     }
 }
+
+@Composable
+private fun DeleteConfirmationDialog(
+    itemCount: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    DeletePopup(
+        imageRes = com.fintexinc.core.R.drawable.ic_warning,
+        imageContentDescription = "",
+        title = stringResource(R.string.text_delete_selected_entries),
+        text = stringResource(R.string.text_delete_confirmation_message, itemCount),
+        onDeleteClick = onConfirm,
+        onCancelClick = onDismiss,
+        isSecondButtonVisible = false,
+        approvedButtonText = R.string.text_delete_entries,
+    )
+}
+
 
 @Composable
 private fun BoatItem(

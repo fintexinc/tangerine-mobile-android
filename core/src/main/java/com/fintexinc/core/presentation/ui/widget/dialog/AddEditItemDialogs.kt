@@ -98,7 +98,9 @@ fun DeletePopup(
     title: String,
     text: String,
     onDeleteClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    isSecondButtonVisible: Boolean = true,
+    approvedButtonText: Int = R.string.text_zero_out_today,
 ) {
     Popup(
         alignment = Alignment.Center
@@ -148,29 +150,31 @@ fun DeletePopup(
                         onDeleteClick()
                     }
                     .padding(vertical = 12.dp),
-                text = stringResource(R.string.text_zero_out_today),
+                text = stringResource(approvedButtonText),
                 style = FontStyles.HeadingLarge,
                 color = Colors.TextInverse,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = Colors.BackgroundSecondary,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .clickable {
-                        onDeleteClick()
-                    }
-                    .padding(vertical = 12.dp),
-                text = stringResource(R.string.text_delete_with_history),
-                style = FontStyles.HeadingLarge,
-                color = Colors.TextInverse,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            if (isSecondButtonVisible) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Colors.BackgroundSecondary,
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .clickable {
+                            onDeleteClick()
+                        }
+                        .padding(vertical = 12.dp),
+                    text = stringResource(R.string.text_delete_with_history),
+                    style = FontStyles.HeadingLarge,
+                    color = Colors.TextInverse,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             SecondaryButton(
                 text = stringResource(R.string.text_cancel),
                 onClick = {

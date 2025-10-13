@@ -93,6 +93,17 @@
     <string name="text_entry_history_title">Entry History (%d)</string>
     <string name="text_delete_selected_items">Delete selected Items (%d)</string>
     <string name="text_description_icon_edit">Edit</string>
+    <string name="text_delete_edit_history">Delete Entry History</string>
+    <string name="text_details">Details</string>
+    <string name="text_update">Update</string>
+    <string name="text_delete_entries">Delete Entries</string>
+    <string name="text_delete_selected_entries">Delete Selected Entries</string>
+    <string name="text_delete_confirmation_message">Are you sure you want to delete %d entries from this asset\'s history? This action will permanently remove it from your history.</string>
+    <plurals name="text_entries_deleted_message">
+        <item quantity="one">Asset of "%d entry" has been deleted</item>
+        <item quantity="other">%d entries have been deleted</item>
+    </plurals>
+    <string name="text_undo">Undo</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
