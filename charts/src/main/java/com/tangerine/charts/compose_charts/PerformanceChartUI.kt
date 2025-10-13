@@ -60,7 +60,7 @@ fun PerformanceChartUI(
                 .weight(1.0f)
                 .wrapContentHeight(),
             text = title,
-            style = FontStyles.TitleMediumMedium,
+            style = FontStyles.TitleMedium,
             maxLines = 2,
         )
         if (isShowFilter) {

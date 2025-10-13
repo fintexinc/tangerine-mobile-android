@@ -76,19 +76,21 @@ fun TabsSelector(
                     ),
                 text = tab.title,
                 textAlign = TextAlign.Center,
-                style = if (selectedIndex.value == index) FontStyles.BodyMediumBold else FontStyles.BodyMedium
+                style = if (selectedIndex.value == index) FontStyles.BodyMediumSemiBold else FontStyles.BodyMedium
             )
         }
     }
 
     AnimatedContent(
-        modifier = Modifier.fillMaxWidth().then(
-            if(contentMaxHeight != Dp.Unspecified) {
-                Modifier.heightIn(max = contentMaxHeight)
-            } else {
-                Modifier.wrapContentHeight()
-            }
-        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (contentMaxHeight != Dp.Unspecified) {
+                    Modifier.heightIn(max = contentMaxHeight)
+                } else {
+                    Modifier.wrapContentHeight()
+                }
+            ),
         targetState = selectedIndex.value,
         transitionSpec = {
             fadeIn(animationSpec = tween(300)).togetherWith(fadeOut(animationSpec = tween(150)))

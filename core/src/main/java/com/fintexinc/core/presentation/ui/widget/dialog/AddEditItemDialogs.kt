@@ -58,7 +58,7 @@ fun UpdatePopup(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = title,
-                style = FontStyles.TitleMediumMedium,
+                style = FontStyles.TitleMedium,
                 color = Colors.Text,
                 textAlign = TextAlign.Center
             )
@@ -124,7 +124,7 @@ fun DeletePopup(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = title,
-                style = FontStyles.TitleMediumMedium,
+                style = FontStyles.TitleMedium,
                 color = Colors.Text,
                 textAlign = TextAlign.Center
             )
