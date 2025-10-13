@@ -190,6 +190,7 @@ private fun Content(
                             showDeleteDialog.value = true
                         },
                         color = Colors.Primary,
+                        textStyle = FontStyles.TitleSmall,
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
