@@ -607,22 +607,32 @@ private fun Charts(
     val allSectorData = remember {
         mapOf(
             "all" to listOf(
-                Pie("Technology", 50.0, color = Color(0xFF0D7C75)),
-                Pie("Finance", 10.0, color = Color(0xFFFEAC5B)),
-                Pie("Healthcare", 20.0, color = Color(0xFFEC407A)),
-                Pie("Energy", 20.0, color = Color(0xFF5C6BC0))
+                Pie("Technology", 9.09, color = Color(0xFF880E4F)),
+                Pie("Finance", 9.09, color = Color(0xFFE57373)),
+                Pie("Healthcare", 9.09, color = Color(0xFFFEAC5B)),
+                Pie("Energy", 9.09, color = Color(0xFFC5DEDB)),
+                Pie("Technology", 9.09, color = Color(0xFF0D7C75)),
+                Pie("Finance", 9.09, color = Color(0xFF15625C)),
+                Pie("Healthcare", 9.09, color = Color(0xFF075BBC)),
+                Pie("Energy", 9.09, color = Color(0xFFAB47BC)),
+                Pie("Technology", 9.09, color = Color(0xFFEC407A)),
+                Pie("Finance", 9.09, color = Color(0xFFFFCDD2)),
+                Pie("Healthcare", 9.01, color = Color(0xFFF17F26)),
             ),
             "ACCT-INV-001" to listOf(
-                Pie("Technology", 65.0, color = Color(0xFF0D7C75)),
-                Pie("Finance", 15.0, color = Color(0xFFFEAC5B)),
-                Pie("Healthcare", 10.0, color = Color(0xFFEC407A)),
-                Pie("Energy", 10.0, color = Color(0xFF5C6BC0))
+                Pie("Technology", 16.67, color = Color(0xFF880E4F)),
+                Pie("Finance", 16.67, color = Color(0xFFE57373)),
+                Pie("Healthcare", 16.67, color = Color(0xFFFEAC5B)),
+                Pie("Energy", 16.67, color = Color(0xFFC5DEDB)),
+                Pie("Technology", 16.67, color = Color(0xFF0D7C75)),
+                Pie("Finance", 16.65, color = Color(0xFF15625C)),
             ),
             "ACCT-BNK-002" to listOf(
-                Pie("Technology", 30.0, color = Color(0xFF0D7C75)),
-                Pie("Finance", 40.0, color = Color(0xFFFEAC5B)),
-                Pie("Healthcare", 20.0, color = Color(0xFFEC407A)),
-                Pie("Energy", 10.0, color = Color(0xFF5C6BC0))
+                Pie("Healthcare", 25.0, color = Color(0xFF075BBC)),
+                Pie("Energy", 20.0, color = Color(0xFFAB47BC)),
+                Pie("Technology", 10.0, color = Color(0xFFEC407A)),
+                Pie("Finance", 30.0, color = Color(0xFFFFCDD2)),
+                Pie("Healthcare", 15.0, color = Color(0xFFF17F26)),
             )
         )
     }
@@ -947,7 +957,8 @@ private fun SectionExposureChartUI(
         title = stringResource(R.string.text_sector_exposure),
         pieData = data,
         chipText = chipText,
-        onFilterClick = onFilterClick
+        onFilterClick = onFilterClick,
+        isPieDataScrollable = true,
     )
 }
 
