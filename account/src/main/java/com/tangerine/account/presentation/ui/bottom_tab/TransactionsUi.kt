@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.components.SectionHeader
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
@@ -47,9 +47,9 @@ import com.tangerine.account.presentation.models.TransactionStatusFilter
 import com.tangerine.account.presentation.models.TransactionUiType
 import com.tangerine.account.presentation.models.TransactionTypeFilterUi
 import com.tangerine.account.presentation.ui.components.DateFilterModalBottomSheet
-import com.tangerine.account.presentation.ui.components.EmptyScreen
-import com.tangerine.account.presentation.ui.components.FilterButton
-import com.tangerine.account.presentation.ui.components.MultiSelectChips
+import com.fintexinc.core.ui.components.EmptyScreen
+import com.fintexinc.core.ui.components.FilterButton
+import com.fintexinc.core.ui.components.MultiSelectChips
 import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 
 @Composable
@@ -138,7 +138,7 @@ internal fun TransactionsUi(
             } else {
                 if (pendingGroups.isNotEmpty()) {
                     item {
-                        TransactionsSectionHeader(
+                        SectionHeader(
                             title = stringResource(R.string.title_pending_transactions).uppercase(),
                             isExpanded = isPendingExpanded,
                             onExpandToggle = { isPendingExpanded = !isPendingExpanded },
@@ -167,7 +167,7 @@ internal fun TransactionsUi(
 
                 if (settledGroups.isNotEmpty()) {
                     item {
-                        TransactionsSectionHeader(
+                        SectionHeader(
                             title = stringResource(R.string.title_settled_transactions).uppercase(),
                             isExpanded = isSettledExpanded,
                             onExpandToggle = { isSettledExpanded = !isSettledExpanded }
@@ -264,34 +264,6 @@ private fun TransactionDateHeader(date: String) {
     )
 }
 
-@Composable
-private fun TransactionsSectionHeader(
-    title: String,
-    isExpanded: Boolean,
-    onExpandToggle: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Colors.BackgroundSubdued)
-            .clickable { onExpandToggle() }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = FontStyles.BodyLargeBold,
-            color = Colors.Text,
-        )
-
-        Image(
-            painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
-            contentDescription = stringResource(com.fintexinc.core.R.string.description_icon_add),
-            modifier = Modifier.rotate(if (isExpanded) 180f else 0f),
-        )
-    }
-}
 
 @Composable
 private fun TransactionItem(

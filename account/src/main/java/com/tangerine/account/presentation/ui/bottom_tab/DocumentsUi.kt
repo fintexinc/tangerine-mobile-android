@@ -33,9 +33,9 @@ import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
 import com.tangerine.account.presentation.models.DocumentTypeFilterUi
 import com.tangerine.account.presentation.ui.components.DateFilterModalBottomSheet
-import com.tangerine.account.presentation.ui.components.EmptyScreen
-import com.tangerine.account.presentation.ui.components.FilterButton
-import com.tangerine.account.presentation.ui.components.MultiSelectChips
+import com.fintexinc.core.ui.components.EmptyScreen
+import com.fintexinc.core.ui.components.FilterButton
+import com.fintexinc.core.ui.components.MultiSelectChips
 import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 import com.tangerine.account.presentation.viewmodel.DocumentDataPoint
 

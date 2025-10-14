@@ -1,20 +1,14 @@
 package com.tangerine.account.presentation.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -27,15 +21,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
-import com.fintexinc.core.ui.color.Colors
-import com.fintexinc.core.ui.font.FontStyles
+import com.fintexinc.core.ui.components.MultiSelectChips
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
 import java.util.Calendar
@@ -168,69 +158,6 @@ internal fun PickerDialog(
                 )
             }
         )
-    }
-}
-
-@Composable
-internal fun MultiSelectChips(
-    options: List<String>,
-    selectedStates: MutableList<Boolean>,
-    onSelectionChanged: (Int, Boolean) -> Unit,
-    icons: List<Int?> = listOf(),
-) {
-    FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        options.forEachIndexed { index, option ->
-            val isSelected = selectedStates[index]
-            Row(
-                modifier = Modifier
-                    .background(
-                        color = Colors.BackgroundInteractive,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .then(
-                        if (isSelected) {
-                            Modifier.border(
-                                width = 1.dp,
-                                color = Colors.TextInteractive,
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .clickableShape(RoundedCornerShape(16.dp)) {
-                        val newSelected = !selectedStates[index]
-                        val canDeselect = newSelected || selectedStates.count { it } > 1
-
-                        if (canDeselect) {
-                            selectedStates[index] = newSelected
-                            onSelectionChanged(index, newSelected)
-                        }
-                    }
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                icons.getOrNull(index)?.let { iconRes ->
-                    Icon(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = null,
-                        tint = Colors.TextInteractive,
-                    )
-                }
-                Text(
-                    text = option,
-                    style = FontStyles.BodyMedium,
-                    color = Colors.TextInteractive,
-                )
-            }
-        }
     }
 }
 

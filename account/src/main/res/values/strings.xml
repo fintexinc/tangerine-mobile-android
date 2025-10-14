@@ -44,7 +44,6 @@
     <string name="text_sell_funds">Sell\nFunds</string>
     <string name="text_automatic_purchases">Automatic\nPurchases</string>
     <string name="text_switch_portfolio">Switch\nPortfolio</string>
-    <string name="text_all_dates">All Dates</string>
     <string name="filter_all_dates">All Dates</string>
     <string name="filter_last_30_days">Last 30 Days</string>
     <string name="filter_last_60_days">Last 60 Days</string>
@@ -98,7 +97,6 @@
     <string name="text_account_info">Account Info</string>
     <string name="text_account_performance">Account Performance</string>
     <string name="text_empty_transactions">Couldn’t find any transactions</string>
-    <string name="text_try_again">Adjust your filters and try again!</string>
     <string name="text_empty_documents">Can’t find any documents</string>
 
     <string name="description_icon_close">Close</string>
@@ -113,5 +111,4 @@
     <string name="description_documents">Document</string>
     <string name="description_icon_open">Open</string>
     <string name="description_info_icon">Information</string>
-    <string name="description_empty_result">Empty result</string>
 </resources>
