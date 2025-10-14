@@ -1,10 +1,14 @@
 package com.tangerine.account.presentation.ui.tab
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,10 +16,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -24,6 +34,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
@@ -43,90 +56,110 @@ fun SummaryUI(
     returnsData: ImmutableList<ReturnsItemUi>,
     holdingsData: ImmutableList<ReturnsItemUi>,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        AccountBalanceUI(performanceData)
+    var showPerformanceInfo by remember { mutableStateOf(false) }
 
-        Spacer(modifier = Modifier.height(40.dp))
-
-        val items = listOf(
-            DataSectionItemUi(
-                label = "Scotia U.S Equity Index\nTracker ETF",
-                value = "50%",
-                hasInfoIcon = false,
-                isMultiline = true,
-                showColorDot = true,
-                dotColor = Color(0xFF921616),
-            ),
-            DataSectionItemUi(
-                label = "Scotia International\nEquity Index Tracker ETF",
-                value = "29%",
-                hasInfoIcon = false,
-                isMultiline = true,
-                showColorDot = true,
-                dotColor = Color(0xFFE57373),
-            ),
-            DataSectionItemUi(
-                label = "Scotia Emerging Markets\nEquity Index EF",
-                value = "15%",
-                hasInfoIcon = false,
-                isMultiline = true,
-                showColorDot = true,
-                dotColor = Color(0xFFFEAC5B),
-            ),
-            DataSectionItemUi(
-                label = "Scotia Canadian Large Cap\nEquity Index Tracker ETF",
-                value = "6%",
-                isMultiline = true,
-                showColorDot = true,
-                dotColor = Color(0xFFB2EBF2),
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            AccountBalanceUI(
+                performanceData,
+                onInfoIconClick = { showPerformanceInfo = true },
             )
-        )
 
-        Text(
-            text = stringResource(R.string.title_balanced_core_portfolio),
-            color = Colors.Text,
-            style = FontStyles.TitleLarge,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
+            Spacer(modifier = Modifier.height(40.dp))
 
-        Spacer(modifier = Modifier.height(24.dp))
+            val items = listOf(
+                DataSectionItemUi(
+                    label = "Scotia U.S Equity Index\nTracker ETF",
+                    value = "50%",
+                    hasInfoIcon = false,
+                    isMultiline = true,
+                    showColorDot = true,
+                    dotColor = Color(0xFF921616),
+                ),
+                DataSectionItemUi(
+                    label = "Scotia International\nEquity Index Tracker ETF",
+                    value = "29%",
+                    hasInfoIcon = false,
+                    isMultiline = true,
+                    showColorDot = true,
+                    dotColor = Color(0xFFE57373),
+                ),
+                DataSectionItemUi(
+                    label = "Scotia Emerging Markets\nEquity Index EF",
+                    value = "15%",
+                    hasInfoIcon = false,
+                    isMultiline = true,
+                    showColorDot = true,
+                    dotColor = Color(0xFFFEAC5B),
+                ),
+                DataSectionItemUi(
+                    label = "Scotia Canadian Large Cap\nEquity Index Tracker ETF",
+                    value = "6%",
+                    isMultiline = true,
+                    showColorDot = true,
+                    dotColor = Color(0xFFB2EBF2),
+                )
+            )
 
-        UniversalDataSection(
-            title = stringResource(R.string.title_allocation_holdings),
-            items = items,
-            showProgressBar = true,
-        )
+            Text(
+                text = stringResource(R.string.title_balanced_core_portfolio),
+                color = Colors.Text,
+                style = FontStyles.TitleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = stringResource(R.string.text_info_allocations),
-            style = FontStyles.BodySmallItalic,
-            color = Colors.BorderInformation,
-            modifier = Modifier.padding(horizontal = 26.dp),
-        )
+            UniversalDataSection(
+                title = stringResource(R.string.title_allocation_holdings),
+                items = items,
+                showProgressBar = true,
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        ReturnsOverTimeSection(
-            title = stringResource(R.string.text_returns_over_time),
-            returnsItems = returnsData,
-            holdingsItems = holdingsData,
-            footerText = "Portfolio as of May 7, 2025",
-            modifier = Modifier.padding(16.dp)
-        )
+            Text(
+                text = stringResource(R.string.text_info_allocations),
+                style = FontStyles.BodySmallItalic,
+                color = Colors.BorderInformation,
+                modifier = Modifier.padding(horizontal = 26.dp),
+            )
 
-        Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
+            ReturnsOverTimeSection(
+                title = stringResource(R.string.text_returns_over_time),
+                returnsItems = returnsData,
+                holdingsItems = holdingsData,
+                footerText = "Portfolio as of May 7, 2025",
+                modifier = Modifier.padding(16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(120.dp))
+
+        }
+
+        if (showPerformanceInfo) {
+            InfoDialog(
+                title = stringResource(R.string.text_account_performance),
+                description = stringResource(R.string.text_dialog),
+                onDismiss = { showPerformanceInfo = false },
+            )
+        }
     }
 }
 
 @Composable
-private fun AccountBalanceUI(performanceData: List<PerformanceItem>) {
+private fun AccountBalanceUI(
+    performanceData: List<PerformanceItem>,
+    onInfoIconClick: () -> Unit,
+) {
+    val allAccountsText = stringResource(R.string.text_all_accounts)
+
     ColumnWithBorder {
         val chartPerformance = if (performanceData.size > 10) {
             val combined = mutableListOf<PerformanceItem>()
@@ -153,7 +186,9 @@ private fun AccountBalanceUI(performanceData: List<PerformanceItem>) {
         }
         PerformanceChartUI(
             title = stringResource(R.string.text_account_performance),
-            chartPerformance = chartPerformance
+            chartPerformance = chartPerformance,
+            onInfoIconClick = onInfoIconClick,
+            chipText = allAccountsText,
         )
     }
 }
@@ -325,6 +360,81 @@ private fun ReturnsRow(
                     color = if (item.isPositive == true) Colors.TextSuccess else Colors.TextCritical,
                     maxLines = 1,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun InfoDialog(
+    title: String,
+    description: String,
+    onDismiss: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onDismiss() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { }
+                    .padding(32.dp),
+            ) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top,
+                    ) {
+                        Text(
+                            text = title,
+                            modifier = Modifier.weight(1f),
+                            style = FontStyles.TitleSmall,
+                        )
+
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.description_icon_close),
+                            tint = Colors.IconSubtitled,
+                            modifier = Modifier
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) { onDismiss() }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = description,
+                        style = FontStyles.BodyLarge,
+                        color = Colors.TextSubdued,
+                    )
+                }
             }
         }
     }

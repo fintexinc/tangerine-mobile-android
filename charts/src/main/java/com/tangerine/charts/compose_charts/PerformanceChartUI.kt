@@ -1,6 +1,7 @@
 package com.tangerine.charts.compose_charts
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,8 @@ fun PerformanceChartUI(
     isShowFilter: Boolean = false,
     onFilterClick: () -> Unit = {},
     sum: String? = null,
-    chipText: String = "All Accounts"
+    chipText: String? = null,
+    onInfoIconClick: () -> Unit = {},
 ) {
     val period = remember {
         mutableStateOf(Period.SIX_MONTHS)
@@ -63,7 +65,7 @@ fun PerformanceChartUI(
             style = FontStyles.TitleMedium,
             maxLines = 2,
         )
-        if (isShowFilter) {
+        if (isShowFilter && chipText != null) {
             Row(
                 modifier = Modifier
                     .wrapContentSize()
@@ -95,7 +97,9 @@ fun PerformanceChartUI(
             Icon(
                 painter = painterResource(R.drawable.ic_info),
                 contentDescription = stringResource(R.string.description_info_icon),
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onInfoIconClick() },
                 tint = Colors.TextInteractive,
             )
         }
@@ -129,15 +133,19 @@ fun PerformanceChartUI(
                     Period.ONE_MONTH -> {
                         chartPerformance.subList(chartPerformance.size - 3, chartPerformance.size)
                     }
+
                     Period.THREE_MONTHS -> {
                         chartPerformance.subList(chartPerformance.size - 5, chartPerformance.size)
                     }
+
                     Period.SIX_MONTHS -> {
                         chartPerformance.subList(chartPerformance.size - 8, chartPerformance.size)
                     }
+
                     Period.ONE_YEAR -> {
                         chartPerformance
                     }
+
                     else -> chartPerformance
                 }
                 performanceValue.doubleValue = performanceRanged[it].value
