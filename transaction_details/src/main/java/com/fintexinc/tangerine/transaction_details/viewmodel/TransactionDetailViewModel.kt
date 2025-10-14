@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionDetailViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @ApplicationContext private val context: Context, // TODO() delete content
     private val accountGateway: AccountGateway,
 ) : ViewModel() {
     private val _state: MutableStateFlow<State> = MutableStateFlow<State>(

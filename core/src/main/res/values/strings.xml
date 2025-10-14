@@ -12,6 +12,8 @@
     <string name="text_delete_with_history">Delete with History</string>
     <string name="format_performance_as_of_date">Balance as of %1$d %2$s %3$d</string>
     <string name="text_all">All</string>
+    <string name="text_try_again">Adjust your filters and try again!</string>
+    <string name="text_empty_transactions">Couldn’t find any transactions</string>
 
     <string name="description_icon_expand_collapse">Expand or collapse</string>
     <string name="description_icon_search">Search</string>
@@ -24,6 +26,7 @@
     <string name="description_documents">Document</string>
     <string name="description_view_details">View details</string>
     <string name="description_icon_error">Error</string>
+    <string name="description_empty_result">Empty result</string>
 
     <string name="error_percentage_format">Percentage can only be between 0 and 100.</string>
     <string name="error_max_length_format">Maximum length exceeded.</string>

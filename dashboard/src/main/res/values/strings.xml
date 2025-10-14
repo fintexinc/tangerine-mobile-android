@@ -104,6 +104,8 @@
         <item quantity="other">%d entries have been deleted</item>
     </plurals>
     <string name="text_undo">Undo</string>
+    <string name="text_accounts_count">Accounts</string>
+    <string name="text_account">accounts</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>

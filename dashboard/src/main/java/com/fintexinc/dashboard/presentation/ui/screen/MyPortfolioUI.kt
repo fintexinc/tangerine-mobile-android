@@ -37,6 +37,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +63,7 @@ import com.fintexinc.dashboard.presentation.ui.models.AccountUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
 import com.tangerine.charts.compose_charts.PerformanceChartUI
 import com.tangerine.charts.compose_charts.models.Pie
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyPortfolioUI(
@@ -576,6 +578,93 @@ private fun Charts(
     val showAccountsBottomSheet = remember { mutableStateOf(false) }
     val selectedAccountIds = remember { mutableStateOf(setOf("all")) }
 
+    // TODO() Asset mock
+    val allAssetData = remember {
+        mapOf(
+            "all" to listOf(
+                Pie("Stocks", 40.0, color = Color(0xFFE57373)),
+                Pie("Bonds", 40.0, color = Color(0xFF880E4F)),
+                Pie("Futures", 20.0, color = Colors.BackgroundPrimary),
+            ),
+            "ACCT-INV-001" to listOf(
+                Pie("Stocks", 55.0, color = Color(0xFFE57373)),
+                Pie("Bonds", 30.0, color = Color(0xFF880E4F)),
+                Pie("Futures", 15.0, color = Colors.BackgroundPrimary),
+            ),
+            "ACCT-BNK-002" to listOf(
+                Pie("Stocks", 25.0, color = Color(0xFFE57373)),
+                Pie("Bonds", 50.0, color = Color(0xFF880E4F)),
+                Pie("Futures", 25.0, color = Colors.BackgroundPrimary),
+            )
+        )
+    }
+
+    val filteredAssetData = remember(selectedAccountIds.value) {
+        filterPieData(selectedAccountIds.value, allAssetData)
+    }
+
+    // TODO() Sector mock data
+    val allSectorData = remember {
+        mapOf(
+            "all" to listOf(
+                Pie("Technology", 9.09, color = Color(0xFF880E4F)),
+                Pie("Finance", 9.09, color = Color(0xFFE57373)),
+                Pie("Healthcare", 9.09, color = Color(0xFFFEAC5B)),
+                Pie("Energy", 9.09, color = Color(0xFFC5DEDB)),
+                Pie("Technology", 9.09, color = Color(0xFF0D7C75)),
+                Pie("Finance", 9.09, color = Color(0xFF15625C)),
+                Pie("Healthcare", 9.09, color = Color(0xFF075BBC)),
+                Pie("Energy", 9.09, color = Color(0xFFAB47BC)),
+                Pie("Technology", 9.09, color = Color(0xFFEC407A)),
+                Pie("Finance", 9.09, color = Color(0xFFFFCDD2)),
+                Pie("Healthcare", 9.01, color = Color(0xFFF17F26)),
+            ),
+            "ACCT-INV-001" to listOf(
+                Pie("Technology", 16.67, color = Color(0xFF880E4F)),
+                Pie("Finance", 16.67, color = Color(0xFFE57373)),
+                Pie("Healthcare", 16.67, color = Color(0xFFFEAC5B)),
+                Pie("Energy", 16.67, color = Color(0xFFC5DEDB)),
+                Pie("Technology", 16.67, color = Color(0xFF0D7C75)),
+                Pie("Finance", 16.65, color = Color(0xFF15625C)),
+            ),
+            "ACCT-BNK-002" to listOf(
+                Pie("Healthcare", 25.0, color = Color(0xFF075BBC)),
+                Pie("Energy", 20.0, color = Color(0xFFAB47BC)),
+                Pie("Technology", 10.0, color = Color(0xFFEC407A)),
+                Pie("Finance", 30.0, color = Color(0xFFFFCDD2)),
+                Pie("Healthcare", 15.0, color = Color(0xFFF17F26)),
+            )
+        )
+    }
+
+    val filteredSectorData = remember(key1 = selectedAccountIds.value) {
+        filterPieData(selectedAccountIds.value, allSectorData)
+    }
+
+    // TODO() mock GeographicData
+    val allGeographicData = remember {
+        mapOf(
+            "all" to listOf(
+                Pie("North America", 65.0, color = Color(0xFF075BBC)),
+                Pie("Europe", 35.0, color = Color(0xFFEC407A)),
+            ),
+            "ACCT-INV-001" to listOf(
+                Pie("North America", 75.0, color = Color(0xFF075BBC)),
+                Pie("Europe", 15.0, color = Color(0xFFEC407A)),
+                Pie("Asia", 10.0, color = Color(0xFF4CAF50)),
+            ),
+            "ACCT-BNK-002" to listOf(
+                Pie("North America", 50.0, color = Color(0xFF075BBC)),
+                Pie("Europe", 40.0, color = Color(0xFFEC407A)),
+                Pie("Asia", 10.0, color = Color(0xFF4CAF50)),
+            )
+        )
+    }
+
+    val filteredGeographicData = remember(selectedAccountIds.value) {
+        filterPieData(selectedAccountIds.value, allGeographicData)
+    }
+
     val uniqueAccounts = remember(performance) {
         performance.groupBy { it.accountId }
             .map { (accountId, items) ->
@@ -613,12 +702,14 @@ private fun Charts(
             performance.filter { it.accountId in selectedAccountIds.value }
         }
     }
+    val allAccountsText = stringResource(R.string.text_all_accounts)
+    val accountsText = stringResource(R.string.text_account)
 
     val chipText = remember(selectedAccountIds.value) {
         when {
-            selectedAccountIds.value.contains("all") -> "All Accounts"
+            selectedAccountIds.value.contains("all") -> allAccountsText
             selectedAccountIds.value.size == 1 -> selectedAccountIds.value.first()
-            else -> "${selectedAccountIds.value.size} Accounts"
+            else -> "${selectedAccountIds.value.size} $accountsText"
         }
     }
 
@@ -627,6 +718,8 @@ private fun Charts(
         initialPage = (Int.MAX_VALUE / 2 / pageCount) * pageCount,
         pageCount = { Int.MAX_VALUE }
     )
+
+    val coroutineScope = rememberCoroutineScope()
 
     HorizontalPager(state = pagerState) { page ->
         val actualPage = page % pageCount
@@ -640,6 +733,11 @@ private fun Charts(
                     color = Colors.Background,
                     shape = RoundedCornerShape(16.dp)
                 )
+                .clickable {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
+                }
                 .padding(18.dp)
         ) {
             val chartPerformance = if (filteredPerformance.size > 10) {
@@ -647,8 +745,10 @@ private fun Charts(
                 var i = 0
                 while (i < filteredPerformance.size) {
                     val first = filteredPerformance[i]
-                    val second = if (i + 1 < filteredPerformance.size) filteredPerformance[i + 1] else null
-                    val combinedValue = if (second != null) first.value + second.value else first.value
+                    val second =
+                        if (i + 1 < filteredPerformance.size) filteredPerformance[i + 1] else null
+                    val combinedValue =
+                        if (second != null) first.value + second.value else first.value
                     combined.add(
                         PerformanceItem(
                             id = first.id,
@@ -669,7 +769,7 @@ private fun Charts(
                 0 -> PerformanceChartUI(
                     title = stringResource(R.string.text_investor_performance),
                     chartPerformance = chartPerformance,
-                    step = if(filteredPerformance.size > 10) 20000.0 else 10000.0,
+                    step = if (filteredPerformance.size > 10) 20000.0 else 10000.0,
                     onFilterClick = {
                         showAccountsBottomSheet.value = true
                     },
@@ -678,9 +778,29 @@ private fun Charts(
                     chipText = chipText
                 )
 
-                1 -> AssetMixChartUI()
-                2 -> SectionExposureChartUI()
-                3 -> GeographicExposure()
+                1 -> AssetMixChartUI(
+                    onFilterClick = {
+                        showAccountsBottomSheet.value = true
+                    },
+                    data = filteredAssetData,
+                    chipText = chipText,
+                )
+
+                2 -> SectionExposureChartUI(
+                    onFilterClick = {
+                        showAccountsBottomSheet.value = true
+                    },
+                    data = filteredSectorData,
+                    chipText = chipText,
+                )
+
+                3 -> GeographicExposure(
+                    onFilterClick = {
+                        showAccountsBottomSheet.value = true
+                    },
+                    data = filteredGeographicData,
+                    chipText = chipText,
+                )
             }
             Spacer(modifier = Modifier.height(18.dp))
             Row(
@@ -828,97 +948,89 @@ private fun ChipsRow(
 }
 
 @Composable
-private fun SectionExposureChartUI() {
+private fun SectionExposureChartUI(
+    data: List<Pie>,
+    chipText: String = stringResource(R.string.text_all_accounts),
+    onFilterClick: () -> Unit = {}
+) {
     TangerinePieChart(
         title = stringResource(R.string.text_sector_exposure),
-        pieData = listOf(
-            Pie("Technology", 50.0, color = Color(0xFF0D7C75)),
-            Pie("Finance", 10.0, color = Color(0xFFFEAC5B)),
-            Pie("Healthcare", 20.0, color = Color(0xFFEC407A))
-        )
+        pieData = data,
+        chipText = chipText,
+        onFilterClick = onFilterClick,
+        isPieDataScrollable = true,
     )
 }
 
 @Composable
-private fun AssetMixChartUI() {
+private fun AssetMixChartUI(
+    chipText: String = stringResource(R.string.text_all_accounts),
+    onFilterClick: () -> Unit = {},
+    data: List<Pie>
+) {
     TangerinePieChart(
         title = stringResource(R.string.text_asset_mix),
-        pieData = listOf(
-            Pie("Stocks", 40.0, color = Color(0xFFE57373)),
-            Pie("Bonds", 40.0, color = Color(0xFF880E4F)),
-            Pie("Futures", 20.0, color = Colors.BackgroundPrimary),
-        )
+        pieData = data,
+        chipText = chipText,
+        onFilterClick = onFilterClick
     )
 }
 
 @Composable
-private fun GeographicExposure() {
+private fun GeographicExposure(
+    data: List<Pie>,
+    chipText: String = stringResource(R.string.text_all_accounts),
+    onFilterClick: () -> Unit = {}
+) {
     TangerinePieChart(
         title = stringResource(R.string.text_geographic_exposure),
-        pieData = listOf(
-            Pie("North America", 65.0, color = Color(0xFF075BBC)),
-            Pie("Europe", 35.0, color = Color(0xFFEC407A)),
-        )
+        pieData = data,
+        chipText = chipText,
+        onFilterClick = onFilterClick
     )
-}
-
-@Composable
-private fun TopHoldingsItem(
-    holdingsName: String,
-    holdingsSubName: String,
-    sum: String,
-    percent: String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.Start,
-        ) {
-            Text(
-                text = holdingsName,
-                style = FontStyles.BodyLarge,
-                color = Colors.Text,
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = holdingsSubName,
-                style = FontStyles.BodyMedium,
-                color = Colors.TextSubdued,
-            )
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Column(
-            modifier = Modifier.wrapContentWidth(),
-            horizontalAlignment = Alignment.End,
-        ) {
-            Text(
-                text = sum,
-                style = FontStyles.BodyLargeBold,
-                color = Colors.Text,
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = percent,
-                style = FontStyles.BodyMedium,
-                color = Colors.TextSubdued,
-            )
-        }
-    }
 }
 
 enum class GroupingType(label: String) {
     NONE("None"),
     REGISTERED_STATUS("Registered/Non-Registered"),
     ACCOUNT_TYPE("AccountType")
+}
+
+private fun filterPieData(
+    selectedAccountIds: Set<String>,
+    allData: Map<String, List<Pie>>
+): List<Pie> {
+    return when {
+        selectedAccountIds.contains("all") -> {
+            allData["all"] ?: emptyList()
+        }
+
+        selectedAccountIds.size == 1 -> {
+            val accountId = selectedAccountIds.first()
+            allData[accountId] ?: allData["all"] ?: emptyList()
+        }
+
+        else -> {
+            val selectedAccounts = selectedAccountIds.mapNotNull { allData[it] }
+            if (selectedAccounts.isNotEmpty()) {
+                val groupedData = mutableMapOf<String, MutableList<Double>>()
+                val colors = mutableMapOf<String, Color>()
+
+                selectedAccounts.forEach { accountData ->
+                    accountData.forEach { pie ->
+                        val label = pie.label ?: ""
+                        groupedData.getOrPut(label) { mutableListOf() }.add(pie.data)
+                        colors.putIfAbsent(label, pie.color)
+                    }
+                }
+
+                groupedData.map { (label, values) ->
+                    val avgPercentage = values.average()
+                    Pie(label, avgPercentage, color = colors[label] ?: Color.Gray)
+                }.sortedByDescending { it.data }
+            } else {
+                allData["all"] ?: emptyList()
+            }
+        }
+    }
 }

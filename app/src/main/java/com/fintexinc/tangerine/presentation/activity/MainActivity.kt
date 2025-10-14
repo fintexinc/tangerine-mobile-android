@@ -3,9 +3,7 @@ package com.fintexinc.tangerine.presentation.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -55,8 +53,9 @@ import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
 import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
+import com.tangerine.documents.presentation.ui.statment.StatementViewModel
 import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
-import com.tangerine.documents.presentation.ui.ui.StatementsScreen
+import com.tangerine.documents.presentation.ui.statment.StatementsScreen
 import com.tangerine.documents.presentation.ui.ui.InvestmentDocumentsUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -68,18 +67,10 @@ class MainActivity : ComponentActivity() {
     private val accountViewModel: AccountViewModel by viewModels()
     private val transactionDetailViewModel: TransactionDetailViewModel by viewModels()
     private val historyViewModel: HistoryViewModel by viewModels()
-
+    private val statementViewModel: StatementViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                android.graphics.Color.WHITE,
-                android.graphics.Color.WHITE
-            )
-        )
-
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
@@ -254,9 +245,21 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable<Routes.Statements> {
+                        val state = statementViewModel.state.collectAsState()
                         StatementsScreen(
+                            state = state.value,
                             onBackClicked = {
                                 navController.popBackStack()
+                            },
+                            onSearchQueryChanged = {
+                                statementViewModel.onSearchQueryChanged(it)
+                            },
+                            onYearToggle = { statementViewModel.toggleYearExpansion(it) },
+                            onYearFilterApplied = {
+                                statementViewModel.onYearFilterApplied(it)
+                            },
+                            onMonthFilterApplied = {
+                                statementViewModel.onMonthFilterApplied(it)
                             },
                         )
                     }
