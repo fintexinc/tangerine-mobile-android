@@ -39,7 +39,7 @@ fun PerformanceChartUI(
     isShowFilter: Boolean = false,
     onFilterClick: () -> Unit = {},
     sum: String? = null,
-    chipText: String = "All Accounts"
+    chipText: String = stringResource(com.tangerine.charts.R.string.text_all_accounts),
 ) {
     val period = remember {
         mutableStateOf(Period.SIX_MONTHS)

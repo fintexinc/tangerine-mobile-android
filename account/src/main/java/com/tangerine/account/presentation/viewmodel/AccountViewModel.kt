@@ -59,7 +59,7 @@ class AccountViewModel @Inject constructor(
         val allPerformanceData = accountGateway.getPerformanceData()
 
         val accountPerformanceData = allPerformanceData.filter {
-            it.accountId == "ACCT-INV-001" // TODO()
+            it.accountId == "ACCT-INV-001" // TODO() mock data
         }
 
         val returnsItems = calculateReturns(performanceItems = accountPerformanceData)
