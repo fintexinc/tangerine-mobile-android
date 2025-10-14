@@ -133,19 +133,15 @@ fun PerformanceChartUI(
                     Period.ONE_MONTH -> {
                         chartPerformance.subList(chartPerformance.size - 3, chartPerformance.size)
                     }
-
                     Period.THREE_MONTHS -> {
                         chartPerformance.subList(chartPerformance.size - 5, chartPerformance.size)
                     }
-
                     Period.SIX_MONTHS -> {
                         chartPerformance.subList(chartPerformance.size - 8, chartPerformance.size)
                     }
-
                     Period.ONE_YEAR -> {
                         chartPerformance
                     }
-
                     else -> chartPerformance
                 }
                 performanceValue.doubleValue = performanceRanged[it].value
