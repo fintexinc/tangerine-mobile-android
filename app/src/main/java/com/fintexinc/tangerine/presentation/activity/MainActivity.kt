@@ -44,7 +44,10 @@ import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.presentation.ui.DashboardScreenUI
 import com.fintexinc.dashboard.presentation.ui.screen.AddEditLiabilityUI
 import com.fintexinc.dashboard.presentation.ui.screen.asset.AddEditAssetUI
+import com.fintexinc.dashboard.presentation.ui.screen.history.HistoryUi
+import com.fintexinc.dashboard.presentation.ui.screen.historyDetail.HistoryDetailUi
 import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
+import com.fintexinc.dashboard.presentation.viewmodel.HistoryViewModel
 import com.fintexinc.tangerine.presentation.ui.SplashScreenUI
 import com.fintexinc.tangerine.transaction_details.ui.TransactionDetailUi
 import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailViewModel
@@ -63,6 +66,7 @@ class MainActivity : ComponentActivity() {
     private val dashboardViewModel: DashboardViewModel by viewModels()
     private val accountViewModel: AccountViewModel by viewModels()
     private val transactionDetailViewModel: TransactionDetailViewModel by viewModels()
+    private val historyViewModel: HistoryViewModel by viewModels()
     private val statementViewModel: StatementViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -205,6 +209,9 @@ class MainActivity : ComponentActivity() {
                             },
                             onBackButtonFromExternalScreenClicked = {
                                 navController.popBackStack()
+                            },
+                            onHistoryScreenClicked = {
+                                navController.navigate(Routes.History)
                             }
                         )
                     }
@@ -254,6 +261,29 @@ class MainActivity : ComponentActivity() {
                             onMonthFilterApplied = {
                                 statementViewModel.onMonthFilterApplied(it)
                             },
+                        )
+                    }
+
+                    composable<Routes.History> {
+                        val historyState = historyViewModel.state.collectAsState().value
+                        HistoryUi(
+                            state = historyState,
+                            onBackClicked = { navController.popBackStack() },
+                            onDetailsNavigate = { navController.navigate(Routes.HistoryDetail) },
+                            onEditModeToggle = { historyViewModel.toggleEditMode() },
+                            onItemSelectionToggle = { historyViewModel.toggleItemSelection(it) },
+                            onDeleteSelected = { historyViewModel.onDeleteSelected() },
+                            onCancelEdit = { historyViewModel.cancelEdit() },
+                            onUndoDelete = { historyViewModel.onUndoDelete() },
+                        )
+                    }
+
+                    composable<Routes.HistoryDetail> {
+                        HistoryDetailUi(
+                            onBackClicked = { navController.popBackStack() },
+                            onEditAssetNavigate = {
+                                navController.navigate(Routes.AddEditAsset(it))
+                            }
                         )
                     }
                 }
@@ -482,6 +512,12 @@ object Routes {
 
     @Serializable
     object Statements
+
+    @Serializable
+    object History
+
+    @Serializable
+    object HistoryDetail
 
     @Serializable
     object InvestmentDocument
