@@ -62,6 +62,7 @@ internal fun TransactionsUi(
     onTypeFilterChanged: (List<TransactionTypeFilterUi>) -> Unit,
     onStatusFilterChanged: (List<TransactionStatusFilter>) -> Unit,
     onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
+    onTransactionDetailsClick: (String) -> Unit,
 ) {
     var isPendingExpanded by remember { mutableStateOf(true) }
     var isSettledExpanded by remember { mutableStateOf(true) }
@@ -154,7 +155,7 @@ internal fun TransactionsUi(
                             items(group.transactions) { transaction ->
                                 TransactionItem(
                                     transaction = transaction,
-                                    onClick = { },
+                                    onClick = { onTransactionDetailsClick(transaction.id) },
                                 )
                             }
 
@@ -183,7 +184,7 @@ internal fun TransactionsUi(
                             items(group.transactions) { transaction ->
                                 TransactionItem(
                                     transaction = transaction,
-                                    onClick = { },
+                                    onClick = { onTransactionDetailsClick(transaction.id) },
                                 )
 
                                 if (transaction != group.transactions.last()) {
