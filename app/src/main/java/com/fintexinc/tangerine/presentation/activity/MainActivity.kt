@@ -180,6 +180,9 @@ class MainActivity : ComponentActivity() {
                                 onDocumentTypeFilterChanged = { type ->
                                     accountViewModel.onBottomSheetDocumentsTypeFilterChanged(type)
                                 },
+                                onTransactionDetailsClick = { id ->
+                                    navController.navigate(Routes.TransactionDetail(id))
+                                },
                             )
                         }
                     }

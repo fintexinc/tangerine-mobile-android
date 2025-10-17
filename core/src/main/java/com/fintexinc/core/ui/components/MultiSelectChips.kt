@@ -26,6 +26,7 @@ fun MultiSelectChips(
     selectedStates: MutableList<Boolean>,
     onSelectionChanged: (Int, Boolean) -> Unit,
     icons: List<Int?> = listOf(),
+    onSelectedChipClick: ((Int) -> Unit)? = null,
 ) {
     FlowRow(
         modifier = Modifier
@@ -54,6 +55,11 @@ fun MultiSelectChips(
                         }
                     )
                     .clickableShape(RoundedCornerShape(16.dp)) {
+                        if (isSelected && onSelectedChipClick != null) {
+                            onSelectedChipClick(index)
+                            return@clickableShape
+                        }
+
                         val newSelected = !selectedStates[index]
                         val canDeselect = newSelected || selectedStates.count { it } > 1
 

@@ -36,8 +36,10 @@ import com.tangerine.account.presentation.ui.components.DateFilterModalBottomShe
 import com.fintexinc.core.ui.components.EmptyScreen
 import com.fintexinc.core.ui.components.FilterButton
 import com.fintexinc.core.ui.components.MultiSelectChips
+import com.tangerine.account.presentation.ui.components.formatMonthYear
 import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 import com.tangerine.account.presentation.viewmodel.DocumentDataPoint
+import kotlin.enums.EnumEntries
 
 @Composable
 internal fun DocumentsUi(
@@ -71,6 +73,11 @@ internal fun DocumentsUi(
             !selectedDates.contains(DateFilterUi.ALL_DATES) ||
             !selectedDocumentTypes.contains(DocumentTypeFilterUi.ALL_DOCUMENTS)
 
+    val dateEnums: EnumEntries<DateFilterUi> = DateFilterUi.entries
+
+    var selectedMonth: Int? by remember { mutableStateOf<Int?>(null) }
+    var selectedYear: Int? by remember { mutableStateOf<Int?>(null) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -90,10 +97,15 @@ internal fun DocumentsUi(
                 .padding(horizontal = 16.dp)
         ) {
             FilterButton(
-                text = stringResource(
-                    selectedDates.firstOrNull()?.stringResId ?: R.string.filter_all_dates
-                ),
-                onClick = { showDateFilter = true }
+                text = if (selectedDates.firstOrNull() == DateFilterUi.BY_MONTH && selectedMonth != null && selectedYear != null) {
+                    formatMonthYear(selectedMonth!!, selectedYear!!)
+                } else {
+                    stringResource(
+                        selectedDates.firstOrNull()?.stringResId
+                            ?: R.string.filter_all_dates
+                    )
+                },
+                onClick = { showDateFilter = true },
             )
 
             Spacer(modifier = Modifier.width(20.dp))
@@ -141,10 +153,15 @@ internal fun DocumentsUi(
             selectedDates = selectedDates,
             onDatesSelected = { newDates, month, year ->
                 selectedDates = newDates
+                selectedMonth = month
+                selectedYear = year
                 onDateFilterChangedDocument(newDates, month, year)
                 showDateFilter = false
             },
             onDismiss = { showDateFilter = false },
+            dateEnums = dateEnums,
+            selectedYear = selectedYear,
+            selectedMonth = selectedMonth,
         )
     }
 
