@@ -106,6 +106,9 @@
     <string name="text_undo">Undo</string>
     <string name="text_accounts_count">Accounts</string>
     <string name="text_account">accounts</string>
+    <string name="text_estimated_value">Estimated Value</string>
+    <string name="text_annualized_rate_of_return_optional">Annualized rate of return % (Optional)</string>
+    <string name="text_revisit_date_optional">Revisit Date (Optional)</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>

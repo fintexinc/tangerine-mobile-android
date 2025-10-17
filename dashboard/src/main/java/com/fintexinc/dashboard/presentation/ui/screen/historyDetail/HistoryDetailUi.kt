@@ -39,7 +39,7 @@ fun HistoryDetailUi(
     // TODO() mock data
     val mockData = listOf(
         DataSectionItemUi(
-            label = "Asset Type",
+            label = stringResource(R.string.text_asset_type),
             value = "Luxury Assets",
             valueColor = Colors.BrandBlack,
             hasInfoIcon = false,
@@ -52,7 +52,7 @@ fun HistoryDetailUi(
             isMultiline = false
         ),
         DataSectionItemUi(
-            label = "Asset Name",
+            label = stringResource(R.string.text_asset_name),
             value = "Boat",
             valueColor = Colors.BrandBlack,
             hasInfoIcon = false,
@@ -65,7 +65,7 @@ fun HistoryDetailUi(
             isMultiline = false
         ),
         DataSectionItemUi(
-            label = "Estimated Value",
+            label = stringResource(R.string.text_estimated_value),
             value = "$500,000",
             valueColor = Colors.BrandBlack,
             hasInfoIcon = false,
@@ -78,7 +78,7 @@ fun HistoryDetailUi(
             isMultiline = false
         ),
         DataSectionItemUi(
-            label = "Annualized rate of return % (Optional)",
+            label = stringResource(R.string.text_annualized_rate_of_return_optional),
             value = "3%",
             valueColor = Colors.BrandBlack,
             hasInfoIcon = false,
@@ -91,7 +91,7 @@ fun HistoryDetailUi(
             isMultiline = true
         ),
         DataSectionItemUi(
-            label = "Effective Date",
+            label = stringResource(R.string.text_effective_date),
             value = "MAY 2, 2024",
             valueColor = Colors.BrandBlack,
             hasInfoIcon = false,
@@ -104,7 +104,7 @@ fun HistoryDetailUi(
             isMultiline = false
         ),
         DataSectionItemUi(
-            label = "Revisit Date (Optional)",
+            label = stringResource(R.string.text_revisit_date_optional),
             value = "MAR 2, 2025",
             valueColor = Colors.BrandBlack,
             hasInfoIcon = false,

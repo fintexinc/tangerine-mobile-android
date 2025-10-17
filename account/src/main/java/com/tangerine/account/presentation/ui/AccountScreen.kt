@@ -90,6 +90,7 @@ fun AccountScreen(
     onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
+    onTransactionDetailsClick: (String) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -114,6 +115,7 @@ fun AccountScreen(
                 onDateFilterChanged = onDateFilterChanged,
                 onDateFilterChangedDocument = onDateFilterChangedDocument,
                 onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
+                onTransactionDetailsClick = onTransactionDetailsClick,
             )
         }
     }
@@ -135,6 +137,7 @@ private fun Content(
     onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
+    onTransactionDetailsClick: (String) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -162,6 +165,7 @@ private fun Content(
                     onDateFilterChanged = onDateFilterChanged,
                     onDateFilterChangedDocument = onDateFilterChangedDocument,
                     onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
+                    onTransactionDetailsClick = onTransactionDetailsClick,
                 )
             },
             sheetPeekHeight = 84.dp,
@@ -323,6 +327,7 @@ private fun BottomSheetTabsContent(
     onDateFilterChanged: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
+    onTransactionDetailsClick: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
@@ -342,6 +347,7 @@ private fun BottomSheetTabsContent(
                         onTypeFilterChanged = onTypeFilterChanged,
                         onStatusFilterChanged = onStatusFilterChanged,
                         onDateFilterChanged = onDateFilterChanged,
+                        onTransactionDetailsClick = onTransactionDetailsClick,
                     )
                 },
                 onTabSelected = {
