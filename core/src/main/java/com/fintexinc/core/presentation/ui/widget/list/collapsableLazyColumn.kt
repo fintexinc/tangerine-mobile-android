@@ -71,29 +71,6 @@ fun collapsableLazyColumn(
                                     bottomEnd = 16.dp
                                 ) else RectangleShape
                             )
-                            .then(
-                                if (isLastList) {
-                                    Modifier
-                                        .border(
-                                            width = 1.dp,
-                                            color = Colors.BorderSubdued,
-                                            shape = RoundedCornerShape(
-                                                bottomStart = 16.dp,
-                                                bottomEnd = 16.dp
-                                            )
-                                        )
-                                } else {
-                                    Modifier
-                                        .border(
-                                            width = 1.dp,
-                                            color = Colors.BorderSubdued,
-                                            shape = RoundedCornerShape(
-                                                topStart = 16.dp,
-                                                topEnd = 16.dp
-                                            )
-                                        )
-                                }
-                            )
                     }
                 )
                 .padding(vertical = 12.dp, horizontal = 16.dp)
@@ -176,15 +153,6 @@ fun collapsableLazyColumn(
                     color = Colors.TextInverse
                 )
             }
-        }
-        item {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(2.dp)
-                    .padding(18.dp)
-                    .background(Colors.BorderSubdued)
-            )
         }
     }
 }

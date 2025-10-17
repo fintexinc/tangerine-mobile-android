@@ -120,21 +120,21 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
-    fun onAddAsset(asset: Custom) {
+    fun onAddAsset(asset: Custom, isNew: Boolean) {
         viewModelScope.launch {
             val currentState = currentDataState()
-            val updatedAssets =
-                if (currentState.customAssets.firstOrNull { it.asset.id == asset.id } != null) {
-                    currentState.customAssets.toMutableList().apply {
-                        val index = indexOfFirst { it.asset.id == asset.id }
-                        remove(get(index))
-                        add(index, CustomUI(asset, asset.toNameValue()))
-                    }
-                } else {
-                    currentState.customAssets.toMutableList().apply {
-                        add(CustomUI(asset, asset.toNameValue()))
-                    }
-                }
+            val updatedAssets = if(isNew) {
+                currentState.customAssets.toMutableList().apply {
+                    add(CustomUI(asset, asset.toNameValue()))
+                }.toList()
+            } else {
+                currentState.customAssets.toMutableList().apply {
+                    val index = indexOfFirst { it.asset.id == asset.id }
+                    remove(get(index))
+                    add(index, CustomUI(asset, asset.toNameValue()))
+                }.toList()
+            }
+            _action.emit(Action.ShowObjectEditSuccess(asset.assetName))
             _state.value = currentState.copy(customAssets = updatedAssets)
             softDataCache = _state.value as? State.Data
         }
@@ -157,11 +157,20 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
-    fun onAddLiability(liability: Liability) {
+    fun onAddLiability(liability: Liability, isNew: Boolean) {
         viewModelScope.launch {
             val currentState = currentDataState()
             val updatedLiabilities =
-                if (currentState.liabilities.firstOrNull { it.liability.id == liability.id } != null) {
+                if (isNew) {
+                    currentState.liabilities.toMutableList().apply {
+                        add(
+                            LiabilityUI(
+                                liability,
+                                liability.toNameValue()
+                            )
+                        )
+                    }.toList()
+                } else {
                     currentState.liabilities.toMutableList().apply {
                         val index = indexOfFirst { it.liability.id == liability.id }
                         remove(get(index))
@@ -171,17 +180,9 @@ class DashboardViewModel @Inject constructor(
                                 liability.toNameValue()
                             )
                         )
-                    }
-                } else {
-                    currentState.liabilities.toMutableList().apply {
-                        add(
-                            LiabilityUI(
-                                liability,
-                                liability.toNameValue()
-                            )
-                        )
-                    }
+                    }.toList()
                 }
+            _action.emit(Action.ShowObjectEditSuccess(liability.liabilityName))
             _state.value = currentState.copy(liabilities = updatedLiabilities)
             softDataCache = _state.value as? State.Data
         }
@@ -250,6 +251,7 @@ class DashboardViewModel @Inject constructor(
     sealed class Action {
         data class AddEditAsset(val assetId: String?) : Action()
         data class AddEditLiability(val liabilityId: String?) : Action()
+        data class ShowObjectEditSuccess(val objectName: String) : Action()
     }
 
     companion object {

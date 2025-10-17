@@ -86,8 +86,7 @@ internal fun Banner(
             Image(
                 modifier = Modifier
                     .wrapContentSize()
-                    .align(Alignment.TopCenter)
-                    .padding(top = 16.dp),
+                    .align(Alignment.TopCenter),
                 painter = painterResource(R.drawable.ic_banner_image),
                 contentDescription = stringResource(R.string.description_icon_folder)
             )

@@ -159,7 +159,7 @@ const val PERFORMANCE_MOCK = "[\n" +
         "        \"accountType\": \"BANKING\",\n" +
         "        \"value\": 52450.1,\n" +
         "        \"currency\": \"CAD\",\n" +
-        "        \"date\": {\"month\": 10, \"year\": 2025, \"day\": 10}\n" +
+        "        \"date\": {\"month\": 10, \"year\": 2025, \"day\": 16}\n" +
         "    }\n" +
         "]\n" +
         "\n" +

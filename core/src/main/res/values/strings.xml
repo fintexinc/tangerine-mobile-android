@@ -14,6 +14,8 @@
     <string name="text_all">All</string>
     <string name="text_try_again">Adjust your filters and try again!</string>
     <string name="text_empty_transactions">Couldn’t find any transactions</string>
+    <string name="text_object_was_updated">“%s” was updated.</string>
+    <string name="text_dismiss">Dismiss</string>
 
     <string name="description_icon_expand_collapse">Expand or collapse</string>
     <string name="description_icon_search">Search</string>

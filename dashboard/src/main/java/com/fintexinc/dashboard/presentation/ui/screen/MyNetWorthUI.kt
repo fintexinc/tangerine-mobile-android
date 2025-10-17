@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ import com.fintexinc.core.data.model.DateValue
 import com.fintexinc.core.data.model.InvestmentUI
 import com.fintexinc.core.data.model.LiabilityUI
 import com.fintexinc.core.data.utils.currency.formatCurrency
+import com.fintexinc.core.data.utils.date.DateUtils
 import com.fintexinc.core.data.utils.date.formatToDisplayDate
 import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.LiabilityType
@@ -173,7 +175,11 @@ fun MyNetWorthUI(
             }
         )
         item {
-
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 18.dp),
+                color = Colors.BorderSubdued,
+                thickness = 1.dp
+            )
         }
         collapsableLazyColumn(
             scope = this@LazyColumn,
@@ -326,7 +332,7 @@ fun MyNetWorthUI(
                                     .fillMaxWidth()
                                     .wrapContentHeight(),
                                 text = stringResource(R.string.text_invest),
-                                style = FontStyles.BodySmall,
+                                style = FontStyles.BodyMedium,
                                 color = Colors.TextSave
                             )
                             Spacer(modifier = Modifier.height(8.dp))
@@ -505,6 +511,18 @@ private fun NetWorthInfoUI(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            text = stringResource(
+                R.string.text_net_worth_as_of,
+                DateUtils.formatMillisToFullMonthDate(System.currentTimeMillis())
+            ),
+            style = FontStyles.BodySmallItalic,
+            color = Colors.TextSubdued
+        )
     }
     if (showAccountsBottomSheet.value) {
         AssetLiabilitiesModalBottomSheet(
@@ -842,11 +860,10 @@ private fun ActivityUI(
             .wrapContentHeight()
             .padding(horizontal = 16.dp),
         text = stringResource(R.string.text_recent_investment_activity_and_document),
-        style = FontStyles.TitleSmall
+        style = FontStyles.TitleMedium
     )
     Spacer(modifier = Modifier.height(16.dp))
     TabsSelector(
-        modifier = Modifier.padding(horizontal = 16.dp),
         tabs = listOf(
             TabItem(
                 title = stringResource(R.string.text_activity),
@@ -873,7 +890,16 @@ private fun ActivityUI(
                     )
                 }
             )
-        )
+        ),
+        shadowDivider = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(1.dp)
+                    .shadow(2.dp)
+            )
+        }
     )
 }
 
@@ -892,8 +918,13 @@ private fun ActivitiesUI(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 16.dp)
     ) {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(12.dp)
+                .background(color = Colors.Background)
+        )
         groupedTransactions.forEachIndexed { groupIndex, group ->
 
             Text(
@@ -908,7 +939,6 @@ private fun ActivitiesUI(
 
             group.transactions.forEachIndexed { index, transaction ->
                 TransactionItemUI(
-                    modifier = Modifier.padding(horizontal = 16.dp),
                     transaction = transaction,
                     onClick = {
                         onActivitiesClicked(transaction)
@@ -941,7 +971,6 @@ private fun DocumentsUI(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 16.dp)
     ) {
         dataPoints.forEach {
             DocumentUI(

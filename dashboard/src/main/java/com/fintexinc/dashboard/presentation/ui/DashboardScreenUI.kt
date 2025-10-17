@@ -4,10 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -35,7 +38,7 @@ fun DashboardScreenUI(
     state: DashboardViewModel.State,
     onPlatformClicked: () -> Unit,
     onOpenAccountClicked: (accountId: String) -> Unit,
-    onAddAssetClicked : (DataPoint?) -> Unit,
+    onAddAssetClicked: (DataPoint?) -> Unit,
     onAddLiabilityClicked: (DataPoint?) -> Unit,
     onOpenJuiceArticle: (url: String) -> Unit,
     onOpenJuiceSection: () -> Unit,
@@ -49,6 +52,7 @@ fun DashboardScreenUI(
                 CircularProgressIndicator()
             }
         }
+
         is DashboardViewModel.State.Data -> Content(
             state = state,
             onPlatformClicked = onPlatformClicked,
@@ -68,8 +72,8 @@ fun DashboardScreenUI(
 private fun Content(
     state: DashboardViewModel.State.Data,
     onPlatformClicked: () -> Unit,
-    onOpenAccount:(accountId: String) -> Unit,
-    onAddAssetClicked : (dataPoint: DataPoint?) -> Unit,
+    onOpenAccount: (accountId: String) -> Unit,
+    onAddAssetClicked: (dataPoint: DataPoint?) -> Unit,
     onAddLiabilityClicked: (dataPoint: DataPoint?) -> Unit,
     onOpenJuiceArticle: (url: String) -> Unit,
     onOpenJuiceSection: () -> Unit,
@@ -80,29 +84,23 @@ private fun Content(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Colors.BackgroundSubdued)
+            .background(color = Colors.Background)
+            .padding(WindowInsets.statusBars.asPaddingValues())
     ) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(vertical = 18.dp),
+                .padding(vertical = 24.dp),
             text = stringResource(R.string.app_title),
             style = FontStyles.TitleSmallRegular,
             textAlign = TextAlign.Center
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .shadow(2.dp)
-        )
-        Spacer(modifier = Modifier.height(12.dp))
         TabsSelector(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(start = 18.dp, top = 12.dp, end = 18.dp),
+                .padding(top = 12.dp),
             tabs = listOf(
                 TabItem(
                     title = stringResource(R.string.text_my_net_worth),

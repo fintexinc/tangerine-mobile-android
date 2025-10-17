@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +41,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.fintexinc.core.R
+import com.fintexinc.core.presentation.ui.widget.TangerineSnackbar
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.presentation.ui.DashboardScreenUI
@@ -54,8 +57,8 @@ import com.fintexinc.tangerine.transaction_details.viewmodel.TransactionDetailVi
 import com.tangerine.account.presentation.ui.AccountScreen
 import com.tangerine.account.presentation.viewmodel.AccountViewModel
 import com.tangerine.documents.presentation.ui.statment.StatementViewModel
-import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
 import com.tangerine.documents.presentation.ui.statment.StatementsScreen
+import com.tangerine.documents.presentation.ui.ui.AccountDocumentsUI
 import com.tangerine.documents.presentation.ui.ui.InvestmentDocumentsUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -74,6 +77,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
+                val snackBarHostState = remember { SnackbarHostState() }
 
                 val shouldShowSplashScreen = remember {
                     mutableStateOf(true)
@@ -88,6 +92,14 @@ class MainActivity : ComponentActivity() {
 
                             is DashboardViewModel.Action.AddEditLiability -> {
                                 navController.navigate(Routes.AddEditLiability(action.liabilityId))
+                            }
+
+                            is DashboardViewModel.Action.ShowObjectEditSuccess -> {
+                                snackBarHostState.showSnackbar(
+                                    getString(
+                                        R.string.text_object_was_updated, action.objectName
+                                    )
+                                )
                             }
                         }
                     }
@@ -174,6 +186,7 @@ class MainActivity : ComponentActivity() {
                     composable<Routes.MainRoute> {
                         MainRoute(
                             parentNavController = navController,
+                            snackBarHostState = snackBarHostState,
                             dashboardViewModel = dashboardViewModel,
                         )
                     }
@@ -199,8 +212,8 @@ class MainActivity : ComponentActivity() {
                             asset = if (args.assetId != null) {
                                 dashboardViewModel.getCustomAssetById(args.assetId)
                             } else null,
-                            onSaveAssetClick = { asset ->
-                                dashboardViewModel.onAddAsset(asset)
+                            onSaveAssetClick = { asset, isNew ->
+                                dashboardViewModel.onAddAsset(asset, isNew)
                                 navController.popBackStack()
                             },
                             onDeleteAsset = { asset ->
@@ -221,8 +234,8 @@ class MainActivity : ComponentActivity() {
                             liability = if (args.liabilityId != null) {
                                 dashboardViewModel.getLiabilityById(args.liabilityId)
                             } else null,
-                            onSaveLiabilityClick = { liability ->
-                                dashboardViewModel.onAddLiability(liability)
+                            onSaveLiabilityClick = { liability, isNew ->
+                                dashboardViewModel.onAddLiability(liability, isNew)
                                 navController.popBackStack()
                             },
                             onDeleteLiability = { liability ->
@@ -294,6 +307,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MainRoute(
         parentNavController: NavHostController,
+        snackBarHostState: SnackbarHostState,
         dashboardViewModel: DashboardViewModel
     ) {
         val tabNavController = rememberNavController()
@@ -430,6 +444,17 @@ class MainActivity : ComponentActivity() {
                                 tint = if (bottomMenuSelectedItem.value == Routes.MenuItem.More) Colors.BackgroundPrimary else Colors.BrandBlack,
                                 contentDescription = "Accounts Icon"
                             )
+                        }
+                    )
+                }
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackBarHostState) { data ->
+                    TangerineSnackbar(
+                        message = data.visuals.message,
+                        actionLabel = stringResource(R.string.text_dismiss),
+                        onAction = {
+                            snackBarHostState.currentSnackbarData?.dismiss()
                         }
                     )
                 }

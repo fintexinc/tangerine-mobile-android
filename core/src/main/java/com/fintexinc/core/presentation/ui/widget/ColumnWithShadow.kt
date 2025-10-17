@@ -64,25 +64,3 @@ fun ColumnWithBorder(
         content()
     }
 }
-
-
-@Composable
-fun RowWithShadow(
-    modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 18.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp))
-            .background(
-                color = Colors.Background,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(16.dp)
-    ) {
-        content()
-    }
-}

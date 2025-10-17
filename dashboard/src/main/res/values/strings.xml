@@ -11,13 +11,12 @@
     <string name="text_earned_this_month">earned this month</string>
     <string name="text_assets">Assets</string>
     <string name="text_add">Add %s</string>
-    <string name="text_confirm_changes">Confirm Changes</string>
+    <string name="text_save_changes">Save Changes</string>
     <string name="text_update_asset">Update Asset</string>
+    <string name="text_edit_asset">Edit Asset</string>
     <string name="format_delete_item">Delete %s</string>
     <string name="text_are_you_sure_you_want_to_delete_asset">Are you sure you want to delete this asset? This action will permanently remove it from your history.</string>
     <string name="text_are_you_sure_you_want_to_delete_liability">Are you sure you want to delete this liability? This action will permanently remove it from your history.</string>
-    <string name="text_update_successful">Update successful</string>
-    <string name="text_change_may_affect">Changes take effect today and past\nrecords remain unchanged.</string>
     <string name="text_liabilities">Liabilities</string>
     <string name="title_add_liability">Add an External Liability</string>
     <string name="title_edit_liability">Edit Liability</string>
@@ -70,7 +69,7 @@
     <string name="text_cancel">Cancel</string>
     <string name="text_liability_type">Liability Type</string>
     <string name="text_liability_name">Liability Name</string>
-    <string name="text_see_investment_documents">See Investment documents</string>
+    <string name="text_see_investment_documents">See Investment Documents</string>
     <string name="text_projections">Projections</string>
     <string name="text_cache_flow">Cache Flow</string>
     <string name="text_percent">%</string>
@@ -106,6 +105,7 @@
     <string name="text_undo">Undo</string>
     <string name="text_accounts_count">Accounts</string>
     <string name="text_account">accounts</string>
+    <string name="text_net_worth_as_of">Net Worth as of %s</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>
@@ -121,7 +121,6 @@
     <string name="description_icon_open">Open</string>
     <string name="description_info_icon">Information</string>
     <string name="description_icon_transaction">Transaction</string>
-    <string name="description_icon_update_successful">Update successful</string>
     <string name="description_icon_delete_item">Delete item</string>
     <string name="description_icon_pictogram">News</string>
 </resources>

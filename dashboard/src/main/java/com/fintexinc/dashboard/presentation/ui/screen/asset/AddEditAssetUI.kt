@@ -5,10 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -56,7 +59,7 @@ import java.util.UUID
 @Composable
 fun AddEditAssetUI(
     asset: Custom?,
-    onSaveAssetClick: (asset: Custom) -> Unit,
+    onSaveAssetClick: (asset: Custom, isNew: Boolean) -> Unit,
     onDeleteAsset: (asset: Custom) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit,
     onHistoryScreenClicked: () -> Unit,
@@ -65,12 +68,10 @@ fun AddEditAssetUI(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Colors.Background)
+            .padding(WindowInsets.statusBars.asPaddingValues())
     ) {
         val currency = stringResource(R.string.text_currency)
         val showAssetTypeSelection = remember {
-            mutableStateOf(false)
-        }
-        val showUpdatePopup = remember {
             mutableStateOf(false)
         }
         val showDeletePopup = remember {
@@ -130,7 +131,8 @@ fun AddEditAssetUI(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 30.dp, vertical = 24.dp)
+                    .padding(horizontal = 30.dp, vertical = 24.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
                     modifier = Modifier
@@ -150,11 +152,11 @@ fun AddEditAssetUI(
                         .padding(vertical = 18.dp)
                         .align(Alignment.Center),
                     text = if (asset != null) {
-                        stringResource(R.string.text_confirm_changes)
+                        stringResource(R.string.text_edit_asset)
                     } else {
                         stringResource(R.string.title_add_an_asset)
                     },
-                    style = FontStyles.HeadingRegular,
+                    style = FontStyles.TitleSmallRegular,
                     textAlign = TextAlign.Center
                 )
 
@@ -229,6 +231,7 @@ fun AddEditAssetUI(
                         showAssetTypeSelection.value = true
                     }
                 )
+                Spacer(modifier = Modifier.height(18.dp))
                 AddItemText(
                     title = stringResource(R.string.text_asset_name),
                     text = assetName.value,
@@ -284,7 +287,9 @@ fun AddEditAssetUI(
                 Spacer(modifier = Modifier.height(40.dp))
                 if (asset != null) {
                     Column {
-                        PrimaryButton(stringResource(R.string.text_confirm_changes)) {
+                        PrimaryButton(
+                            text = stringResource(R.string.text_save_changes)
+                        ) {
                             val validationResult = validateAsset(
                                 assetType.value, assetName.value, estimatedValue.value,
                                 effectiveDate.value, revisitDate.value
@@ -293,7 +298,23 @@ fun AddEditAssetUI(
                                 assetValidation.value = validationResult
                                 return@PrimaryButton
                             }
-                            showUpdatePopup.value = true
+                            onSaveAssetClick(
+                                Custom(
+                                    id = asset.id,
+                                    userId = asset.userId,
+                                    assetName = assetName.value,
+                                    assetType = assetType.value ?: AssetType.OTHER,
+                                    assetValue = estimatedValue.value.toDoubleOrNull()
+                                        ?: 0.0,
+                                    annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
+                                        0,
+                                        endIndex = annualizedRateOfReturn.value.length - 1
+                                    ).toDoubleOrNull() ?: 0.0,
+                                    linkedDate = effectiveDate.value,
+                                    lastUpdated = revisitDate.value
+                                ),
+                                true
+                            )
                         }
                         SecondaryButton(
                             text = stringResource(R.string.format_delete_item, "Asset"),
@@ -304,7 +325,9 @@ fun AddEditAssetUI(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    PrimaryButton(stringResource(R.string.text_add, "Asset")) {
+                    PrimaryButton(
+                        text = stringResource(R.string.text_add, "Asset")
+                    ) {
                         val validationResult = validateAsset(
                             assetType.value, assetName.value, estimatedValue.value,
                             effectiveDate.value, revisitDate.value
@@ -327,7 +350,8 @@ fun AddEditAssetUI(
                                 ).toDoubleOrNull() ?: 0.0,
                                 linkedDate = effectiveDate.value,
                                 lastUpdated = revisitDate.value
-                            )
+                            ),
+                            false
                         )
                     }
                 }
@@ -391,32 +415,6 @@ fun AddEditAssetUI(
                 }
             }) {
                 DatePicker(state = datePickerState)
-            }
-        }
-        if (showUpdatePopup.value) {
-            UpdatePopup(
-                imageRes = R.drawable.ic_update_successful,
-                imageContentDescription = stringResource(R.string.description_icon_update_successful),
-                title = stringResource(R.string.text_update_successful),
-                text = stringResource(R.string.text_change_may_affect)
-            ) {
-                showUpdatePopup.value = false
-                onSaveAssetClick(
-                    Custom(
-                        id = asset?.id ?: UUID.randomUUID().toString(),
-                        userId = asset?.userId ?: "",
-                        assetName = assetName.value,
-                        assetType = assetType.value ?: AssetType.OTHER,
-                        assetValue = estimatedValue.value.toDoubleOrNull()
-                            ?: 0.0,
-                        annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
-                            0,
-                            endIndex = annualizedRateOfReturn.value.length - 1
-                        ).toDoubleOrNull() ?: 0.0,
-                        linkedDate = effectiveDate.value,
-                        lastUpdated = revisitDate.value
-                    )
-                )
             }
         }
         if (showDeletePopup.value) {

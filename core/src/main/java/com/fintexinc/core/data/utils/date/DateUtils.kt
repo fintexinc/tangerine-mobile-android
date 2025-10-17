@@ -32,6 +32,12 @@ object DateUtils {
         return sdf.format(date)
     }
 
+    fun formatMillisToFullMonthDate(millis: Long): String {
+        val sdf = SimpleDateFormat("MMMM d, yyyy", Locale.UK)
+        val date = java.util.Date(millis)
+        return sdf.format(date)
+    }
+
     fun Int.monthName(): String {
         val months = listOf(
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

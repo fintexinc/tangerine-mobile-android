@@ -3,6 +3,7 @@ package com.fintexinc.core.presentation.ui.datapoint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,8 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
@@ -51,11 +51,12 @@ fun DataPointCollapsableUI(
             verticalAlignment = Alignment.Top
         ) {
             if (dataPoint.iconResId != null) {
-                Image(
+                Icon(
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(2.dp),
                     painter = painterResource(id = dataPoint.iconResId),
+                    tint = Color.Unspecified,
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -64,7 +65,8 @@ fun DataPointCollapsableUI(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
+                        .wrapContentHeight(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
                         modifier = Modifier
@@ -84,7 +86,10 @@ fun DataPointCollapsableUI(
                     }
                     if (dataPoint.value != null) {
                         Spacer(modifier = Modifier.width(8.dp))
-                        Row {
+                        Row(
+                            modifier = Modifier.wrapContentSize(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 modifier = Modifier.wrapContentSize(),
                                 text = dataPoint.value,
@@ -111,7 +116,7 @@ fun DataPointCollapsableUI(
                 Spacer(
                     modifier = Modifier.height(16.dp)
                 )
-                if(!isLastItem) {
+                if (!isLastItem) {
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -141,19 +146,19 @@ fun DocumentUI(
         verticalAlignment = Alignment.Top
     ) {
         if (dataPoint.iconResId != null) {
+            Spacer(modifier = Modifier.width(16.dp))
             Image(
-                modifier = Modifier.wrapContentSize(),
+                modifier = Modifier.wrapContentSize().padding(top = 4.dp),
                 painter = painterResource(id = dataPoint.iconResId),
                 contentDescription = null
             )
-            Spacer(modifier = Modifier.width(12.dp))
         }
         Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(

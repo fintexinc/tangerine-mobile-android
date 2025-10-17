@@ -1,5 +1,6 @@
 package com.fintexinc.core.ui.color
 
+import android.webkit.WebSettings
 import androidx.compose.ui.graphics.Color
 
 object Colors {
@@ -30,6 +31,7 @@ object Colors {
     val TextSubdued = Color(0xFF616161)
     val TextSave = Color(0xFF175651)
     val TextHighlight = Color(0xFF9C27B0)
+    val TextSupplementary = Color(0xFFBDBDBD)
     val Primary = Color(0xFFEA7024)
     val Transparent = Color(0x00000000)
     val IconSupplementary = Color(0xFFBDBDBD)

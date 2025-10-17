@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -24,6 +26,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -68,16 +71,16 @@ fun UniversalModalBottomSheet(
                     .wrapContentHeight()
                     .padding(horizontal = 24.dp)
             ) {
-                Text(
+                Icon(
                     modifier = Modifier
-                        .wrapContentHeight()
+                        .wrapContentSize()
                         .clickable {
                             isShowing.value = false
                             onDismiss?.invoke()
                         },
-                    text = stringResource(R.string.text_cancel),
-                    style = FontStyles.BodyLargeBold,
-                    color = Colors.TextInteractive
+                    painter = painterResource(R.drawable.ic_close),
+                    tint = Colors.Primary,
+                    contentDescription = stringResource(R.string.description_icon_close)
                 )
                 Text(
                     modifier = Modifier
@@ -88,17 +91,16 @@ fun UniversalModalBottomSheet(
                     style = FontStyles.BodyLargeBold,
                     color = Colors.BrandBlack
                 )
-                Text(
+                Icon(
                     modifier = Modifier
-                        .wrapContentHeight()
+                        .wrapContentSize()
                         .clickable {
-                            onDoneClick?.invoke()
                             isShowing.value = false
+                            onDoneClick?.invoke()
                         },
-                    text = stringResource(R.string.text_done),
-                    textAlign = TextAlign.End,
-                    style = FontStyles.BodyLargeBold,
-                    color = Colors.TextInteractive
+                    painter = painterResource(R.drawable.ic_check),
+                    tint = Colors.Primary,
+                    contentDescription = stringResource(R.string.description_icon_close)
                 )
             }
 
@@ -159,7 +161,7 @@ fun AssetLiabilitiesModalBottomSheet(
                     assetsCheckStates[index] = isChecked
                 }
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             ChipsWithTitle(
                 title = stringResource(R.string.text_liabilities),
                 items = liabilities,
@@ -185,7 +187,7 @@ private fun ChipsWithTitle(
             .fillMaxWidth()
             .wrapContentHeight(),
         text = title,
-        style = FontStyles.BodyLargeBold,
+        style = FontStyles.BodyMedium,
         color = Colors.BrandBlack
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -235,7 +237,7 @@ private fun ChipsWithTitle(
             color = Colors.TextInteractive
         )
         items.forEachIndexed { index, item ->
-            val checked = checkStates[index]
+            val checked = checkStates[index] && !allChecked.value
             Text(
                 modifier = Modifier
                     .background(
@@ -256,10 +258,10 @@ private fun ChipsWithTitle(
                     .clickableShape(RoundedCornerShape(16.dp)) {
                         val newChecked = !checkStates[index]
                         checkStates[index] = newChecked
-                        if(checkStates.all { checked -> checked }) {
+                        if (checkStates.all { checked -> checked }) {
                             allChecked.value = true
                         }
-                        if(!newChecked && allChecked.value) {
+                        if (!newChecked && allChecked.value) {
                             allChecked.value = false
                         }
                         onItemCheckedChange(index, newChecked)

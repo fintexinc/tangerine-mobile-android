@@ -26,8 +26,6 @@ fun PrimaryButton(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 18.dp)
-            .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         Text(
             modifier = Modifier

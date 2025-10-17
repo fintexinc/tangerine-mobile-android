@@ -58,7 +58,7 @@ import java.util.UUID
 @Composable
 fun AddEditLiabilityUI(
     liability: Liability?,
-    onSaveLiabilityClick: (liability: Liability) -> Unit,
+    onSaveLiabilityClick: (liability: Liability, isNew: Boolean) -> Unit,
     onDeleteLiability: (liability: Liability) -> Unit,
     onBackButtonFromExternalScreenClicked: () -> Unit
 ) {
@@ -111,9 +111,6 @@ fun AddEditLiabilityUI(
         }
         val showDialog = remember {
             mutableStateOf<DateSelectionType?>(null)
-        }
-        val showUpdatePopup = remember {
-            mutableStateOf(false)
         }
         val showDeletePopup = remember {
             mutableStateOf(false)
@@ -310,7 +307,7 @@ fun AddEditLiabilityUI(
                 Spacer(modifier = Modifier.height(40.dp))
                 if (liability != null) {
                     Column {
-                        PrimaryButton(stringResource(R.string.text_confirm_changes)) {
+                        PrimaryButton(stringResource(R.string.text_save_changes)) {
                             val validationResult = validateLiability(
                                 liabilityType = liabilityType.value,
                                 liabilityName = liabilityName.value,
@@ -322,7 +319,26 @@ fun AddEditLiabilityUI(
                                 liabilityValidation.value = validationResult
                                 return@PrimaryButton
                             }
-                            showUpdatePopup.value = true
+                            onSaveLiabilityClick(
+                                Liability(
+                                    id = liability?.id ?: UUID.randomUUID().toString(),
+                                    userId = liability?.userId ?: "",
+                                    liabilityName = liabilityName.value,
+                                    liabilityType = liabilityType.value ?: LiabilityType.OTHER,
+                                    accountNumber = UUID.randomUUID().toString(),
+                                    balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                                    linkedDate = effectiveDate.value,
+                                    limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                                    interestRate = annualInterestRate.value.substring(
+                                        0,
+                                        endIndex = annualInterestRate.value.length - 1
+                                    ).toDoubleOrNull() ?: 0.0,
+                                    currency = "$",
+                                    lastUpdated = revisitDate.value,
+                                    isCustomLiability = true
+                                ),
+                                false
+                            )
                         }
                         SecondaryButton(
                             text = stringResource(R.string.format_delete_item, "Liability"),
@@ -362,7 +378,8 @@ fun AddEditLiabilityUI(
                                 currency = "$",
                                 lastUpdated = revisitDate.value,
                                 isCustomLiability = true
-                            )
+                            ),
+                            true
                         )
                     }
                 }
@@ -417,46 +434,6 @@ fun AddEditLiabilityUI(
                     }
                 }) {
                 DatePicker(state = datePickerState)
-            }
-        }
-        if (showUpdatePopup.value) {
-            UpdatePopup(
-                imageRes = R.drawable.ic_update_successful,
-                imageContentDescription = stringResource(R.string.description_icon_update_successful),
-                title = stringResource(R.string.text_update_successful),
-                text = stringResource(R.string.text_change_may_affect)
-            ) {
-                showUpdatePopup.value = false
-                val validationResult = validateLiability(
-                    liabilityType = liabilityType.value,
-                    liabilityName = liabilityName.value,
-                    balance = currentBalance.value,
-                    effectiveDate = effectiveDate.value,
-                    revisitDate = revisitDate.value
-                )
-                if (validationResult.values.any { !it.isValid }) {
-                    liabilityValidation.value = validationResult
-                    return@UpdatePopup
-                }
-                onSaveLiabilityClick(
-                    Liability(
-                        id = liability?.id ?: UUID.randomUUID().toString(),
-                        userId = liability?.userId ?: "",
-                        liabilityName = liabilityName.value,
-                        liabilityType = liabilityType.value ?: LiabilityType.OTHER,
-                        accountNumber = UUID.randomUUID().toString(),
-                        balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
-                        linkedDate = effectiveDate.value,
-                        limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
-                        interestRate = annualInterestRate.value.substring(
-                            0,
-                            endIndex = annualInterestRate.value.length - 1
-                        ).toDoubleOrNull() ?: 0.0,
-                        currency = "$",
-                        lastUpdated = revisitDate.value,
-                        isCustomLiability = true
-                    )
-                )
             }
         }
         if (showDeletePopup.value) {

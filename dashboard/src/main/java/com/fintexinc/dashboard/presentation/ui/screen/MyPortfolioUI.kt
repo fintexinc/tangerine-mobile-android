@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -51,7 +50,6 @@ import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
-import com.fintexinc.core.presentation.ui.widget.RowWithShadow
 import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
@@ -100,26 +98,18 @@ fun MyPortfolioUI(
             .verticalScroll(rememberScrollState())
     ) {
         if (isShowNewsBanner.value) {
-            Spacer(modifier = Modifier.height(18.dp))
-            RowWithShadow(
-                modifier = Modifier.clickable {
-                    // TODO() navigate to news
-                }
-            ) {
-                Column(
-                    modifier = Modifier.wrapContentHeight(),
-                    verticalArrangement = Arrangement.Top,
-                ) {
-                    Icon(
-                        modifier = Modifier.wrapContentSize(),
-                        painter = painterResource(R.drawable.ic_pictogram),
-                        contentDescription = stringResource(R.string.description_icon_pictogram),
-                        tint = Color.Unspecified,
+            Spacer(modifier = Modifier.height(34.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(horizontal = 16.dp)
+                    .background(
+                        color = Colors.Background,
+                        shape = RoundedCornerShape(8.dp)
                     )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
+                    .padding(16.dp)
+            ) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -130,7 +120,7 @@ fun MyPortfolioUI(
                             .fillMaxWidth()
                             .wrapContentHeight(),
                         text = stringResource(R.string.text_new_market_insights),
-                        style = FontStyles.BodyMedium,
+                        style = FontStyles.BodyLarge,
                         color = Colors.Text,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -139,7 +129,7 @@ fun MyPortfolioUI(
                             .fillMaxWidth()
                             .wrapContentHeight(),
                         text = stringResource(R.string.text_check_in_update),
-                        style = FontStyles.BodyMediumBold,
+                        style = FontStyles.BodyLargeBold,
                         color = Colors.TextInteractive,
                     )
                 }
