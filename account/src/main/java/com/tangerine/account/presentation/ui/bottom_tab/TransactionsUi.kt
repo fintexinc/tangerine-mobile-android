@@ -50,7 +50,9 @@ import com.tangerine.account.presentation.ui.components.DateFilterModalBottomShe
 import com.fintexinc.core.ui.components.EmptyScreen
 import com.fintexinc.core.ui.components.FilterButton
 import com.fintexinc.core.ui.components.MultiSelectChips
+import com.tangerine.account.presentation.ui.components.formatMonthYear
 import com.tangerine.account.presentation.ui.components.handleUniversalSelection
+import kotlin.enums.EnumEntries
 
 @Composable
 internal fun TransactionsUi(
@@ -79,6 +81,11 @@ internal fun TransactionsUi(
     val hasSearchResults = pendingGroups.isNotEmpty() || settledGroups.isNotEmpty()
     val isSearching = searchText.isNotBlank()
 
+    val dateEnums: EnumEntries<DateFilterUi> = DateFilterUi.entries
+
+    var selectedMonth: Int? by remember { mutableStateOf<Int?>(null) }
+    var selectedYear: Int? by remember { mutableStateOf<Int?>(null) }
+
     Column {
         LazyColumn(
             modifier = modifier
@@ -103,10 +110,14 @@ internal fun TransactionsUi(
                 ) {
                     item {
                         FilterButton(
-                            text = stringResource(
-                                selectedDates.firstOrNull()?.stringResId
-                                    ?: R.string.filter_all_dates
-                            ),
+                            text = if (selectedDates.firstOrNull() == DateFilterUi.BY_MONTH && selectedMonth != null && selectedYear != null) {
+                                formatMonthYear(selectedMonth!!, selectedYear!!)
+                            } else {
+                                stringResource(
+                                    selectedDates.firstOrNull()?.stringResId
+                                        ?: R.string.filter_all_dates
+                                )
+                            },
                             onClick = { showDateFilter = true },
                         )
                     }
@@ -207,12 +218,17 @@ internal fun TransactionsUi(
                     value = showDateFilter
                 },
                 selectedDates = selectedDates,
-                onDatesSelected = { newDates, month, selectedYear ->
+                onDatesSelected = { newDates, month, year ->
                     selectedDates = newDates
-                    onDateFilterChanged(newDates, month, selectedYear)
+                    selectedMonth = month
+                    selectedYear = year
+                    onDateFilterChanged(newDates, month, year)
                     showDateFilter = false
                 },
                 onDismiss = { showDateFilter = false },
+                dateEnums = dateEnums,
+                selectedYear = selectedYear,
+                selectedMonth = selectedMonth,
             )
         }
 

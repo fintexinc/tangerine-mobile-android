@@ -28,34 +28,53 @@ import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.components.MultiSelectChips
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
+import kotlin.enums.EnumEntries
 
 @Composable
 internal fun DateFilterModalBottomSheet(
     isShowing: MutableState<Boolean>,
     selectedDates: List<DateFilterUi>,
     onDatesSelected: (List<DateFilterUi>, Int?, Int?) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    dateEnums: EnumEntries<DateFilterUi>,
+    selectedMonth: Int?,
+    selectedYear: Int?,
 ) {
-    val dateEnums = DateFilterUi.entries
-    val dateOptions = dateEnums.map { stringResource(it.stringResId) }
     val dateIcons = dateEnums.map { it.iconResId }
 
     val selectedStates = remember(selectedDates) {
         mutableStateListOf(*dateEnums.map { it in selectedDates }.toTypedArray())
     }
 
+    var tempSelectedMonth by remember(selectedMonth) { mutableStateOf(selectedMonth) }
+    var tempSelectedYear by remember(selectedYear) { mutableStateOf(selectedYear) }
+
+    val baseOptions = dateEnums.map { stringResource(it.stringResId) }
+    val updatedDateOptions = remember(tempSelectedMonth, tempSelectedYear, baseOptions) {
+        baseOptions.mapIndexed { index, baseText ->
+            if (dateEnums[index] == DateFilterUi.BY_MONTH && tempSelectedMonth != null && tempSelectedYear != null) {
+                formatMonthYear(tempSelectedMonth!!, tempSelectedYear!!)
+            } else {
+                baseText
+            }
+        }
+    }
+
     var previousSelectedIndex by remember { mutableIntStateOf(-1) }
-
-    var selectedMonth by remember { mutableStateOf<Int?>(null) }
-    var selectedYear by remember { mutableStateOf<Int?>(null) }
-
-    val isByMonthSelected = selectedStates.getOrNull(dateEnums.indexOf(DateFilterUi.BY_MONTH)) == true
     var showDatePicker by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isByMonthSelected) {
-        if (isByMonthSelected) {
-            showDatePicker = true
+    LaunchedEffect(tempSelectedMonth, tempSelectedYear) {
+        if (tempSelectedMonth != null && tempSelectedYear != null) {
+            val byMonthIndex = dateEnums.indexOf(DateFilterUi.BY_MONTH)
+            if (!selectedStates[byMonthIndex]) {
+                selectedStates.forEachIndexed { i, _ ->
+                    selectedStates[i] = false
+                }
+                selectedStates[byMonthIndex] = true
+            }
         }
     }
 
@@ -64,7 +83,13 @@ internal fun DateFilterModalBottomSheet(
         title = stringResource(R.string.title_timeframe),
         onDoneClick = {
             val selected = dateEnums.filterIndexed { index, _ -> selectedStates[index] }
-            onDatesSelected(selected, selectedMonth, selectedYear)
+            val byMonthIndex = dateEnums.indexOf(DateFilterUi.BY_MONTH)
+
+            if (selectedStates[byMonthIndex]) {
+                onDatesSelected(selected, tempSelectedMonth, tempSelectedYear)
+            } else {
+                onDatesSelected(selected, null, null)
+            }
         },
         onDismiss = onDismiss,
     ) {
@@ -76,31 +101,48 @@ internal fun DateFilterModalBottomSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             MultiSelectChips(
-                options = dateOptions,
+                options = updatedDateOptions,
                 selectedStates = selectedStates,
                 icons = dateIcons,
                 onSelectionChanged = { index, _ ->
+                    val byMonthIndex = dateEnums.indexOf(DateFilterUi.BY_MONTH)
+
                     previousSelectedIndex = selectedStates.indexOfFirst { it }
 
                     selectedStates.forEachIndexed { i, _ ->
                         selectedStates[i] = false
                     }
                     selectedStates[index] = true
+
+                    if (index != byMonthIndex) {
+                        tempSelectedMonth = null
+                        tempSelectedYear = null
+                    }
+
+                    if (index == byMonthIndex) {
+                        showDatePicker = true
+                    }
+                },
+                onSelectedChipClick = { index ->
+                    val byMonthIndex = dateEnums.indexOf(DateFilterUi.BY_MONTH)
+                    if (index == byMonthIndex) {
+                        showDatePicker = true
+                    }
                 }
             )
 
             if (showDatePicker) {
                 PickerDialog(
-                    onDateSelected = { month, year ->
-                        selectedMonth = month
-                        selectedYear = year
+                    onDateSelected = { month: Int, year ->
+                        tempSelectedMonth = month
+                        tempSelectedYear = year
                         showDatePicker = false
                     },
                     onDismiss = {
                         showDatePicker = false
                         val byMonthIndex = dateEnums.indexOf(DateFilterUi.BY_MONTH)
 
-                        if (selectedMonth == null || selectedYear == null) {
+                        if (tempSelectedMonth == null || tempSelectedYear == null) {
                             selectedStates[byMonthIndex] = false
 
                             if (previousSelectedIndex != -1 && previousSelectedIndex != byMonthIndex) {
@@ -114,6 +156,15 @@ internal fun DateFilterModalBottomSheet(
             }
         }
     }
+}
+
+fun formatMonthYear(month: Int, year: Int): String {
+    val calendar = Calendar.getInstance().apply {
+        set(Calendar.MONTH, month - 1)
+        set(Calendar.YEAR, year)
+    }
+    val monthFormat = SimpleDateFormat("MMM yyyy", Locale.getDefault())
+    return monthFormat.format(calendar.time)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
