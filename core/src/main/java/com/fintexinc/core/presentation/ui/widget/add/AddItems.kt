@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.R
 import com.fintexinc.core.data.model.ItemType
@@ -78,7 +79,7 @@ fun AddItemSelection(
                     style = FontStyles.BodyMedium,
                     color = Colors.Text
                 )
-                if(errorRes != null) {
+                if (errorRes != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(
                         modifier = Modifier
@@ -172,7 +173,10 @@ fun AddItemText(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            value = if (suffix != null && inputText.value.isNotEmpty() && !inputText.value.endsWith(suffix)) inputText.value + suffix else inputText.value,
+            value = if (suffix != null && inputText.value.isNotEmpty() && !inputText.value.endsWith(
+                    suffix
+                )
+            ) inputText.value + suffix else inputText.value,
             onValueChange = { newValue ->
                 // Remove suffix if present, so user only edits the input part
                 val cleanValue = if (suffix != null && newValue.endsWith(suffix)) {
@@ -187,37 +191,109 @@ fun AddItemText(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             decorationBox = { innerTextField ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(Color.Transparent)
-                ) {
-                    if (prefix != null) {
-                        Text(
-                            text = prefix,
-                            style = FontStyles.BodyLarge,
-                            color = Colors.Text
-                        )
+                when {
+                    errorResState.intValue != Int.MIN_VALUE -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.Transparent)
+                            ) {
+                                if (prefix != null) {
+                                    Text(
+                                        text = prefix,
+                                        style = FontStyles.BodyLarge,
+                                        color = Colors.Text
+                                    )
+                                }
+                                Box(Modifier.weight(1f)) {
+                                    innerTextField()
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .wrapContentSize()
+                                        .align(Alignment.CenterVertically)
+                                        .padding(end = 4.dp),
+                                    painter = painterResource(id = R.drawable.ic_error),
+                                    contentDescription = stringResource(R.string.description_icon_error),
+                                    tint = Colors.TextCritical
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(),
+                                    text = stringResource(errorResState.intValue),
+                                    style = FontStyles.BodyMedium,
+                                    color = Colors.TextCritical
+                                )
+                            }
+                        }
                     }
-                    Box(Modifier.weight(1f)) {
-                        innerTextField()
+
+                    info.isNotEmpty() -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            innerTextField()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .background(color = Colors.BackgroundSubdued)
+                                    .padding(8.dp),
+                                text = info,
+                                style = FontStyles.BodySmall,
+                                color = Colors.Text
+                            )
+                        }
+                    }
+
+                    text.isEmpty() -> {
+                        Box {
+                            Text(
+                                text = hint,
+                                style = FontStyles.BodyLarge,
+                                color = Colors.TextSubdued
+                            )
+                            innerTextField()
+                        }
+                    }
+
+                    else -> {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .background(Color.Transparent)
+                        ) {
+                            if (prefix != null) {
+                                Text(
+                                    text = prefix,
+                                    style = FontStyles.BodyLarge,
+                                    color = Colors.Text
+                                )
+                            }
+                            Box(Modifier.weight(1f)) {
+                                innerTextField()
+                            }
+                        }
                     }
                 }
             },
         )
-        if (info.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(color = Colors.BackgroundSubdued)
-                    .padding(8.dp),
-                text = info,
-                style = FontStyles.BodySmall,
-                color = Colors.Text
-            )
-        }
         Spacer(
             modifier = Modifier.height(16.dp)
         )
@@ -236,6 +312,7 @@ fun AddItemText(
 fun ItemTypeSelection(
     itemTypeTitle: String,
     itemTypes: List<ItemType>,
+    selectedItemType: ItemType?,
     onItemTypeSelected: (ItemType) -> Unit,
     onCancel: () -> Unit
 ) {
@@ -249,48 +326,68 @@ fun ItemTypeSelection(
         dragHandle = null
     ) {
         Column {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
+                Icon(
                     modifier = Modifier
-                        .weight(0.33f)
-                        .wrapContentHeight()
+                        .wrapContentSize()
                         .clickable {
                             onCancel()
-                        },
-                    text = "Cancel",
-                    style = FontStyles.BodyLarge,
-                    color = Colors.TextInteractive
+                        }
+                        .align(Alignment.CenterStart),
+                    painter = painterResource(id = R.drawable.ic_close),
+                    contentDescription = stringResource(R.string.description_icon_close),
+                    tint = Colors.Primary
                 )
                 Text(
                     modifier = Modifier
-                        .weight(0.39f)
+                        .fillMaxWidth()
                         .wrapContentHeight(),
                     text = itemTypeTitle,
+                    textAlign = TextAlign.Center,
                     style = FontStyles.BodyLargeBold,
                     color = Colors.BrandBlack
                 )
-                Spacer(modifier = Modifier.weight(0.33f))
             }
             HorizontalDivider(color = Colors.BorderSubdued)
             itemTypes.forEach {
                 Column {
-                    Text(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
-                            .clickable {
-                                onItemTypeSelected(it)
-                            }
-                            .padding(horizontal = 30.dp, vertical = 18.dp),
-                        text = it.label,
-                        style = FontStyles.BodyLarge,
-                        color = Colors.BrandBlack,
-                    )
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentHeight()
+                                .clickable {
+                                    onItemTypeSelected(it)
+                                }
+                                .padding(horizontal = 30.dp, vertical = 18.dp),
+                            text = it.label,
+                            style = FontStyles.BodyLarge,
+                            color = Colors.BrandBlack,
+                        )
+                        if (it == selectedItemType) {
+                            Icon(
+                                modifier = Modifier
+                                    .wrapContentSize()
+                                    .align(Alignment.CenterVertically)
+                                    .padding(end = 30.dp),
+                                painter = painterResource(
+                                    id = R.drawable.ic_check
+                                ),
+                                contentDescription = stringResource(R.string.description_icon_check),
+                                tint = Colors.Primary
+                            )
+                        }
+                    }
                     HorizontalDivider(
                         color = Colors.BorderSubdued,
                         modifier = Modifier.padding(horizontal = 30.dp),

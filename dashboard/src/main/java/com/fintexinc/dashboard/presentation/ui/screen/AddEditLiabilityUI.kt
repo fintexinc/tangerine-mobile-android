@@ -46,7 +46,6 @@ import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.presentation.ui.widget.button.PrimaryButton
 import com.fintexinc.core.presentation.ui.widget.button.SecondaryButton
 import com.fintexinc.core.presentation.ui.widget.dialog.DeletePopup
-import com.fintexinc.core.presentation.ui.widget.dialog.UpdatePopup
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
@@ -321,18 +320,22 @@ fun AddEditLiabilityUI(
                             }
                             onSaveLiabilityClick(
                                 Liability(
-                                    id = liability?.id ?: UUID.randomUUID().toString(),
-                                    userId = liability?.userId ?: "",
+                                    id = liability.id,
+                                    userId = liability.userId,
                                     liabilityName = liabilityName.value,
                                     liabilityType = liabilityType.value ?: LiabilityType.OTHER,
                                     accountNumber = UUID.randomUUID().toString(),
                                     balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
                                     linkedDate = effectiveDate.value,
                                     limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
-                                    interestRate = annualInterestRate.value.substring(
-                                        0,
-                                        endIndex = annualInterestRate.value.length - 1
-                                    ).toDoubleOrNull() ?: 0.0,
+                                    interestRate = if (annualInterestRate.value.isNotEmpty()) {
+                                        annualInterestRate.value.substring(
+                                            0,
+                                            endIndex = annualInterestRate.value.length - 1
+                                        ).toDoubleOrNull() ?: 0.0
+                                    } else {
+                                        0.0
+                                    },
                                     currency = "$",
                                     lastUpdated = revisitDate.value,
                                     isCustomLiability = true
@@ -349,38 +352,45 @@ fun AddEditLiabilityUI(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    PrimaryButton(stringResource(R.string.text_add, "Liability")) {
-                        val validationResult = validateLiability(
-                            liabilityType = liabilityType.value,
-                            liabilityName = liabilityName.value,
-                            balance = currentBalance.value,
-                            effectiveDate = effectiveDate.value,
-                            revisitDate = revisitDate.value
-                        )
-                        if (validationResult.values.any { !it.isValid }) {
-                            liabilityValidation.value = validationResult
-                            return@PrimaryButton
-                        }
-                        onSaveLiabilityClick(
-                            Liability(
-                                id = liability?.id ?: UUID.randomUUID().toString(),
-                                userId = liability?.userId ?: "",
+                    Column {
+                        PrimaryButton(stringResource(R.string.text_add, "Liability")) {
+                            val validationResult = validateLiability(
+                                liabilityType = liabilityType.value,
                                 liabilityName = liabilityName.value,
-                                liabilityType = liabilityType.value ?: LiabilityType.OTHER,
-                                accountNumber = UUID.randomUUID().toString(),
-                                balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
-                                linkedDate = effectiveDate.value,
-                                limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
-                                interestRate = annualInterestRate.value.substring(
-                                    0,
-                                    endIndex = annualInterestRate.value.length - 1
-                                ).toDoubleOrNull() ?: 0.0,
-                                currency = "$",
-                                lastUpdated = revisitDate.value,
-                                isCustomLiability = true
-                            ),
-                            true
-                        )
+                                balance = currentBalance.value,
+                                effectiveDate = effectiveDate.value,
+                                revisitDate = revisitDate.value
+                            )
+                            if (validationResult.values.any { !it.isValid }) {
+                                liabilityValidation.value = validationResult
+                                return@PrimaryButton
+                            }
+                            onSaveLiabilityClick(
+                                Liability(
+                                    id = liability?.id ?: UUID.randomUUID().toString(),
+                                    userId = liability?.userId ?: "",
+                                    liabilityName = liabilityName.value,
+                                    liabilityType = liabilityType.value ?: LiabilityType.OTHER,
+                                    accountNumber = UUID.randomUUID().toString(),
+                                    balance = currentBalance.value.toDoubleOrNull() ?: 0.0,
+                                    linkedDate = effectiveDate.value,
+                                    limit = monthlyPayment.value.toDoubleOrNull() ?: 0.0,
+                                    interestRate = if (annualInterestRate.value.isNotEmpty()) {
+                                        annualInterestRate.value.substring(
+                                            0,
+                                            endIndex = annualInterestRate.value.length - 1
+                                        ).toDoubleOrNull() ?: 0.0
+                                    } else {
+                                        0.0
+                                    },
+                                    currency = "$",
+                                    lastUpdated = revisitDate.value,
+                                    isCustomLiability = true
+                                ),
+                                true
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
                 }
             }
@@ -393,6 +403,7 @@ fun AddEditLiabilityUI(
                     liabilityType.value = it as LiabilityType
                     showLiabilityTypeSelection.value = false
                 },
+                selectedItemType = liabilityType.value,
                 onCancel = {
                     showLiabilityTypeSelection.value = false
                 }

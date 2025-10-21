@@ -50,7 +50,7 @@ fun TangerinePieChart(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(410.dp)
+            .height(418.dp)
     ) {
         Spacer(modifier = Modifier.height(12.dp))
         Row(
@@ -68,7 +68,7 @@ fun TangerinePieChart(
             Row(
                 modifier = Modifier
                     .wrapContentSize()
-                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                    .shadow(1.dp, RoundedCornerShape(16.dp))
                     .background(
                         color = Colors.BackgroundInteractive,
                         shape = RoundedCornerShape(16.dp)
@@ -82,7 +82,7 @@ fun TangerinePieChart(
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = chipText,
-                    style = FontStyles.BodySmall,
+                    style = FontStyles.BodyMedium,
                     color = Colors.TextInteractive
                 )
                 Spacer(modifier = Modifier.width(4.dp))

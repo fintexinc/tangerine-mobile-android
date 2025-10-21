@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +38,6 @@ import com.fintexinc.dashboard.presentation.viewmodel.DashboardViewModel
 @Composable
 fun DashboardScreenUI(
     state: DashboardViewModel.State,
-    onPlatformClicked: () -> Unit,
     onOpenAccountClicked: (accountId: String) -> Unit,
     onAddAssetClicked: (DataPoint?) -> Unit,
     onAddLiabilityClicked: (DataPoint?) -> Unit,
@@ -55,7 +56,6 @@ fun DashboardScreenUI(
 
         is DashboardViewModel.State.Data -> Content(
             state = state,
-            onPlatformClicked = onPlatformClicked,
             onOpenAccount = onOpenAccountClicked,
             onAddAssetClicked = onAddAssetClicked,
             onAddLiabilityClicked = onAddLiabilityClicked,
@@ -71,7 +71,6 @@ fun DashboardScreenUI(
 @Composable
 private fun Content(
     state: DashboardViewModel.State.Data,
-    onPlatformClicked: () -> Unit,
     onOpenAccount: (accountId: String) -> Unit,
     onAddAssetClicked: (dataPoint: DataPoint?) -> Unit,
     onAddLiabilityClicked: (dataPoint: DataPoint?) -> Unit,
@@ -85,7 +84,7 @@ private fun Content(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Colors.Background)
-            .padding(WindowInsets.statusBars.asPaddingValues())
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
             modifier = Modifier

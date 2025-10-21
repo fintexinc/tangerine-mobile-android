@@ -37,19 +37,19 @@ import androidx.compose.ui.unit.dp
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.components.EmptyScreen
+import com.fintexinc.core.ui.components.FilterButton
+import com.fintexinc.core.ui.components.MultiSelectChips
 import com.fintexinc.core.ui.components.SectionHeader
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.account.R
 import com.tangerine.account.presentation.models.DateFilterUi
-import com.tangerine.account.presentation.models.TransactionUi
 import com.tangerine.account.presentation.models.TransactionGroup
 import com.tangerine.account.presentation.models.TransactionStatusFilter
-import com.tangerine.account.presentation.models.TransactionUiType
 import com.tangerine.account.presentation.models.TransactionTypeFilterUi
+import com.tangerine.account.presentation.models.TransactionUi
+import com.tangerine.account.presentation.models.TransactionUiType
 import com.tangerine.account.presentation.ui.components.DateFilterModalBottomSheet
-import com.fintexinc.core.ui.components.EmptyScreen
-import com.fintexinc.core.ui.components.FilterButton
-import com.fintexinc.core.ui.components.MultiSelectChips
 import com.tangerine.account.presentation.ui.components.formatMonthYear
 import com.tangerine.account.presentation.ui.components.handleUniversalSelection
 import kotlin.enums.EnumEntries
@@ -86,7 +86,10 @@ internal fun TransactionsUi(
     var selectedMonth: Int? by remember { mutableStateOf<Int?>(null) }
     var selectedYear: Int? by remember { mutableStateOf<Int?>(null) }
 
-    Column {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+    ) {
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
@@ -95,6 +98,7 @@ internal fun TransactionsUi(
             item {
                 TangerineSearchBar(
                     searchText = searchText,
+                    hint = stringResource(R.string.text_search_settled_transactions),
                     onSearchTextChange = { onSearchQueryChanged(it) },
                     isShowFilter = false,
                 )

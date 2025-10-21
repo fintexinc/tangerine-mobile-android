@@ -53,7 +53,7 @@ fun ChartPeriodSelector(
                 }
             )
             if (period != periods.last()) {
-                Spacer(modifier = Modifier.padding(horizontal = 12.dp))
+                Spacer(modifier = Modifier.padding(horizontal = 16.dp))
             }
         }
     }
@@ -85,9 +85,9 @@ private fun ChartPeriodItem(
                     Modifier
                 }
             )
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         text = period.label,
-        style = FontStyles.BodySmall,
+        style = FontStyles.BodyMedium,
         color = Colors.TextInteractive,
         textAlign = TextAlign.Center,
     )

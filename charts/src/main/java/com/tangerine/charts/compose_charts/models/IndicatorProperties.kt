@@ -40,7 +40,7 @@ data class VerticalIndicatorProperties(
 data class HorizontalIndicatorProperties(
     override val enabled: Boolean = true,
     override val textStyle: TextStyle = TextStyle.Default.copy(fontSize = 12.sp),
-    override val count: IndicatorCount = IndicatorCount.CountBased(count = 5),
+    override val count: IndicatorCount = IndicatorCount.CountBased(count = 3),
     override val position: IndicatorPosition.Horizontal = IndicatorPosition.Horizontal.Start,
     override val padding: Dp = 12.dp,
     override val contentBuilder: (Double) -> String = {

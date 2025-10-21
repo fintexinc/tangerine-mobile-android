@@ -5,7 +5,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class TangerineApplication: Application() {
+class TangerineApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 

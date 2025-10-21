@@ -1,26 +1,23 @@
 package com.fintexinc.core.presentation.ui.widget.list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
@@ -34,9 +31,8 @@ import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 
-// TODO: fully refactor when there is time
-fun collapsableLazyColumn(
-    scope: LazyListScope,
+@Composable
+fun CollapsableLazyColumn(
     dataPoints: Map<String, List<DataPoint>>,
     expanded: MutableState<Boolean>,
     headerShape: Shape = RectangleShape,
@@ -46,8 +42,12 @@ fun collapsableLazyColumn(
     isLastList: Boolean = false,
     onAddItemClick: () -> Unit,
     onItemClick: (DataPoint) -> Unit
-) = with(scope) {
-    item {
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,55 +104,49 @@ fun collapsableLazyColumn(
     }
     if (expanded.value) {
         dataPoints.forEach { (entryTitle, entryList) ->
-            item {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(horizontal = 34.dp, vertical = 8.dp),
-                    text = entryTitle,
-                    style = FontStyles.BodySmall,
-                    color = Colors.Text
-                )
-            }
-            entryList.forEach { dataPoint ->
-                item {
-                    DataPointCollapsableUI(
-                        dataPoint = dataPoint,
-                        onClick = onItemClick,
-                        isLastItem = entryList.last() == dataPoint
-                    )
-                }
-            }
-        }
-        item {
-            Box(
+            Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 18.dp)
-                    .background(color = Colors.Background)
-                    .padding(vertical = 12.dp, horizontal = 16.dp)
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .background(
-                            color = Colors.BackgroundSecondary,
-                            shape = RoundedCornerShape(40.dp)
-                        )
-                        .clickableShape(RoundedCornerShape(40.dp)) {
-                            onAddItemClick()
-                        }
-                        .padding(12.dp)
-                        .align(Alignment.Center),
-                    text = addItemText,
-                    textAlign = TextAlign.Center,
-                    style = FontStyles.BodyLargeBold,
-                    color = Colors.TextInverse
+                    .padding(horizontal = 34.dp, vertical = 8.dp),
+                text = entryTitle,
+                style = FontStyles.BodySmall,
+                color = Colors.Text
+            )
+            entryList.forEach { dataPoint ->
+                DataPointCollapsableUI(
+                    dataPoint = dataPoint,
+                    onClick = onItemClick,
+                    isLastItem = entryList.last() == dataPoint
                 )
             }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 18.dp)
+                .background(color = Colors.Background)
+                .padding(vertical = 12.dp, horizontal = 16.dp)
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(
+                        color = Colors.BackgroundSecondary,
+                        shape = RoundedCornerShape(40.dp)
+                    )
+                    .clickableShape(RoundedCornerShape(40.dp)) {
+                        onAddItemClick()
+                    }
+                    .padding(12.dp)
+                    .align(Alignment.Center),
+                text = addItemText,
+                textAlign = TextAlign.Center,
+                style = FontStyles.BodyLargeBold,
+                color = Colors.TextInverse
+            )
         }
     }
 }

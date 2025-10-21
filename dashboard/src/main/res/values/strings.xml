@@ -109,6 +109,8 @@
     <string name="text_estimated_value">Estimated Value</string>
     <string name="text_annualized_rate_of_return_optional">Annualized rate of return % (Optional)</string>
     <string name="text_revisit_date_optional">Revisit Date (Optional)</string>
+    <string name="text_how_are_these_calculated">How are these calculated?</string>
+    <string name="format_all_time_percentage">%s All Time</string>
 
     // Descriptions
     <string name="description_icon_notification">Notifications</string>

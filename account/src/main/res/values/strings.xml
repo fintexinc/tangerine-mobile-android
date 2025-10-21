@@ -100,6 +100,7 @@
     <string name="text_empty_documents">Can’t find any documents</string>
     <string name="text_dialog">This graph shows the balance of this account over time. It reflects contributions, withdrawals, and investment performance specific to this account.</string>
     <string name="text_all_accounts">All Accounts</string>
+    <string name="text_search_settled_transactions">Search settled transactions</string>
 
     <string name="description_icon_close">Close</string>
     <string name="description_icon_search">Search</string>

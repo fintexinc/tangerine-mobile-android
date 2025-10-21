@@ -54,6 +54,7 @@ import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
 import com.fintexinc.core.ui.color.Colors
+import com.fintexinc.core.ui.color.Colors.BackgroundSuccessSubdued
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
@@ -95,7 +96,6 @@ fun MyPortfolioUI(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
     ) {
         if (isShowNewsBanner.value) {
             Spacer(modifier = Modifier.height(34.dp))
@@ -147,7 +147,17 @@ fun MyPortfolioUI(
         Charts(
             performance = performance,
         )
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 18.dp),
+            text = stringResource(R.string.text_how_are_these_calculated),
+            style = FontStyles.BodyLargeBold,
+            color = Colors.TextInteractive
+        )
+        Spacer(modifier = Modifier.height(40.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -421,6 +431,7 @@ fun MyPortfolioUI(
                     }
                     showInvestmentAccountsSelection.value = false
                 },
+                selectedItemType = filterItemTypes.first { item -> item.type == selectedGroupingType.value },
                 onCancel = {
                     showInvestmentAccountsSelection.value = false
                 },
@@ -466,14 +477,16 @@ private fun AccountListUI(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(),
                 text = title,
                 style = FontStyles.TitleSmall,
                 color = Colors.BrandBlack
             )
 
             Text(
-                modifier = Modifier,
+                modifier = Modifier.wrapContentSize(),
                 text = totalSum,
                 style = FontStyles.BodyLargeBold,
                 color = Colors.BrandBlack
@@ -524,10 +537,26 @@ private fun AccountListUI(
                             Spacer(modifier = Modifier.width(8.dp))
 
                             Text(
-                                text = "▲ " + String.format(
-                                    "$%.2f (%.2f%%)",
-                                    account.valueChange,
-                                    account.percentageChange
+                                text = "▲ " + account.valueChange.formatCurrency(),
+                                style = FontStyles.BodyMedium,
+                                color = Colors.TextSuccess
+                            )
+                            Spacer(
+                                modifier = Modifier.width(4.dp)
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .wrapContentSize()
+                                    .background(
+                                        color = BackgroundSuccessSubdued,
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(
+                                        horizontal = 4.dp, vertical = 2.dp
+                                    ),
+                                text = stringResource(
+                                    R.string.format_all_time_percentage,
+                                    "+${account.percentageChange}%"
                                 ),
                                 style = FontStyles.BodyMedium,
                                 color = Colors.TextSuccess
@@ -535,14 +564,12 @@ private fun AccountListUI(
                         }
                     }
 
-                    if (onOpenAccount != null) {
-                        Icon(
-                            modifier = Modifier.wrapContentSize(),
-                            painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
-                            tint = Colors.IconSupplementary,
-                            contentDescription = stringResource(R.string.description_view_details)
-                        )
-                    }
+                    Icon(
+                        modifier = Modifier.wrapContentSize(),
+                        painter = painterResource(com.fintexinc.core.R.drawable.ic_arrow_right),
+                        tint = Colors.IconSupplementary,
+                        contentDescription = stringResource(R.string.description_view_details)
+                    )
                 }
 
                 if (index < accounts.size - 1) {
@@ -798,11 +825,12 @@ private fun Charts(
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(pageCount) { iteration ->
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
+                            .size(if (actualPage == iteration) 10.dp else 9.dp)
                             .clip(CircleShape)
                             .then(
                                 if (actualPage == iteration) {

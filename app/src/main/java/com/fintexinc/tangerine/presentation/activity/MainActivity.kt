@@ -472,9 +472,6 @@ class MainActivity : ComponentActivity() {
                     val state = dashboardViewModel.state.collectAsState()
                     DashboardScreenUI(
                         state.value,
-                        onPlatformClicked = {
-                            dashboardViewModel.onPlatformClicked()
-                        },
                         onOpenAccountClicked = {
                             parentNavController.navigate(Routes.Account(it))
                         },

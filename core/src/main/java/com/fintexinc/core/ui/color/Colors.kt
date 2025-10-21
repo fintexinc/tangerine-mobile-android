@@ -21,6 +21,8 @@ object Colors {
     val BorderPrimary = Color(0xFFEA7024)
     val BorderInformation = Color(0xFF616161)
     val BackgroundSupplementary = Color(0xFFEEEEEE)
+    val BackgroundSuccessSubdued = Color(0xFFE8F5E9)
+    val BackgroundCriticalSubdued = Color(0xFFFCF0F0)
     val TransactionIncome = Color(0xFF43A047)
     val TextCritical = Color(0xFFD50000)
     val Text = Color(0xFF333333)
@@ -36,4 +38,5 @@ object Colors {
     val Transparent = Color(0x00000000)
     val IconSupplementary = Color(0xFFBDBDBD)
     val IconSubtitled = Color(0xFF757575)
+    val Icon = Color(0xFF333333)
 }

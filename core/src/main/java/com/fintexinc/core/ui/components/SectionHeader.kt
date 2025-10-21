@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,11 +39,11 @@ fun SectionHeader(
             style = FontStyles.BodyLargeBold,
             color = Colors.Text,
         )
-
-        Image(
+        Icon(
+            modifier = Modifier.rotate(if (isExpanded) 180f else 0f),
             painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
             contentDescription = stringResource(com.fintexinc.core.R.string.description_icon_add),
-            modifier = Modifier.rotate(if (isExpanded) 180f else 0f),
+            tint = Colors.Icon
         )
     }
 }

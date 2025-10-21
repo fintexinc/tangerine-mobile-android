@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -60,7 +59,7 @@ import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.presentation.ui.widget.ColumnWithShadow
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
-import com.fintexinc.core.presentation.ui.widget.list.collapsableLazyColumn
+import com.fintexinc.core.presentation.ui.widget.list.CollapsableLazyColumn
 import com.fintexinc.core.presentation.ui.widget.modal.AssetLiabilitiesModalBottomSheet
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.core.ui.color.Colors
@@ -124,42 +123,42 @@ fun MyNetWorthUI(
     val liabilitiesCheckedState = liabilities.map {
         it.liability.toNameValue()
     }
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(start = 18.dp, end = 18.dp, top = 18.dp)
-            ) {
-                NetWorthNotificationUI()
-                Spacer(modifier = Modifier.height(18.dp))
-                NetWorthInfoUI(
-                    banking = banking,
-                    investment = investment,
-                    custom = custom,
-                    liabilities = liabilities,
-                    updateCheckedStates = updateCheckedStates
-                )
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(start = 18.dp, end = 18.dp, top = 18.dp)
+        ) {
+            NetWorthNotificationUI()
+            Spacer(modifier = Modifier.height(18.dp))
+            NetWorthInfoUI(
+                banking = banking,
+                investment = investment,
+                custom = custom,
+                liabilities = liabilities,
+                updateCheckedStates = updateCheckedStates
+            )
         }
-
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
+        Spacer(modifier = Modifier.height(24.dp))
 
         // TODO: refactor whole thing when there is a time
-        collapsableLazyColumn(
-            scope = this@LazyColumn,
+        CollapsableLazyColumn(
             dataPoints = mapOf(
                 textTangerineAssets to banking.map { it.checkedState.toDataPoint() } + investment.map { it.checkedState.toDataPoint() },
                 textExternalAssets to custom.map { custom ->
                     custom.checkedState.toDataPoint()
-                        .copy(subName = "$effectiveOnText ${custom.asset.linkedDate}")
+                        .copy(
+                            subName = "$effectiveOnText ${
+                                DateUtils.formatDateStringToEffectiveDate(
+                                    custom.asset.linkedDate
+                                )
+                            }"
+                        )
                 },
             ),
             headerShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -174,15 +173,12 @@ fun MyNetWorthUI(
                 onAddAssetClicked(dataPoint)
             }
         )
-        item {
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 18.dp),
-                color = Colors.BorderSubdued,
-                thickness = 1.dp
-            )
-        }
-        collapsableLazyColumn(
-            scope = this@LazyColumn,
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 18.dp),
+            color = Colors.BorderSubdued,
+            thickness = 1.dp
+        )
+        CollapsableLazyColumn(
             dataPoints = mapOf(textExternalLiabilities to liabilitiesCheckedState.map { liability ->
                 val shouldShowEffectiveDate = liabilities.first {
                     it.liability.id == liability.id
@@ -191,7 +187,11 @@ fun MyNetWorthUI(
                     DataPoint(
                         id = id,
                         name = name,
-                        subName = if (shouldShowEffectiveDate) "$effectiveOnText ${liability.date}" else liability.subName,
+                        subName = if (shouldShowEffectiveDate) "$effectiveOnText ${
+                            DateUtils.formatDateStringToEffectiveDate(
+                                liability.date
+                            )
+                        }" else liability.subName,
                         value = value.formatCurrency(),
                         iconResId = iconResId
                     )
@@ -209,149 +209,134 @@ fun MyNetWorthUI(
                 onAddLiabilityClicked(dataPoint)
             }
         )
-        item {
-            AnimatedVisibility(
-                visible = isBannerVisible,
-                exit = fadeOut() + shrinkVertically(),
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.height(18.dp))
-                    Banner(closeBannerClick = { isBannerVisible = false })
-                }
-            }
-        }
-        item {
-            Spacer(modifier = Modifier.height(18.dp))
-        }
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
-                    .background(
-                        color = Colors.Background,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .padding(PaddingValues(vertical = 16.dp))
-            ) {
+        AnimatedVisibility(
+            visible = isBannerVisible,
+            exit = fadeOut() + shrinkVertically(),
+        ) {
+            Column {
                 Spacer(modifier = Modifier.height(18.dp))
-                ActivityUI(
-                    activities = activities,
-                    documents = documents,
-                    onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
-                    onActivitiesClicked = onActivitiesClicked,
-                )
+                Banner(closeBannerClick = { isBannerVisible = false })
             }
         }
-        item {
-            Spacer(modifier = Modifier.height(20.dp))
-        }
-        item {
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+                .background(
+                    color = Colors.Background,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(PaddingValues(vertical = 16.dp))
+        ) {
             Spacer(modifier = Modifier.height(18.dp))
+            ActivityUI(
+                activities = activities,
+                documents = documents,
+                onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
+                onActivitiesClicked = onActivitiesClicked,
+            )
         }
-        item {
-            Row(
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(18.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .clickable {
+                    onOpenJuiceSection()
+                },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clickable {
-                        onOpenJuiceSection()
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .padding(start = 22.dp),
-                    text = stringResource(R.string.text_articles_you_might_like),
-                    style = FontStyles.TitleMediumBold,
-                    color = Colors.BrandBlack
-                )
-                Spacer(
-                    modifier = Modifier.width(4.dp)
-                )
-                Icon(
-                    modifier = Modifier
-                        .size(28.dp),
-                    painter = painterResource(id = com.fintexinc.core.R.drawable.ic_arrow_right),
-                    tint = Colors.IconSubtitled,
-                    contentDescription = stringResource(R.string.description_icon_open),
-                )
-            }
+                    .wrapContentSize()
+                    .padding(start = 22.dp),
+                text = stringResource(R.string.text_articles_you_might_like),
+                style = FontStyles.TitleMediumBold,
+                color = Colors.BrandBlack
+            )
+            Spacer(
+                modifier = Modifier.width(4.dp)
+            )
+            Icon(
+                modifier = Modifier
+                    .size(28.dp),
+                painter = painterResource(id = com.fintexinc.core.R.drawable.ic_arrow_right),
+                tint = Colors.IconSubtitled,
+                contentDescription = stringResource(R.string.description_icon_open),
+            )
         }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 18.dp),
-            ) {
-                items(3) {
-                    Row(
-                        modifier = Modifier
-                            .width(320.dp)
-                            .height(128.dp)
-                            .background(
-                                color = Colors.Background,
-                                RoundedCornerShape(16.dp)
-                            )
-                            .clickableShape(
-                                shape = RoundedCornerShape(16.dp)
-                            ) {
-                                // TODO: add actual info from mocks
-                                onOpenJuiceArticle("https://www.tangerine.ca/en/thejuice/invest/what-should-you-do-with-your-cash")
-                            },
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .width(120.dp)
-                                .fillMaxHeight()
-                                .background(
-                                    color = Colors.BorderSubdued,
-                                    shape = RoundedCornerShape(
-                                        topStart = 16.dp,
-                                        topEnd = 0.dp,
-                                        bottomStart = 16.dp,
-                                        bottomEnd = 0.dp
-                                    )
-                                )
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(horizontal = 18.dp),
+        ) {
+            items(3) {
+                Row(
+                    modifier = Modifier
+                        .width(320.dp)
+                        .height(128.dp)
+                        .background(
+                            color = Colors.Background,
+                            RoundedCornerShape(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column(
-                            modifier = Modifier
-                                .width(200.dp)
-                                .fillMaxHeight()
-                                .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .clickableShape(
+                            shape = RoundedCornerShape(16.dp)
                         ) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                text = stringResource(R.string.text_invest),
-                                style = FontStyles.BodyMedium,
-                                color = Colors.TextSave
+                            // TODO: add actual info from mocks
+                            onOpenJuiceArticle("https://www.tangerine.ca/en/thejuice/invest/what-should-you-do-with-your-cash")
+                        },
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .fillMaxHeight()
+                            .background(
+                                color = Colors.BorderSubdued,
+                                shape = RoundedCornerShape(
+                                    topStart = 16.dp,
+                                    topEnd = 0.dp,
+                                    bottomStart = 16.dp,
+                                    bottomEnd = 0.dp
+                                )
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f),
-                                text = stringResource(R.string.text_invest_instructions),
-                                style = FontStyles.HeadingMedium,
-                                color = Colors.BrandBlack
-                            )
-                        }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .fillMaxHeight()
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            text = stringResource(R.string.text_invest),
+                            style = FontStyles.BodyMedium,
+                            color = Colors.TextSave
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            text = stringResource(R.string.text_invest_instructions),
+                            style = FontStyles.HeadingMedium,
+                            color = Colors.BrandBlack
+                        )
                     }
                 }
             }
         }
-        item {
-            Spacer(modifier = Modifier.height(48.dp))
-        }
+        Spacer(modifier = Modifier.height(48.dp))
     }
 }
 
@@ -486,7 +471,7 @@ private fun NetWorthInfoUI(
             Row(
                 modifier = Modifier
                     .wrapContentSize()
-                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                    .shadow(1.dp, RoundedCornerShape(16.dp))
                     .background(
                         color = Colors.BackgroundInteractive,
                         shape = RoundedCornerShape(16.dp)

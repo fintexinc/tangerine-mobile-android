@@ -69,7 +69,7 @@ fun PerformanceChartUI(
             Row(
                 modifier = Modifier
                     .wrapContentSize()
-                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                    .shadow(1.dp, RoundedCornerShape(16.dp))
                     .background(
                         color = Colors.BackgroundInteractive,
                         shape = RoundedCornerShape(16.dp)
@@ -83,12 +83,12 @@ fun PerformanceChartUI(
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = chipText,
-                    style = FontStyles.BodySmall,
+                    style = FontStyles.BodyMedium,
                     color = Colors.TextInteractive
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
+                    painter = painterResource(R.drawable.ic_chevron_down),
                     tint = Colors.TextInteractive,
                     contentDescription = "",
                 )
@@ -118,14 +118,13 @@ fun PerformanceChartUI(
             asOfDateValue.value.day, asOfDateValue.value.month.monthName(), asOfDateValue.value.year
         ),
         color = Colors.TextSubdued,
-        style = FontStyles.BodySmallBold,
+        style = FontStyles.BodySmallItalic,
     )
     Spacer(modifier = Modifier.height(18.dp))
 
     // Combine every two consecutive items, summing their values, step 2
     TangerineLineChart(
         performance = chartPerformance,
-        step = step,
         period = period.value,
         onIndexSelected = {
             if (it in chartPerformance.indices) {

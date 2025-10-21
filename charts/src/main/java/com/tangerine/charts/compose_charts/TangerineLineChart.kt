@@ -28,12 +28,16 @@ import java.util.Locale
 @Composable
 fun TangerineLineChart(
     performance: List<PerformanceItem>,
-    step: Double = 10000.0,
     period: Period,
     onIndexSelected: (Int) -> Unit
 ) {
 
     val data = getPerformanceByMonth(performance, period)
+    val labels = if (data.size > 2) {
+        listOf(data.keys.first(), data.keys.elementAt(data.size / 2), data.keys.last())
+    } else {
+        listOf(data.keys.first(), data.keys.last())
+    }
 
     LineChart(
         modifier = Modifier
@@ -43,11 +47,6 @@ fun TangerineLineChart(
             Line(
                 label = "Performance",
                 values = data.map { it.value },
-                dotProperties = DotProperties(
-                    enabled = true,
-                    radius = 4.dp,
-                    color = SolidColor(Color(0xFFEA7024))
-                ),
                 color = SolidColor(Color(0xFFEA7024)),
                 firstGradientFillColor = Color(0xFFFEC388),
                 secondGradientFillColor = Color(0x00FFFFFF),
@@ -57,13 +56,19 @@ fun TangerineLineChart(
         ),
         gridProperties = GridProperties(false),
         indicatorProperties = HorizontalIndicatorProperties(
-            count = IndicatorCount.StepBased(
-                step
-            ), contentBuilder = {
+            count = IndicatorCount.CountBased(
+                3
+            ),
+            contentBuilder = {
                 (it / 1000).format(0) + "K"
-            }
+            },
+            textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued)
         ),
-        labelProperties = LabelProperties(enabled = true, labels = data.map { it.key }),
+        labelProperties = LabelProperties(
+            enabled = true,
+            labels = labels,
+            textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued)
+        ),
         labelHelperProperties = LabelHelperProperties(false),
         popupProperties = PopupProperties(
             textStyle = FontStyles.BodySmall.copy(color = Colors.TextSubdued),

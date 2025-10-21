@@ -30,8 +30,8 @@ import com.fintexinc.core.ui.font.FontStyles
 fun TangerineSearchBar(
     modifier: Modifier = Modifier,
     searchText: String = "",
+    hint: String = "",
     onSearchTextChange: (String) -> Unit = {},
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     isShowFilter: Boolean = true,
     horizontalPadding: Dp = 16.dp,
 ) {
@@ -57,19 +57,13 @@ fun TangerineSearchBar(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_search),
-                        contentDescription = stringResource(R.string.description_icon_search),
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
                     Box(modifier = Modifier.weight(1f)) {
                         if (searchText.isEmpty()) {
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .wrapContentHeight(),
-                                text = stringResource(R.string.text_search),
+                                text = hint,
                                 style = FontStyles.BodyLarge,
                                 color = Colors.TextSubdued
                             )

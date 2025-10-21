@@ -4,8 +4,8 @@ import java.text.NumberFormat
 import java.util.Locale
 
 fun Double.formatCurrency(
-    maximumFractionDigits: Int = 2,
-    minimumFractionDigits: Int = 2
+    maximumFractionDigits: Int = 0,
+    minimumFractionDigits: Int = 0
 ): String {
     val formatter = NumberFormat.getCurrencyInstance(Locale.US)
     formatter.maximumFractionDigits = maximumFractionDigits

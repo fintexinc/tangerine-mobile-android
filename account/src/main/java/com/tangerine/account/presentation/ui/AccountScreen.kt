@@ -33,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -146,7 +147,9 @@ private fun Content(
     val showBottomSheet = state is AccountViewModel.State.Loaded
 
     if (showBottomSheet) {
-        val bottomSheetState = rememberBottomSheetScaffoldState()
+        val bottomSheetState = rememberBottomSheetScaffoldState(
+            bottomSheetState = rememberStandardBottomSheetState()
+        )
         BottomSheetScaffold(
             scaffoldState = bottomSheetState,
             sheetContent = {
@@ -235,7 +238,7 @@ private fun MainPageContent(
         }, rightIcon = {
             Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
                 Icon(
-                    painter = painterResource(com.fintexinc.core.R.drawable.icon_dots),
+                    painter = painterResource(com.fintexinc.core.R.drawable.ic_menu_more),
                     contentDescription = stringResource(R.string.description_icon_navigate_edit),
                     tint = Colors.Primary,
                     modifier = Modifier
@@ -333,8 +336,7 @@ private fun BottomSheetTabsContent(
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
     TabsSelector(
         modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 28.dp),
+            .padding(horizontal = 16.dp),
         tabs = listOf(
             TabItem(
                 title = stringResource(R.string.title_transactions),
@@ -351,7 +353,10 @@ private fun BottomSheetTabsContent(
                     )
                 },
                 onTabSelected = {
-                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                    // animate to a half-expanded state instead of full expand
+                    scope.launch {
+                        bottomSheetState.bottomSheetState.expand()
+                    }
                 }
             ),
             TabItem(
@@ -360,7 +365,9 @@ private fun BottomSheetTabsContent(
                     DetailsUi()
                 },
                 onTabSelected = {
-                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                    scope.launch {
+                        bottomSheetState.bottomSheetState.expand()
+                    }
                 }
             ),
             TabItem(
@@ -376,11 +383,24 @@ private fun BottomSheetTabsContent(
                     )
                 },
                 onTabSelected = {
-                    scope.launch { bottomSheetState.bottomSheetState.expand() }
+                    scope.launch {
+                        bottomSheetState.bottomSheetState.expand()
+                    }
                 }
             )
         ),
-        contentMaxHeight = tabsContentMaxHeight
+        contentMaxHeight = tabsContentMaxHeight,
+        shadowDivider = {
+            Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .shadow(2.dp)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
     )
 }
 
@@ -393,6 +413,7 @@ private fun AccountBalanceCard(
 ) {
     Column(
         modifier = modifier
+            .shadow(1.dp, RoundedCornerShape(bottomEnd = 16.dp))
             .background(
                 Colors.Background, shape = RoundedCornerShape(bottomEnd = 16.dp)
             )

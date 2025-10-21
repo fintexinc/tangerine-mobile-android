@@ -38,6 +38,15 @@ object DateUtils {
         return sdf.format(date)
     }
 
+    fun formatDateStringToEffectiveDate(dateStr: String): String {
+        val parser = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val date = parser.parse(dateStr)
+        if (date == null) return ""
+        val formatter = SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH)
+        return formatter.format(date).uppercase(Locale.ENGLISH)
+    }
+
+
     fun Int.monthName(): String {
         val months = listOf(
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

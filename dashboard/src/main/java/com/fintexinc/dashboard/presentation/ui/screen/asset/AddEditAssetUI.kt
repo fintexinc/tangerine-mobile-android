@@ -48,7 +48,6 @@ import com.fintexinc.core.presentation.ui.widget.add.ItemTypeSelection
 import com.fintexinc.core.presentation.ui.widget.button.PrimaryButton
 import com.fintexinc.core.presentation.ui.widget.button.SecondaryButton
 import com.fintexinc.core.presentation.ui.widget.dialog.DeletePopup
-import com.fintexinc.core.presentation.ui.widget.dialog.UpdatePopup
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
@@ -306,14 +305,18 @@ fun AddEditAssetUI(
                                     assetType = assetType.value ?: AssetType.OTHER,
                                     assetValue = estimatedValue.value.toDoubleOrNull()
                                         ?: 0.0,
-                                    annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
-                                        0,
-                                        endIndex = annualizedRateOfReturn.value.length - 1
-                                    ).toDoubleOrNull() ?: 0.0,
+                                    annualizedRateOfReturn = if (annualizedRateOfReturn.value.isNotEmpty()) {
+                                        annualizedRateOfReturn.value.substring(
+                                            0,
+                                            endIndex = annualizedRateOfReturn.value.length - 1
+                                        ).toDoubleOrNull() ?: 0.0
+                                    } else {
+                                        0.0
+                                    },
                                     linkedDate = effectiveDate.value,
                                     lastUpdated = revisitDate.value
                                 ),
-                                true
+                                false
                             )
                         }
                         SecondaryButton(
@@ -325,34 +328,41 @@ fun AddEditAssetUI(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    PrimaryButton(
-                        text = stringResource(R.string.text_add, "Asset")
-                    ) {
-                        val validationResult = validateAsset(
-                            assetType.value, assetName.value, estimatedValue.value,
-                            effectiveDate.value, revisitDate.value
-                        )
-                        if (validationResult.any { pair -> !pair.value.isValid }) {
-                            assetValidation.value = validationResult
-                            return@PrimaryButton
+                    Column {
+                        PrimaryButton(
+                            text = stringResource(R.string.text_add, "Asset")
+                        ) {
+                            val validationResult = validateAsset(
+                                assetType.value, assetName.value, estimatedValue.value,
+                                effectiveDate.value, revisitDate.value
+                            )
+                            if (validationResult.any { pair -> !pair.value.isValid }) {
+                                assetValidation.value = validationResult
+                                return@PrimaryButton
+                            }
+                            onSaveAssetClick(
+                                Custom(
+                                    id = asset?.id ?: UUID.randomUUID().toString(),
+                                    userId = asset?.userId ?: "",
+                                    assetName = assetName.value,
+                                    assetType = assetType.value ?: AssetType.OTHER,
+                                    assetValue = estimatedValue.value.toDoubleOrNull()
+                                        ?: 0.0,
+                                    annualizedRateOfReturn = if (annualizedRateOfReturn.value.isNotEmpty()) {
+                                        annualizedRateOfReturn.value.substring(
+                                            0,
+                                            endIndex = annualizedRateOfReturn.value.length - 1
+                                        ).toDoubleOrNull() ?: 0.0
+                                    } else {
+                                        0.0
+                                    },
+                                    linkedDate = effectiveDate.value,
+                                    lastUpdated = revisitDate.value
+                                ),
+                                true
+                            )
                         }
-                        onSaveAssetClick(
-                            Custom(
-                                id = asset?.id ?: UUID.randomUUID().toString(),
-                                userId = asset?.userId ?: "",
-                                assetName = assetName.value,
-                                assetType = assetType.value ?: AssetType.OTHER,
-                                assetValue = estimatedValue.value.toDoubleOrNull()
-                                    ?: 0.0,
-                                annualizedRateOfReturn = annualizedRateOfReturn.value.substring(
-                                    0,
-                                    endIndex = annualizedRateOfReturn.value.length - 1
-                                ).toDoubleOrNull() ?: 0.0,
-                                linkedDate = effectiveDate.value,
-                                lastUpdated = revisitDate.value
-                            ),
-                            false
-                        )
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
                 }
             }
@@ -368,6 +378,7 @@ fun AddEditAssetUI(
                     }.toMap()
                     showAssetTypeSelection.value = false
                 },
+                selectedItemType = assetType.value,
                 onCancel = {
                     showAssetTypeSelection.value = false
                 }

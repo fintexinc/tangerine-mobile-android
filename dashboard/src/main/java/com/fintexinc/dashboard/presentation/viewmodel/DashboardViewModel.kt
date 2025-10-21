@@ -104,10 +104,6 @@ class DashboardViewModel @Inject constructor(
         return softDataCache?.liabilities?.firstOrNull { it.liability.id == id }?.liability
     }
 
-    fun onPlatformClicked() {
-        // Handle platform click event
-    }
-
     fun onAddAssetClicked(dataPoint: DataPoint?) = viewModelScope.launch {
         if (dataPoint != null && currentDataState().customAssets.firstOrNull {
                 it.asset.id == dataPoint.id

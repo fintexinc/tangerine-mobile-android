@@ -34,12 +34,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.fintexinc.core.domain.model.Account
 import com.fintexinc.core.domain.model.PerformanceItem
-import com.fintexinc.core.presentation.ui.widget.ColumnWithBorder
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.components.UniversalDataSection
 import com.fintexinc.core.ui.font.FontStyles
@@ -160,7 +158,17 @@ private fun AccountBalanceUI(
 ) {
     val allAccountsText = stringResource(R.string.text_all_accounts)
 
-    ColumnWithBorder {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp)
+            .background(
+                color = Colors.Background,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(16.dp)
+    ) {
         val chartPerformance = if (performanceData.size > 10) {
             val combined = mutableListOf<PerformanceItem>()
             var i = 0
@@ -320,6 +328,7 @@ private fun ReturnsRow(
                     modifier = Modifier.size(16.dp),
                     tint = Colors.TextInteractive
                 )
+                Spacer(modifier = Modifier.width(6.dp))
             }
         }
 
@@ -355,9 +364,23 @@ private fun ReturnsRow(
             item.percentage?.let {
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
+                    modifier = Modifier
+                        .background(
+                            color = if (item.isPositive == true) {
+                                Colors.BackgroundSuccessSubdued
+                            } else {
+                                Colors.BackgroundCriticalSubdued
+                            },
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
                     text = it,
-                    style = FontStyles.BodyMedium,
-                    color = if (item.isPositive == true) Colors.TextSuccess else Colors.TextCritical,
+                    style = FontStyles.BodySmall,
+                    color = if (item.isPositive == true) {
+                        Colors.TextSuccess
+                    } else {
+                        Colors.TextCritical
+                    },
                     maxLines = 1,
                 )
             }
