@@ -91,6 +91,7 @@ fun PerformanceChartUI(
                     painter = painterResource(R.drawable.ic_chevron_down),
                     tint = Colors.TextInteractive,
                     contentDescription = "",
+                    modifier = Modifier.size(24.dp),
                 )
             }
         } else {

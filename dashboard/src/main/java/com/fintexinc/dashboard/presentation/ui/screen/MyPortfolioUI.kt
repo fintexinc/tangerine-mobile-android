@@ -175,7 +175,7 @@ fun MyPortfolioUI(
             )
             Spacer(modifier = Modifier.weight(1.0f))
             Icon(
-                modifier = Modifier.wrapContentSize(),
+                modifier = Modifier.size(24.dp),
                 painter = painterResource(com.fintexinc.core.R.drawable.icon_sliders_light),
                 tint = Colors.Primary,
                 contentDescription = stringResource(R.string.description_icon_filter)
@@ -495,7 +495,9 @@ private fun AccountListUI(
             Spacer(modifier = Modifier.width(4.dp))
 
             Icon(
-                modifier = Modifier.rotate(if (expanded.value) 180f else 0f),
+                modifier = Modifier
+                    .size(24.dp)
+                    .rotate(if (expanded.value) 180f else 0f),
                 painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
                 tint = Colors.BrandBlack,
                 contentDescription = stringResource(R.string.description_icon_expand)
