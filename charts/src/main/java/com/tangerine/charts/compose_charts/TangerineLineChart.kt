@@ -77,7 +77,7 @@ fun TangerineLineChart(
             contentVerticalPadding = 10.dp,
             contentHorizontalPadding = 12.dp
         ),
-        onValueSelected = { index, value ->
+        onValueSelected = { index ->
             onIndexSelected(index)
         },
     )
