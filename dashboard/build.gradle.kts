@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.android.hilt)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.jacoco)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -78,4 +80,40 @@ dependencies {
     // Preview
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    testImplementation("io.kotest:kotest-runner-junit5:5.9.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.0")
+    testImplementation("io.mockk:mockk:1.13.9")
+    testImplementation("app.cash.turbine:turbine:1.1.0")
+}
+
+afterEvaluate {
+    tasks.register<JacocoReport>("jacocoTestReport") {
+        dependsOn("testDebugUnitTest")
+
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+
+        val fileFilter = listOf(
+            "**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*"
+        )
+
+        val debugTree = fileTree("${buildDir}/intermediates/javac/debug") {
+            exclude(fileFilter)
+        }
+
+        val kotlinTree = fileTree("${buildDir}/tmp/kotlin-classes/debug") {
+            exclude(fileFilter)
+        }
+
+        classDirectories.setFrom(files(debugTree, kotlinTree))
+        sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
+        executionData.setFrom(files("${buildDir}/jacoco/testDebugUnitTest.exec"))
+    }
 }

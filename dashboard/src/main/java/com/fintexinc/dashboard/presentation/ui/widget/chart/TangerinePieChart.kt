@@ -90,6 +90,7 @@ fun TangerinePieChart(
                     painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
                     tint = Colors.TextInteractive,
                     contentDescription = "",
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
