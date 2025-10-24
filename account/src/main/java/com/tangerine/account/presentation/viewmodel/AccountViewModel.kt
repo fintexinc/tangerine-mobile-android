@@ -242,12 +242,12 @@ class AccountViewModel @Inject constructor(
         )
     }
 
-    private fun formatCurrency(value: Double, locale: Locale = Locale.getDefault()): String {
+    fun formatCurrency(value: Double, locale: Locale = Locale.getDefault()): String {
         val formatter = NumberFormat.getCurrencyInstance(locale)
         return formatter.format(value)
     }
 
-    private fun formatPercentage(value: Double): String {
+    fun formatPercentage(value: Double): String {
         return if (value >= 0) {
             "+${String.format("%.2f", value)}%"
         } else {
@@ -396,7 +396,7 @@ class AccountViewModel @Inject constructor(
                 transactionsState.selectedStatuses.contains(TransactionStatusFilter.ALL_STATUS) ||
                         transactionsState.selectedStatuses.contains(transaction.status)
 
-            val dateOk = if (transactionsState.selectedDates.contains(DateFilterUi.ALL_DATES)) {
+            val dateOk = if (transactionsState.selectedDates.contains(ALL_DATES)) {
                 true
             } else {
                 val date = parseTransactionDate(transaction.date)
@@ -494,7 +494,7 @@ class AccountViewModel @Inject constructor(
                 date.get(Calendar.MONTH) == (month - 1)
     }
 
-    private fun parseTransactionDate(dateString: String): Calendar {
+    fun parseTransactionDate(dateString: String): Calendar {
         val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
         val date = formatter.parse(dateString)
         return Calendar.getInstance().apply {
@@ -523,6 +523,13 @@ class AccountViewModel @Inject constructor(
         val documentsState = bottomSheet.documents
 
         val filtered = documentsState.all.filter { document ->
+            val queryOk = if (documentsState.query.isBlank()) {
+                true
+            } else {
+                document.name.contains(documentsState.query, ignoreCase = true) ||
+                        document.subName.contains(documentsState.query, ignoreCase = true)
+            }
+
             val typeOk =
                 documentsState.selectedTypes.contains(DocumentTypeFilterUi.ALL_DOCUMENTS) ||
                         documentsState.selectedTypes.contains(document.type)
@@ -551,7 +558,7 @@ class AccountViewModel @Inject constructor(
                 }
             }
 
-            typeOk && dateOk
+            typeOk && dateOk && queryOk
         }
 
         _state.value = State.Loaded(
@@ -790,7 +797,7 @@ class AccountViewModel @Inject constructor(
         val query: String = "",
         val filtered: List<DocumentDataPoint> = emptyList(),
         val selectedTypes: List<DocumentTypeFilterUi> = listOf(DocumentTypeFilterUi.ALL_DOCUMENTS),
-        val selectedDates: List<DateFilterUi> = listOf(DateFilterUi.ALL_DATES),
+        val selectedDates: List<DateFilterUi> = listOf(ALL_DATES),
         val selectedMonth: Int? = null,
         val selectedYear: Int? = null,
     )
@@ -802,7 +809,7 @@ class AccountViewModel @Inject constructor(
         val settledGroups: List<TransactionGroup> = emptyList(),
         val selectedTypes: List<TransactionTypeFilterUi> = listOf(TransactionTypeFilterUi.ALL_TYPES),
         val selectedStatuses: List<TransactionStatusFilter> = listOf(TransactionStatusFilter.ALL_STATUS),
-        val selectedDates: List<DateFilterUi> = listOf(DateFilterUi.ALL_DATES),
+        val selectedDates: List<DateFilterUi> = listOf(ALL_DATES),
         val selectedMonth: Int? = null,
         val selectedYear: Int? = null,
     )

@@ -119,7 +119,7 @@ class DashboardViewModel @Inject constructor(
     fun onAddAsset(asset: Custom, isNew: Boolean) {
         viewModelScope.launch {
             val currentState = currentDataState()
-            val updatedAssets = if(isNew) {
+            val updatedAssets = if (isNew) {
                 currentState.customAssets.toMutableList().apply {
                     add(CustomUI(asset, asset.toNameValue()))
                 }.toList()
