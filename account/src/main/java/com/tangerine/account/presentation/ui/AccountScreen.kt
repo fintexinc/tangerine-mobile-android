@@ -92,6 +92,7 @@ fun AccountScreen(
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
     onTransactionDetailsClick: (String) -> Unit,
+    onOpenDocument: (DocumentDataPoint) -> Unit,
 ) {
     when (state) {
         is AccountViewModel.State.Loading -> {
@@ -117,6 +118,7 @@ fun AccountScreen(
                 onDateFilterChangedDocument = onDateFilterChangedDocument,
                 onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
                 onTransactionDetailsClick = onTransactionDetailsClick,
+                onOpenDocument = onOpenDocument
             )
         }
     }
@@ -139,6 +141,7 @@ private fun Content(
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
     onTransactionDetailsClick: (String) -> Unit,
+    onOpenDocument: (DocumentDataPoint) -> Unit,
 ) {
     val selectedTab = remember {
         mutableStateOf(AccountTab.BUY_FUNDS)
@@ -169,6 +172,7 @@ private fun Content(
                     onDateFilterChangedDocument = onDateFilterChangedDocument,
                     onDocumentTypeFilterChanged = onDocumentTypeFilterChanged,
                     onTransactionDetailsClick = onTransactionDetailsClick,
+                    onOpenDocument = onOpenDocument
                 )
             },
             sheetPeekHeight = 84.dp,
@@ -331,6 +335,7 @@ private fun BottomSheetTabsContent(
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onDocumentTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
     onTransactionDetailsClick: (String) -> Unit,
+    onOpenDocument: (DocumentDataPoint) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tabsContentMaxHeight = GetPercentageOfScreenHeight(0.85f)
@@ -380,6 +385,7 @@ private fun BottomSheetTabsContent(
                         navigateToTransactionDetailScreen = navigateToTransactionDetailScreen,
                         onDateFilterChangedDocument = onDateFilterChangedDocument,
                         onTypeFilterChanged = onDocumentTypeFilterChanged,
+                        onOpenDocument = onOpenDocument
                     )
                 },
                 onTabSelected = {

@@ -47,6 +47,7 @@ import com.tangerine.documents.presentation.ui.models.DocumentCategoryType
 fun InvestmentDocumentsUi(
     onBackClicked: () -> Unit = {},
     onStatementsClick: () -> Unit,
+    onOpenDocument: (DataPoint) -> Unit,
 ) {
     val searchQuery = remember { mutableStateOf("") }
     val statementsText = stringResource(R.string.text_category_statements_title)
@@ -115,7 +116,7 @@ fun InvestmentDocumentsUi(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Colors.BackgroundSubdued)
-            .statusBarsPadding(),
+            .statusBarsPadding()
     ) {
         item {
             ToolBar(
@@ -211,11 +212,7 @@ fun InvestmentDocumentsUi(
                     title = document.name,
                     date = document.subName,
                     onClick = {
-                        val intent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-                        )
-                        context.startActivity(intent)
+                        onOpenDocument(document)
                     },
                     isLastItem = isLastItem,
                     modifier = Modifier.wrapContentHeight(),

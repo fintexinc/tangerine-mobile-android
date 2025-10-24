@@ -63,6 +63,10 @@ import com.tangerine.documents.presentation.ui.ui.InvestmentDocumentsUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
+import androidx.core.content.FileProvider
+import java.io.File
+import android.content.ActivityNotFoundException
+import java.io.IOException
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -183,6 +187,10 @@ class MainActivity : ComponentActivity() {
                                 onTransactionDetailsClick = { id ->
                                     navController.navigate(Routes.TransactionDetail(id))
                                 },
+                                // Temp
+                                onOpenDocument = {
+                                    openPdfFromAssets("tangerine_bank_statement.pdf")
+                                }
                             )
                         }
                     }
@@ -257,6 +265,9 @@ class MainActivity : ComponentActivity() {
                             onStatementsClick = {
                                 navController.navigate(Routes.Statements)
                             },
+                            onOpenDocument = {
+                                openPdfFromAssets("tangerine_investment_document.pdf")
+                            }
                         )
                     }
 
@@ -277,6 +288,9 @@ class MainActivity : ComponentActivity() {
                             onMonthFilterApplied = {
                                 statementViewModel.onMonthFilterApplied(it)
                             },
+                            onOpenDocument = {
+                                openPdfFromAssets("tangerine_bank_statement.pdf")
+                            }
                         )
                     }
 
@@ -499,6 +513,9 @@ class MainActivity : ComponentActivity() {
                         onActivitiesClicked = { item ->
                             parentNavController.navigate(Routes.TransactionDetail(item.id))
                         },
+                        onOpenDocument = { document ->
+                            openPdfFromAssets("tangerine_bank_statement.pdf")
+                        }
                     )
                 }
 
@@ -522,6 +539,35 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(Intent.ACTION_VIEW, "https://www.tangerine.ca/en/thejuice".toUri())
         this.startActivity(intent)
     }
+
+    // Helper to copy a PDF from assets to cache and open it with an external PDF viewer using FileProvider
+    private fun openPdfFromAssets(assetFileName: String) {
+        try {
+            val outFile = File(cacheDir, assetFileName)
+
+            // Copy asset to cache
+            assets.open(assetFileName).use { input ->
+                outFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            val contentUri = FileProvider.getUriForFile(this, "$packageName.fileprovider", outFile)
+
+            val openIntent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(contentUri, "application/pdf")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            startActivity(Intent.createChooser(openIntent, "Open file"))
+        } catch (e: ActivityNotFoundException) {
+            // No app to handle PDFs
+            // You can show a Toast or Snackbar here; keeping minimal to avoid new deps
+        } catch (e: IOException) {
+            // Copy/open failed
+        }
+    }
+
 }
 
 object Routes {

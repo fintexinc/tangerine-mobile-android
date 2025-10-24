@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -39,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.utils.date.formatToString
+import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.presentation.ui.widget.TangerineSearchBar
 import com.fintexinc.core.presentation.ui.widget.ToolBar
 import com.fintexinc.core.presentation.ui.widget.modal.UniversalModalBottomSheet
@@ -50,6 +49,7 @@ import com.fintexinc.core.ui.components.MultiSelectChips
 import com.fintexinc.core.ui.font.FontStyles
 import com.tangerine.documents.R
 import com.tangerine.documents.presentation.ui.models.MonthFilterUi
+import com.tangerine.documents.presentation.ui.ui.ListItem
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -62,6 +62,7 @@ fun StatementsScreen(
     onYearToggle: (Int) -> Unit,
     onYearFilterApplied: (List<Int>) -> Unit,
     onMonthFilterApplied: (List<Int>) -> Unit,
+    onOpenDocument: (Document) -> Unit
 ) {
     when (state) {
         is StatementViewModel.State.Loading -> {
@@ -79,6 +80,7 @@ fun StatementsScreen(
                 onYearToggle = onYearToggle,
                 onYearFilterApplied = onYearFilterApplied,
                 onMonthFilterApplied = onMonthFilterApplied,
+                onOpenDocument = onOpenDocument
             )
         }
     }
@@ -92,8 +94,8 @@ private fun Content(
     onYearToggle: (Int) -> Unit,
     onYearFilterApplied: (List<Int>) -> Unit,
     onMonthFilterApplied: (List<Int>) -> Unit,
+    onOpenDocument: (Document) -> Unit
 ) {
-    val context = LocalContext.current
     val yearGroups = remember(state.documents) {
         state.documents
             .groupBy { it.documentDate.year }
@@ -117,116 +119,99 @@ private fun Content(
             .fillMaxSize()
             .background(color = Colors.Background),
     ) {
-        LazyColumn(
+        Column(
             modifier = Modifier.statusBarsPadding(),
         ) {
-            item {
-                ToolBar(
-                    text = stringResource(R.string.text_category_statements_title),
-                    leftIcon = {
-                        Icon(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .clickable { onBackClicked() },
-                            painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
-                            contentDescription = stringResource(R.string.description_icon_navigate_back),
-                            tint = Colors.Primary,
-                        )
-                    },
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-
-                TangerineSearchBar(
-                    searchText = state.searchText,
-                    onSearchTextChange = { onSearchQueryChanged(it) },
-                    isShowFilter = false,
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            item {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    val yearFilterText = when {
-                        state.selectedYears.isEmpty() -> stringResource(R.string.text_all_years)
-                        state.selectedYears.size == 1 -> state.selectedYears.first().toString()
-                        else -> "${state.selectedYears.size} years"
-                    }
-                    val filterMonthText = when {
-                        state.selectedMonths.isEmpty() -> stringResource(R.string.text_all_months)
-                        state.selectedMonths.size == 1 -> MonthFilterUi.fromMonthNumber(state.selectedMonths.first())
-                            ?.let {
-                                stringResource(it.stringResId)
-                            } ?: state.selectedMonths.first().toString()
-
-                        else -> "${state.selectedMonths.size} months"
-                    }
-
-                    FilterButton(
-                        text = yearFilterText,
-                        onClick = { showYearBottomSheet.value = true },
-                        modifier = Modifier.padding(horizontal = 16.dp)
+            ToolBar(
+                text = stringResource(R.string.text_category_statements_title),
+                leftIcon = {
+                    Icon(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .clickable { onBackClicked() },
+                        painter = painterResource(com.fintexinc.core.R.drawable.ic_back_arrow),
+                        contentDescription = stringResource(R.string.description_icon_navigate_back),
+                        tint = Colors.Primary,
                     )
+                },
+            )
 
-                    Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-                    FilterButton(
-                        text = filterMonthText,
-                        onClick = { showMonthBottomSheet.value = true },
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+            TangerineSearchBar(
+                searchText = state.searchText,
+                onSearchTextChange = { onSearchQueryChanged(it) },
+                isShowFilter = false,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                val yearFilterText = when {
+                    state.selectedYears.isEmpty() -> stringResource(R.string.text_all_years)
+                    state.selectedYears.size == 1 -> state.selectedYears.first().toString()
+                    else -> "${state.selectedYears.size} years"
+                }
+                val filterMonthText = when {
+                    state.selectedMonths.isEmpty() -> stringResource(R.string.text_all_months)
+                    state.selectedMonths.size == 1 -> MonthFilterUi.fromMonthNumber(state.selectedMonths.first())
+                        ?.let {
+                            stringResource(it.stringResId)
+                        } ?: state.selectedMonths.first().toString()
+
+                    else -> "${state.selectedMonths.size} months"
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                FilterButton(
+                    text = yearFilterText,
+                    onClick = { showYearBottomSheet.value = true },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                FilterButton(
+                    text = filterMonthText,
+                    onClick = { showMonthBottomSheet.value = true },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             if (yearGroups.isEmpty()) {
-                item {
-                    EmptyScreen(
-                        modifier = Modifier.matchParentSize(),
-                        title = R.string.text_empty_documents,
-                    )
-                }
+                EmptyScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    title = R.string.text_empty_documents,
+                )
             } else {
-                yearGroups.forEach { yearGroup ->
-                    item(key = "year-${yearGroup.year}") {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                ) {
+                    yearGroups.forEach { yearGroup ->
                         YearHeader(
                             year = yearGroup.year,
                             isExpanded = state.expandedYears.contains(yearGroup.year),
                             onToggle = { onYearToggle(yearGroup.year) }
                         )
-                    }
 
-                    if (state.expandedYears.contains(yearGroup.year)) {
-                        yearGroup.monthGroups.forEach { monthGroup: MonthGroup ->
-                            item(key = "month-${monthGroup.year}-${monthGroup.month}") {
+                        if (state.expandedYears.contains(yearGroup.year)) {
+                            yearGroup.monthGroups.forEach { monthGroup: MonthGroup ->
                                 MonthHeader(month = monthGroup.month)
-                            }
+                                monthGroup.documents.forEachIndexed { index, document ->
+                                    DocumentItem(
+                                        title = document.documentName,
+                                        date = document.documentDate.formatToString(),
+                                        onClick = {
+                                            onOpenDocument(document)
+                                        },
+                                        isLastItem = false
+                                    )
 
-                            itemsIndexed(
-                                items = monthGroup.documents,
-                                key = { _, document -> document.id }
-                            ) { index, document ->
-                                DocumentItem(
-                                    title = document.documentName,
-                                    date = document.documentDate.formatToString(),
-                                    onClick = {
-                                        val intent = Intent(
-                                            Intent.ACTION_VIEW,
-                                            Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-                                        )
-                                        context.startActivity(intent)
-                                    },
-                                    isLastItem = index == monthGroup.documents.lastIndex
-                                )
-
-                                if (index == monthGroup.documents.lastIndex) {
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                   /* if (index == monthGroup.documents.lastIndex) {
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                    }*/
                                 }
                             }
                         }
@@ -234,9 +219,7 @@ private fun Content(
                 }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
         if (showYearBottomSheet.value) {

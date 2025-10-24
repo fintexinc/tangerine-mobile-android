@@ -105,6 +105,7 @@ fun MyNetWorthUI(
     onOpenJuiceArticle: (articleUrl: String) -> Unit,
     onSeeInvestmentDocumentClicked: () -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
+    onOpenDocument: (Document) -> Unit
 ) {
     val assetsExpanded = remember { mutableStateOf(true) }
     val textAssets = stringResource(R.string.text_assets)
@@ -238,6 +239,7 @@ fun MyNetWorthUI(
                 documents = documents,
                 onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
                 onActivitiesClicked = onActivitiesClicked,
+                onOpenDocument = onOpenDocument
             )
         }
 
@@ -838,6 +840,7 @@ private fun ActivityUI(
     documents: List<Document>,
     onSeeInvestmentDocumentClicked: () -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
+    onOpenDocument: (Document) -> Unit,
 ) {
     Text(
         modifier = Modifier
@@ -871,7 +874,10 @@ private fun ActivityUI(
                                 iconResId = com.fintexinc.core.R.drawable.ic_document
                             )
                         },
-                        onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked
+                        onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
+                        onOpenDocument = {
+                            onOpenDocument(documents.first { doc -> doc.id == it.id } )
+                        }
                     )
                 }
             )
@@ -947,7 +953,8 @@ private fun ActivitiesUI(
 @Composable
 private fun DocumentsUI(
     dataPoints: List<DataPoint>,
-    onSeeInvestmentDocumentClicked: () -> Unit
+    onSeeInvestmentDocumentClicked: () -> Unit,
+    onOpenDocument: (DataPoint) -> Unit,
 ) {
     val context = LocalContext.current
     Spacer(modifier = Modifier.height(18.dp))
@@ -962,11 +969,7 @@ private fun DocumentsUI(
                 dataPoint = it,
                 isLastItem = dataPoints.last() == it,
                 onClick = {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-                    )
-                    context.startActivity(intent)
+                    onOpenDocument(it)
                 },
             )
         }
