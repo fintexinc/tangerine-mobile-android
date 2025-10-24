@@ -125,187 +125,204 @@ fun AddEditLiabilityUI(
                 ).toMap()
             )
         }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .verticalScroll(rememberScrollState())
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 30.dp, vertical = 24.dp)
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(Alignment.CenterStart)
-                        .clickable {
-                            onBackButtonFromExternalScreenClicked()
-                        },
-                    painter = painterResource(id = com.fintexinc.core.R.drawable.ic_back_arrow),
-                    contentDescription = stringResource(R.string.description_icon_back),
-                    tint = Colors.BackgroundPrimary
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(vertical = 18.dp)
-                        .align(Alignment.Center),
-                    text = if (liability != null) {
-                        stringResource(R.string.title_edit_liability)
-                    } else {
-                        stringResource(R.string.title_add_liability)
-                    },
-                    style = FontStyles.HeadingRegular,
-                    textAlign = TextAlign.Center
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .shadow(2.dp)
-            )
-            Spacer(
-                modifier = Modifier.height(24.dp)
-            )
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 30.dp, vertical = 24.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.CenterStart)
+                            .clickable {
+                                onBackButtonFromExternalScreenClicked()
+                            },
+                        painter = painterResource(id = com.fintexinc.core.R.drawable.ic_back_arrow),
+                        contentDescription = stringResource(R.string.description_icon_back),
+                        tint = Colors.BackgroundPrimary
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(vertical = 18.dp)
+                            .align(Alignment.Center),
+                        text = if (liability != null) {
+                            stringResource(R.string.title_edit_liability)
+                        } else {
+                            stringResource(R.string.title_add_liability)
+                        },
+                        style = FontStyles.HeadingRegular,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .shadow(2.dp)
+                )
+                Spacer(
+                    modifier = Modifier.height(24.dp)
+                )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .background(
-                            color = Colors.BackgroundSupplementary,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .drawBehind {
-                            drawRect(
-                                color = Colors.BorderInformation,
-                                topLeft = Offset(0f, 0f),
-                                size = Size(4.dp.toPx(), size.height)
-                            )
-                        }
-                        .padding(start = 12.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(horizontal = 16.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.text_gain_complete_picture_liability),
-                        style = FontStyles.BodyMediumBold,
-                        color = Colors.Text
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .background(
+                                color = Colors.BackgroundSupplementary,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .drawBehind {
+                                drawRect(
+                                    color = Colors.BorderInformation,
+                                    topLeft = Offset(0f, 0f),
+                                    size = Size(4.dp.toPx(), size.height)
+                                )
+                            }
+                            .padding(start = 12.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.text_gain_complete_picture_liability),
+                            style = FontStyles.BodyMediumBold,
+                            color = Colors.Text
+                        )
+                        Spacer(
+                            modifier = Modifier.height(8.dp)
+                        )
+                        Text(
+                            text = stringResource(
+                                R.string.text_you_can_remove_later,
+                                stringResource(R.string.text_liability_lowercase)
+                            ),
+                            style = FontStyles.BodyMedium,
+                            color = Colors.BrandBlack,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    AddItemSelection(
+                        title = stringResource(R.string.text_liability_type),
+                        text = liabilityType.value?.label?.takeIf { it.isNotEmpty() }
+                            ?: stringResource(R.string.text_make_selection),
+                        errorRes = getErrorResIdOrNull(
+                            "liabilityType",
+                            liabilityValidation.value
+                        ),
+                        onAddItemSelectionClicked = {
+                            showLiabilityTypeSelection.value = true
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AddItemText(
+                        title = stringResource(R.string.text_liability_name),
+                        hint = stringResource(R.string.text_enter_name),
+                        text = liabilityName.value,
+                        errorRes = getErrorResIdOrNull(
+                            "liabilityName",
+                            liabilityValidation.value
+                        ),
+                        onTextChanged = { text ->
+                            liabilityName.value = text
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AddItemText(
+                        title = stringResource(R.string.text_current_balance),
+                        hint = currency,
+                        prefix = currency,
+                        text = currentBalance.value,
+                        errorRes = getErrorResIdOrNull(
+                            "balance",
+                            liabilityValidation.value
+                        ),
+                        onTextChanged = { text ->
+                            currentBalance.value = text
+                        },
+                        keyboardType = KeyboardType.Number
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AddItemText(
+                        title = stringResource(R.string.text_monthly_payment),
+                        hint = currency,
+                        prefix = currency,
+                        text = monthlyPayment.value,
+                        onTextChanged = { text ->
+                            monthlyPayment.value = text
+                        },
+                        keyboardType = KeyboardType.Number
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AddItemText(
+                        title = stringResource(R.string.text_annual_interest_rate),
+                        hint = stringResource(R.string.text_percent),
+                        info = stringResource(R.string.text_annual_interest_rate_info),
+                        suffix = "%",
+                        text = annualInterestRate.value,
+                        onTextChanged = { text ->
+                            annualInterestRate.value = text
+                        },
+                        keyboardType = KeyboardType.Number
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AddItemSelection(
+                        title = stringResource(R.string.text_effective_date),
+                        text = effectiveDate.value,
+                        info = stringResource(R.string.text_revisited_date_info, "liability"),
+                        errorRes = getErrorResIdOrNull(
+                            "effectiveDate",
+                            liabilityValidation.value
+                        ),
+                        onAddItemSelectionClicked = {
+                            showDialog.value = DateSelectionType.EffectiveDate
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AddItemSelection(
+                        title = stringResource(R.string.text_revisit_date),
+                        text = revisitDate.value,
+                        errorRes = getErrorResIdOrNull(
+                            "revisitDate",
+                            liabilityValidation.value
+                        ),
+                        onAddItemSelectionClicked = {
+                            showDialog.value = DateSelectionType.RevisitDate
+                        }
                     )
                     Spacer(
-                        modifier = Modifier.height(8.dp)
-                    )
-                    Text(
-                        text = stringResource(
-                            R.string.text_you_can_remove_later,
-                            stringResource(R.string.text_liability_lowercase)
-                        ),
-                        style = FontStyles.BodyMedium,
-                        color = Colors.BrandBlack,
+                        modifier = Modifier.height(40.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(18.dp))
-
-                AddItemSelection(
-                    title = stringResource(R.string.text_liability_type),
-                    text = liabilityType.value?.label?.takeIf { it.isNotEmpty() }
-                        ?: stringResource(R.string.text_make_selection),
-                    errorRes = getErrorResIdOrNull(
-                        "liabilityType",
-                        liabilityValidation.value
-                    ),
-                    onAddItemSelectionClicked = {
-                        showLiabilityTypeSelection.value = true
-                    }
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                AddItemText(
-                    title = stringResource(R.string.text_liability_name),
-                    hint = stringResource(R.string.text_enter_name),
-                    text = liabilityName.value,
-                    errorRes = getErrorResIdOrNull(
-                        "liabilityName",
-                        liabilityValidation.value
-                    ),
-                    onTextChanged = { text ->
-                        liabilityName.value = text
-                    }
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                AddItemText(
-                    title = stringResource(R.string.text_current_balance),
-                    hint = currency,
-                    prefix = currency,
-                    text = currentBalance.value,
-                    errorRes = getErrorResIdOrNull(
-                        "balance",
-                        liabilityValidation.value
-                    ),
-                    onTextChanged = { text ->
-                        currentBalance.value = text
-                    },
-                    keyboardType = KeyboardType.Number
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                AddItemText(
-                    title = stringResource(R.string.text_monthly_payment),
-                    hint = currency,
-                    prefix = currency,
-                    text = monthlyPayment.value,
-                    onTextChanged = { text ->
-                        monthlyPayment.value = text
-                    },
-                    keyboardType = KeyboardType.Number
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                AddItemText(
-                    title = stringResource(R.string.text_annual_interest_rate),
-                    hint = stringResource(R.string.text_percent),
-                    info = stringResource(R.string.text_annual_interest_rate_info),
-                    suffix = "%",
-                    text = annualInterestRate.value,
-                    onTextChanged = { text ->
-                        annualInterestRate.value = text
-                    },
-                    keyboardType = KeyboardType.Number
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                AddItemSelection(
-                    title = stringResource(R.string.text_effective_date),
-                    text = effectiveDate.value,
-                    info = stringResource(R.string.text_revisited_date_info, "liability"),
-                    errorRes = getErrorResIdOrNull(
-                        "effectiveDate",
-                        liabilityValidation.value
-                    ),
-                    onAddItemSelectionClicked = {
-                        showDialog.value = DateSelectionType.EffectiveDate
-                    }
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                AddItemSelection(
-                    title = stringResource(R.string.text_revisit_date),
-                    text = revisitDate.value,
-                    errorRes = getErrorResIdOrNull(
-                        "revisitDate",
-                        liabilityValidation.value
-                    ),
-                    onAddItemSelectionClicked = {
-                        showDialog.value = DateSelectionType.RevisitDate
-                    }
-                )
-                Spacer(modifier = Modifier.height(40.dp))
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            ) {
                 if (liability != null) {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .background(color = Colors.Background)
+                            .padding(16.dp)
+                    ) {
                         PrimaryButton(stringResource(R.string.text_save_changes)) {
                             val validationResult = validateLiability(
                                 liabilityType = liabilityType.value,
@@ -352,7 +369,11 @@ fun AddEditLiabilityUI(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 } else {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .background(color = Colors.Background)
+                            .padding(16.dp)
+                    ) {
                         PrimaryButton(stringResource(R.string.text_add, "Liability")) {
                             val validationResult = validateLiability(
                                 liabilityType = liabilityType.value,
