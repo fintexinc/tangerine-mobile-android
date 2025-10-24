@@ -66,6 +66,7 @@ import kotlinx.serialization.Serializable
 import androidx.core.content.FileProvider
 import java.io.File
 import android.content.ActivityNotFoundException
+import android.util.Log
 import java.io.IOException
 
 @AndroidEntryPoint
@@ -266,7 +267,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(Routes.Statements)
                             },
                             onOpenDocument = {
-                                openPdfFromAssets("tangerine_investment_document.pdf")
+                                openPdfFromAssets("tangerine_bank_statement.pdf")
                             }
                         )
                     }
@@ -540,12 +541,9 @@ class MainActivity : ComponentActivity() {
         this.startActivity(intent)
     }
 
-    // Helper to copy a PDF from assets to cache and open it with an external PDF viewer using FileProvider
     private fun openPdfFromAssets(assetFileName: String) {
         try {
             val outFile = File(cacheDir, assetFileName)
-
-            // Copy asset to cache
             assets.open(assetFileName).use { input ->
                 outFile.outputStream().use { output ->
                     input.copyTo(output)
@@ -561,10 +559,9 @@ class MainActivity : ComponentActivity() {
 
             startActivity(Intent.createChooser(openIntent, "Open file"))
         } catch (e: ActivityNotFoundException) {
-            // No app to handle PDFs
-            // You can show a Toast or Snackbar here; keeping minimal to avoid new deps
+            // Don't handle errors for now, it's a temp solution
         } catch (e: IOException) {
-            // Copy/open failed
+            // Don't handle errors for now, it's a temp solution
         }
     }
 
