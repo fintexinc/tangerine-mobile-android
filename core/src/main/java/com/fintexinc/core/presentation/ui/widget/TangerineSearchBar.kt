@@ -30,7 +30,7 @@ import com.fintexinc.core.ui.font.FontStyles
 fun TangerineSearchBar(
     modifier: Modifier = Modifier,
     searchText: String = "",
-    hint: String = "",
+    hint: String = stringResource(R.string.text_search),
     onSearchTextChange: (String) -> Unit = {},
     isShowFilter: Boolean = true,
     horizontalPadding: Dp = 16.dp,
