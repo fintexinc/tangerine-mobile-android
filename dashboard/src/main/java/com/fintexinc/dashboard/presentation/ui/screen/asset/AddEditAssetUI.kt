@@ -284,87 +284,92 @@ fun AddEditAssetUI(
                     }
                 )
                 Spacer(modifier = Modifier.height(40.dp))
-                if (asset != null) {
-                    Column {
-                        PrimaryButton(
-                            text = stringResource(R.string.text_save_changes)
-                        ) {
-                            val validationResult = validateAsset(
-                                assetType.value, assetName.value, estimatedValue.value,
-                                effectiveDate.value, revisitDate.value
-                            )
-                            if (validationResult.any { pair -> !pair.value.isValid }) {
-                                assetValidation.value = validationResult
-                                return@PrimaryButton
-                            }
-                            onSaveAssetClick(
-                                Custom(
-                                    id = asset.id,
-                                    userId = asset.userId,
-                                    assetName = assetName.value,
-                                    assetType = assetType.value ?: AssetType.OTHER,
-                                    assetValue = estimatedValue.value.toDoubleOrNull()
-                                        ?: 0.0,
-                                    annualizedRateOfReturn = if (annualizedRateOfReturn.value.isNotEmpty()) {
-                                        annualizedRateOfReturn.value.substring(
-                                            0,
-                                            endIndex = annualizedRateOfReturn.value.length - 1
-                                        ).toDoubleOrNull() ?: 0.0
-                                    } else {
-                                        0.0
-                                    },
-                                    linkedDate = effectiveDate.value,
-                                    lastUpdated = revisitDate.value
-                                ),
-                                false
-                            )
-                        }
-                        SecondaryButton(
-                            text = stringResource(R.string.format_delete_item, "Asset"),
-                            onClick = {
-                                showDeletePopup.value = true
-                            }
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .align(Alignment.BottomCenter)
+                .background(color = Colors.Background)
+                .padding(16.dp)
+        ) {
+            if (asset != null) {
+                PrimaryButton(
+                    text = stringResource(R.string.text_save_changes)
+                ) {
+                    val validationResult = validateAsset(
+                        assetType.value, assetName.value, estimatedValue.value,
+                        effectiveDate.value, revisitDate.value
+                    )
+                    if (validationResult.any { pair -> !pair.value.isValid }) {
+                        assetValidation.value = validationResult
+                        return@PrimaryButton
                     }
-                } else {
-                    Column {
-                        PrimaryButton(
-                            text = stringResource(R.string.text_add, "Asset")
-                        ) {
-                            val validationResult = validateAsset(
-                                assetType.value, assetName.value, estimatedValue.value,
-                                effectiveDate.value, revisitDate.value
-                            )
-                            if (validationResult.any { pair -> !pair.value.isValid }) {
-                                assetValidation.value = validationResult
-                                return@PrimaryButton
-                            }
-                            onSaveAssetClick(
-                                Custom(
-                                    id = asset?.id ?: UUID.randomUUID().toString(),
-                                    userId = asset?.userId ?: "",
-                                    assetName = assetName.value,
-                                    assetType = assetType.value ?: AssetType.OTHER,
-                                    assetValue = estimatedValue.value.toDoubleOrNull()
-                                        ?: 0.0,
-                                    annualizedRateOfReturn = if (annualizedRateOfReturn.value.isNotEmpty()) {
-                                        annualizedRateOfReturn.value.substring(
-                                            0,
-                                            endIndex = annualizedRateOfReturn.value.length - 1
-                                        ).toDoubleOrNull() ?: 0.0
-                                    } else {
-                                        0.0
-                                    },
-                                    linkedDate = effectiveDate.value,
-                                    lastUpdated = revisitDate.value
-                                ),
-                                true
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
+                    onSaveAssetClick(
+                        Custom(
+                            id = asset.id,
+                            userId = asset.userId,
+                            assetName = assetName.value,
+                            assetType = assetType.value ?: AssetType.OTHER,
+                            assetValue = estimatedValue.value.toDoubleOrNull()
+                                ?: 0.0,
+                            annualizedRateOfReturn = if (annualizedRateOfReturn.value.isNotEmpty()) {
+                                annualizedRateOfReturn.value.substring(
+                                    0,
+                                    endIndex = annualizedRateOfReturn.value.length - 1
+                                ).toDoubleOrNull() ?: 0.0
+                            } else {
+                                0.0
+                            },
+                            linkedDate = effectiveDate.value,
+                            lastUpdated = revisitDate.value
+                        ),
+                        false
+                    )
                 }
+                SecondaryButton(
+                    text = stringResource(R.string.format_delete_item, "Asset"),
+                    onClick = {
+                        showDeletePopup.value = true
+                    }
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            } else {
+                PrimaryButton(
+                    text = stringResource(R.string.text_add, "Asset")
+                ) {
+                    val validationResult = validateAsset(
+                        assetType.value, assetName.value, estimatedValue.value,
+                        effectiveDate.value, revisitDate.value
+                    )
+                    if (validationResult.any { pair -> !pair.value.isValid }) {
+                        assetValidation.value = validationResult
+                        return@PrimaryButton
+                    }
+                    onSaveAssetClick(
+                        Custom(
+                            id = asset?.id ?: UUID.randomUUID().toString(),
+                            userId = asset?.userId ?: "",
+                            assetName = assetName.value,
+                            assetType = assetType.value ?: AssetType.OTHER,
+                            assetValue = estimatedValue.value.toDoubleOrNull()
+                                ?: 0.0,
+                            annualizedRateOfReturn = if (annualizedRateOfReturn.value.isNotEmpty()) {
+                                annualizedRateOfReturn.value.substring(
+                                    0,
+                                    endIndex = annualizedRateOfReturn.value.length - 1
+                                ).toDoubleOrNull() ?: 0.0
+                            } else {
+                                0.0
+                            },
+                            linkedDate = effectiveDate.value,
+                            lastUpdated = revisitDate.value
+                        ),
+                        true
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
         if (showAssetTypeSelection.value) {
