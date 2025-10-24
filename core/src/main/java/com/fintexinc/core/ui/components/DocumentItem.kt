@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ fun DocumentItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .wrapContentHeight()
             .background(Colors.Background)
             .clickable { onClick() }
             .padding(top = 12.dp),
@@ -79,25 +81,21 @@ fun DocumentItem(
                         )
                     }
 
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(R.drawable.ic_arrow_right),
-                            tint = Colors.IconSupplementary,
-                            contentDescription = stringResource(R.string.description_view_details),
-                        )
-                    }
-                }
-                if (!isLastItem) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    HorizontalDivider(
-                        color = Colors.BorderSubdued,
-                        modifier = Modifier,
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(R.drawable.ic_arrow_right),
+                        tint = Colors.IconSupplementary,
+                        contentDescription = stringResource(R.string.description_view_details),
                     )
                 }
+            }
+
+            if (!isLastItem) {
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider(
+                    color = Colors.BorderSubdued,
+                    modifier = Modifier,
+                )
             }
         }
     }

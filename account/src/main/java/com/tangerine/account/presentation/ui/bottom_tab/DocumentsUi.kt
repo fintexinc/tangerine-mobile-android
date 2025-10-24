@@ -50,6 +50,7 @@ internal fun DocumentsUi(
     navigateToTransactionDetailScreen: (String) -> Unit,
     onDateFilterChangedDocument: (List<DateFilterUi>, Int?, Int?) -> Unit,
     onTypeFilterChanged: (List<DocumentTypeFilterUi>) -> Unit,
+    onOpenDocument: (DocumentDataPoint) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -132,11 +133,7 @@ internal fun DocumentsUi(
                         title = document.name,
                         date = document.subName,
                         onClick = {
-                            val intent = Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf")
-                            )
-                            context.startActivity(intent)
+                            onOpenDocument(document)
                         },
                         isLastItem = index == filteredDocuments.lastIndex,
                     )

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fintexinc.core.data.model.DataPoint
+import com.fintexinc.core.domain.model.Document
 import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.TabItem
 import com.fintexinc.core.presentation.ui.widget.TabsSelector
@@ -46,6 +47,7 @@ fun DashboardScreenUI(
     onSeeInvestmentDocumentClicked: () -> Unit,
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
+    onOpenDocument: (Document) -> Unit = {},
 ) {
     when (state) {
         is DashboardViewModel.State.Loading -> {
@@ -64,6 +66,7 @@ fun DashboardScreenUI(
             onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
             updateCheckedStates = updateCheckedStates,
             onActivitiesClicked = onActivitiesClicked,
+            onOpenDocument = onOpenDocument
         )
     }
 }
@@ -79,6 +82,7 @@ private fun Content(
     onSeeInvestmentDocumentClicked: () -> Unit = {},
     updateCheckedStates: (List<NameValueChecked>, List<NameValueChecked>) -> Unit,
     onActivitiesClicked: (Transaction) -> Unit,
+    onOpenDocument: (Document) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -118,6 +122,7 @@ private fun Content(
                             onOpenJuiceSection = onOpenJuiceSection,
                             onSeeInvestmentDocumentClicked = onSeeInvestmentDocumentClicked,
                             onActivitiesClicked = onActivitiesClicked,
+                            onOpenDocument = onOpenDocument
                         )
                     }
                 ),
