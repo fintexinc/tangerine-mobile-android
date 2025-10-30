@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionDetailViewModel @Inject constructor(
     @ApplicationContext private val context: Context, // TODO() delete content
-    private val accountGateway: AccountGateway,
+    private val accountRepository: AccountGateway,
 ) : ViewModel() {
     private val _state: MutableStateFlow<State> = MutableStateFlow<State>(
         State.Loading
@@ -32,7 +32,7 @@ class TransactionDetailViewModel @Inject constructor(
     fun loadTransaction(documentId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             // TODO() need to pass a valid ID to get a model with data that can be filled ui
-            val document = accountGateway.getDocumentsById("DOC-001")
+            val document = accountRepository.getDocumentsById("DOC-001")
             val mockData = DocumentUi(
                 id = "1",
                 amount = "$1,000.00",

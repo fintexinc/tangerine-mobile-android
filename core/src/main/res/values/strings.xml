@@ -16,6 +16,8 @@
     <string name="text_empty_transactions">Couldn’t find any transactions</string>
     <string name="text_object_was_updated">“%s” was updated.</string>
     <string name="text_dismiss">Dismiss</string>
+    <string name="text_no_investment_data">No investments to show yet. Add or link an account to view performance.</string>
+    <string name="text_add_investment_account">Add Investment Account</string>
 
     <string name="description_icon_expand_collapse">Expand or collapse</string>
     <string name="description_icon_search">Search</string>
@@ -29,6 +31,7 @@
     <string name="description_view_details">View details</string>
     <string name="description_icon_error">Error</string>
     <string name="description_empty_result">Empty result</string>
+    <string name="description_no_investments">No investments</string>
 
     <string name="error_percentage_format">Percentage can only be between 0 and 100.</string>
     <string name="error_max_length_format">Maximum length exceeded.</string>

@@ -42,10 +42,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.foundation.layout)
 
     // DI
     implementation(libs.android.hilt)
-    implementation(libs.androidx.foundation.layout)
     ksp(libs.android.hilt.compiler)
 
     // compose
@@ -59,6 +59,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.collections.immutable)
     api(libs.threetenabp)
+
+    // network
+    implementation(project(":network"))
 
     // test
     testImplementation(libs.junit)

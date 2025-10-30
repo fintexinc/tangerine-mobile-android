@@ -75,6 +75,9 @@ dependencies {
     // charts
     implementation(project(":charts"))
 
+    // network
+    implementation(project(":network"))
+
     // Preview
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

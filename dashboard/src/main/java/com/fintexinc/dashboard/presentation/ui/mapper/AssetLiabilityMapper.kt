@@ -3,12 +3,12 @@ package com.fintexinc.dashboard.presentation.ui.mapper
 import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.utils.currency.formatCurrency
 import com.fintexinc.core.data.utils.date.formatEffectiveDate
-import com.fintexinc.core.domain.model.Banking
-import com.fintexinc.core.domain.model.Custom
-import com.fintexinc.core.domain.model.Investment
-import com.fintexinc.core.domain.model.Liability
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
 import com.fintexinc.dashboard.R
+import domain.model.Banking
+import domain.model.Custom
+import domain.model.Investment
+import domain.model.Liability
 
 fun Liability.toNameValue() = NameValueChecked(
     id = id,

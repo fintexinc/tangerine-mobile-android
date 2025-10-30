@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatementViewModel @Inject constructor(
-    private val accountGateway: AccountGateway,
+    private val accountRepository: AccountGateway,
 ) : ViewModel() {
     private val _state = MutableStateFlow<State>(State.Loading)
     val state: StateFlow<State>
@@ -28,7 +28,7 @@ class StatementViewModel @Inject constructor(
     }
 
     private suspend fun getData(): State.Data {
-        allDocuments = accountGateway.getDocuments().sortedWith(
+        allDocuments = accountRepository.getDocuments().sortedWith(
             compareByDescending<Document> { it.documentDate.year }
                 .thenByDescending { it.documentDate.month }
                 .thenByDescending { it.documentDate.day }

@@ -1,9 +1,9 @@
 package com.fintexinc.core.data.model
 
-import com.fintexinc.core.domain.model.Banking
-import com.fintexinc.core.domain.model.Custom
-import com.fintexinc.core.domain.model.Investment
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
+import domain.model.Banking
+import domain.model.Custom
+import domain.model.Investment
 
 data class BankingUI(
     val asset: Banking,

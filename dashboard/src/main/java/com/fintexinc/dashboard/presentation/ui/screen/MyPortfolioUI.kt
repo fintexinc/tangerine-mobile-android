@@ -58,6 +58,7 @@ import com.fintexinc.core.ui.color.Colors.BackgroundSuccessSubdued
 import com.fintexinc.core.ui.components.TextButton
 import com.fintexinc.core.ui.font.FontStyles
 import com.fintexinc.dashboard.R
+import com.fintexinc.dashboard.presentation.models.PerformanceResult
 import com.fintexinc.dashboard.presentation.ui.models.AccountUI
 import com.fintexinc.dashboard.presentation.ui.widget.chart.TangerinePieChart
 import com.tangerine.charts.compose_charts.PerformanceChartUI
@@ -67,7 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyPortfolioUI(
     accounts: List<Account>,
-    performance: List<PerformanceItem>,
+    performance: PerformanceResult,
     onOpenAccount: (accountId: String) -> Unit
 ) {
     data class MockItemType(override val label: String) : ItemType
@@ -586,12 +587,8 @@ private fun AccountListUI(
 
 @Composable
 private fun Charts(
-    performance: List<PerformanceItem>,
+    performance: PerformanceResult,
 ) {
-    performance.forEach {
-        Log.e("xcxxc", "$it")
-    }
-
     val showAccountsBottomSheet = remember { mutableStateOf(false) }
     val selectedAccountIds = remember { mutableStateOf(setOf("all")) }
 
@@ -785,8 +782,7 @@ private fun Charts(
             when (actualPage) {
                 0 -> PerformanceChartUI(
                     title = stringResource(R.string.text_investor_performance),
-                    chartPerformance = chartPerformance,
-                    step = if (filteredPerformance.size > 10) 20000.0 else 10000.0,
+                    chartPerformance = listOf(),
                     onFilterClick = {
                         showAccountsBottomSheet.value = true
                     },

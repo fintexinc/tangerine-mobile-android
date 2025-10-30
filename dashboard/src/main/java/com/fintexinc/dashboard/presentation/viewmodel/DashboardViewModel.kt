@@ -7,17 +7,22 @@ import com.fintexinc.core.data.model.CustomUI
 import com.fintexinc.core.data.model.DataPoint
 import com.fintexinc.core.data.model.InvestmentUI
 import com.fintexinc.core.data.model.LiabilityUI
-import com.fintexinc.core.domain.gateway.AccountGateway
-import com.fintexinc.core.domain.gateway.NetWorthGateway
-import com.fintexinc.core.domain.model.Account
-import com.fintexinc.core.domain.model.Custom
-import com.fintexinc.core.domain.model.Document
-import com.fintexinc.core.domain.model.Liability
-import com.fintexinc.core.domain.model.PerformanceItem
-import com.fintexinc.core.domain.model.Transaction
 import com.fintexinc.core.presentation.ui.widget.modal.NameValueChecked
+import com.fintexinc.dashboard.presentation.models.PerformanceResult
 import com.fintexinc.dashboard.presentation.ui.mapper.toNameValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import domain.model.Account
+import domain.model.Custom
+import domain.model.Document
+import domain.model.Liability
+import domain.model.Transaction
+import domain.usecase.account.GetAccountsUseCase
+import domain.usecase.account.GetActivitiesUseCase
+import domain.usecase.account.GetDocumentsUseCase
+import domain.usecase.account.GetInvestmentPerformanceUseCase
+import domain.usecase.base.BaseUseCase
+import domain.usecase.networth.GetAssetsUseCase
+import domain.usecase.networth.GetLiabilitiesUseCase
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +32,12 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val accountGateway: AccountGateway,
-    private val netWorthGateway: NetWorthGateway,
+    private val getAccountsUseCase: GetAccountsUseCase,
+    private val getAssetsUseCase: GetAssetsUseCase,
+    private val getLiabilitiesUseCase: GetLiabilitiesUseCase,
+    private val getInvestmentPerformanceUseCase: GetInvestmentPerformanceUseCase,
+    private val getActivitiesUseCase: GetActivitiesUseCase,
+    private val getDocumentsUseCase: GetDocumentsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<State>(State.Loading)
@@ -51,39 +60,78 @@ class DashboardViewModel @Inject constructor(
     }
 
     private suspend fun getData(): State.Data {
-        val accounts = accountGateway.getAccounts()
-        val assets = netWorthGateway.getAssets()
-        val liabilities = netWorthGateway.getLiabilities()
-        val activities = accountGateway.getActivities().sortedByDescending { it.transactionDate }
-            .take(ACTIVITIES_COUNT)
+        // Accounts
+        val accountsResult = getAccountsUseCase()
+        val accounts: List<Account> = when (accountsResult) {
+            is BaseUseCase.Result.Success -> accountsResult.data
+            is BaseUseCase.Result.Failure -> emptyList()
+        }
 
-        val documents: List<Document> = accountGateway.getDocuments().sortedWith(
-            compareByDescending<Document> { it.documentDate.year }
-                .thenByDescending { it.documentDate.month }
-                .thenByDescending { it.documentDate.day }
-        ).take(ACTIVITIES_COUNT)
+        // Assets (Net worth)
+        val assetsResult = getAssetsUseCase()
+        val bankingAssetsRaw = when (assetsResult) {
+            is BaseUseCase.Result.Success -> assetsResult.data.banking
+            is BaseUseCase.Result.Failure -> emptyList()
+        }
+        val investmentAssetsRaw = when (assetsResult) {
+            is BaseUseCase.Result.Success -> assetsResult.data.investment
+            is BaseUseCase.Result.Failure -> emptyList()
+        }
+        val customAssetsRaw = when (assetsResult) {
+            is BaseUseCase.Result.Success -> assetsResult.data.custom
+            is BaseUseCase.Result.Failure -> emptyList()
+        }
 
-        val performance = accountGateway.getPerformanceData().sortedWith(
-            compareBy({ it.date.year }, { it.date.month }, { it.date.day })
-        )
+        // Liabilities
+        val liabilitiesResult = getLiabilitiesUseCase()
+        val liabilitiesRaw = when (liabilitiesResult) {
+            is BaseUseCase.Result.Success -> liabilitiesResult.data
+            is BaseUseCase.Result.Failure -> emptyList()
+        }
+
+        // Activities (Transactions)
+        val activitiesResult = getActivitiesUseCase()
+        val activities = when (activitiesResult) {
+            is BaseUseCase.Result.Success -> activitiesResult.data.sortedByDescending { it.transactionDate }
+                .take(ACTIVITIES_COUNT)
+            is BaseUseCase.Result.Failure -> emptyList()
+        }
+
+        // Documents
+        val documentsResult = getDocumentsUseCase()
+        val documents: List<Document> = when (documentsResult) {
+            is BaseUseCase.Result.Success -> documentsResult.data.sortedWith(
+                compareByDescending<Document> { it.documentDate.year }
+                    .thenByDescending { it.documentDate.month }
+                    .thenByDescending { it.documentDate.day }
+            ).take(ACTIVITIES_COUNT)
+            is BaseUseCase.Result.Failure -> emptyList()
+        }
+
+        // Performance
+        val performanceResult = getInvestmentPerformanceUseCase()
+        val performance = when (performanceResult) {
+            is BaseUseCase.Result.Failure -> PerformanceResult(error = performanceResult.throwable)
+            is BaseUseCase.Result.Success -> PerformanceResult(performanceItems = performanceResult.data)
+        }
 
         return State.Data(
-            bankingAssets = assets.banking.map {
+            bankingAssets = bankingAssetsRaw.map {
                 BankingUI(
                     it, it.toNameValue()
                 )
             },
-            investmentAssets = assets.investment.map {
+            investmentAssets = investmentAssetsRaw.map {
                 InvestmentUI(
                     it, it.toNameValue()
                 )
             },
-            customAssets = assets.custom.map {
+            customAssets = customAssetsRaw.map {
                 CustomUI(
                     it, it.toNameValue()
                 )
             },
-            liabilities = liabilities.map {
+            liabilities = liabilitiesRaw.map {
                 LiabilityUI(
                     it,
                     it.toNameValue()
@@ -119,7 +167,7 @@ class DashboardViewModel @Inject constructor(
     fun onAddAsset(asset: Custom, isNew: Boolean) {
         viewModelScope.launch {
             val currentState = currentDataState()
-            val updatedAssets = if(isNew) {
+            val updatedAssets = if (isNew) {
                 currentState.customAssets.toMutableList().apply {
                     add(CustomUI(asset, asset.toNameValue()))
                 }.toList()
@@ -240,7 +288,7 @@ class DashboardViewModel @Inject constructor(
             val accounts: List<Account>,
             val activities: List<Transaction>,
             val documents: List<Document>,
-            val performance: List<PerformanceItem>
+            val performance: PerformanceResult
         ) : State()
     }
 

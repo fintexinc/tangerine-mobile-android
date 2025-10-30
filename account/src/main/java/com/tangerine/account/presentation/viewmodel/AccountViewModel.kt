@@ -47,7 +47,7 @@ import kotlin.math.absoluteValue
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val accountGateway: AccountGateway,
+    private val accountRepository: AccountGateway,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<State> = MutableStateFlow<State>(State.Loading)
@@ -55,8 +55,8 @@ class AccountViewModel @Inject constructor(
         get() = _state.asStateFlow()
 
     fun getData(id: String) = viewModelScope.launch {
-        val account = accountGateway.getAccountById(id)
-        val allPerformanceData = accountGateway.getPerformanceData()
+        val account = accountRepository.getAccountById(id)
+        val allPerformanceData = accountRepository.getPerformanceData()
 
         val accountPerformanceData = allPerformanceData.filter {
             it.accountId == "ACCT-INV-001" // TODO() mock data
@@ -260,7 +260,7 @@ class AccountViewModel @Inject constructor(
 
         when (tab) {
             AccountTab.BUY_FUNDS -> {
-                val account = accountGateway.getAccountById(accountId)
+                val account = accountRepository.getAccountById(accountId)
                 _state.value = State.Loaded(
                     current.copy(
                         selectedTab = TopTab.SUMMARY,
@@ -270,7 +270,7 @@ class AccountViewModel @Inject constructor(
             }
 
             AccountTab.AUTOMATIC_PURCHASES -> {
-                val activities = accountGateway.getActivities()
+                val activities = accountRepository.getActivities()
                 _state.value = State.Loaded(
                     current.copy(
                         selectedTab = TopTab.ACTIVITIES,
@@ -301,7 +301,7 @@ class AccountViewModel @Inject constructor(
             }
 
             AccountTab.SWITCH_PORTFOLIO -> {
-                val documents = accountGateway.getDocumentsByAccountId(accountId)
+                val documents = accountRepository.getDocumentsByAccountId(accountId)
                 _state.value = State.Loaded(
                     current.copy(
                         selectedTab = TopTab.DOCUMENTS,

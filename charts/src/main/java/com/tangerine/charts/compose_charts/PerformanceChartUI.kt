@@ -2,6 +2,7 @@ package com.tangerine.charts.compose_charts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,17 +32,96 @@ import com.fintexinc.core.domain.model.PerformanceItem
 import com.fintexinc.core.presentation.ui.modifier.clickableShape
 import com.fintexinc.core.ui.color.Colors
 import com.fintexinc.core.ui.font.FontStyles
+import com.tangerine.charts.compose_charts.widget.error.ShowEmptyPerformanceUI
 
 @Composable
 fun PerformanceChartUI(
     title: String,
-    step: Double = 10000.0,
     chartPerformance: List<PerformanceItem>,
     isShowFilter: Boolean = false,
     onFilterClick: () -> Unit = {},
     sum: String? = null,
     chipText: String? = null,
     onInfoIconClick: () -> Unit = {},
+    onAddInvestmentAccountClicked: () -> Unit = {},
+) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier
+                    .weight(1.0f)
+                    .wrapContentHeight(),
+                text = title,
+                style = FontStyles.TitleMedium,
+                maxLines = 2,
+            )
+            if (isShowFilter && chipText != null) {
+                Row(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .shadow(1.dp, RoundedCornerShape(16.dp))
+                        .background(
+                            color = Colors.BackgroundInteractive,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .clickableShape(RoundedCornerShape(16.dp)) {
+                            onFilterClick()
+                        }
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.wrapContentSize(),
+                        text = chipText,
+                        style = FontStyles.BodyMedium,
+                        color = Colors.TextInteractive
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        painter = painterResource(R.drawable.ic_chevron_down),
+                        tint = Colors.TextInteractive,
+                        contentDescription = "",
+                    )
+                }
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.ic_info),
+                    contentDescription = stringResource(R.string.description_info_icon),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { onInfoIconClick() },
+                    tint = Colors.TextInteractive,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(18.dp))
+        when {
+            chartPerformance.isEmpty() -> {
+                ShowEmptyPerformanceUI(
+                    onAddInvestmentAccountClicked = onAddInvestmentAccountClicked
+                )
+            }
+
+            else -> {
+                Content(
+                    chartPerformance = chartPerformance,
+                    sum = sum,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Content(
+    chartPerformance: List<PerformanceItem>,
+    sum: String?
 ) {
     val period = remember {
         mutableStateOf(Period.SIX_MONTHS)
@@ -52,59 +132,6 @@ fun PerformanceChartUI(
     val asOfDateValue = remember(chartPerformance) {
         mutableStateOf(chartPerformance.last().date)
     }
-    Spacer(modifier = Modifier.height(12.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            modifier = Modifier
-                .weight(1.0f)
-                .wrapContentHeight(),
-            text = title,
-            style = FontStyles.TitleMedium,
-            maxLines = 2,
-        )
-        if (isShowFilter && chipText != null) {
-            Row(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .shadow(1.dp, RoundedCornerShape(16.dp))
-                    .background(
-                        color = Colors.BackgroundInteractive,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .clickableShape(RoundedCornerShape(16.dp)) {
-                        onFilterClick()
-                    }
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.wrapContentSize(),
-                    text = chipText,
-                    style = FontStyles.BodyMedium,
-                    color = Colors.TextInteractive
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    painter = painterResource(R.drawable.ic_chevron_down),
-                    tint = Colors.TextInteractive,
-                    contentDescription = "",
-                )
-            }
-        } else {
-            Icon(
-                painter = painterResource(R.drawable.ic_info),
-                contentDescription = stringResource(R.string.description_info_icon),
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable { onInfoIconClick() },
-                tint = Colors.TextInteractive,
-            )
-        }
-    }
-    Spacer(modifier = Modifier.height(16.dp))
     Text(
         modifier = Modifier.wrapContentSize(),
         text = if (sum.isNullOrEmpty()) performanceValue.doubleValue.formatCurrency() else sum,
@@ -132,15 +159,19 @@ fun PerformanceChartUI(
                     Period.ONE_MONTH -> {
                         chartPerformance.subList(chartPerformance.size - 3, chartPerformance.size)
                     }
+
                     Period.THREE_MONTHS -> {
                         chartPerformance.subList(chartPerformance.size - 5, chartPerformance.size)
                     }
+
                     Period.SIX_MONTHS -> {
                         chartPerformance.subList(chartPerformance.size - 8, chartPerformance.size)
                     }
+
                     Period.ONE_YEAR -> {
                         chartPerformance
                     }
+
                     else -> chartPerformance
                 }
                 performanceValue.doubleValue = performanceRanged[it].value
