@@ -495,6 +495,7 @@ private fun NetWorthInfoUI(
                     painter = painterResource(com.fintexinc.core.R.drawable.ic_chevron_down),
                     tint = Colors.TextInteractive,
                     contentDescription = stringResource(R.string.description_icon_all_accounts_expand),
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
